@@ -1,0 +1,22 @@
+CNK-FarmaStatR - PBE modulu - Validasyon calisma paketi (surum 0.1)
+===================================================================
+R\pbe_core.R            Hesap cekirdegi. PBE_webr_v05_3.html icindeki R kodunun
+                        BAYT BAYT kopyasi. SHA-256:
+                        e7be66b8e93c79ec3cc78463513db3a2e2d48031dbdc0d41975ed6232426ac65
+R\pbe_tests.R           Test vakalari TC-P1 ... TC-P6 (213 kontrol)
+R\referans_python.R     Bagimsiz Python referansinin degerleri (otomatik uretilir)
+R\pbe_referans.py       Bagimsiz Python uygulamasi (PSG_020929 Appendix'ten)
+R\referans_python.json  Python ciktisi
+R\test_verisi_olustur.R Test veri setlerini uretir
+R\test_verisi\          10 CSV (PSG ornegi ve turetilmis vakalar)
+SAS\pbe_validation.sas  SAS dogrulamasi (PROC SQL + DATA adimi; 177 kontrol)
+
+R ILE CALISTIRMA (RStudio)
+  setwd("<bu klasor>/R")
+  source("pbe_core.R"); source("referans_python.R"); source("pbe_tests.R")
+  Beklenen: Toplam 213 kontrol, GECTI 213.
+
+SAS ILE CALISTIRMA
+  1. R\test_verisi klasorunu ASCII bir yola kopyalayin: C:\CNK-FarmaStatR\PBE\test_verisi
+  2. pbe_validation.sas dosyasini calistirin (YOL degiskeni bu klasoru gosterir).
+  Beklenen: OZET tablosunda Y 27/27, B 150/150 GECTI.

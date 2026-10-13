@@ -1,0 +1,4 @@
+# Devralınan çekirdeklerin tüm fonksiyonları dışa açılır (v1.0.0'da gözden geçirilecek).
+exportPattern("^[[:alpha:]]")
+import(stats)
+import(utils)

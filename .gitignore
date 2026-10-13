@@ -1,0 +1,12 @@
+# R / RStudio
+.Rhistory
+.RData
+.Rproj.user/
+*.Rcheck/
+CNKfarmastatr_*.tar.gz
+# Windows
+Thumbs.db
+desktop.ini
+# Copyrighted guidance and articles are never committed (kept in a local folder outside the repo)
+kaynaklar/
+*.pdf

@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta name="referrer" content="no-referrer">
+<title>CNK-FarmaStatR · Dissolüsyon Profil Benzerliği · Kullanım Kılavuzu</title>
+<style>
+:root {
+  --lacivert: #1F3864;
+  --lacivert-acik: #e8edf5;
+  --metin: #25303b;
+  --ikincil: #5a6674;
+  --zemin: #fbfcfd;
+  --cizgi: #d6dde6;
+  --kaynak: #0f6b63;
+  --kaynak-zemin: #e6f3f1;
+  --benzer: #2e7d32;
+  --sinir: #ef6c00;
+  --degil: #c62828;
+  --serif: Charter, "Bitstream Charter", "Sitka Text", Cambria, Georgia, serif;
+  --sans: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+}
+* { box-sizing: border-box; }
+html { scroll-padding-top: 16px; }
+body { margin: 0; background: var(--zemin); color: var(--metin); font: 16px/1.6 var(--sans); }
+a { color: var(--lacivert); }
+a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visible {
+  outline: 3px solid #7aa7e0; outline-offset: 2px; }
+
+.cerceve { display: grid; grid-template-columns: 280px minmax(0, 1fr); min-height: 100vh; }
+
+/* ---- Sol menü ---- */
+nav.menu { position: sticky; top: 0; height: 100vh; overflow-y: auto; background: var(--lacivert);
+  color: #e9eef6; padding: 22px 18px 40px; }
+nav.menu .marka { font: 600 21px/1.2 var(--serif); color: #fff; margin: 0 0 2px; }
+nav.menu .alt-marka { font-size: 13px; color: #b9c6da; margin: 0 0 18px; }
+nav.menu input { width: 100%; padding: 8px 10px; border-radius: 6px; border: 0; font: inherit;
+  font-size: 14px; margin-bottom: 16px; }
+nav.menu ol, nav.menu ul { list-style: none; margin: 0; padding: 0; }
+nav.menu li { margin: 1px 0; }
+nav.menu a { color: #e9eef6; text-decoration: none; display: block; padding: 4px 8px;
+  border-radius: 5px; font-size: 14px; }
+nav.menu a:hover { background: rgba(255,255,255,.1); }
+nav.menu .grup { font-size: 12px; color: #9fb0c9; margin: 18px 8px 4px; }
+nav.menu .ic a { padding-left: 22px; font-size: 13px; color: #c9d4e4; }
+
+/* ---- İçerik ---- */
+main { padding: 40px clamp(20px, 5vw, 64px) 80px; }
+.metin { max-width: 76ch; }
+h1 { font: 600 38px/1.15 var(--serif); color: var(--lacivert); margin: 0 0 10px; }
+h2 { font: 600 28px/1.25 var(--serif); color: var(--lacivert); margin: 64px 0 12px;
+  padding-top: 18px; border-top: 2px solid var(--lacivert); }
+h3 { font: 600 20px/1.3 var(--serif); margin: 36px 0 8px; color: var(--metin); }
+p { margin: 0 0 14px; }
+.giris { font-size: 18px; color: var(--ikincil); max-width: 70ch; }
+.surum { font-size: 14px; color: var(--ikincil); margin-bottom: 28px; }
+code, .kod { font-family: Consolas, "Cascadia Mono", monospace; font-size: .92em;
+  background: #eef1f5; padding: 1px 5px; border-radius: 4px; }
+
+/* ---- Ayar kartı: uygulamadaki kontrolün kendisi başlık gibi ---- */
+.ayar { margin: 34px 0 10px; border-left: 4px solid var(--lacivert); background: #fff;
+  border-radius: 0 8px 8px 0; box-shadow: 0 1px 0 var(--cizgi); max-width: 88ch; }
+.ayar-bas { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px;
+  padding: 14px 18px; background: var(--lacivert-acik); border-radius: 0 8px 0 0; }
+.ayar-bas .etiket { font-weight: 600; font-size: 17px; }
+.kontrol { font-size: 14px; border: 1px solid #b7c3d3; background: #fff; border-radius: 5px;
+  padding: 3px 10px; color: var(--metin); white-space: nowrap; }
+.kontrol::before { content: "varsayılan: "; color: var(--ikincil); }
+.ayar-bas .yer { margin-left: auto; font-size: 13px; color: var(--ikincil); }
+.ayar-govde { display: grid; grid-template-columns: 170px 1fr; gap: 0; }
+.ayar-govde > div { padding: 10px 18px; border-top: 1px solid #eef1f5; }
+.ayar-govde .baslik { font-weight: 600; font-size: 14px; color: var(--ikincil); }
+.ayar-govde p:last-child { margin-bottom: 0; }
+
+.kaynak { display: inline-block; background: var(--kaynak-zemin); color: var(--kaynak);
+  border-radius: 4px; padding: 0 6px; font-size: 13.5px; font-weight: 600; margin: 1px 2px 1px 0;
+  text-decoration: none; white-space: nowrap; }
+.kaynak.test { background: #eef1f5; color: var(--lacivert); }
+
+details.uzman { margin: 0 18px 14px; border: 1px dashed #b7c3d3; border-radius: 6px; padding: 0 12px;
+  background: #fcfdfe; }
+details.uzman summary { cursor: pointer; padding: 8px 0; font-size: 14px; color: var(--lacivert);
+  font-weight: 600; }
+details.uzman[open] summary { border-bottom: 1px solid #eef1f5; margin-bottom: 8px; }
+.formul { font-family: Cambria, "Cambria Math", var(--serif); font-style: italic; background: #f4f6f9;
+  padding: 6px 12px; border-radius: 4px; margin: 6px 0 10px; overflow-x: auto; }
+
+/* ---- Tablo, kutular ---- */
+.tablo-kap { overflow-x: auto; max-width: 92ch; }
+table { border-collapse: collapse; width: 100%; font-size: 14.5px; margin: 8px 0 18px; background: #fff; }
+th, td { border: 1px solid var(--cizgi); padding: 7px 10px; text-align: left; vertical-align: top; }
+th { background: var(--lacivert); color: #fff; font-weight: 600; }
+.not { border-left: 4px solid var(--sinir); background: #fff7ef; padding: 10px 14px; border-radius: 0 6px 6px 0;
+  margin: 12px 0 18px; max-width: 80ch; }
+.bilgi { border-left: 4px solid var(--kaynak); background: var(--kaynak-zemin); padding: 10px 14px;
+  border-radius: 0 6px 6px 0; margin: 12px 0 18px; max-width: 80ch; }
+.rozet { display: inline-block; color: #fff; font-weight: 700; padding: 3px 10px; border-radius: 5px; font-size: 14px; }
+.r-benzer { background: var(--benzer); } .r-sinir { background: var(--sinir); } .r-degil { background: var(--degil); }
+
+ol.adimlar { counter-reset: a; list-style: none; padding: 0; max-width: 78ch; }
+ol.adimlar > li { counter-increment: a; position: relative; padding: 4px 0 12px 48px; }
+ol.adimlar > li::before { content: counter(a); position: absolute; left: 0; top: 2px; width: 32px; height: 32px;
+  border-radius: 50%; background: var(--lacivert); color: #fff; font: 600 16px/32px var(--serif); text-align: center; }
+
+.akis { display: grid; gap: 8px; max-width: 80ch; margin: 10px 0 20px; }
+.akis .dugum { background: #fff; border: 1px solid var(--cizgi); border-radius: 8px; padding: 10px 14px; }
+.akis .dugum strong { color: var(--lacivert); }
+.akis .ok { text-align: center; color: var(--ikincil); font-size: 13px; }
+
+dl.sozluk dt { font-weight: 700; color: var(--lacivert); margin-top: 12px; }
+dl.sozluk dd { margin: 2px 0 0 0; max-width: 78ch; }
+.gizli { display: none !important; }
+#bulunamadi { color: var(--ikincil); }
+
+@media (max-width: 900px) {
+  .cerceve { grid-template-columns: 1fr; }
+  nav.menu { position: static; height: auto; }
+  .ayar-govde { grid-template-columns: 1fr; }
+  .ayar-govde .baslik { padding-bottom: 0; border-top: 1px solid #eef1f5; }
+  .ayar-govde .baslik + div { border-top: 0; }
+}
+@media print {
+  nav.menu { display: none; } .cerceve { display: block; }
+  details.uzman { border-style: solid; } details.uzman > *:not(summary) { display: block !important; }
+  h2 { break-before: page; } .ayar { break-inside: avoid; box-shadow: none; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+<div class="cerceve">
+
+<nav class="menu" aria-label="İçindekiler">
+  <p class="marka">CNK-FarmaStatR</p>
+  <p class="alt-marka">Dissolüsyon profil benzerliği · kullanım kılavuzu</p>
+  <label for="ara" class="gizli">Kılavuzda ara</label>
+  <input id="ara" type="search" placeholder="Kılavuzda ara (ör. seed, BCa, parti)">
+  <p id="bulunamadi" class="gizli">Eşleşme yok.</p>
+  <ul>
+    <li><a href="#baslatma">Başlatma ve güvenlik</a></li>
+    <li><a href="#baslangic">Hızlı başlangıç</a></li>
+    <li><a href="#yontem-secimi">Hangi yöntemi seçmeliyim?</a></li>
+  </ul>
+  <p class="grup">Uygulamanın sekmeleri</p>
+  <ol>
+    <li><a href="#sekme-veri">1 — Veri</a></li>
+    <li class="ic"><a href="#ayar-kaynak">Veri kaynağı</a></li>
+    <li class="ic"><a href="#ayar-sutun">Sütun eşleştirme</a></li>
+    <li class="ic"><a href="#ayar-urun">Test ve referans ürünü</a></li>
+    <li class="ic"><a href="#ayar-u_lot">Referans partileri</a></li>
+    <li class="ic"><a href="#ayar-birim">Zaman birimi</a></li>
+    <li><a href="#sekme-f2">2 — f2 / Bootstrap</a></li>
+    <li class="ic"><a href="#ayar-persp">Perspektif</a></li>
+    <li class="ic"><a href="#ayar-tahminci">Tahminci</a></li>
+    <li class="ic"><a href="#ayar-kesme">%85 kesme kuralı</a></li>
+    <li class="ic"><a href="#ayar-kmod">Kesme uygulaması</a></li>
+    <li class="ic"><a href="#ayar-cvkural">CV kuralı</a></li>
+    <li class="ic"><a href="#ayar-gatipi">Güven aralığı</a></li>
+    <li class="ic"><a href="#ayar-B">B (bootstrap örneği)</a></li>
+    <li class="ic"><a href="#ayar-seed">Seed</a></li>
+    <li class="ic"><a href="#ayar-qtip">Kantil tipi</a></li>
+    <li class="ic"><a href="#f2-sonuc">Sonuçları okuma</a></li>
+    <li><a href="#sekme-msd">3 — MSD (model bağımsız)</a></li>
+    <li class="ic"><a href="#ayar-msd_sinir">Benzerlik sınırı</a></li>
+    <li class="ic"><a href="#ayar-msd_dg">D_g</a></li>
+    <li class="ic"><a href="#ayar-msd_kesme">%85 kesmesi</a></li>
+    <li class="ic"><a href="#msd-sonuc">Sonuçları okuma</a></li>
+    <li><a href="#sekme-weibull">4 — Weibull MSD</a></li>
+    <li class="ic"><a href="#ayar-wb_param">Parametrizasyon</a></li>
+    <li class="ic"><a href="#ayar-wb_bolge">Benzerlik bölgesi</a></li>
+    <li class="ic"><a href="#wb-sonuc">Sonuçları okuma</a></li>
+    <li><a href="#sekme-rapor">5 — Rapor</a></li>
+    <li><a href="#sekme-hakkinda">6 — Yardım ve Hakkında</a></li>
+  </ol>
+  <p class="grup">Kayıtlar ve GMP</p>
+  <ul>
+    <li><a href="#kayitlar">Kayıtlar, denetim izi ve imza</a></li>
+    <li class="ic"><a href="#kayit-klasor">Çalışma ayarları (açılış ekranı)</a></li>
+    <li class="ic"><a href="#kayit-kimlik">Kimlik çubuğu</a></li>
+    <li class="ic"><a href="#kayit-analiz">Analiz kaydı</a></li>
+    <li class="ic"><a href="#kayit-gerekce">Yeniden analiz gerekçesi</a></li>
+    <li class="ic"><a href="#kayit-rapor">Rapor, parmak izi ve imza</a></li>
+    <li class="ic"><a href="#kayit-denetim">Denetim izi sayfası</a></li>
+    <li class="ic"><a href="#kayit-klasor">Çalışma klasörleri ve ana defter</a></li>
+    <li class="ic"><a href="#kayit-olaylar">Kayda geçen olaylar</a></li>
+    <li class="ic"><a href="#kayit-sorumluluk">Kullanıcı kuruluşun sorumlulukları</a></li>
+  </ul>
+  <p class="grup">Başvuru</p>
+  <ul>
+    <li><a href="#hatalar">Sık karşılaşılan sorunlar</a></li>
+    <li><a href="#sozluk">Sözlük</a></li>
+    <li><a href="#kaynakca">Kaynakça</a></li>
+    <li><a href="#validasyon">Validasyon belgeleri</a></li>
+  </ul>
+</nav>
+
+<main>
+<section class="bolum" id="ust">
+  <h1>Dissolüsyon profil benzerliği</h1>
+  <p class="giris">Bu kılavuz, CNK-FarmaStatR dissolüsyon modülündeki her ayarın ne işe yaradığını,
+  varsayılan değerinin neden seçildiğini, ne zaman değiştirilmesi gerektiğini ve hangi kılavuz maddesine
+  dayandığını açıklar. Analizlerin nasıl kayda geçtiği, raporun nasıl imzalanıp doğrulandığı
+  <a href="#kayitlar">Kayıtlar, denetim izi ve imza</a> bölümündedir.</p>
+  <p class="surum">Dissolüsyon modülü 0.4.0 · CNK-FarmaStatR platformu 0.5.1 (çevrimdışı) · Kılavuz sürümü 2.2 · 12.10.2026</p>
+  <div class="bilgi"><strong>Nasıl okunmalı?</strong> Her ayar dört başlık altında anlatılır: ne işe yaradığı,
+  varsayılanı ve gerekçesi, ne zaman değiştirileceği ve kaynağı. Formüller ve teknik gerekçeler
+  <em>Ayrıntı (uzmanlar için)</em> kutularındadır; sonuca ulaşmak için bu kutuları açmanız gerekmez.
+  Petrol yeşili etiketler kaynakçaya, gri etiketler validasyon testlerine bağlanır.</div>
+</section>
+
+<!-- ================================================================== -->
+<section class="bolum" id="baslatma">
+<h2>Başlatma ve güvenlik</h2>
+<ol class="adimlar">
+  <li>Paket klasöründeki <strong>Baslat.bat</strong> dosyasına çift tıklayın. Bilgisayarda R (4.2 ya da üstü) kurulu olmalıdır; R'ı açmanıza gerek yoktur. Siyah bir pencere açılır; bu, yerel sunucudur ve iş bitene kadar açık kalır.</li>
+  <li>Tarayıcıda önce <strong>Çalışma ayarları</strong> ekranı açılır. İki klasör seçersiniz: verinin okunacağı
+  <strong>kaynak veri klasörü</strong> ve sonuçların yazılacağı <strong>çıktı klasörü</strong>. Son kullandığınız klasörler
+  hazır gelir; değişiklik yoksa <strong>Kaydet ve devam et</strong>'e basın. Ayrıntılar: <a href="#kayit-klasor">Çalışma klasörleri</a>.</li>
+  <li><strong>Ana sayfa</strong> açılır. Üstteki <a href="#kayit-kimlik">kimlik çubuğunda</a> Windows kullanıcı adınızı, denetim izinin durumunu ve seçtiğiniz iki klasörü görürsünüz.</li>
+  <li>Modüller arasından <strong>Dissolüsyon profil benzerliği</strong> kartındaki <strong>Aç</strong> düğmesine basın.</li>
+  <li>Modül sayfasında üstteki gösterge <em>R hazır</em> ve <em>hesap dosyaları doğrulandı</em> yazana kadar bekleyin (ilk açılışta 10–20 saniye).</li>
+  <li>İşiniz bitince tarayıcı sekmelerini kapatın. Siyah pencere kısa süre içinde kendiliğinden kapanır ve oturumun kapandığı denetim izine yazılır.</li>
+</ol>
+<div class="bilgi"><strong>Veriniz bu bilgisayardan çıkmaz.</strong>
+<ul>
+  <li>R hesap motoru dahil tüm bileşenler uygulama klasöründedir; internetten hiçbir şey yüklenmez. Bilgisayar internete bağlı olmasa da çalışır.</li>
+  <li>Uygulamayı sunan yerel sunucu yalnızca <code>127.0.0.1</code> adresindedir; ağdaki başka bir bilgisayardan erişilemez.</li>
+  <li>Tarayıcı güvenlik kuralı (Content-Security-Policy), sayfanın ve R motorunun yerel sunucu dışındaki hiçbir adrese bağlanmasına izin vermez. Üst çubuktaki <strong>Güvenliği sına</strong> düğmesi, dış bir adrese bağlanma denemesinin engellendiğini canlı olarak gösterir.</li>
+  <li>Açılışta hesap dosyalarının SHA-256 parmak izleri validasyonlu sürümlerle karşılaştırılır. Bir dosya değiştirilmişse hesaplar devre dışı kalır. Parmak izleri 6. sekmede ve Word raporunda listelenir.</li>
+</ul></div>
+<div class="not">Paket klasörünü, yolunda Türkçe karakter, boşluk ya da kesme işareti bulunmayan bir yere koyun (ör. <code>C:\CNK-FarmaStatR</code>).
+Uygulamayı her zaman Baslat.bat ile açın; HTML dosyasına doğrudan çift tıklanırsa ne hesap ne kayıt çalışır.</div>
+</section>
+
+<!-- ================================================================== -->
+<section class="bolum" id="baslangic">
+<h2>Hızlı başlangıç</h2>
+<p class="metin">Gelişmiş ayarlara dokunmadan, EMA'nın beklentisine uygun bir analiz için:</p>
+<ol class="adimlar">
+  <li>Veri dosyanızı (CSV ya da Excel) <a href="#kayit-klasor">kaynak veri klasörüne</a> koyun.
+  <strong>1 — Veri</strong> sekmesinde <em>Kaynak klasörden dosya</em>'yı işaretleyip dosyayı listeden seçin ya da bir örnek veri seçin. Sütunları eşleştirin,
+  test ve referans ürününü seçin, zaman birimini belirleyin.</li>
+  <li><strong>Veriyi hazırla</strong> düğmesine basın. Profil grafiği ve özet tablosu dolar; ortalama ve CV%
+  değerlerine bir göz atın.</li>
+  <li><strong>2 — f2 / Bootstrap</strong> sekmesinde perspektif olarak <em>EMA</em> seçiliyken
+  <strong>Hesapla</strong>'ya basın. Sonucun üstünde <strong>✓ KAYDEDİLDİ</strong> kutusu çıkar: analiz,
+  kimliğiniz ve zaman damgasıyla <a href="#kayit-analiz">kayda geçmiştir</a>.</li>
+  <li>Karar rozetini okuyun: <span class="rozet r-benzer">BENZER</span>,
+  <span class="rozet r-sinir">SINIR VAKA</span> ya da <span class="rozet r-degil">BENZER DEĞİL</span>.
+  Altındaki uyarıları mutlaka okuyun.</li>
+  <li><strong>5 — Rapor</strong> sekmesinde <strong>Word raporunu kaydet</strong>'e basın. Rapor çıktı klasörünüzün
+  <code>raporlar</code> alt klasörüne yazılır. Raporu Word'de açıp yeniden kaydetmeyin; yazdırıp
+  <a href="#kayit-rapor">ıslak imzayla</a> onaylayın.</li>
+</ol>
+<div class="not"><strong>Önemli:</strong> Program bir karar desteği aracıdır. Nihai benzerlik kararı, verinin
+bütünü ve başvuru bağlamıyla birlikte bir uzman tarafından verilir. Özellikle
+<span class="rozet r-sinir">SINIR VAKA</span> sonuçlar yorum gerektirir.</div>
+</section>
+
+<!-- ================================================================== -->
+<section class="bolum" id="yontem-secimi">
+<h2>Hangi yöntemi seçmeliyim?</h2>
+<p class="metin">Uygulamada üç yöntem var. Hangisinin birincil olduğu başvurunun yapılacağı otoriteye ve
+verinin değişkenliğine bağlıdır.</p>
+<div class="akis">
+  <div class="dugum"><strong>1. Her iki ürün de 15 dakikada %85'ten fazla çözünüyor mu?</strong><br>
+    Evet ise profiller matematiksel değerlendirme olmadan benzer kabul edilebilir.
+    <a class="kaynak" href="#k-ema10">EMA10 App. I</a></div>
+  <div class="ok">hayır ↓</div>
+  <div class="dugum"><strong>2. Değişkenlik koşulu (CV) sağlanıyor mu?</strong><br>
+    Evet ise klasik f2 yeterlidir: f2 ≥ 50 ise benzer. Uygulama bunu 2. sekmede "Öneri" satırında bildirir.
+    <a class="kaynak" href="#k-ema10">EMA10 App. I</a> <a class="kaynak" href="#k-fda97">FDA97 V.A</a></div>
+  <div class="ok">hayır, değişkenlik yüksek ↓</div>
+  <div class="dugum"><strong>3a. EMA / TİTCK başvurusu:</strong> E(f2) için bootstrap %90 güven aralığı
+    (2. sekme, EMA perspektifi). MSD ve Weibull MSD yalnızca destekleyicidir.
+    <a class="kaynak" href="#k-emaqa">EMAQA 3.11</a> <a class="kaynak" href="#k-emaqa">EMAQA 3.9</a></div>
+  <div class="dugum"><strong>3b. FDA başvurusu:</strong> f2 için bootstrap %90 güven aralığı (2. sekme, FDA
+    perspektifi) ya da MSD (3. sekme). FDA'nın bootstrap için yayımlanmış bir kılavuzu yoktur; alternatif
+    yaklaşımların önceden FDA/OGD ile görüşülmesi önerilir.
+    <a class="kaynak" href="#k-fda97">FDA97 V.B</a> <a class="kaynak" href="#k-gong20">GONG20</a></div>
+</div>
+<div class="bilgi"><strong>Yöntemler aynı sonucu vermeyebilir.</strong> Örnek Noce verisinde (Ürün 1 – Ürün 3)
+MSD "benzer", bootstrap f2 "benzer değil" der. Bu beklenen bir durumdur: MSD değişkenlik arttıkça hoşgörülü
+hale gelebilir, bootstrap f2 ise değişkenliği cezalandırır.
+<a class="kaynak" href="#k-emaqa">EMAQA 3.9</a> <a class="kaynak" href="#k-mandula19">MANDULA19</a></div>
+</section>
+
+<!-- ================================================================== -->
+<section class="bolum" id="sekme-veri">
+<h2>1 — Veri</h2>
+<p class="metin">Bu sekmede veri yüklenir, sütunlar tanıtılır ve karşılaştırılacak ürünler seçilir. Diğer
+sekmelerdeki hesaplar ancak <strong>Veriyi hazırla</strong> düğmesine basıldıktan sonra çalışır.</p>
+
+<div class="ayar" id="ayar-kaynak">
+  <div class="ayar-bas"><span class="etiket">Veri kaynağı</span><span class="kontrol">Örnek: Noce 2020</span></div>
+  <div class="ayar-govde">
+    <div class="baslik">Ne işe yarar?</div>
+    <div><p>Veriyi kendi dosyanızdan mı, yoksa yerleşik örnek veri setlerinden mi alacağınızı belirler.</p></div>
+    <div class="baslik">Seçenekler</div>
+    <div><p><strong>Kaynak klasörden dosya (CSV / XLSX):</strong> kendi veriniz. Liste, açılışta seçtiğiniz
+    <a href="#kayit-klasor">kaynak veri klasöründeki</a> CSV ve Excel dosyalarını gösterir (alt klasörler listelenmez).
+    Dosyayı klasöre sonradan koyduysanız <strong>Yenile</strong>'ye basın. Başka bir yerdeki dosya seçilemez; bu bilinçli bir
+    kısıtlamadır: analize giren her dosya, yeri ve parmak izi kayda geçecek şekilde aynı klasörden gelir. Dosya
+    <em>uzun formatta</em> olmalıdır: her satır bir tabletin bir zaman noktasındaki değeridir.</p>
+    <p><strong>Örnek: Tsong 1996:</strong> 6 tabletlik TEST ve REF ile iki standart referans partisi (STD1, STD2).
+    Parti tabanlı sınırları denemek için uygundur.</p>
+    <p><strong>Örnek: Noce 2020:</strong> 3 ürün × 12 tablet × 9 zaman noktası; yüksek değişkenlikli gerçek veri.</p></div>
+    <div class="baslik">Kaynak</div>
+    <div><p>Örnek veriler yayımlanmış tablolardan birebir aktarılmıştır: <a class="kaynak" href="#k-tsong96">TSONG96 Tablo 1, 3</a>
+    <a class="kaynak" href="#k-noce20">NOCE20 Tablo 1</a>. Tsong verisinde tek bir düzeltme vardır: REF tablet 4,
+    30. dakika 78.54 yerine 78.45 (yayındaki dizgi hatası).
+    <a class="kaynak test" href="#validasyon">1A validasyon belgesi, Bölüm 6</a></p></div>
+  </div>
+</div>
+
+<div class="ayar" id="ayar-sutun">
+  <div class="ayar-bas"><span class="etiket">Ürün / Ünite / Zaman / % çözünen sütunu</span><span class="kontrol">Product, Unit, Time, Diss</span></div>
+  <div class="ayar-govde">
+    <div class="baslik">Ne işe yarar?</div>
+    <div><p>Dosyanızdaki sütunların ne anlama geldiğini programa söyler. Sütun adlarınız farklıysa (ör. Urun, Tablet,
+    Dakika, Cozunen) burada eşleştirirsiniz; dosyayı değiştirmenize gerek yoktur.</p></div>
+    <div class="baslik">Dikkat</div>
+    <div><p><strong>Ünite</strong> sütunu her tableti ayırt eden bir kimliktir (1, 2, …, 12). Aynı tabletin tüm zaman
+    noktalarındaki değerleri aynı kimliği taşımalıdır; çünkü yöntemler her tabletin profilini bir bütün olarak ele alır.</p>
+    <p>Boş şablon için sol alttaki <strong>Boş CSV şablonu</strong> düğmesini kullanın.</p></div>
+  </div>
+</div>
+
+<div class="ayar" id="ayar-urun">
+  <div class="ayar-bas"><span class="etiket">Test ürünü · Referans ürünü</span><span class="kontrol">ilk iki ürün</span></div>
+  <div class="ayar-govde">
+    <div class="baslik">Ne işe yarar?</div>
+    <div><p><strong>Test:</strong> benzerliği gösterilmek istenen ürün (jenerik, değişiklik sonrası seri, düşük doz).
+    <strong>Referans:</strong> karşılaştırmanın yapıldığı ürün (orijinal ürün, değişiklik öncesi seri, biyo-doz).</p></div>
+    <div class="baslik">Koşullar</div>
+    <div><p>İki ürünün zaman noktaları aynı olmalıdır; değilse program uyarır. Her ürün için en az 12 ünite beklenir.</p>
+    <p><a class="kaynak" href="#k-ema10">EMA10 App. I madde 2, 3</a> <a class="kaynak" href="#k-fda97">FDA97 V.A</a></p></div>
+  </div>
+  <details class="uzman"><summary>Ayrıntı (uzmanlar için): "twelve" mi, "at least twelve" mi?</summary>
+    <p>EMA kılavuzu Appendix I "Twelve individual values for every time point for each formulation" der. EMA Q&amp;A 3.11
+    aynı koşulu "at least twelve" olarak aktarır; Appendix III ise 12 üniteyi "recommended" olarak belirtir. Program
+    n &lt; 12'de uyarı verir, n &gt; 12'de hesaplar ve bu farkı not olarak raporlar. Test ve referansın ünite sayıları
+    farklıysa varyans terimi ürün bazında ayrı ayrı bölünür (FarmaStatR türetimi).</p>
+    <p><a class="kaynak test" href="#validasyon">TC-F2</a> <a class="kaynak test" href="#validasyon">TC-F4</a></p>
+  </details>
+</div>
+
+<div class="ayar" id="ayar-u_lot">
+  <div class="ayar-bas"><span class="etiket">Referans partileri (isteğe bağlı, ≥ 2)</span><span class="kontrol">boş</span></div>
+  <div class="ayar-govde">
+    <div class="baslik">Ne işe yarar?</div>
+    <div><p>Referans ürünün partilerini tanımlar. Bu partilerin kendi aralarındaki doğal fark (referans–referans
+    değişkenliği), "kabul edilebilir fark" olarak kullanılır: test ürünü referanstan en fazla referans partilerinin
+    birbirinden farklı olduğu kadar farklıysa benzer sayılır.</p>
+    <p><strong>Karşılaştırılan referans ürünü de işaretlenebilir.</strong> Örneğin test = Ürün 1, referans = Ürün 3 ve
+    partiler = Ürün 3 ile Ürün 2 seçilirse: sınır Ürün 3 – Ürün 2 farkından, karşılaştırma Ürün 1 – Ürün 3 farkından
+    hesaplanır. Ürün 3 iki rolde kullanılır, ama bu döngüsellik yaratmaz; sınır referansın kendi partileri arasındaki
+    farktan gelir. Test ürünü parti olarak seçilemez; işaretlenirse listeden çıkarılır.</p>
+    <p>Üç ya da daha fazla parti seçilirse tüm parti çiftleri karşılaştırılır ve en büyük değer sınır olur. Parti çiftlerinin
+    değerleri MSD sonuç ekranında ve raporda ayrıca listelenir.</p></div>
+    <div class="baslik">Nerede kullanılır?</div>
+    <div><p>Yalnızca parti tabanlı sınırlarda: MSD'de <a href="#ayar-msd_sinir">L2a ve L2b</a>, Weibull MSD'de
+    <a href="#ayar-wb_bolge">B-L2a ve B-L2b</a>. f2/bootstrap ve sabit sınırlı seçenekler partileri kullanmaz.</p></div>
+    <div class="baslik">Neden en az 2?</div>
+    <div><p>Partiler arası farkı hesaplamak için en az iki parti gerekir. Parti sayısı arttıkça sınır daha güvenilir olur.</p></div>
+    <div class="baslik">Dikkat</div>
+    <div><p>Referans ne kadar değişkense sınır o kadar geniş, yani hoşgörülü olur. Hangi partilerin neden seçildiği
+    protokolde önceden gerekçelendirilmelidir.</p></div>
+    <div class="baslik">Kaynak</div>
+    <div><p><a class="kaynak" href="#k-fda97">FDA97 V.B adım 1; V.C adım 3</a> <a class="kaynak" href="#k-sathe96">SATHE96</a>
+    <a class="kaynak" href="#k-gong20">GONG20 vaka 2</a> <a class="kaynak" href="#k-mandula19">MANDULA19</a>
+    <a class="kaynak" href="#k-tsong96">TSONG96 Tartışma</a></p></div>
+  </div>
+</div>
+
+<div class="ayar" id="ayar-birim">
+  <div class="ayar-bas"><span class="etiket">Zaman birimi</span><span class="kontrol">dakika</span></div>
+  <div class="ayar-govde">
+    <div class="baslik">Ne işe yarar?</div>
+    <div><p>Verideki zamanın dakika mı saat mi olduğunu belirtir.</p></div>
+    <div class="baslik">Neden önemli?</div>
+    <div><p>f2 kurallarındaki "15 dakikada %85" ve CV için "10 dakikaya kadar" gibi sınırlar dakika cinsindendir.
+    Saat seçilirse program zamanları f2 hesabı için dakikaya çevirir. Uzatılmış salımlı ürünlerde saat kullanımı yaygındır.</p>
+    <p>Weibull MSD'de varsayılan parametrizasyon zaman biriminden etkilenmez; Sathe parametrizasyonu etkilenir
+    (bkz. <a href="#ayar-wb_param">Parametrizasyon</a>).</p></div>
+  </div>
+</div>
+</section>
+
+<!-- ================================================================== -->
+<section class="bolum" id="sekme-f2">
+<h2>2 — f2 / Bootstrap</h2>
+<p class="metin">f2 benzerlik faktörü, iki ortalama profil arasındaki farkı 0–100 arasında tek bir sayıya çevirir;
+f2 ≥ 50 benzerlik anlamına gelir. Değişkenlik yüksek olduğunda tek bir f2 değeri güvenilir değildir; bu durumda
+tabletler tekrar tekrar yeniden örneklenerek (bootstrap) f2'nin güven aralığı hesaplanır ve karar aralığın
+<em>alt sınırına</em> göre verilir.</p>
+
+<div class="ayar" id="ayar-persp">
+  <div class="ayar-bas"><span class="etiket">Perspektif</span><span class="kontrol">EMA (Q&amp;A 3.11)</span></div>
+  <div class="ayar-govde">
+    <div class="baslik">Ne işe yarar?</div>
+    <div><p>Diğer ayarları tek seferde, hedef otoritenin beklentisine göre doldurur. Çoğu kullanıcı yalnızca bunu seçer.</p>
+    <div class="tablo-kap"><table>
+      <tr><th>Ayar</th><th>EMA</th><th>FDA</th></tr>
+      <tr><td>Tahminci</td><td>E(f2)</td><td>f2</td></tr>
+      <tr><td>%85 kesme kuralı</td><td>EMA</td><td>FDA</td></tr>
+      <tr><td>CV kuralı</td><td>ICH M9</td><td>FDA 1997</td></tr>
+      <tr><td>B</td><td>5000</td><td>10 000</td></tr>
+      <tr><td>Güven aralığı</td><td>Persentil</td><td>Persentil</td></tr>
+    </table></div></div>
+    <div class="baslik">Varsayılan ve gerekçesi</div>
+    <div><p>EMA: Q&amp;A 3.11 bootstrap için ayrıntılı beklenti tanımlayan tek resmi belgedir.</p></div>
+    <div class="baslik">FDA hakkında</div>
+    <div><p>FDA kılavuzları yalnızca klasik f2'yi tanımlar. FDA ön ayarı, FDA çalışanlarının bilimsel sunumlarına
+    dayanır ve <strong>resmi FDA politikası değildir</strong>.</p></div>
+    <div class="baslik">Kaynak</div>
+    <div><p><a class="kaynak" href="#k-emaqa">EMAQA 3.11</a> <a class="kaynak" href="#k-fda97">FDA97 V.A</a>
+    <a class="kaynak" href="#k-fda22">FDA22 III.A.2</a> <a class="kaynak" href="#k-gong20">GONG20</a>
+    <a class="kaynak" href="#k-mandula19">MANDULA19</a> <a class="kaynak test" href="#validasyon">TC-F9</a></p></div>
+  </div>
+</div>
+
+<div class="bilgi"><strong>Gelişmiş ayarlar:</strong> aşağıdaki ayarlar "Gelişmiş ayarlar" kutusu işaretlendiğinde görünür.
+Perspektif değiştirildiğinde kendiliğinden güncellenirler. Bir ayarı perspektifin önerdiğinden farklı yaparsanız,
+raporda bunun gerekçesini belirtmeniz gerekir.</div>
+
+<div class="ayar" id="ayar-tahminci">
+  <div class="ayar-bas"><span class="etiket">Tahminci</span><span class="kontrol">E(f2)</span><span class="yer">EMA ön ayarı</span></div>
+  <div class="ayar-govde">
+    <div class="baslik">Ne işe yarar?</div>
+    <div><p>Her bootstrap örneğinde hangi f2 türünün hesaplanacağını seçer.</p>
+    <p><strong>f2 (klasik):</strong> yalnızca ortalamaların farkına bakar, değişkenliği dikkate almaz.<br>
+    <strong>E(f2) (Expected f2):</strong> değişkenliği de hesaba katar ve daima biraz daha düşük çıkar; değişken
+    ürünleri bilinçli olarak cezalandırır.<br>
+    <strong>bc-f2 (yanlılık düzeltmeli):</strong> değişkenliği çıkarır; değişkenlik yüksekse hesaplanamaz.</p></div>
+    <div class="baslik">Varsayılan ve gerekçesi</div>
+    <div><p>EMA: E(f2); Q&amp;A 3.11 açıkça ister. FDA: klasik f2; FDA sunumları bunu kullanır.</p></div>
+    <div class="baslik">Ne zaman değiştirilir?</div>
+    <div><p>EMA başvurusunda değiştirilmemelidir. Simülasyon çalışmaları klasik f2 ve bc-f2'nin hatalı "benzer"
+    kararı oranını kabul edilebilir düzeyin üzerine çıkarabildiğini göstermiştir; program bu durumda uyarı verir.</p></div>
+    <div class="baslik">Kaynak</div>
+    <div><p><a class="kaynak" href="#k-emaqa">EMAQA 3.11 Denk. 1</a> <a class="kaynak" href="#k-ma00">MA00 Denk. 9</a>
+    <a class="kaynak" href="#k-noce20">NOCE20 Denk. 2</a> <a class="kaynak" href="#k-xu21">XU21</a>
+    <a class="kaynak test" href="#validasyon">TC-F1</a> <a class="kaynak test" href="#validasyon">TC-F2</a></p></div>
+  </div>
+  <details class="uzman"><summary>Ayrıntı (uzmanlar için): formüller</summary>
+    <p>P zaman noktası, n ürün başına ünite sayısı; D = Σ(X̄<sub>T</sub> − X̄<sub>R</sub>)², V = Σ(S²<sub>T</sub>/n<sub>T</sub> + S²<sub>R</sub>/n<sub>R</sub>):</p>
+    <div class="formul">f2 = 100 − 25 · log₁₀(1 + D/P)</div>
+    <div class="formul">E(f2) = 100 − 25 · log₁₀(1 + (D + V)/P)</div>
+    <div class="formul">bc-f2 = 100 − 25 · log₁₀(1 + (D − V)/P), D ≤ V ise tanımsız</div>
+    <p>Örnek ortalamalarının farkının karesi (D), gerçek farkı sistematik olarak büyük tahmin eder. bc-f2 bu gürültüyü
+    çıkarır; E(f2) ise bir kez daha ekleyerek "yanlı tahmincinin beklenen değerini" hedefler. Eşit n'de V, EMA formülündeki
+    (1/n)Σ(S²<sub>T</sub> + S²<sub>R</sub>) terimine indirgenir.</p>
+  </details>
+</div>
+
+<div class="ayar" id="ayar-kesme">
+  <div class="ayar-bas"><span class="etiket">%85 kesme kuralı</span><span class="kontrol">EMA</span><span class="yer">EMA ön ayarı</span></div>
+  <div class="ayar-govde">
+    <div class="baslik">Ne işe yarar?</div>
+    <div><p>Hesaba hangi zaman noktalarının gireceğini belirler. Dissolüsyonun sonunda iki ürün de %90–100'de bir
+    platoya ulaşır; bu noktalarda fark doğal olarak sıfıra yaklaşır ve hesaba girerse f2'yi yapay olarak yükseltir.
+    Kural, %85'in üzerindeki noktalardan yalnızca birinin hesaba girmesine izin verir.</p></div>
+    <div class="baslik">Seçenekler</div>
+    <div><p><strong>EMA:</strong> ürünlerden <em>herhangi biri</em> %85'i geçtiğinde durulur (o nokta dahil). Daha katıdır.<br>
+    <strong>FDA:</strong> ürünlerin <em>ikisi de</em> %85'i geçtiğinde durulur (o nokta dahil). Daha çok nokta girer.<br>
+    <strong>Yok:</strong> tüm noktalar girer; yalnızca akademik karşılaştırma içindir.</p></div>
+    <div class="baslik">Örnek</div>
+    <div><p>Noce Ürün 1 – Ürün 3: Ürün 1 165. dakikada %86.5'e ulaşır, Ürün 3 ancak 180. dakikada %85'i geçer.
+    EMA kuralı 165'te durur (6 nokta, f2 = 45.85); FDA kuralı 180'e kadar devam eder (7 nokta, f2 = 47.34).</p></div>
+    <div class="baslik">Kaynak</div>
+    <div><p><a class="kaynak" href="#k-ema10">EMA10 App. I madde 4</a> <a class="kaynak" href="#k-emaqa">EMAQA 3.11</a>
+    <a class="kaynak" href="#k-fda97">FDA97 V.A</a> <a class="kaynak test" href="#validasyon">TC-F1</a>
+    <a class="kaynak test" href="#validasyon">TC-F4</a></p></div>
+  </div>
+  <details class="uzman"><summary>Ayrıntı (uzmanlar için): tam 85.0 durumu</summary>
+    <p>Karar <em>ortalamalar</em> üzerinden verilir. Veri tek ondalıklı olduğunda 12 tabletin ortalaması tam 85.0 çıkabilir;
+    bu "> %85" koşulunu sağlamaz. Farklı yazılımlar toplama sırasına göre 85.00000000000001 üretip koşulu yanlışlıkla
+    sağlayabildiği için ortalamalar karşılaştırmadan önce 10 ondalığa yuvarlanır. Bu kural R, Python ve SAS'ta aynı
+    sonucu garanti eder.</p>
+    <p><a class="kaynak test" href="#validasyon">Bölüm 2 belgesi, bulgu B-2</a></p>
+  </details>
+</div>
+
+<div class="ayar" id="ayar-kmod">
+  <div class="ayar-bas"><span class="etiket">Kesme uygulaması</span><span class="kontrol">Her replikada</span></div>
+  <div class="ayar-govde">
+    <div class="baslik">Ne işe yarar?</div>
+    <div><p>%85 kuralının bootstrap sırasında nasıl uygulanacağını belirler.</p>
+    <p><strong>Her replikada:</strong> her yeniden örneklenmiş veri setinde kural o setin ortalamalarına tekrar uygulanır;
+    bu yüzden farklı replikalarda farklı sayıda nokta girebilir.<br>
+    <strong>Orijinal veride bir kez:</strong> noktalar gerçek veride bir kez belirlenir ve tüm replikalarda sabit tutulur.</p></div>
+    <div class="baslik">Varsayılan ve gerekçesi</div>
+    <div><p>Her replikada. Bootstrap'ın temel ilkesi, veriye bakılarak verilen tüm kararların her replikada yeniden
+    verilmesidir. Ayrıca bu davranış, Noce 2020'de kullanılan Bootf2bca yazılımının sonuçlarını yakalamaktadır.</p></div>
+    <div class="baslik">Ne zaman değiştirilir?</div>
+    <div><p>Kılavuzlar bu konuda bir şey söylemez. "Bir kez" seçeneği, farklı bir yazılımın sonucuyla karşılaştırma ya da
+    duyarlılık analizi için kullanılabilir. Fark genellikle birkaç onda birdir, ama sınır vakalarda kararı değiştirebilir.</p></div>
+    <div class="baslik">Kaynak</div>
+    <div><p><a class="kaynak" href="#k-noce20">NOCE20 (DDSolver değerlendirmesi)</a> <a class="kaynak test" href="#validasyon">TC-F6</a>
+    <a class="kaynak test" href="#validasyon">Bölüm 2 belgesi, bulgu B-1</a></p></div>
+  </div>
+</div>
+
+<div class="ayar" id="ayar-cvkural">
+  <div class="ayar-bas"><span class="etiket">CV kuralı</span><span class="kontrol">ICH M9 (≤10 dk %20)</span><span class="yer">EMA ön ayarı</span></div>
+  <div class="ayar-govde">
+    <div class="baslik">Ne işe yarar?</div>
+    <div><p>Değişkenliğin (varyasyon katsayısı, CV%) klasik f2 için kabul edilebilir olup olmadığını kontrol eder.
+    Koşul sağlanıyorsa klasik f2 yeterlidir; sağlanmıyorsa bootstrap önerilir. Bu ayar hesabı değil,
+    yalnızca yöntem <em>önerisini</em> etkiler.</p></div>
+    <div class="baslik">Seçenekler</div>
+    <div><p><strong>ICH M9:</strong> 10. dakikaya kadar olan noktalarda ≤ %20, sonrasında ≤ %10.<br>
+    <strong>EMA App. I:</strong> ilk noktada &lt; %20, sonrakilerde &lt; %10.<br>
+    <strong>FDA 1997:</strong> erken noktalarda (örneğin 15 dakika) ≤ %20, diğerlerinde ≤ %10.</p></div>
+    <div class="baslik">Varsayılan ve gerekçesi</div>
+    <div><p>EMA: M9. Q&amp;A 3.11, Appendix I'deki kuralın M9 ve dissolüsyon reflection paper'ı ile değiştirildiğini belirtir.</p></div>
+    <div class="baslik">Kaynak</div>
+    <div><p><a class="kaynak" href="#k-ema10">EMA10 App. I madde 5</a> <a class="kaynak" href="#k-emaqa">EMAQA 3.11</a>
+    <a class="kaynak" href="#k-fda97">FDA97 V.A</a> <a class="kaynak test" href="#validasyon">TC-F4</a>
+    <a class="kaynak test" href="#validasyon">TC-F9</a></p></div>
+  </div>
+  <details class="uzman"><summary>Ayrıntı (uzmanlar için): yorum noktaları</summary>
+    <p>FDA 1997'nin "earlier time points (e.g., 15 minutes)" ifadesi, programda "t ≤ 15 dakika" olarak yorumlanmıştır
+    (FarmaStatR yorumu). Appendix I "less than", M9 ve FDA "not more than" der; program bu farkı eşitsizlik yönünde korur.
+    CV, %85 kesmesinden <em>sonra</em> kalan noktalarda hesaplanır.</p>
+  </details>
+</div>
+
+<div class="ayar" id="ayar-gatipi">
+  <div class="ayar-bas"><span class="etiket">Güven aralığı</span><span class="kontrol">Persentil</span></div>
+  <div class="ayar-govde">
+    <div class="baslik">Ne işe yarar?</div>
+    <div><p>Bootstrap değerlerinden %90 güven aralığının nasıl çıkarılacağını belirler.</p>
+    <p><strong>Persentil:</strong> değerler küçükten büyüğe sıralanır; %5 ve %95'teki değerler alt ve üst sınırdır.<br>
+    <strong>BCa (bias-corrected and accelerated):</strong> dağılımın kayıklığını ve çarpıklığını düzelterek
+    sınırları kaydırır.</p></div>
+    <div class="baslik">Varsayılan ve gerekçesi</div>
+    <div><p>Her iki perspektifte persentil. EMA bunu ister. FDA'nın kaynak sunumunda da persentil birincil yöntemdir,
+    BCa "uygulanabilir" seçenek olarak geçer. Simülasyonlar, klasik f2 ile BCa'nın hatalı "benzer" kararını
+    artırabildiğini göstermiştir.</p></div>
+    <div class="baslik">Ne zaman değiştirilir?</div>
+    <div><p>Bir FDA değerlendiricisi BCa isterse ya da BCa kullanan başka bir yazılımın sonucuyla karşılaştırma
+    yapılacaksa. Program BCa seçildiğinde uyarı verir.</p></div>
+    <div class="baslik">Kaynak</div>
+    <div><p><a class="kaynak" href="#k-emaqa">EMAQA 3.11</a> <a class="kaynak" href="#k-gong20">GONG20 slayt 7</a>
+    <a class="kaynak" href="#k-mandula19">MANDULA19</a> <a class="kaynak" href="#k-xu21">XU21 Denk. 21–24; Tablo 2–3</a>
+    <a class="kaynak test" href="#validasyon">TC-F9</a></p></div>
+  </div>
+  <details class="uzman"><summary>Ayrıntı (uzmanlar için): BCa formülleri</summary>
+    <p>θ̂ orijinal verideki tahmin, θ*<sub>b</sub> bootstrap değerleri, θ<sub>(i)</sub> jackknife değerleri
+    (önce her test, sonra her referans ünitesi tek tek çıkarılarak):</p>
+    <div class="formul">z₀ = Φ⁻¹( #{θ*<sub>b</sub> &lt; θ̂} / B )</div>
+    <div class="formul">a = Σ(θ̄<sub>J</sub> − θ<sub>(i)</sub>)³ / {6 · [Σ(θ̄<sub>J</sub> − θ<sub>(i)</sub>)²]<sup>3/2</sup>}</div>
+    <div class="formul">α₁,₂ = Φ( z₀ + (z₀ + z<sub>α</sub>) / (1 − a·(z₀ + z<sub>α</sub>)) ), α = 0.05</div>
+    <p>Sınırlar bootstrap dağılımının α₁ ve α₂ kantilleridir. Bootf2BCA'nın <code>boot</code> paketi tabanlı BCa'sı
+    ivmeyi regresyonla hesapladığı için biraz farklı sonuç verebilir.</p>
+  </details>
+</div>
+
+<div class="ayar" id="ayar-B">
+  <div class="ayar-bas"><span class="etiket">B (bootstrap örneği)</span><span class="kontrol">5000</span><span class="yer">FDA: 10 000</span></div>
+  <div class="ayar-govde">
+    <div class="baslik">Ne işe yarar?</div>
+    <div><p>Tabletlerin kaç kez yeniden örnekleneceğini belirler. B büyüdükçe sonuç daha kararlı olur, hesap uzar.</p></div>
+    <div class="baslik">Varsayılan ve gerekçesi</div>
+    <div><p>EMA en az 5000 ister ve sayının raporlanmasını bekler. FDA sunumlarında 10 000 kullanılmıştır.</p></div>
+    <div class="baslik">Ne zaman değiştirilir?</div>
+    <div><p>Alt sınır 50'ye çok yakınsa (bkz. <a href="#f2-sonuc">seed duyarlılığı</a>) B'yi artırmak Monte Carlo
+    belirsizliğini azaltır. 5000'in altına inilmemelidir; program uyarır.</p></div>
+    <div class="baslik">Kaynak</div>
+    <div><p><a class="kaynak" href="#k-emaqa">EMAQA 3.11</a> <a class="kaynak" href="#k-gong20">GONG20</a>
+    <a class="kaynak" href="#k-mandula19">MANDULA19</a></p></div>
+  </div>
+</div>
+
+<div class="ayar" id="ayar-seed">
+  <div class="ayar-bas"><span class="etiket">Seed</span><span class="kontrol">20260927</span></div>
+  <div class="ayar-govde">
+    <div class="baslik">Ne işe yarar?</div>
+    <div><p>Rastgele yeniden örneklemenin başlangıç noktasıdır. Aynı veri, aynı ayarlar ve aynı seed her zaman,
+    her bilgisayarda aynı sonucu verir. Bu, sonucun bir değerlendirici tarafından tekrarlanabilmesini sağlar.</p></div>
+    <div class="baslik">Ne zaman değiştirilir?</div>
+    <div><p>Analizden <em>önce</em> protokolde belirlenmeli ve sonra değiştirilmemelidir. Sonuca bakıp seed değiştirerek
+    "benzer" sonucu aramak kabul edilemez bir uygulamadır.</p></div>
+    <div class="baslik">Kaynak</div>
+    <div><p><a class="kaynak" href="#k-emaqa">EMAQA 3.11</a> (seed ve yazılım ayarları raporlanmalıdır)
+    <a class="kaynak test" href="#validasyon">TC-F5</a></p></div>
+  </div>
+  <details class="uzman"><summary>Ayrıntı (uzmanlar için): rastgele sayı üreteci</summary>
+    <p>Program Mersenne-Twister / Inversion / Rejection üretecini açıkça ayarlar ve işlem sonunda kullanıcının kendi ayarını
+    geri yükler. Aynı seed'in Linux ve Windows'ta aynı bootstrap örneklerini ürettiği validasyonda doğrulanmıştır.</p>
+  </details>
+</div>
+
+<div class="ayar" id="ayar-qtip">
+  <div class="ayar-bas"><span class="etiket">Kantil tipi (Hyndman &amp; Fan)</span><span class="kontrol">7</span></div>
+  <div class="ayar-govde">
+    <div class="baslik">Ne işe yarar?</div>
+    <div><p>Sıralanmış bootstrap değerlerinden %5 ve %95 noktasının tam olarak nasıl okunacağını belirleyen teknik
+    bir tanımdır. Dokuz tanım vardır; aralarındaki fark genellikle ikinci ondalıktan sonradır.</p></div>
+    <div class="baslik">Varsayılan ve gerekçesi</div>
+    <div><p>Tip 7: R'ın varsayılanı ve literatürde en yaygın olanı. EMA dokuzundan herhangi birini kabul eder.</p></div>
+    <div class="baslik">Ne zaman değiştirilir?</div>
+    <div><p>Başka bir yazılımın sonucunu birebir tekrarlamak gerektiğinde. Seçilen tip raporda yazılır.</p></div>
+    <div class="baslik">Kaynak</div>
+    <div><p><a class="kaynak" href="#k-hf96">HF96</a> <a class="kaynak" href="#k-emaqa">EMAQA 3.11</a>
+    <a class="kaynak test" href="#validasyon">TC-F3</a></p></div>
+  </div>
+</div>
+
+<h3 id="f2-sonuc">Sonuçları okuma</h3>
+<div class="tablo-kap"><table>
+  <tr><th>Çıktı</th><th>Anlamı</th></tr>
+  <tr><td><span class="rozet r-benzer">BENZER</span></td><td>Güven aralığının alt sınırı ≥ 50.</td></tr>
+  <tr><td><span class="rozet r-sinir">SINIR VAKA</span></td><td>Alt sınır 49.5 ile 50 arasında. Ham değer 50'nin altındadır,
+    ama EMA'nın tam sayıya yuvarlama kuralı uygulansa 50 olur. Program kesin hüküm vermez; iki yorum da
+    değerlendiriciye bırakılır.</td></tr>
+  <tr><td><span class="rozet r-degil">BENZER DEĞİL</span></td><td>Alt sınır &lt; 49.5.</td></tr>
+  <tr><td>%90 GA</td><td>4 ondalıkla, yuvarlanmadan verilir. Karar hiçbir zaman yuvarlanmış değere dayanmaz.</td></tr>
+  <tr><td>Alt sınır MCSE</td><td>Alt sınırın Monte Carlo belirsizliği: farklı bir seed'le ne kadar oynayabileceği.</td></tr>
+  <tr><td>"Sonuç seed'e duyarlı" uyarısı</td><td>Alt sınır 50'ye bu belirsizliğin iki katından daha yakın. B artırılarak
+    tekrarlanması ve sonucun temkinle yorumlanması önerilir.</td></tr>
+  <tr><td>Tam sayı biçimi</td><td>EMA'nın raporlama biçimi; yalnızca bilgi amaçlıdır.</td></tr>
+  <tr><td>Bootstrap ortalaması</td><td>Tüm replikaların ortalaması; FDA sunumlarında raporlanır.</td></tr>
+  <tr><td>Replikalarda P</td><td>Replikalarda hesaba kaç zaman noktasının girdiği. "Her replikada" kesmede birden fazla değer görülmesi normaldir.</td></tr>
+  <tr><td>Öneri satırı</td><td>CV koşuluna göre klasik f2'nin mi bootstrap'ın mı uygun olduğu.</td></tr>
+</table></div>
+<p class="metin"><a class="kaynak test" href="#validasyon">TC-F8</a> Karar kuralı (4 ondalık, üç durum) kullanıcı kararıyla
+belirlenmiş bir CNK-FarmaStatR uygulamasıdır.</p>
+</section>
+
+<!-- ================================================================== -->
+<section class="bolum" id="sekme-msd">
+<h2>3 — MSD (model bağımsız)</h2>
+<p class="metin">Çok değişkenli istatistiksel uzaklık (MSD), tüm zaman noktalarındaki farkları tek bir uzaklıkta birleştirir.
+Bunu yaparken her noktanın değişkenliğini ve aynı tabletin farklı zamanlardaki değerleri arasındaki ilişkiyi hesaba katar
+(Mahalanobis uzaklığı). Uzaklık için %90 güven aralığı hesaplanır; aralığın üst sınırı benzerlik sınırının altındaysa
+profiller benzer sayılır.</p>
+<div class="not"><strong>Regülatif statü:</strong> FDA 1997 V.B'de tanımlı bir yöntemdir. EMA ise MSD'yi, değişkenlik arttıkça
+profilleri daha benzer gösterebildiği için tercih edilen yöntem olarak desteklemez; EMA/TİTCK başvurularında
+destekleyici olarak kullanılır. <a class="kaynak" href="#k-fda97">FDA97 V.B</a> <a class="kaynak" href="#k-emaqa">EMAQA 3.9</a></div>
+
+<div class="ayar" id="ayar-msd_sinir">
+  <div class="ayar-bas"><span class="etiket">Benzerlik sınırı</span><span class="kontrol">L1: sabit D_g</span></div>
+  <div class="ayar-govde">
+    <div class="baslik">Ne işe yarar?</div>
+    <div><p>Test ile referans arasındaki uzaklığın hangi değerin altında kalırsa "benzer" sayılacağını belirler.</p>
+    <p><strong>L1 — sabit D<sub>g</sub>:</strong> her zaman noktasında D<sub>g</sub> kadar (varsayılan %10) farka karşılık gelen uzaklık.<br>
+    <strong>L2a — partiler arası en büyük fark:</strong> referans partileri arasındaki en büyük ortalama fark D<sub>g</sub> olarak alınır.<br>
+    <strong>L2b — partiler arası en büyük MSD:</strong> referans partileri arasındaki en büyük uzaklık doğrudan sınır olur.</p></div>
+    <div class="baslik">Ne zaman hangisi?</div>
+    <div><p>Referans partileri yoksa L1. Referans partileri varsa ve FDA 1997'nin öngördüğü "seriler arası fark" yaklaşımı
+    isteniyorsa L2a ya da L2b; bunlar için 1. sekmede en az 2 <a href="#ayar-u_lot">referans partisi</a> seçilmelidir.</p></div>
+    <div class="baslik">Kaynak</div>
+    <div><p>L1: <a class="kaynak" href="#k-tsong96">TSONG96</a> <a class="kaynak" href="#k-ema10">EMA10 App. I (≤ %10)</a>
+    <a class="kaynak" href="#k-mandula19">MANDULA19 (D<sub>g</sub> = %10)</a>. L2b: <a class="kaynak" href="#k-fda97">FDA97 V.B adım 1</a>
+    <a class="kaynak" href="#k-gong20">GONG20 vaka 2 ("Maximum MSD")</a>. L2a: FarmaStatR türetimi.
+    <a class="kaynak test" href="#validasyon">TC-1 … TC-3</a></p></div>
+  </div>
+  <details class="uzman"><summary>Ayrıntı (uzmanlar için): formüller</summary>
+    <div class="formul">D<sub>M</sub> = √( d′ S⁻¹ d ),  S = [(n<sub>T</sub>−1)S<sub>T</sub> + (n<sub>R</sub>−1)S<sub>R</sub>] / (n<sub>T</sub>+n<sub>R</sub>−2)</div>
+    <div class="formul">K = [n<sub>T</sub>n<sub>R</sub>/(n<sub>T</sub>+n<sub>R</sub>)] · (n<sub>T</sub>+n<sub>R</sub>−P−1) / [(n<sub>T</sub>+n<sub>R</sub>−2)·P]</div>
+    <div class="formul">%90 GA: D<sub>M</sub> ∓ √(F / K),  F = F(P, n<sub>T</sub>+n<sub>R</sub>−P−1; 0.90)</div>
+    <div class="formul">L1: R<sub>D</sub> = √( D<sub>g</sub>·1′ S⁻¹ D<sub>g</sub>·1 )</div>
+    <p>Kapalı form, Tsong'un Lagrange çözümüyle özdeştir; Tsong 1996'daki sayısal örnekler birebir üretilmiştir.
+    Zaman noktası sayısı en fazla n<sub>T</sub>+n<sub>R</sub>−2 olabilir.</p>
+  </details>
+</div>
+
+<div class="ayar" id="ayar-msd_dg">
+  <div class="ayar-bas"><span class="etiket">D_g (L1 ve L3 hiperküp)</span><span class="kontrol">10</span></div>
+  <div class="ayar-govde">
+    <div class="baslik">Ne işe yarar?</div>
+    <div><p>Zaman noktası başına izin verilen en büyük fark (yüzde puan). Hem L1 sınırında hem L3 kontrolünde kullanılır.</p></div>
+    <div class="baslik">Varsayılan ve gerekçesi</div>
+    <div><p>10: EMA alternatif yöntemlerde kabul sınırının %10 farktan büyük olmamasını ister. Tsong 1996, değişkenlik
+    düşükse 10, genel durumda 15 kullanımını tartışır.</p></div>
+    <div class="baslik">Kaynak</div>
+    <div><p><a class="kaynak" href="#k-ema10">EMA10 App. I</a> <a class="kaynak" href="#k-tsong96">TSONG96</a></p></div>
+  </div>
+</div>
+
+<div class="ayar" id="ayar-msd_kesme">
+  <div class="ayar-bas"><span class="etiket">%85 kesmesi</span><span class="kontrol">Yok</span></div>
+  <div class="ayar-govde">
+    <div class="baslik">Ne işe yarar?</div>
+    <div><p>2. sekmedeki <a href="#ayar-kesme">%85 kesme kuralı</a>nın MSD'ye uygulanmasıdır.</p></div>
+    <div class="baslik">Varsayılan ve gerekçesi</div>
+    <div><p>Yok. Kılavuzlar bu kuralı f2 için tanımlar; MSD için bir hüküm yoktur. Tsong 1996'nın örnekleri tüm noktalarla
+    hesaplanmıştır. MSD'ye uygulanması CNK-FarmaStatR seçeneğidir.</p></div>
+  </div>
+</div>
+
+<h3 id="msd-sonuc">Sonuçları okuma</h3>
+<div class="tablo-kap"><table>
+  <tr><th>Çıktı</th><th>Anlamı</th></tr>
+  <tr><td>MSD kararı</td><td>GA üst sınırı ≤ R<sub>D</sub> ise BENZER. <a class="kaynak" href="#k-fda97">FDA97 V.B adım 4</a></td></tr>
+  <tr><td>L3 kararı</td><td>Güven bölgesinin her zaman noktasındaki en uç farkı ≤ D<sub>g</sub> ise BENZER. EMA'nın "hiçbir noktada
+    %10'dan fazla fark olmasın" beklentisinin doğrudan kontrolüdür (FarmaStatR türetimi).</td></tr>
+  <tr><td>Kırmızı çelişki uyarısı</td><td>MSD "benzer", L3 "benzer değil" diyorsa: uzaklık küçük görünse de en az bir
+    zaman noktasında büyük fark vardır. EMA'nın MSD'ye itirazının somut örneğidir.
+    <a class="kaynak" href="#k-emaqa">EMAQA 3.9</a> <a class="kaynak test" href="#validasyon">TC-4</a></td></tr>
+  <tr><td>Zaman noktası tablosu</td><td>Her noktadaki fark ve eşzamanlı güven aralığı; "Nokta aşımı" sütunu, ortalama farkın
+    tek başına D<sub>g</sub>'yi aştığı noktaları gösterir.</td></tr>
+</table></div>
+</section>
+
+<!-- ================================================================== -->
+<section class="bolum" id="sekme-weibull">
+<h2>4 — Weibull MSD</h2>
+<p class="metin">Model bağımlı yaklaşım: her tabletin profili önce Weibull eğrisine uydurulup iki sayıya indirgenir
+(çözünme hızını ve eğrinin şeklini anlatan iki parametre). Test ve referans bu parametreler üzerinden MSD ile karşılaştırılır.</p>
+<div class="not"><strong>Regülatif statü:</strong> FDA 1997 V.C'de tanımlıdır; EMA/TİTCK için destekleyicidir. Bir FDA/OGD
+sunumunda, başvuru sahibinin önerdiği Weibull yaklaşımının uygun görülmediği bir vaka aktarılmıştır.
+<a class="kaynak" href="#k-fda97">FDA97 V.C</a> <a class="kaynak" href="#k-emaqa">EMAQA 3.9</a> <a class="kaynak" href="#k-gong20">GONG20 vaka 2</a></div>
+
+<div class="ayar" id="ayar-wb_param">
+  <div class="ayar-bas"><span class="etiket">Parametrizasyon</span><span class="kontrol">(ln T_d, ln β)</span></div>
+  <div class="ayar-govde">
+    <div class="baslik">Ne işe yarar?</div>
+    <div><p>Karşılaştırmanın hangi parametre çifti üzerinden yapılacağını seçer. Aynı eğri farklı parametrelerle yazılabilir,
+    ama uzaklık hesabı bu seçimden etkilenir.</p>
+    <p><strong>(ln T<sub>d</sub>, ln β):</strong> T<sub>d</sub> materyalin %63.2'sinin çözündüğü süre, β eğrinin şekli.<br>
+    <strong>(ln α, ln β):</strong> Sathe 1996'nın kullandığı çift.<br>
+    <strong>(ln α, β):</strong> doğrusal regresyonun doğrudan verdiği çift.</p></div>
+    <div class="baslik">Varsayılan ve gerekçesi</div>
+    <div><p>(ln T<sub>d</sub>, ln β): sonuç zaman biriminden bağımsızdır. Aynı veride Sathe parametrizasyonu dakika, saat
+    ve saniye için üç farklı uzaklık verir (10.81 / 8.94 / 11.66); varsayılan üçünde de aynıdır (8.56). Bu çift bir FarmaStatR
+    türetimidir (Langenbucher'in T<sub>d</sub>'si ile Sathe'nin ln β'sı).</p></div>
+    <div class="baslik">Ne zaman değiştirilir?</div>
+    <div><p>Sathe 1996'nın yayımlanmış sonuçlarını tekrarlamak için (ln α, ln β). Bu seçilirse zaman birimi protokolde
+    tanımlanmalıdır.</p></div>
+    <div class="baslik">Kaynak</div>
+    <div><p><a class="kaynak" href="#k-sathe96">SATHE96</a> <a class="kaynak" href="#k-langenbucher72">LANGENBUCHER72</a>
+    <a class="kaynak test" href="#validasyon">TC-B2</a> <a class="kaynak test" href="#validasyon">TC-B4</a>
+    <a class="kaynak test" href="#validasyon">TC-B6</a></p></div>
+  </div>
+  <details class="uzman"><summary>Ayrıntı (uzmanlar için): model ve uydurma</summary>
+    <div class="formul">X(t) = 100 · [1 − exp(−α · t<sup>β</sup>)],  ln(−ln(1 − X/100)) = ln α + β · ln t,  ln T<sub>d</sub> = −ln α / β</div>
+    <p>Her tablete doğrusallaştırılmış form basit regresyonla uydurulur. X ≤ 0, X ≥ 100 ve t = 0 noktaları dönüşümde
+    tanımsız olduğundan dışlanır; her tablette en az 3 geçerli nokta gerekir. Langenbucher, doğrusallaştırmanın uçlardaki
+    sapmaları büyüttüğü konusunda uyarır; uydurma tablosundaki R² değerlerine bakılmalıdır.</p>
+  </details>
+</div>
+
+<div class="ayar" id="ayar-wb_bolge">
+  <div class="ayar-bas"><span class="etiket">Benzerlik bölgesi</span><span class="kontrol">B-L3: yanıt uzayında ±D_g</span></div>
+  <div class="ayar-govde">
+    <div class="baslik">Ne işe yarar?</div>
+    <div><p>Parametre farkının ne kadar olabileceğini belirler.</p>
+    <p><strong>B-L3:</strong> parametre farkının, her gözlenen zaman noktasında en fazla D<sub>g</sub> (%10) çözünme farkına yol
+    açıp açmadığına bakar. Parti gerektirmez.<br>
+    <strong>B-L2a — Sathe kutusu:</strong> her parametre için referans partilerinin değişkenliğinden ±k standart sapmalık
+    bir aralık. k = 1, 2 ya da 3; Sathe hangisinin kullanılacağını açık bırakmıştır.<br>
+    <strong>B-L2b — Sathe eki elips:</strong> referans partilerinden kurulan eliptik bölge. Σ₂ böleni: N (varsayılan) ya da √N.</p></div>
+    <div class="baslik">Varsayılan ve gerekçesi</div>
+    <div><p>B-L3: parti verisi gerektirmez ve sonucu doğrudan yüzde çözünme cinsinden, EMA'nın %10 ölçütüyle yorumlanabilir.</p></div>
+    <div class="baslik">Kaynak</div>
+    <div><p>B-L3: <a class="kaynak" href="#k-ema10">EMA10 App. I</a> <a class="kaynak" href="#k-muselik21">MUSELIK21</a> (FarmaStatR türetimi).
+    B-L2a, B-L2b: <a class="kaynak" href="#k-sathe96">SATHE96 s. 1800–1801, Ek</a>.
+    <a class="kaynak test" href="#validasyon">TC-B1 … TC-B3</a></p></div>
+  </div>
+  <details class="uzman"><summary>Ayrıntı (uzmanlar için): Σ₂/N mı, Σ₂/√N mi?</summary>
+    <p>Sathe'nin ekindeki formül Σ₂/√N yazar. Σ₂ bir kovaryans matrisidir ve parti ortalamasının varyansı Σ₁ + Σ₂/N'dir;
+    √N ile bölme varyans ve standart hata ölçeklerini karıştırır. Bu yüzden varsayılan Σ₂/N'dir; literal √N seçenek olarak
+    korunur. N = 12'de √N bölgeyi yaklaşık 3.5 kat daha hoşgörülü yapar. Sathe makalesinde ham veri olmadığı için hangisinin
+    kastedildiği sayısal olarak doğrulanamaz.</p>
+    <p><a class="kaynak test" href="#validasyon">1B validasyon belgesi, Bölüm 6</a></p>
+  </details>
+</div>
+
+<h3 id="wb-sonuc">Sonuçları okuma</h3>
+<p class="metin">Karar rozeti seçilen benzerlik bölgesine göredir. Grafikte ortalama profiller (noktalar) ve ortalama
+parametrelerden çizilen Weibull eğrileri görülür; eğriler noktalardan belirgin sapıyorsa model veriye uymuyor olabilir.
+Ünite bazındaki uydurma tablosunda her tabletin parametreleri, T<sub>d</sub>, R² ve dışlanan noktaları yer alır.</p>
+</section>
+
+<!-- ================================================================== -->
+<section class="bolum" id="sekme-rapor">
+<h2>5 — Rapor</h2>
+<p class="metin">Word raporu, bu oturumda çalıştırılan analizleri (f2/bootstrap, MSD, Weibull MSD), tüm ayarları, uyarıları,
+regülatif statüyü, validasyon durumunu, hesap dosyalarının parmak izlerini ve son bölümde <strong>analiz kayıtları ve imza</strong>
+tablosunu içerir. Bir analiz türü birden çok kez çalıştırıldıysa raporda en son koşu yer alır; önceki koşular denetim izinde durur.
+Çalışma adı 1. sekmede girilir.</p>
+<p class="metin"><strong>Word raporunu kaydet</strong> düğmesi raporu doğrudan çıktı klasörünüzün <code>raporlar</code> alt
+klasörüne yazar; tarayıcının İndirilenler klasörüne gitmez. Aynı adda bir dosya varsa üzerine yazılmaz, adın sonuna
+<code>_2</code>, <code>_3</code> eklenir. Dosyanın tam yeri ve parmak izi ekranda gösterilir ve denetim izine yazılır.
+Ayrıntılar: <a href="#kayit-rapor">Rapor, parmak izi ve imza</a>.</p>
+<p class="metin">Bootstrap replikaları da CSV olarak aynı klasöre kaydedilebilir; bu dosya, sonucun başka bir yazılımla bağımsız
+olarak incelenmesine olanak verir. Kaydetme, denetim izine "dışa aktarım" olarak yazılır.</p>
+</section>
+
+<section class="bolum" id="sekme-hakkinda">
+<h2>6 — Yardım ve Hakkında</h2>
+<p class="metin">Kılavuza bağlantıyı, modül ve platform sürümlerini, güvenlik açıklamasını, hesap dosyalarının parmak izi doğrulamasını ve validasyon durumunu gösterir.
+Arayüz hiçbir hesap yapmaz; tüm sayılar validasyonlu modül fonksiyonlarından gelir. Validasyon test setleri tarayıcı içindeki R motorunda
+(webR) da koşulmuş ve aynı sonuçları vermiştir.</p>
+</section>
+
+
+<!-- ================================================================== -->
+<section class="bolum" id="kayitlar">
+<h2>Kayıtlar, denetim izi ve imza</h2>
+<p class="metin">CNK-FarmaStatR, GMP ortamında kullanılabilmesi için yaptığınız her önemli işlemi kendiliğinden kayda geçirir.
+Bunun için ayrıca bir şey yapmanız gerekmez ve kayıt tutma kapatılamaz. Bu bölüm, neyin kaydedildiğini, kayıtları nasıl
+inceleyeceğinizi ve kullanıcı kuruluşa düşen görevleri anlatır.</p>
+<div class="bilgi"><strong>Kısaca:</strong>
+<ul>
+  <li>Kim olduğunuzu program Windows oturumunuzdan alır; adınızı yazmanız gerekmez, değiştiremezsiniz de.</li>
+  <li>Her hesap, sonucu raporlansın ya da raporlanmasın, bir <strong>analiz kaydı</strong> oluşturur.</li>
+  <li>Aynı veriyi aynı yöntemle yeniden analiz ederseniz program bir <strong>gerekçe</strong> ister.</li>
+  <li>Kayıtlar birbirine zincirlenmiştir; bir satırın değiştirilmesi ya da silinmesi fark edilir.</li>
+  <li>Rapor, dayandığı kayıtların kimliğini ve parmak izini taşır; ıslak imzayla onaylanır.</li>
+</ul></div>
+<div class="not">CNK-FarmaStatR uyumluluğu kendi başına sağlamaz; kullanıcı kuruluşun kendi validasyonunu ve prosedürlerini
+destekler. Gereksinimler <strong>FSR-URS-PLT-DI</strong> belgesindedir (DI-… numaraları bu belgeye atıftır). Platformun
+validasyonu (FSR-VAL-PLT) henüz tamamlanmamıştır; bkz. <a href="#validasyon">Validasyon belgeleri</a>.</div>
+
+<h3 id="kayit-kimlik">Kimlik çubuğu</h3>
+<p class="metin">Ana sayfanın, modül sayfasının ve denetim izi sayfasının üstünde yer alır. Üç bilgi gösterir:</p>
+<div class="tablo-kap"><table>
+  <tr><th>Gösterilen</th><th>Anlamı</th></tr>
+  <tr><td>Kullanıcı: <em>ad</em> @ <em>bilgisayar</em></td><td>Windows oturumundaki kullanıcı adı ve bilgisayar adı. Kayıtlara sunucu tarafından yazılır; tarayıcıdan değiştirilemez (DI-1.1).</td></tr>
+  <tr><td>Denetim izi (klasör seçildiğinde): sağlam / KIRIK / yeni (boş)</td><td>Çıktı klasörü seçilirken o klasördeki denetim izinin son 50 kaydının zinciri kontrol edilir. "KIRIK" görürseniz analize başlamayın ve nedenini araştırın. Durum, sayfa açıkken yeniden hesaplanmaz; tam kontrol için denetim izi sayfasını açın.</td></tr>
+  <tr><td>Kaynak veri · Çıktı</td><td>Açılışta seçtiğiniz iki klasör. <strong>klasörleri değiştir</strong> bağlantısı çalışma ayarları ekranını açar; bkz. <a href="#kayit-klasor">Çalışma klasörleri</a>.</td></tr>
+</table></div>
+<p class="metin">Kimlik çubuğunda "Kayıt sunucusuna ulaşılamadı" yazıyorsa siyah pencere kapanmış olabilir. Sayfayı kapatıp
+Baslat.bat ile yeniden açın. Çalışma ayarları yapılmadan bir modül sayfası açılırsa program sizi önce ayarlar ekranına götürür.</p>
+
+<h3 id="kayit-analiz">Analiz kaydı</h3>
+<p class="metin">2., 3. ve 4. sekmelerde <strong>Hesapla</strong>'ya her basışınızda, hesap bittikten hemen sonra bir analiz kaydı
+yazılır ve sonucun üstünde şu kutu görünür:</p>
+<div class="bilgi"><strong>✓ KAYDEDİLDİ</strong> — Analiz kaydı: <code>AN-20261002-123752-000007</code> · kullanıcı · denetim sırası<br>
+SHA-256: <em>64 karakterlik parmak izi</em></div>
+<p class="metin">Kayıt, analizin baştan yeniden yapılabilmesi için gereken her şeyi içerir: girdi verisinin tamamı ve parmak izi,
+kaynak dosyanın tam yolu ve dosyanın kendi parmak izi, sütun eşleştirmesi, test, referans ve parti seçimi, tüm ayarlar (seed dahil), modül ve platform sürümleri,
+hesap dosyalarının parmak izleri, R ve webR sürümü, sonuçlar ve uyarılar (DI-3.1). Bootstrap replikalarının kendisi
+kayda alınmaz; seed ve B ile aynen yeniden üretilebilirler.</p>
+<p class="metin">Kayıt yazılamazsa (ör. çıktı klasörüne erişilemiyorsa) sonuç ekranda <strong>gösterilmez</strong> ve hata mesajı
+çıkar. Böylece kayda geçmemiş bir sonuç kullanılamaz.</p>
+<p class="metin"><a class="kaynak" href="#k-a11">A11-2011 §9</a> <a class="kaynak" href="#k-a11-25">A11-2025 §12.7</a> <a class="kaynak" href="#k-pi041">PI041 §9.8</a>
+<span class="kaynak test">DI-2.3</span> <span class="kaynak test">DI-3.1</span></p>
+
+<h3 id="kayit-gerekce">Yeniden analiz gerekçesi</h3>
+<p class="metin">Aynı veri seti aynı analiz türüyle (f2, MSD ya da Weibull) daha önce analiz edilmişse, hesaba başlamadan önce
+bir pencere açılır ve kaç kez analiz edildiğini söyler. Devam etmek için en az 10 karakterlik bir gerekçe yazmanız gerekir;
+örneğin "B 5000'den 10000'e çıkarıldı" ya da "1 ünitenin veri giriş hatası düzeltildi".</p>
+<ul class="metin">
+  <li><strong>Kaydet ve analiz et:</strong> gerekçe analiz kaydına ve denetim izine yazılır, hesap yapılır.</li>
+  <li><strong>İptal:</strong> hesap yapılmaz; iptal de denetim izine "analiz_iptal" olarak yazılır.</li>
+</ul>
+<p class="metin">"Aynı veri", içeriği bayt bayt aynı veri demektir. Tek bir değer bile değişmişse veri parmak izi değişir ve
+pencere açılmaz; ama yeni veri de kendi parmak iziyle kayda geçer. Ayar değişikliği gerekçeyi ortadan kaldırmaz: amaç, bir
+sonucun "istenen sonuç çıkana kadar" yeniden hesaplanmasının iz bırakmasıdır.</p>
+<p class="metin"><a class="kaynak" href="#k-a11">A11-2011 §9</a> <a class="kaynak" href="#k-a11-25">A11-2025 §12.2</a> <span class="kaynak test">DI-2.2</span></p>
+
+<h3 id="kayit-rapor">Rapor, parmak izi ve imza</h3>
+<p class="metin">Word raporunun son bölümü <strong>Analiz kayıtları ve imza</strong>'dır. Burada:</p>
+<ul class="metin">
+  <li>raporun dayandığı her analizin kayıt kimliği, SHA-256 parmak izi ve analizi yapan kullanıcı listelenir;</li>
+  <li>üç imza satırı vardır ve her birinin anlamı yazılıdır: <em>Hazırlayan</em> (analizi yaptım; girdi verisinin kaynağıyla
+  uyumlu olduğunu doğruladım), <em>Gözden geçiren</em> (analiz kaydını ve denetim izini gözden geçirdim),
+  <em>Onaylayan</em> (sonucu onaylıyorum).</li>
+</ul>
+<p class="metin">Bu bir <strong>hibrit</strong> çözümdür: elektronik kayıt CNK-FarmaStatR'da, imza kâğıt üzerindedir; ikisini kayıt
+kimliği ve parmak izi birbirine bağlar. Elektronik imza bu sürümün kapsamı dışındadır (DI-4.4).</p>
+<ol class="adimlar">
+  <li><strong>5 — Rapor</strong> sekmesinde <strong>Word raporunu kaydet</strong> düğmesine basın. Rapor <code>&lt;çıktı klasörü&gt;\raporlar</code> içine yazılır; tam yeri ve parmak izi ekranda gösterilir ve denetim izine yazılır.</li>
+  <li>Raporu taşımanız gerekmez. Taşır ya da adını değiştirirseniz doğrulama yine çalışır; parmak izi yalnızca dosyanın içeriğine bağlıdır.</li>
+  <li>Raporu yazdırın ve imzalayın.</li>
+  <li>Gerekirse raporun değişmediğini <a href="#kayit-denetim">denetim izi sayfasındaki</a> <strong>Rapor doğrulama</strong> ile kontrol edin.</li>
+</ol>
+<div class="not"><strong>Raporu Word'de açıp kaydetmeyin.</strong> Hiçbir şeyi değiştirmeseniz bile Word dosyayı yeniden
+yazar ve parmak izi değişir; rapor doğrulamada "eşleşmiyor" sonucu alırsınız. Raporu yalnızca okumak ve yazdırmak için açın.
+Rapora ek açıklama gerekiyorsa ayrı bir belgede yapın.</div>
+<p class="metin">Aynı oturumda raporu iki kez kaydederseniz iki rapor da ayrı dosya olarak ve kendi parmak iziyle denetim izine
+yazılır. Hangisinin imzalandığı, doğrulamayla tespit edilebilir. İmzalı kâğıt raporu taratıp aynı çalışma klasörüne koymanız önerilir.</p>
+<p class="metin"><a class="kaynak" href="#k-a11">A11-2011 §8</a> <a class="kaynak" href="#k-a11">A11-2011 §14</a> <a class="kaynak" href="#k-a11-25">A11-2025 §13.9</a>
+<a class="kaynak" href="#k-pi041">PI041 §9.10</a> <span class="kaynak test">DI-4.1</span> <span class="kaynak test">DI-4.2</span>
+<span class="kaynak test">DI-4.3</span> <span class="kaynak test">DI-4.4</span></p>
+
+<h3 id="kayit-denetim">Denetim izi sayfası</h3>
+<p class="metin">Ana sayfadaki <strong>Denetim izini görüntüle</strong> düğmesiyle ya da kimlik çubuğundaki
+<strong>görüntüle</strong> bağlantısıyla açılır. Beş bölümü vardır:</p>
+<div class="tablo-kap"><table>
+  <tr><th>Bölüm</th><th>Ne yapar?</th></tr>
+  <tr><td>Zincir bütünlüğü</td><td>Denetim izinin <em>tamamını</em> baştan sona doğrular. "✓ Zincir sağlam" ya da "✗ Zincir KIRIK: satır n" ve nedenini gösterir (satır içeriği değiştirilmiş; satır silinmiş ya da eklenmiş).</td></tr>
+  <tr><td>Kayıtlar</td><td>Tüm olayların tablosu. Metinle arama, olay, modül ve kullanıcıya göre süzme, başlığa tıklayarak sıralama yapılabilir. Bir satıra tıklayınca ayrıntısı açılır. <strong>CSV olarak dışa aktar</strong>, o an görünen satırları çıktı klasörünün <code>raporlar</code> alt klasörüne kaydeder.</td></tr>
+  <tr><td>Analiz kayıtlarının doğrulanması</td><td>Her analiz kaydı dosyasının parmak izini denetim izindeki değerle karşılaştırır. Değiştirilmiş ya da silinmiş kayıt dosyalarını listeler.</td></tr>
+  <tr><td>Rapor doğrulama</td><td>Bir Word raporu seçersiniz; parmak izi, rapor kaydedildiğinde yazılan değerle karşılaştırılır. Eşleşirse raporu kimin, ne zaman ürettiği gösterilir. Rapor başka bir çıktı klasöründe üretilmişse ana defterden bulunur.</td></tr>
+  <tr><td>Ana defter</td><td>Bu bilgisayarda kullanılan bütün çalışma klasörlerinin listesi ve ana defterin zincir doğrulaması; bkz. <a href="#kayit-klasor">Çalışma klasörleri ve ana defter</a>.</td></tr>
+</table></div>
+<p class="metin">Denetim izini görüntülemek, dışa aktarmak ve doğrulamak da kayda geçer. Bu yüzden sayfayı açtığınız anda
+oluşan "denetim_izi_goruntulendi" satırı o an açık tabloda değil, sayfa bir sonraki açılışında görünür.</p>
+<p class="metin"><a class="kaynak" href="#k-a11-25">A11-2025 §12.3</a> <a class="kaynak" href="#k-pi041">PI041 §9.6</a>
+<span class="kaynak test">DI-2.4</span> <span class="kaynak test">DI-2.7</span></p>
+
+<h3 id="kayit-klasor">Çalışma klasörleri ve ana defter</h3>
+<p class="metin">Program her açılışta <strong>Çalışma ayarları</strong> ekranıyla başlar. Burada iki klasör belirlenir:</p>
+<div class="tablo-kap"><table>
+  <tr><th>Klasör</th><th>Ne için?</th><th>Program ne yapar?</th></tr>
+  <tr><td><strong>Kaynak veri klasörü</strong></td><td>Analiz edilecek ham veri dosyaları (CSV, Excel)</td><td>Yalnızca okur; dosyaları değiştirmez. Okuduğu her dosyanın yolunu ve parmak izini denetim izine yazar.</td></tr>
+  <tr><td><strong>Çıktı klasörü</strong></td><td>Analiz sonuçları ve validasyon dosyaları</td><td>Yoksa oluşturur. İçinde üç alt klasör açar ve yazar:
+    <code>raporlar</code> (Word raporları, CSV dışa aktarımları), <code>kayitlar</code> (<code>denetim_izi.jsonl</code> ve
+    <code>analizler</code> klasöründeki analiz kayıtları), <code>dogrulama</code> (kurulum doğrulama raporları).</td></tr>
+</table></div>
+<ol class="adimlar">
+  <li><strong>Gözat…</strong> düğmesiyle Windows'un klasör seçme penceresini açın ve klasörü seçin. Yolu elle de yazabilirsiniz.
+  Pencere görünmüyorsa görev çubuğuna bakın; pencere kapanana kadar program bekler.</li>
+  <li><strong>Kaydet ve devam et</strong>'e basın. Program kuralları denetler (aşağıda), çıktı klasörünü hazırlar ve sizi ana sayfaya götürür.</li>
+  <li>Program son kullandığınız klasörleri hatırlar; bir sonraki açılışta hazır gelirler.</li>
+</ol>
+<p class="metin"><strong>Kurallar.</strong> İki klasör aynı olamaz. İkisi de program klasörünün <em>dışında</em> olmalıdır, çünkü program
+klasörü her yeni sürümde değişir; çalışmalarınız ise kalıcıdır. Çıktı klasörüne yazılamıyorsa ayar kabul edilmez.
+Reddedilen her deneme de kayda geçer.</p>
+<p class="metin"><strong>Önerilen düzen.</strong> Her çalışma için bir klasör açıp kaynak ve çıktıyı onun altında tutmak, bir çalışmanın
+bütün belgelerini bir arada tutar:</p>
+<p class="metin"><code>C:\cloud\CNK_calismalar\2026-10_X10mg_pH6.8\ham_veri</code> → kaynak veri klasörü<br>
+<code>C:\cloud\CNK_calismalar\2026-10_X10mg_pH6.8\cikti</code> → çıktı klasörü</p>
+<p class="metin"><strong>Klasör değiştirmek.</strong> Kimlik çubuğundaki <strong>klasörleri değiştir</strong> bağlantısıyla oturum
+içinde de değiştirilebilir. Eski klasörün denetim izine "çalışma klasörü bırakıldı", yenisine "çalışma ayarlandı" (önceki
+klasörlerle birlikte) yazılır.</p>
+<p class="metin"><strong>Ana defter.</strong> Her çıktı klasörünün kendi denetim izi vardır. Bunun yanında programın, program
+klasöründe Baslat.bat'ın yanındaki <code>ana_defter</code> klasöründe (<code>ana_defter\ana_defter.jsonl</code>) bir
+<em>ana defteri</em> bulunur. Aynı klasörde son kullanılan çalışma klasörlerini hatırlayan <code>calisma_ayarlari.txt</code>
+dosyası da durur. <strong>Yeni sürüme geçerken</strong> eski program klasöründeki <code>ana_defter</code> klasörünü yeni program
+klasörüne kopyalayın; aksi halde yeni sürüm boş bir ana defterle başlar. Ana defter; programın her açılış ve kapanışını, hangi çalışma klasörünün ne zaman seçildiğini, her
+analiz kaydının ve kaydedilen her dosyanın parmak izini tutar. Böylece bir çıktı klasörü silinse ya da taşınsa bile o klasörde
+yapılan işin varlığı izlenebilir. Ana defter de zincirlidir ve denetim izi sayfasında doğrulanır.</p>
+<div class="not">Kayıt dosyalarını (<code>kayitlar</code> klasörü ve ana defter) elle açıp düzenlemeyin ya da silmeyin. En küçük
+değişiklik bile zinciri kırar ve denetim izi sayfasında görünür. Çalışma klasörlerinizi ve ana defteri düzenli olarak
+yedekleyin (ör. harici bir diske ya da bulut klasörüne kopyalayarak); yedekten geri dönüldüğünde zincir doğrulaması
+kayıtların bozulmadığını gösterir.</div>
+<p class="metin"><a class="kaynak" href="#k-a11">A11-2011 §7</a> <a class="kaynak" href="#k-pi041">PI041 §9.9</a> <span class="kaynak test">DI-5.1</span>
+<span class="kaynak test">DI-5.2</span> <span class="kaynak test">DI-5.3</span></p>
+
+<h3 id="kayit-olaylar">Kayda geçen olaylar</h3>
+<p class="metin">Aksi belirtilmedikçe olaylar seçili çıktı klasörünün denetim izine yazılır. Analizler ve kaydedilen dosyalar ayrıca ana deftere de işlenir.</p>
+<div class="tablo-kap"><table>
+  <tr><th>Olay</th><th>Ne zaman yazılır?</th></tr>
+  <tr><td>sunucu_basladi / sunucu_kapandi / oturum_acildi</td><td><em>Ana defter.</em> Baslat.bat ile program açıldığında, ilk sayfa açıldığında ve program kapandığında (DI-1.4). Açılış kaydı paket sürümünü içerir.</td></tr>
+  <tr><td>calisma_ayarlandi</td><td>Çalışma ayarları kaydedildiğinde: kaynak ve çıktı klasörü, önceki klasörler, paket sürümü (hem çıktı klasörünün denetim izine hem ana deftere).</td></tr>
+  <tr><td>calisma_klasoru_birakildi / calisma_ayari_reddedildi</td><td>Oturum içinde başka bir klasöre geçildiğinde (eski klasörün izine) ve kurallara uymayan bir ayar denendiğinde (ana deftere).</td></tr>
+  <tr><td>kaynak_dosya_okundu</td><td>Kaynak klasörden bir dosya okunduğunda: dosyanın adı, tam yolu, boyutu, değiştirilme zamanı ve parmak izi.</td></tr>
+  <tr><td>oturum_kapandi</td><td>Tüm sekmeler kapandıktan sonra.</td></tr>
+  <tr><td>veri_hazirlandi / veri_hatasi</td><td>"Veriyi hazırla" başarılı olduğunda (dosya adı, satır sayısı, veri parmak izi, test, referans, partiler) ya da veri reddedildiğinde.</td></tr>
+  <tr><td>analiz</td><td>Her başarılı hesapta; analiz kaydının kimliği ve parmak izi, kısa sonuç ve varsa gerekçe.</td></tr>
+  <tr><td>analiz_iptal / analiz_hatasi</td><td>Gerekçe penceresi iptal edildiğinde ya da hesap hata verdiğinde.</td></tr>
+  <tr><td>rapor_uretildi</td><td>Word raporu her kaydedildiğinde; dosyanın tam yolu, raporun parmak izi ve dayandığı analiz kayıtları.</td></tr>
+  <tr><td>disa_aktarim</td><td>Bootstrap replikaları CSV olarak kaydedildiğinde.</td></tr>
+  <tr><td>denetim_izi_goruntulendi / denetim_izi_disa_aktarildi</td><td>Denetim izi sayfası açıldığında ve CSV kaydedildiğinde.</td></tr>
+  <tr><td>analiz_kayitlari_dogrulandi / rapor_dogrulandi</td><td>Denetim izi sayfasındaki doğrulamalar yapıldığında, sonucuyla birlikte.</td></tr>
+  <tr><td>zincir_kirik / saat_geri / sunucu_hatasi</td><td>Çıktı klasörü ya da ana defter zinciri kırık bulunduğunda; bilgisayarın saati önceki kayıttan geriye alınmışsa; sunucuda beklenmeyen bir hata olduğunda (DI-2.6, DI-6.3).</td></tr>
+</table></div>
+
+<h3 id="kayit-sorumluluk">Kullanıcı kuruluşun sorumlulukları</h3>
+<p class="metin">Bazı gereksinimler yazılımla değil, kullanıcının ya da kuruluşun yazılı prosedürleriyle karşılanır. Programı tek
+kişi kullanıyorsa bu sorumluluklar o kişiye aittir. CNK-FarmaStatR'ı GMP ortamında kullanmadan önce şunların yazılı
+olarak tanımlanmış olması gerekir:</p>
+<div class="tablo-kap"><table>
+  <tr><th>Konu</th><th>Beklenen</th><th>Gereksinim</th></tr>
+  <tr><td>Kişisel hesaplar</td><td>Herkes kendi Windows hesabıyla çalışır; ortak hesap kullanılmaz. Parola, kilitleme ve ekran kilidi etki alanı politikalarıyla sağlanır.</td><td>DI-1.2, DI-1.3</td></tr>
+  <tr><td>Klasörler ve yedekleme</td><td>Çalışma klasörlerinin ve ana defterin başkalarının değiştiremeyeceği bir yerde tutulması; düzenli yedekleme ve yedekten geri dönüşün en az bir kez denenmesi.</td><td>DI-5.1, DI-5.2</td></tr>
+  <tr><td>Denetim izinin gözden geçirilmesi</td><td>Kimin, hangi sıklıkta ve neye bakarak gözden geçireceği bir prosedürde yazılı olmalı.</td><td>DI-2.8</td></tr>
+  <tr><td>İmza</td><td>Hazırlayan, gözden geçiren ve onaylayan rollerinin kimlere ait olduğu ve imzalı raporun nerede saklanacağı.</td><td>DI-4.4</td></tr>
+  <tr><td>Sürüm geçişi ve periyodik değerlendirme</td><td>Yeni sürüme geçişin değişiklik kontrolüyle yapılması; sistemin düzenli değerlendirilmesi.</td><td>DI-6.2, DI-6.4</td></tr>
+  <tr><td>Kullanıcı validasyonu</td><td>Kuruluşun kendi kullanım amacına göre yaptığı validasyon (kurulum ve kullanım testleri).</td><td>FSR-URS-PLT-DI</td></tr>
+</table></div>
+</section>
+
+<!-- ================================================================== -->
+<section class="bolum" id="hatalar">
+<h2>Sık karşılaşılan sorunlar</h2>
+<div class="tablo-kap"><table>
+  <tr><th>Belirti</th><th>Neden ve çözüm</th></tr>
+  <tr><td>Grafik ve tablolar boş</td><td>"Veriyi hazırla" düğmesine basılmamış.</td></tr>
+  <tr><td>"R bulunamadı" mesajı</td><td>Bilgisayarda R kurulu değil ya da standart dışı bir yere kurulmuş. R'ı kurun ya da R'ın <code>bin</code> klasörünü sistem PATH değişkenine ekleyin.</td></tr>
+  <tr><td>Göstergede "Hesap dosyalarından en az biri uyuşmuyor"</td><td>hesap klasöründeki bir dosya değiştirilmiş. Uygulama klasörünü orijinal paketten yeniden kopyalayın.</td></tr>
+  <tr><td>Uygulama bulut sürücüsünde ya da uzun bir yolda çalışmıyor</td><td>Klasör yolunda Türkçe karakter, boşluk ya da kesme işareti var. Kısa bir ASCII yola taşıyın (ör. C:\CNK-FarmaStatR).</td></tr>
+  <tr><td>Dosyaya çift tıklayınca sayfa açılıyor ama gösterge "yükleniyor"da kalıyor</td><td>index.html doğrudan açılmış. Uygulamayı her zaman Baslat.bat ile açın.</td></tr>
+  <tr><td>"Test ve referansın zaman noktaları aynı olmalı"</td><td>Ürünlerden birinde eksik ya da fazladan bir zaman noktası var.</td></tr>
+  <tr><td>"Ünite sayısı 12'nin altında" notu</td><td>EMA ve FDA en az 12 ünite bekler; sonuç hesaplanır ama regülatif olarak yetersizdir.</td></tr>
+  <tr><td>"Kesme sonrası P &lt; 3" hatası</td><td>Ürün çok hızlı çözünüyor; f2 için en az 3 nokta gerekir. 15 dakika kuralına bakın.</td></tr>
+  <tr><td>L2a/L2b ya da B-L2a/B-L2b çalışmıyor</td><td>1. sekmede en az 2 referans partisi seçilmemiş.</td></tr>
+  <tr><td>Weibull uydurmasında "eğim ≤ 0" ya da "geçerli nokta &lt; 3"</td><td>Profil düşüyor ya da noktaların çoğu 0 veya 100'de. Weibull bu veri için uygun değil.</td></tr>
+  <tr><td>Sonuç her çalıştırmada biraz değişiyor</td><td>Seed değiştirilmiş olabilir. Seed sabitse sonuç birebir aynıdır.</td></tr>
+  <tr><td>"Kayıt sunucusuna ulaşılamadı"</td><td>Siyah pencere kapanmış. Tarayıcı sekmelerini kapatıp Baslat.bat ile yeniden açın.</td></tr>
+  <tr><td>Hesapla'ya basınca gerekçe penceresi açılıyor</td><td>Bu veri bu analizle daha önce analiz edilmiş. Gerekçe yazın ya da iptal edin; bkz. <a href="#kayit-gerekce">Yeniden analiz gerekçesi</a>.</td></tr>
+  <tr><td>Hesap bitti ama sonuç yerine hata çıktı</td><td>Analiz kaydı yazılamamış olabilir (çıktı klasörüne erişim yok ya da sunucu kapalı). Kayda geçmeyen sonuç gösterilmez. Çıktı klasörünü kontrol edip yeniden deneyin.</td></tr>
+  <tr><td>Kaynak klasör listesinde dosyam yok</td><td>Dosya alt klasörde ya da uzantısı CSV/TXT/XLSX/XLS değil. Dosyayı kaynak klasörün kendisine koyup <strong>Yenile</strong>'ye basın.</td></tr>
+  <tr><td>"Klasörler program klasörünün dışında olmalıdır"</td><td>Kaynak ya da çıktı klasörü program klasörünün içinde seçilmiş. Program klasörünün dışında bir yer seçin (ör. <code>C:\cloud\CNK_calismalar\…</code>).</td></tr>
+  <tr><td>Gözat'a bastım, pencere açılmadı</td><td>Klasör seçme penceresi tarayıcının arkasında açılmış olabilir; görev çubuğuna bakın. İsterseniz yolu kutuya elle yazın.</td></tr>
+  <tr><td>Modül sayfası yerine Çalışma ayarları açılıyor</td><td>Bu oturumda klasörler henüz onaylanmamış. Klasörleri onaylayınca kaldığınız sayfaya dönersiniz.</td></tr>
+  <tr><td>Denetim izi "KIRIK"</td><td>Kayıt dosyası elle değiştirilmiş ya da bir satırı silinmiş. Analize devam etmeden kalite birimine bildirin; dosyayı düzeltmeye çalışmayın.</td></tr>
+  <tr><td>Rapor doğrulamada "eşleşmiyor"</td><td>Rapor Word'de açılıp kaydedilmiş ya da bu bilgisayarda üretilmemiş olabilir. <code>raporlar</code> klasöründeki orijinal dosyayla deneyin.</td></tr>
+  <tr><td>Analiz kayıtları doğrulamasında "dosya bulunamadı"</td><td>Analiz kaydı dosyası silinmiş ya da taşınmış. Kalite birimine bildirin; yedekten geri yükleme gerekebilir.</td></tr>
+</table></div>
+</section>
+
+<section class="bolum" id="sozluk">
+<h2>Sözlük</h2>
+<dl class="sozluk">
+  <dt>Bootstrap</dt><dd>Tabletlerin iadeli olarak binlerce kez yeniden çekilmesiyle bir istatistiğin belirsizliğini tahmin etme yöntemi. Her tabletin tüm profili birlikte çekilir.</dd>
+  <dt>Replika</dt><dd>Bootstrap'ta oluşturulan her bir yapay veri seti.</dd>
+  <dt>Güven aralığı (GA)</dt><dd>Gerçek değerin belirli bir güvenle içinde bulunduğu aralık. f2 için karar %90 GA'nın alt sınırına göre verilir.</dd>
+  <dt>CV (varyasyon katsayısı)</dt><dd>Standart sapmanın ortalamaya oranı (%). Tabletler arası değişkenliğin ölçüsü.</dd>
+  <dt>Kesme (%85 kuralı)</dt><dd>Plato bölgesindeki noktaların f2'yi yapay olarak yükseltmesini önlemek için hesaba girecek noktaların sınırlandırılması.</dd>
+  <dt>Parti (lot, seri, batch)</dt><dd>Aynı üretim sürecinde üretilmiş ve tek birim olarak izlenen ürün miktarı. Kılavuzlarda "batch" ya da "lot" olarak geçer.</dd>
+  <dt>Mahalanobis uzaklığı</dt><dd>Değişkenliği ve değişkenler arası ilişkiyi hesaba katan uzaklık ölçüsü; MSD'nin temeli.</dd>
+  <dt>Jackknife</dt><dd>Her seferinde bir ünite çıkarılarak hesaplanan değerler; BCa'nın ivme terimi için kullanılır.</dd>
+  <dt>Monte Carlo standart hatası (MCSE)</dt><dd>Bootstrap sonucunun, sonlu sayıda replika kullanılmasından kaynaklanan belirsizliği.</dd>
+  <dt>Weibull fonksiyonu</dt><dd>Dissolüsyon eğrilerini iki (ya da üç) parametreyle tanımlayan esnek bir matematiksel model.</dd>
+  <dt>Denetim izi (audit trail)</dt><dd>Kimin, neyi, ne zaman yaptığının değiştirilemez, zaman sıralı kaydı.</dd>
+  <dt>Analiz kaydı</dt><dd>Bir hesabın girdi verisi, ayarları, sürümleri ve sonuçlarını içeren, kimlikle (AN-…) adlandırılmış dosya.</dd>
+  <dt>Parmak izi (SHA-256)</dt><dd>Bir dosyanın içeriğinden hesaplanan 64 karakterlik özet. İçerikte tek bir bayt değişse parmak izi tamamen değişir.</dd>
+  <dt>Zincirleme</dt><dd>Her denetim izi satırının bir önceki satırın parmak izini içermesi. Aradan satır silinirse ya da bir satır değiştirilirse zincir kırılır.</dd>
+  <dt>Hibrit imza</dt><dd>Elektronik kaydın sistemde, imzanın kâğıt üzerinde olduğu ve ikisinin kayıt kimliği ve parmak iziyle bağlandığı onay biçimi.</dd>
+  <dt>T<sub>d</sub> (dissolüsyon zamanı)</dt><dd>Materyalin %63.2'sinin çözündüğü süre (Langenbucher).</dd>
+</dl>
+</section>
+
+<section class="bolum" id="kaynakca">
+<h2>Kaynakça</h2>
+<p class="metin">Numaralar proje klasöründeki PDF dosyalarının ön ekleridir (in vitro ve GMP kılavuzları ayrı numaralanmıştır). Bilimsel sunumlar (GONG20, MANDULA19) yazarlarının
+görüşünü yansıtır; resmi FDA politikası değildir.</p>
+<div class="tablo-kap"><table>
+  <tr><th>Kısaltma</th><th>Kaynak</th><th>Dosya</th></tr>
+  <tr id="k-ema10"><td>EMA10</td><td>EMA. Guideline on the Investigation of Bioequivalence. CPMP/EWP/QWP/1401/98 Rev.1/Corr** (2010). Appendix I, Bölüm 2.</td><td>5</td></tr>
+  <tr id="k-emaqa"><td>EMAQA</td><td>EMA PKWP/BSWP Soru-Cevap: 3.9 (Mahalanobis uzaklığı) ve 3.11 (f2 için bootstrap %90 GA beklentileri).</td><td>0</td></tr>
+  <tr id="k-fda97"><td>FDA97</td><td>FDA. Dissolution Testing of Immediate Release Solid Oral Dosage Forms (1997). Bölüm V.A, V.B, V.C.</td><td>6</td></tr>
+  <tr id="k-fda22"><td>FDA22</td><td>FDA. Statistical Approaches to Establishing Bioequivalence. Draft, Rev. 1 (Aralık 2022). Bölüm III.A.2.</td><td>—</td></tr>
+  <tr id="k-tsong96"><td>TSONG96</td><td>Tsong Y, Hammerstrom T, Sathe P, Shah VP. Drug Inf J 1996;30:1105–1112.</td><td>7</td></tr>
+  <tr id="k-sathe96"><td>SATHE96</td><td>Sathe PM, Tsong Y, Shah VP. Pharm Res 1996;13(12):1799–1803.</td><td>8</td></tr>
+  <tr id="k-langenbucher72"><td>LANGENBUCHER72</td><td>Langenbucher F. J Pharm Pharmacol 1972;24:979–981.</td><td>9</td></tr>
+  <tr id="k-muselik21"><td>MUSELIK21</td><td>Muselík J ve ark. Pharmaceutics 2021;13:1703.</td><td>4</td></tr>
+  <tr id="k-ma00"><td>MA00</td><td>Ma M-C, Wang BBC, Liu J-P, Tsong Y. J Biopharm Stat 2000;10:229–249.</td><td>2</td></tr>
+  <tr id="k-hf96"><td>HF96</td><td>Hyndman RJ, Fan Y. Sample quantiles in statistical packages. Am Stat 1996;50:361–365.</td><td>1</td></tr>
+  <tr id="k-noce20"><td>NOCE20</td><td>Noce L, Gwaza L, Mangas-Sanjuan V, Garcia-Arieta A. Eur J Pharm Sci 2020;146:105259.</td><td>3</td></tr>
+  <tr id="k-gong20"><td>GONG20</td><td>Gong X. Alternatives to f2 Testing for Dissolution Similarity – f2 Bootstrapping and MSD Method. FDA/CDER/OGD; SBIA 2020, 30.09.2020.</td><td>11</td></tr>
+  <tr id="k-mandula19"><td>MANDULA19</td><td>Mandula H. Rational Statistical Analysis Practice in Dissolution Profile Comparison: FDA Perspective. FDA/CDER/OPQ; M-CERSI 2019.</td><td>10</td></tr>
+  <tr id="k-a11"><td>A11-2011</td><td>EudraLex Cilt 4, Ek 11: Computerised Systems (2011).</td><td>—</td></tr>
+  <tr id="k-a11-25"><td>A11-2025</td><td>EudraLex Cilt 4, Ek 11 revizyon taslağı (kamuoyu görüşüne açık, 2025).</td><td>9</td></tr>
+  <tr id="k-pi041"><td>PI041</td><td>PIC/S PI 041-1. Good Practices for Data Management and Integrity in Regulated GMP/GDP Environments (2021).</td><td>6-2</td></tr>
+  <tr id="k-xu21"><td>XU21</td><td>Xu Z, Merino-Sanjuan M, Mangas-Sanjuan V, García-Arieta A. Comput Methods Programs Biomed 2021;212:106449.</td><td>12</td></tr>
+</table></div>
+</section>
+
+<section class="bolum" id="validasyon">
+<h2>Validasyon belgeleri</h2>
+<p class="metin">Kılavuzdaki gri etiketler (TC-…) aşağıdaki belgelerdeki test vakalarına karşılık gelir. Her test, R kodunun
+sonucunu yayımlanmış değerlere, bağımsız bir Python uygulamasına ya da analitik bir çözüme karşı karşılaştırır; seçilen
+testler SAS/IML ile ayrıca doğrulanmıştır.</p>
+<div class="tablo-kap"><table>
+  <tr><th>Bölüm</th><th>Belge</th><th>Test vakaları</th><th>R</th><th>SAS</th><th>webR</th></tr>
+  <tr><td>1A · Model bağımsız MSD</td><td>FSR-VAL-DIS-1A v1.1</td><td>TC-1 … TC-6</td><td>60/60</td><td>27/27</td><td>60/60</td></tr>
+  <tr><td>1B · Weibull MSD</td><td>FSR-VAL-DIS-1B v1.1</td><td>TC-B1 … TC-B6</td><td>98/98</td><td>52/52</td><td>98/98</td></tr>
+  <tr><td>2 · Bootstrap f2</td><td>FSR-VAL-DIS-2 v1.1</td><td>TC-F1 … TC-F9</td><td>120/120</td><td>44/44</td><td>120/120</td></tr>
+</table></div>
+<p class="metin">Yukarıdaki belgeler <strong>hesapların</strong> doğruluğunu kapsar. Kayıt, denetim izi, rapor doğrulama ve güvenlik
+özellikleri (platform) geliştirme sırasında otomatik testlerle ve kullanıcı testleriyle sınanmıştır: kayıt zinciri, kurcalama
+tespiti (satır değiştirme, satır silme, analiz kaydı değiştirme) ve arayüz testleri. Bunların resmî validasyon belgesi
+(FSR-VAL-PLT) ve dayandığı gereksinim belgesinin (FSR-URS-PLT-DI) onayı henüz tamamlanmamıştır. Bu belgeler tamamlanana kadar
+platform GMP kararlarında kullanılmadan önce kullanıcı kuruluşça ayrıca değerlendirilmelidir.</p>
+</section>
+</main>
+</div>
+
+<script src="js/kilavuz.js"></script>
+</body>
+</html>

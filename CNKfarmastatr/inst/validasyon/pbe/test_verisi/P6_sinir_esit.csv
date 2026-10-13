@@ -1,0 +1,11 @@
+"Batches","Container","Stage","Product","score"
+1,1,"B","REF",0.1
+1,2,"B","REF",-0.1
+1,3,"B","REF",0.1
+1,4,"B","REF",-0.1
+1,5,"B","REF",0
+2,6,"B","TEST",0.05
+2,7,"B","TEST",-0.05
+2,8,"B","TEST",0.02
+2,9,"B","TEST",0
+2,10,"B","TEST",-0.02

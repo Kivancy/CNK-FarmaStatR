@@ -1,0 +1,22 @@
+Package: CNKfarmastatr
+Type: Package
+Title: Reproducible Pharmaceutical Statistics for Education and Research
+Version: 1.0.0.9000
+Authors@R: person("Kıvanç", "Yüksel", email = "kivancyuksel@gmail.com",
+    role = c("aut", "cre"))
+Description: Statistical core of the CNK-FarmaStatR platform. Implements
+    model-independent multivariate statistical distance (MSD) for dissolution
+    profile comparison (Tsong et al. 1996), Weibull model-dependent MSD
+    (Sathe et al. 1996), f2 and bootstrap f2 with EMA and FDA perspectives
+    (EMA Q&A 3.11; Xu et al. 2021), and in vitro population bioequivalence
+    (FDA PSG 020929). Each statistical model is validated once against
+    analytic cases and published examples. For research and education; not
+    a validated system for GxP environments.
+License: file LICENSE
+Encoding: UTF-8
+Depends: R (>= 4.1.0)
+Imports: stats, utils
+Suggests: testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Collate: 'msd_core.R' 'msd_weibull.R' 'f2_boot.R' 'f2_noce_data.R'
+    'dis_ornek_veri.R' 'pbe_core.R' 'pbe_ornek_veri.R'
