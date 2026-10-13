@@ -1,0 +1,70 @@
+# CNK-FarmaStatR · automatic integrity check on every push.
+# Not a re-validation: it shows that the validated models are unchanged and
+# still reproduce their documented results (project instructions, "Validasyon").
+#   Step 1: SHA-256 of the 7 validated core files must match CEKIRDEK_SHA256.txt
+#   Step 2: install the package and run the inherited validation tests
+#           (491 checks: MSD 60, Weibull 98, f2 120, PBE 213)
+# Runs on Linux and on Windows (the user's platform).
+
+name: dogrulama
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    env:
+      NOT_CRAN: "true"   # also run the bootstrap f2 tests (skip_on_cran)
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: UTF-8 locale (Linux)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          echo "LANG=C.UTF-8" >> "$GITHUB_ENV"
+          echo "LC_ALL=C.UTF-8" >> "$GITHUB_ENV"
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: release
+          use-public-rspm: true
+
+      - name: Install testthat
+        shell: Rscript {0}
+        run: install.packages("testthat")
+
+      - name: "Step 1: validated core files unchanged (SHA-256)"
+        shell: Rscript {0}
+        run: |
+          source("araclar/cekirdek_kontrol.R")
+          if (!all(liste$durum == "AYNI")) quit(status = 1)
+
+      - name: Install CNKfarmastatr
+        shell: bash
+        run: R CMD INSTALL CNKfarmastatr
+
+      - name: "Step 2: inherited validation tests (491 checks)"
+        shell: Rscript {0}
+        run: |
+          res <- testthat::test_dir("CNKfarmastatr/tests/testthat",
+                                    package = "CNKfarmastatr",
+                                    load_package = "installed",
+                                    reporter = "summary",
+                                    stop_on_failure = TRUE)
+          df <- as.data.frame(res)
+          cat("\nExpectations:", sum(df$nb), " Failed:", sum(df$failed),
+              " Skipped:", sum(df$skipped), "\n")
+          if (sum(df$skipped) > 0) quit(status = 1)   # all 491 checks must run
+          sessionInfo()

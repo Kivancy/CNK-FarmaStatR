@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.7 · Son güncelleme: 13.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.8 · Son güncelleme: 13.10.2026"
 ---
 
 # Bu belge hakkında
@@ -160,6 +160,14 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Karar (Ö): KK-19 (KK-18'in yerine):** Çalışma klasörü **`C:\cloud\CNK-FarmaStatR\CNK-FarmaStatR`**. OneDrive içindeki `Belgeler\GitHub\CNK-FarmaStatR` kopyası GitHub Desktop'tan kaldırılıp silinecek.
 - **Önlem:** Claude, bir depo işlemini tamamlanmış saymadan önce `.git/config` içindeki uzak adresi ve hedef dosya boyutlarını doğrular.
 
+## G-11 · Depo GitHub'da doğrulandı; otomatik doğrulama (GitHub Actions) eklendi — 13.10.2026
+
+- **Depo:** Proje sahibi 95 dosyayı `v1.0.0.9000: proje dosyaları` mesajıyla commit + push etti (commit `80556e5`); github.com'da klasörler görüldü. OneDrive içindeki `Belgeler\GitHub\CNK-FarmaStatR` kopyası GitHub Desktop'tan kaldırıldı; tek yerel depo `C:\cloud\CNK-FarmaStatR\CNK-FarmaStatR` (KK-19). Yedek `C:\cloud\CNK-FarmaStatR-v1` şimdilik korunuyor.
+- **Çalışma düzeni (K):** Claude dosyaları yerel depoya yazar ve doğrular; proje sahibi GitHub Desktop'ta inceleyip Commit + Push yapar. Push, proje sahibinin onayıdır.
+- **Otomatik doğrulama (Ö, K onayı):** `.github/workflows/dogrulama.yml`. Her push'ta (ve elle) Linux ve Windows üzerinde: (1) 7 validasyonlu çekirdeğin SHA-256 değerleri `CEKIRDEK_SHA256.txt` ile karşılaştırılır, farklıysa iş başarısız olur; (2) paket kurulur ve devralınan testler koşar (491 kontrol, 12 beklenti; atlanan test kabul edilmez). Bu yeniden validasyon değil, bozulmadığının kanıtıdır.
+- **Ön deneme (Claude ortamı, R 4.3.3, Linux):** SHA-256 7/7 AYNI; 12/12 beklenti GEÇTİ, atlanan 0, yaklaşık 21 s. Negatif deneme: bir çekirdeğe tek satır eklenince 1. adım hata koduyla durdu.
+- **Bekleyen:** GitHub üzerindeki ilk koşunun sonucu (Actions sekmesi).
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -167,7 +175,8 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-1 | Eksik malzemenin (test betikleri, SAS programları, validasyon belgeleri, Excel test paketleri) bulunup `devralinan/v0.5.1/` altına alınması | PBE tamam; Excel paketleri tamam (G-02); dissolüsyon R testleri yeniden kuruldu, 278/278 (G-03). SAS programları ertelendi |
 | A-3 | `Calistir.R`'nin proje sahibinin bilgisayarında çalıştırılması (beklenen 278/278) | Tamam: 278/278 (G-04) |
 | A-4 | Paket testlerinin proje sahibinin bilgisayarında çalıştırılması (`testthat::test_local()`) | Tamam: 12/12, R 4.6.1 (G-06) |
-| A-5 | GitHub deposu (CNK-FarmaStatR) ve bağlantı | Tamam: özel depo yayında (G-08) |
+| A-5 | GitHub deposu (CNK-FarmaStatR) ve bağlantı | Tamam: dosyalar GitHub'da, commit `80556e5` (G-10, G-11) |
+| A-8 | Otomatik doğrulama (GitHub Actions): her push'ta SHA-256 + 491 kontrol | Kuruldu; ilk koşu bekleniyor (G-11) |
 | A-6 | Lisans kararı (MIT / GPL-3 / diğer) | Platform makalesinden önce |
 | A-7 | Fonksiyon belgeleri (İngilizce) ve PBE köprüsünün pakete alınması | Planlandı |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
@@ -176,7 +185,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.7 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.8 | Bu belge |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
 | CNKfarmastatr (R paketi) | 1.0.0.9000 | İskelet; 491 kontrol GEÇTİ (G-05) |
 
@@ -203,3 +212,4 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | KK-17 | Depo özel; v1.0.0 ile açık + Zenodo DOI | G-07 |
 | KK-18 | Çalışma klasörü `C:\cloud\CNK-FarmaStatR` (depo); v1 klasörü yedek | G-09 |
 | KK-19 | Çalışma klasörü `C:\cloud\CNK-FarmaStatR\CNK-FarmaStatR` (GitHub klonu) | G-10 |
+| KK-20 | Claude yazar ve doğrular; proje sahibi Commit + Push yapar | G-11 |
