@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.8 · Son güncelleme: 13.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.9 · Son güncelleme: 13.10.2026"
 ---
 
 # Bu belge hakkında
@@ -168,6 +168,11 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Ön deneme (Claude ortamı, R 4.3.3, Linux):** SHA-256 7/7 AYNI; 12/12 beklenti GEÇTİ, atlanan 0, yaklaşık 21 s. Negatif deneme: bir çekirdeğe tek satır eklenince 1. adım hata koduyla durdu.
 - **Bekleyen:** GitHub üzerindeki ilk koşunun sonucu (Actions sekmesi).
 
+## G-12 · Otomatik doğrulamanın ilk koşusu: GEÇTİ — 13.10.2026
+
+- Commit `0648682` push edildi; GitHub Actions `dogrulama #1` koşusu Linux (ubuntu-latest) ve Windows (windows-latest) üzerinde yeşil tamamlandı (2 dk 13 s): 7 çekirdeğin SHA-256 değerleri aynı, 491 kontrol GEÇTİ. Böylece satır sonu ayarının (`.gitattributes`) Windows'ta da çekirdekleri bozmadığı doğrulandı.
+- Bundan sonra her push'ta aynı kontrol kendiliğinden koşar; sonuç Actions sekmesinde yeşil tik / kırmızı çarpı olarak görülür.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -176,7 +181,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-3 | `Calistir.R`'nin proje sahibinin bilgisayarında çalıştırılması (beklenen 278/278) | Tamam: 278/278 (G-04) |
 | A-4 | Paket testlerinin proje sahibinin bilgisayarında çalıştırılması (`testthat::test_local()`) | Tamam: 12/12, R 4.6.1 (G-06) |
 | A-5 | GitHub deposu (CNK-FarmaStatR) ve bağlantı | Tamam: dosyalar GitHub'da, commit `80556e5` (G-10, G-11) |
-| A-8 | Otomatik doğrulama (GitHub Actions): her push'ta SHA-256 + 491 kontrol | Kuruldu; ilk koşu bekleniyor (G-11) |
+| A-8 | Otomatik doğrulama (GitHub Actions): her push'ta SHA-256 + 491 kontrol | Tamam: ilk koşu Linux + Windows GEÇTİ (G-12) |
 | A-6 | Lisans kararı (MIT / GPL-3 / diğer) | Platform makalesinden önce |
 | A-7 | Fonksiyon belgeleri (İngilizce) ve PBE köprüsünün pakete alınması | Planlandı |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
@@ -185,7 +190,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.8 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.9 | Bu belge |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
 | CNKfarmastatr (R paketi) | 1.0.0.9000 | İskelet; 491 kontrol GEÇTİ (G-05) |
 
