@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.12 · Son güncelleme: 14.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.15 · Son güncelleme: 14.10.2026"
 ---
 
 # Bu belge hakkında
@@ -201,6 +201,35 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Doğrulama (Claude ortamı, R 4.3.3):** tüm testler 73/73 beklenti GEÇTİ (devralınan 516 kontrol + simülasyon 58); `R CMD check` 0 hata, 1 uyarı (devralınan çekirdeklerdeki Türkçe karakterler). Yardım sayfaları: `sim_performance`, `sim_run`.
 - **Açık:** Simülasyon çerçevesinin validasyon belgesi (FSR-VAL-SIM-1) ve SHA-256 sabitlemesi, proje sahibinin incelemesinden sonra. Sıradaki: ilk yayın senaryosu (hangi makalenin simülasyonu) — proje sahibinin kararı.
 
+## G-16 · PBE simülasyon çalışması: model ve araştırma sorusu (tasarım aşaması, kod yok) — 14.10.2026
+
+- **Konu seçimi (K):** İlk yayın senaryosu PBE güç / örneklem büyüklüğü. Gerekçe (K): literatürde güncel PSG tasarımı için güç ya da örneklem büyüklüğü çalışması yok; istatistik modelin sağlam kurulması öncelikli.
+- **Okunan kaynaklar:** PSG 020929 (Aralık 2025) Appendix tamamı; Chow & Liu 2008, Bölüm 14 (özellikle 14.4.2, 14.6, 14.7.1-14.7.2); FDA 2026 (Mayıs) *Statistical Approaches to Establishing Bioequivalence*, III.A.1 ve Ek D-E. Telifli belgeler depoya alınmadı.
+- **Kaynaklardan saptananlar:** (1) PSG tahmin edicisi seri düzeyini yok sayar; kaplar havuzlanır (MSB, sd nℓ-1). (2) FDA 2026 III.A.1: σ_T², σ_R² "population variances of the log-transformed measure"; kriter seçimi *tahmin edilen* σ_R'ye göre. (3) Chow & Liu 2008, 14.4.1: seriler arası, seri içi kaplar arası ve kap içi evreler arası değişkenlik uygun modelle değerlendirilmeli. (4) Chow & Liu 2008, 14.6-14.7.1: iki düzeyli modelde (kap + tekrar; seri yok) örneklem büyüklüğü yöntemi (Chow, Shao, Wang 2003a, Stat Med 22:55-68) ve simülasyon; eski sabitler (θ = 1,125; σ₀ = 0,2); 30 kap çoğu zaman yetersiz güç; kaplar arası varyans varken kap sayısını artırmak tekrar sayısını artırmaktan iyi.
+- **Model (Ö, tartışma sürüyor):** Varyans bileşenleri (karma) modeli, log ölçeği: X = μ_k + b (seri, rastgele) + c (seri içinde kap, rastgele) + τ (yaşam evresi, sabit) + e. Beklenen kareler ortalamaları Claude tarafından türetildi (kaynakta yok; FarmaStatR türetimi) ve 20.000 tekrarlı Monte Carlo ile kontrol edildi; seri varyansı ve evre etkisi sıfırken Chow & Liu 2008 s. 479 sonucuyla örtüşüyor. Sonuç: E[σ̂²] = σ²_C + σ²_W + Στ²/m + n(ℓ-1)/(nℓ-1)·σ²_B. Proje sahibi türetimin kaynağını sordu; kaynaktan gelen / türetilen / yorum ayrımı açıkça yapıldı; SAS PROC GLM (RANDOM, beklenen kareler ortalamaları) ile bağımsız kontrol önerildi.
+- **Karar (K): KK-22.** Seri etkisi **rastgele**: üretilmiş ve üretilecek serilere genelleme ancak böyle istatistiksel olarak doğru. Estimand (toplam varyans) seri varyansını içerir. Varsayım (makalede yazılacak): seriler seri popülasyonunu temsil eder.
+- **Karar (K): KK-23.** Araştırma sorusunun odağı **seri başına kap sayısı n** (PSG: 10). Seri sayısı ℓ = 3 ve yaşam evresi sayısı m = 3 (B/M/E) PSG'deki gibi sabit. (Claude'un "seri sayısı" çerçevelemesi proje sahibince düzeltildi.)
+- **Açık:** (1) Yaşam evresi kaymasının (1/m)Στ² estimand'a katılıp katılmayacağı. (2) Teknik not (model + ADEMP) yazılacak; kodlama onaydan sonra. (3) Türetimin SAS ile bağımsız kontrolü (isteğe bağlı).
+
+## G-17 · Birincil kaynak: FDA 1999 (Haziran taslağı IX.B + 18 Ağustos 1999 istatistik bilgisi) — 14.10.2026
+
+- **Kaynak (proje sahibi sağladı):** *Statistical Information from the June 1999 Draft Guidance and Statistical Information for In Vitro Bioequivalence Data Posted on August 18, 1999* (FDA, 04/10/03 derlemesi). PSG 020121 ve 021433 bu belgeye atıf yapar.
+- **Saptananlar (doğrudan alıntı):**
+  1. IX.B.2.a: σ²_R = σ²_BR + σ²_CR + σ²_LR ve σ²_T = σ²_BT + σ²_CT + σ²_LT. B = seriler arası, C = kaplar arası, L = kap içi yaşam evreleri arası standart sapma. **Toplam varyans seri varyansını açıkça içerir.**
+  2. IX.B.1: "Rather than evaluate performance at each life stage separately, a criterion is recommended that combines the multiple life stages … Lack of uniformity between life stages should be treated as another variance component in the criterion."
+  3. IX.B.2.a: Ortalamalar tüm kaplar, yaşam evreleri ve seriler üzerinden alınır.
+  4. IX.B.1: En az 30 birim (3 serinin her birinden en az 10); "The number of units is a function of T to R product means and variances. Estimates … will necessitate pilot studies." Seri başına 10 kap bir alt sınırdır; sayı ortalama ve varyanslara göre belirlenmelidir.
+  5. IX.B.2.b: Momentler yöntemi önerilir; REML özel durumlarda kullanılabilir.
+  6. 18 Ağustos 1999: "Since three batches are not sufficient to reliably estimate the between batch component of variance, the total variances are estimated as the between canister variance of the 'super-batch' consisting of the three batches combined." PSG tahmin edicisinin seri düzeyini havuzlaması bu bilinçli yaklaşımdan gelir. Evre bileşeni sonradan eklendi (MSW).
+- **Sonuç:** G-15/G-16'da "FarmaStatR türetimi" olarak işaretlenen iki nokta artık **kaynağa dayalıdır**: (i) toplam varyans seri varyansını içerir (KK-22 ile tutarlı); (ii) yaşam evreleri arası tekdüzelik eksikliği bir varyans bileşenidir. Araştırma sorusu FDA'nın kendi çerçevesinde kurulur: üç bileşenli modelde "süper-seri" yaklaşımlı PBE prosedürünün, seri başına kap sayısına (n) göre tip I hata ve gücü.
+- **Düzeltme (Claude):** G-16 öncesinde Claude "hiçbir kaynak σ²'nin seri varyansını içerdiğini doğrudan söylemiyor" demişti; FDA 1999 IX.B.2.a bunu doğrudan söylüyor.
+
+## G-18 · Karar: yaşam evresi değişkenliği toplam varyansa dahil; kaynaklar proje dosyalarında — 14.10.2026
+
+- **Karar (K): KK-24.** Yaşam evreleri arası tekdüzelik eksikliği (rastgele ve sistematik) toplam varyansın bir bileşenidir. Estimand: σ²_k = σ²_B,k + σ²_C,k + σ²_L,k (FDA 1999 Haziran taslağı IX.B.1 ve IX.B.2.a). Veri üretiminde σ²_L = σ²_W + (1/m)Στ² ayrımı yalnızca kayma senaryolarını kurmak için kullanılır (FarmaStatR türetimi; estimand'ı değiştirmez). m ürün tipine göre 1, 2 ya da 3 (PSG 020121, 021433, 020929).
+- **Kaynaklar (K):** Chow & Liu 2008, FDA 2026 (Mayıs) ve FDA 1999 belgesi proje dosyalarına eklendi. Proje sahibinin notu: Chow & Liu 2008, f2 ve MSD gibi profil benzerliği değerlendirmelerinde de (Bölüm 15) kaynak olarak kullanılmalı.
+- **Sıradaki:** Teknik not (model, estimand, ADEMP, kaynak eşlemesi); kodlama notun onayından sonra.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -212,7 +241,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-8 | Otomatik doğrulama (GitHub Actions): her push'ta SHA-256 + 491 kontrol | Tamam: ilk koşu Linux + Windows GEÇTİ (G-12) |
 | A-6 | Lisans kararı (MIT / GPL-3 / diğer) | Üniversite görüşü bekleniyor (G-15); platform makalesinden önce |
 | A-7 | Fonksiyon belgeleri (İngilizce) ve PBE köprüsünün pakete alınması | Tamam: PBE köprüsü (G-13), belgeler (G-14) |
-| A-10 | Simülasyon altyapısı: validasyon belgesi FSR-VAL-SIM-1 ve SHA-256 sabitleme; ilk yayın senaryosu | Altyapı v0.1.0 tamam (G-15); senaryo seçimi proje sahibinde |
+| A-10 | Simülasyon altyapısı: validasyon belgesi FSR-VAL-SIM-1 ve SHA-256 sabitleme; ilk yayın senaryosu | Altyapı v0.1.0 tamam (G-15); ilk senaryo PBE güç / seri başına kap sayısı, model tasarım aşamasında (G-16) |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
 
@@ -220,7 +249,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.12 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.15 | Bu belge |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
 | CNKfarmastatr (R paketi) | 1.0.0.9000 | 8 validasyonlu dosya; 516 kontrol GEÇTİ (G-13); yardım sayfaları (G-14) |
 
@@ -249,3 +278,6 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | KK-19 | Çalışma klasörü `C:\cloud\CNK-FarmaStatR\CNK-FarmaStatR` (GitHub klonu) | G-10 |
 | KK-20 | Claude yazar ve doğrular; proje sahibi Commit + Push yapar | G-11 |
 | KK-21 | Lisans kararından önce üniversiteye danışılacak | G-15 |
+| KK-22 | PBE modelinde seri etkisi rastgele; toplam varyans seri varyansını içerir | G-16 |
+| KK-23 | PBE araştırma sorusu: seri başına kap sayısı n (ℓ = 3, m = 3 sabit) | G-16 |
+| KK-24 | Yaşam evresi değişkenliği toplam varyansa dahil (FDA 1999 IX.B.1); m = 1, 2 ya da 3 | G-18 |
