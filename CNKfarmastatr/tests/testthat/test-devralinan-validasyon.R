@@ -1,16 +1,17 @@
 # Inherited validation test sets (v0.5.1), run unchanged against the package code.
-# Each legacy script fills `.sonuclar` (one row per check); every row must pass.
+# Each legacy script fills a results table (`.sonuclar`, or `.kt` for the PBE
+# bridge), one row per check; every row must pass.
 # Expected counts are the documented validation counts (FSR-LOG-01, G-01/G-03).
 
-run_legacy <- function(subdir, script, setup = character()) {
+run_legacy <- function(subdir, script, setup = character(), result = ".sonuclar") {
   dir <- system.file("validasyon", subdir, package = "CNKfarmastatr")
   expect_true(nzchar(dir))
   old <- setwd(dir); on.exit(setwd(old), add = TRUE)
   env <- globalenv()   # legacy scripts assign with <<- and source() nested files
   for (f in setup) source(f, local = env, encoding = "UTF-8")   # reference values
   suppressWarnings(invisible(capture.output(source(script, local = env, encoding = "UTF-8"))))
-  res <- get(".sonuclar", envir = env)
-  rm(list = intersect(ls(env, all.names = TRUE), c(".sonuclar")), envir = env)
+  res <- get(result, envir = env)
+  rm(list = intersect(ls(env, all.names = TRUE), result), envir = env)
   res
 }
 
@@ -35,4 +36,8 @@ test_that("2 f2 and bootstrap f2, EMA and FDA perspectives: 120/120 (Noce 2020, 
 
 test_that("PBE core: 213/213 (FDA PSG 020929, independent Python reference)", {
   expect_all_pass(run_legacy("pbe", "pbe_tests.R", setup = "referans_python.R"), 213)
+})
+
+test_that("PBE bridge (input checks B-2, B-4): 25/25 (bridge = core; invalid input rejected)", {
+  expect_all_pass(run_legacy("pbe", "pbe_kopru_tests.R", result = ".kt"), 25)
 })

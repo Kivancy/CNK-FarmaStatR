@@ -19,4 +19,4 @@ Imports: stats, utils
 Suggests: testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Collate: 'msd_core.R' 'msd_weibull.R' 'f2_boot.R' 'f2_noce_data.R'
-    'dis_ornek_veri.R' 'pbe_core.R' 'pbe_ornek_veri.R'
+    'dis_ornek_veri.R' 'pbe_core.R' 'pbe_kopru.R' 'pbe_ornek_veri.R'

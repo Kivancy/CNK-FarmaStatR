@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.9 · Son güncelleme: 13.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.10 · Son güncelleme: 14.10.2026"
 ---
 
 # Bu belge hakkında
@@ -173,6 +173,15 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - Commit `0648682` push edildi; GitHub Actions `dogrulama #1` koşusu Linux (ubuntu-latest) ve Windows (windows-latest) üzerinde yeşil tamamlandı (2 dk 13 s): 7 çekirdeğin SHA-256 değerleri aynı, 491 kontrol GEÇTİ. Böylece satır sonu ayarının (`.gitattributes`) Windows'ta da çekirdekleri bozmadığı doğrulandı.
 - Bundan sonra her push'ta aynı kontrol kendiliğinden koşar; sonuç Actions sekmesinde yeşil tik / kırmızı çarpı olarak görülür.
 
+## G-13 · PBE köprüsü pakete alındı: 516 kontrol — 14.10.2026
+
+- **Oturum başı:** Günlük okundu; bilgisayardaki, depodaki ve proje belgelerindeki günlük aynı (v1.9). Son commit `81678ff` ("Günlük: ilk doğrulama koşusu").
+- **İş (A-7'nin ilk parçası):** PBE köprüsü (`devralinan/v0.5.1/hesap/pbe/kopru.R`, v0.1.0) pakete **değiştirilmeden** `CNKfarmastatr/R/pbe_kopru.R` adıyla alındı (SHA-256 `4478174f…`, G-01 envanteriyle aynı). Validasyonlu dosya listesi (`CEKIRDEK_SHA256.txt`) 8 dosyaya çıktı; GitHub Actions'taki parmak izi kontrolü yeni dosyayı da kapsar.
+- **Gerekçe:** Köprü, çekirdeğin kendisinin yapmadığı girdi kontrollerini yapar (B-2: kap başına eksik ya da tekrarlı aşama ölçümü reddedilir; B-4: log kapalıyken geometrik ortalamalar gösterilmez). TC-K3, eksik aşamalı veride `calc_pbe()` doğrudan çağrılırsa hata vermediğini gösterir; köprü bu yüzden çekirdeğin ayrılmaz parçasıdır.
+- **Testler:** Köprü test seti (`pbe_kopru_tests.R`, TC-K1…K4, 25 kontrol) değiştirilmeden `inst/validasyon/pbe/` altına alındı ve testthat'e bağlandı (sonuç tablosu `.kt`). Toplam: MSD 60 + Weibull 98 + f2 120 + PBE 213 + PBE köprüsü 25 = **516 kontrol** (15 beklenti). Claude ortamında (R 4.3.3, Linux) 15/15 GEÇTİ, atlanan 0; `R CMD check`: 0 hata, aynı 2 beklenen uyarı.
+- **Ertelenen:** Dissolüsyon köprüsü (`hesap/dissolusyon/kopru.R`) pakete alınmadı: PBE köprüsüyle aynı adlı fonksiyonlar içeriyor (`kp_hazirla`, `kp_calistir`). Arayüz tasarlanırken ilk revizyonuyla birlikte ele alınacak.
+- **Not:** `.github/workflows/dogrulama.yml` içindeki adım adı hâlâ "491 checks" diyor (yalnızca etiket; sayılar testthat'te denetlenir). Bu klasöre köprü üzerinden yazılamadığı için iş akışında bir sonraki gerçek değişiklikle düzeltilecek.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -183,16 +192,16 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-5 | GitHub deposu (CNK-FarmaStatR) ve bağlantı | Tamam: dosyalar GitHub'da, commit `80556e5` (G-10, G-11) |
 | A-8 | Otomatik doğrulama (GitHub Actions): her push'ta SHA-256 + 491 kontrol | Tamam: ilk koşu Linux + Windows GEÇTİ (G-12) |
 | A-6 | Lisans kararı (MIT / GPL-3 / diğer) | Platform makalesinden önce |
-| A-7 | Fonksiyon belgeleri (İngilizce) ve PBE köprüsünün pakete alınması | Planlandı |
+| A-7 | Fonksiyon belgeleri (İngilizce) ve PBE köprüsünün pakete alınması | PBE köprüsü tamam, 516 kontrol (G-13); fonksiyon belgeleri sırada |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
 
 # 4. Belge ve sürüm dizini
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.9 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.10 | Bu belge |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
-| CNKfarmastatr (R paketi) | 1.0.0.9000 | İskelet; 491 kontrol GEÇTİ (G-05) |
+| CNKfarmastatr (R paketi) | 1.0.0.9000 | 8 validasyonlu dosya; 516 kontrol GEÇTİ (G-13) |
 
 # 5. Kullanıcı kararları dizini
 
