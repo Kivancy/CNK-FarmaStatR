@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.11 · Son güncelleme: 14.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.12 · Son güncelleme: 14.10.2026"
 ---
 
 # Bu belge hakkında
@@ -190,6 +190,17 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Bulunan ve düzeltilen hata:** Sonuç sınıflarının yazdırma yöntemleri (`print.farmastat_msd`, `print.farmastat_msd_weibull`, `print.farmastat_f2boot`) NAMESPACE'te kayıtlı değildi; paket yüklüyken sonuçlar rapor yerine ham liste olarak basılıyordu. NAMESPACE'e `S3method()` satırları eklendi. Çekirdekler değişmedi.
 - **Doğrulama (Claude ortamı, R 4.3.3):** `R CMD check`: 0 hata, 1 uyarı (çekirdeklerdeki Türkçe karakterler; çekirdekler revize edilene kadar kalacak). "Eksik belge" uyarısı kalktı. Tüm örnekler hatasız çalıştı; testler 15/15 (516 kontrol) GEÇTİ.
 
+## G-15 · Lisans: üniversite görüşü bekleniyor; simülasyon altyapısı v0.1.0 — 14.10.2026
+
+- **Lisans (A-6):** Seçenekler (MIT, GPL-3, Apache-2.0; içerik için CC BY 4.0) ve ticarileşmeyle ilişkisi konuşuldu. Claude önerisi: yazılım MIT, içerik CC BY 4.0; ticarileşme (ör. çift lisans) düşünülürse GPL-3. **K:** Karar öncesinde üniversiteye (TTO / fikri mülkiyet birimi) danışılacak. Sorulacaklar: hak sahipliği (FSEK md. 18), açık kaynak yayımı için izin/bildirim, telif notu, ticari yollar, yapay zekâ katkısının etkisi. Depo özel olduğu için karar zamanı platform makalesine kadar.
+- **Simülasyon altyapısı (Ö, K onayı "başlayalım"):** Pakete üç yeni dosya eklendi (temel R, İngilizce yorumlar, ASCII):
+  - `R/sim_performance.R`: Morris, White & Crowther 2019 (Stat Med 38:2074-2102) Tablo 6 performans ölçütleri, her biri Monte Carlo SH ile (bias, EmpSE, MSE, ModSE, ModSE göreli hatası, kapsama, yanlılığı giderilmiş kapsama, reddetme oranı); hedef MCSE için tekrar sayısı (`sim_n_required`).
+  - `R/sim_run.R`: ADEMP senaryo tanımı (`sim_scenario`, kayıt defteri), çalıştırıcı (`sim_run`: tek RNG akışı, RNG türü sabit ve kayıtlı, kullanıcının RNG durumu korunur, hatalı tekrarlar yakalanıp sayılır), tek tekrarın yeniden üretimi (`sim_replicate`), koşu kaydı (parametreler, seed, RNG türü, R ve paket sürümü, platform, zaman) ve JSON dışa aktarımı (sayılar birebir geri okunacak en kısa biçimde), 3. katman için bağımsız R betiği (`sim_export_script`).
+  - `R/sim_scenario_demo.R`: eğitim ve referans senaryosu `demo_mean_ci` (ortalama için t ve z güven aralığı kapsaması, t testi tip I hatası; normal veride gerçek değerler analitik olarak bilinir).
+- **Testler (TC-S1…S10, 58 beklenti):** elle hesaplanmış performans değerleri (TC-S1), eksik tahminler, tekrar sayısı formülü, aynı seed = aynı sonuç ve kullanıcı RNG'sinin korunması, analitik değerlere 3 MCSE içinde yakınsama (t kapsaması 0,95; z kapsaması 2·F_t(1,96; 9) − 1 = 0,9184; tip I hata 0,05), parametre geçersiz kılma ve reddi, dışa aktarılan betiğin koşuyu birebir yeniden üretmesi, JSON, hatalı tekrarların yakalanması, tek tekrarın yeniden üretimi. Geliştirme sırasında bulunan hata: `sim_n_required` ikili kayan nokta yüzünden 1900 yerine 1901 veriyordu; düzeltildi.
+- **Doğrulama (Claude ortamı, R 4.3.3):** tüm testler 73/73 beklenti GEÇTİ (devralınan 516 kontrol + simülasyon 58); `R CMD check` 0 hata, 1 uyarı (devralınan çekirdeklerdeki Türkçe karakterler). Yardım sayfaları: `sim_performance`, `sim_run`.
+- **Açık:** Simülasyon çerçevesinin validasyon belgesi (FSR-VAL-SIM-1) ve SHA-256 sabitlemesi, proje sahibinin incelemesinden sonra. Sıradaki: ilk yayın senaryosu (hangi makalenin simülasyonu) — proje sahibinin kararı.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -199,8 +210,9 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-4 | Paket testlerinin proje sahibinin bilgisayarında çalıştırılması (`testthat::test_local()`) | Tamam: 12/12, R 4.6.1 (G-06) |
 | A-5 | GitHub deposu (CNK-FarmaStatR) ve bağlantı | Tamam: dosyalar GitHub'da, commit `80556e5` (G-10, G-11) |
 | A-8 | Otomatik doğrulama (GitHub Actions): her push'ta SHA-256 + 491 kontrol | Tamam: ilk koşu Linux + Windows GEÇTİ (G-12) |
-| A-6 | Lisans kararı (MIT / GPL-3 / diğer) | Platform makalesinden önce |
+| A-6 | Lisans kararı (MIT / GPL-3 / diğer) | Üniversite görüşü bekleniyor (G-15); platform makalesinden önce |
 | A-7 | Fonksiyon belgeleri (İngilizce) ve PBE köprüsünün pakete alınması | Tamam: PBE köprüsü (G-13), belgeler (G-14) |
+| A-10 | Simülasyon altyapısı: validasyon belgesi FSR-VAL-SIM-1 ve SHA-256 sabitleme; ilk yayın senaryosu | Altyapı v0.1.0 tamam (G-15); senaryo seçimi proje sahibinde |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
 
@@ -208,7 +220,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.11 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.12 | Bu belge |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
 | CNKfarmastatr (R paketi) | 1.0.0.9000 | 8 validasyonlu dosya; 516 kontrol GEÇTİ (G-13); yardım sayfaları (G-14) |
 
@@ -236,3 +248,4 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | KK-18 | Çalışma klasörü `C:\cloud\CNK-FarmaStatR` (depo); v1 klasörü yedek | G-09 |
 | KK-19 | Çalışma klasörü `C:\cloud\CNK-FarmaStatR\CNK-FarmaStatR` (GitHub klonu) | G-10 |
 | KK-20 | Claude yazar ve doğrular; proje sahibi Commit + Push yapar | G-11 |
+| KK-21 | Lisans kararından önce üniversiteye danışılacak | G-15 |
