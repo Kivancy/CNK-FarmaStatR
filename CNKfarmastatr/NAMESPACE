@@ -2,3 +2,7 @@
 exportPattern("^[[:alpha:]]")
 import(stats)
 import(utils)
+# Print methods of the result classes (without registration, results print as raw lists)
+S3method(print, farmastat_msd)
+S3method(print, farmastat_msd_weibull)
+S3method(print, farmastat_f2boot)

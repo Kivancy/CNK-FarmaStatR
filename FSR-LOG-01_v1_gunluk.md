@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.10 · Son güncelleme: 14.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.11 · Son güncelleme: 14.10.2026"
 ---
 
 # Bu belge hakkında
@@ -182,6 +182,14 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Ertelenen:** Dissolüsyon köprüsü (`hesap/dissolusyon/kopru.R`) pakete alınmadı: PBE köprüsüyle aynı adlı fonksiyonlar içeriyor (`kp_hazirla`, `kp_calistir`). Arayüz tasarlanırken ilk revizyonuyla birlikte ele alınacak.
 - **Not:** `.github/workflows/dogrulama.yml` içindeki adım adı hâlâ "491 checks" diyor (yalnızca etiket; sayılar testthat'te denetlenir). Bu klasöre köprü üzerinden yazılamadığı için iş akışında bir sonraki gerçek değişiklikle düzeltilecek.
 
+## G-14 · Fonksiyon belgeleri (İngilizce) ve yazdırma yöntemlerinin kaydı — 14.10.2026
+
+- **İş (A-7'nin ikinci parçası):** Paketin yardım sayfaları `CNKfarmastatr/man/` altına elle yazılmış Rd dosyaları olarak eklendi (9 dosya): paket genel bakışı, `calc_msd`, `msd_prepare`, `calc_msd_weibull` (+ `calc_msd_params`), `calc_f2_boot` (+ `f2_estimators`, `f2_export_indices`), `calc_pbe`, PBE köprüsü (`kp_hazirla`, `kp_pbe`, `kp_calistir`), örnek veriler ve iç fonksiyonlar (tek sayfa, `internal`).
+- **Yöntem kararı (Ö):** Belgeler çekirdek dosyalara roxygen yorumu olarak **yazılmadı**: validasyonlu dosyalara eklenen her satır SHA-256 değerini değiştirir. Rd dosyaları ayrı tutulur; çekirdekler bayt bayt aynı kaldı. roxygen2 bağımlılığı da gerekmedi.
+- **İçerik ilkeleri:** Her sayfada kaynak (kılavuz/makale + bölüm/denklem) belirtildi; kaynakta doğrudan olmayan kurallar "FarmaStatR derivation" olarak işaretlendi (ör. MSD'ye %85 kesmesi, L2a/L2b, L3 hiperküpü, lnTd_lnB parametrizasyonu, f2 karar kuralı, dengesiz PBE tasarımı). Türkçe argüman değerleri, sonuç öğeleri ve mesajlar İngilizce açıklandı. Tek yönlü PBE seçeneğinin kaynağı FDA PSG 020121 (flutikazon nazal sprey, Aralık 2025) Appendix olarak belirlendi (proje dosyalarından doğrulandı). `calc_pbe` sayfasına, eksik aşamalı veriyi reddetmediği ve köprü üzerinden kullanılması gerektiği uyarısı eklendi (TC-K3).
+- **Bulunan ve düzeltilen hata:** Sonuç sınıflarının yazdırma yöntemleri (`print.farmastat_msd`, `print.farmastat_msd_weibull`, `print.farmastat_f2boot`) NAMESPACE'te kayıtlı değildi; paket yüklüyken sonuçlar rapor yerine ham liste olarak basılıyordu. NAMESPACE'e `S3method()` satırları eklendi. Çekirdekler değişmedi.
+- **Doğrulama (Claude ortamı, R 4.3.3):** `R CMD check`: 0 hata, 1 uyarı (çekirdeklerdeki Türkçe karakterler; çekirdekler revize edilene kadar kalacak). "Eksik belge" uyarısı kalktı. Tüm örnekler hatasız çalıştı; testler 15/15 (516 kontrol) GEÇTİ.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -192,16 +200,17 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-5 | GitHub deposu (CNK-FarmaStatR) ve bağlantı | Tamam: dosyalar GitHub'da, commit `80556e5` (G-10, G-11) |
 | A-8 | Otomatik doğrulama (GitHub Actions): her push'ta SHA-256 + 491 kontrol | Tamam: ilk koşu Linux + Windows GEÇTİ (G-12) |
 | A-6 | Lisans kararı (MIT / GPL-3 / diğer) | Platform makalesinden önce |
-| A-7 | Fonksiyon belgeleri (İngilizce) ve PBE köprüsünün pakete alınması | PBE köprüsü tamam, 516 kontrol (G-13); fonksiyon belgeleri sırada |
+| A-7 | Fonksiyon belgeleri (İngilizce) ve PBE köprüsünün pakete alınması | Tamam: PBE köprüsü (G-13), belgeler (G-14) |
+| A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
 
 # 4. Belge ve sürüm dizini
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.10 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.11 | Bu belge |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
-| CNKfarmastatr (R paketi) | 1.0.0.9000 | 8 validasyonlu dosya; 516 kontrol GEÇTİ (G-13) |
+| CNKfarmastatr (R paketi) | 1.0.0.9000 | 8 validasyonlu dosya; 516 kontrol GEÇTİ (G-13); yardım sayfaları (G-14) |
 
 # 5. Kullanıcı kararları dizini
 
