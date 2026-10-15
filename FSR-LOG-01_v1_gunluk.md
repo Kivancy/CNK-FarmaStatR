@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.30 · Son güncelleme: 15.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.31 · Son güncelleme: 15.10.2026"
 ---
 
 # Bu belge hakkında
@@ -384,6 +384,23 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
   - SQLite'a aktarım. Bu ortamda RSQLite kurulamadı; şimdilik CSV.
   - İş akışı etiketi "491 checks".
 
+## G-34 · Teknik not v0.5: Aşama 1 sonuçları şekillerle işlendi — 15.10.2026
+
+- **İş (K: "Aşama 1 sonuçlarını şekillerle teknik nota (v0.5) işle").**
+- **Dosyalar:**
+  - `belgeler/teknik_notlar/FSR-TN-PBE-01_v0.5.docx` (15 sayfa).
+  - `simulasyon/FSR-TN-PBE-01/asama1_sekil.R` (temel R): `sekil/sekil1_tip1.png` ve `sekil/sekil2_guc.png` (300 dpi). Yöntemler için renkler ve ayrıca farklı nokta simgeleri kullanıldı; ℓ tek renk tonunun koyulaşmasıyla gösterildi.
+- **Teknik notta değişenler:**
+  - Yeni Bölüm 11 "Aşama 1 sonuçları": koşu ve yeniden üretim (11.1); Denk. 14'ün simülasyonla kontrolü (11.2); tip I hata, Şekil 1 ve Tablo 11.1 (11.3); güç, Şekil 2 ve Tablo 11.2 (11.4); %80 güce ulaşan en küçük tasarım, Tablo 11.3 (11.5); kapsama ve kriter seçimi (11.6); Hp1–Hp7'nin durumu (11.7); yorumun sınırları (11.8).
+  - Bölüm 5.3: EMA (c) kapalı biçimi (izotonik regresyon) ve serbestlik derecesi seçimi, FarmaStatR türetimi olarak eklendi; tablodaki (c) satırı güncellendi.
+  - 10.4 ve doğrulama planı güncellendi. Eski 11–13. bölümler 12–14 oldu.
+- **Yeni sayılar (G-33'e ek):**
+  - Denk. 14'teki σ̂²_R yanlılığı simülasyonla uyumlu. En büyük |z| = 3,21; ortak seed nedeniyle yaklaşık 90 karşılaştırma bağımsız değil.
+  - EMA (a) kapsaması p_B > 0 iken %36–83; (b) ve (c) %90–96.
+  - Kriter seçim hatası p_B = 0 ve 2 × 5'te %24,9; tip I hata yine ≤ %5.
+- **Hp7 düzeltmesi:** v0.3'teki "(b) aşırı iyimser olabilir" beklentisi Aşama 1'de desteklenmedi. (b)'de tip I hata ≤ %5, kapsama ≥ %90.
+- **Onay bekleyen:** Bölüm 11'in sonuç ve yorumları.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -395,7 +412,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-8 | Otomatik doğrulama (GitHub Actions): her push'ta SHA-256 + 491 kontrol | Tamam: ilk koşu Linux + Windows GEÇTİ (G-12) |
 | A-6 | Lisans kararı (MIT / GPL-3 / diğer) | Üniversite görüşü bekleniyor (G-15); platform makalesinden önce |
 | A-7 | Fonksiyon belgeleri (İngilizce) ve PBE köprüsünün pakete alınması | Tamam: PBE köprüsü (G-13), belgeler (G-14) |
-| A-10 | Simülasyon altyapısı: validasyon belgesi FSR-VAL-SIM-1 ve SHA-256 sabitleme; ilk yayın senaryosu | Altyapı v0.1.0 tamam (G-15); ilk senaryo PBE güç / seri başına kap sayısı; teknik not v0.4 (G-31); hızlı motor `invitro_fast.R` (G-32); Aşama 1 koşuldu (G-33); sırada sonuçların nota işlenmesi ve Aşama 2 |
+| A-10 | Simülasyon altyapısı: validasyon belgesi FSR-VAL-SIM-1 ve SHA-256 sabitleme; ilk yayın senaryosu | Altyapı v0.1.0 tamam (G-15); ilk senaryo PBE güç / seri başına kap sayısı; teknik not v0.4 (G-31); hızlı motor `invitro_fast.R` (G-32); Aşama 1 koşuldu (G-33) ve nota işlendi (G-34); sırada Aşama 2 |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
 | A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
@@ -405,7 +422,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
 | FSR-LOG-01 · Proje günlüğü | 1.27 | Bu belge |
-| FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.4 | Taslak (G-31) |
+| FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.5 | Taslak; Bölüm 11 onay bekliyor (G-34) |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
 | CNKfarmastatr (R paketi) | 1.0.0.9000 | 8 validasyonlu dosya; 516 kontrol GEÇTİ (G-13); yardım sayfaları (G-14) |
 
