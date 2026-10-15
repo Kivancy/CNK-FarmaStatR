@@ -113,6 +113,11 @@ test_that("TC-F5 invitro_gen is reproducible and has the intended structure", {
   y <- invitro_gen(2, 2, 3, 1, sB = 0.1)
   expect_equal(y[, 1, 1], y[, 3, 1], tolerance = 0)
   expect_false(isTRUE(all.equal(y[, 1, 1], y[, 4, 1])))
+  # common random numbers: a zero component still consumes its draws
+  set.seed(9); u0 <- invitro_gen(4, 3, 2, 2, sB = 0,   sC = 0.2, sW = 0.1)
+  set.seed(9); u1 <- invitro_gen(4, 3, 2, 2, sB = 0.3, sC = 0.2, sW = 0.1)
+  w0 <- u0[, 2, ] - u0[, 1, ]; w1 <- u1[, 2, ] - u1[, 1, ]   # batch effect cancels
+  expect_equal(w0, w1, tolerance = 1e-14)
 })
 
 test_that("TC-F6 shares and drift reproduce the total variance", {
@@ -122,4 +127,18 @@ test_that("TC-F6 shares and drift reproduce the total variance", {
   expect_equal(mean(tau^2), cp$drift_var, tolerance = 1e-12)
   expect_equal(cp$sB^2 + cp$sC^2 + cp$sW^2 + mean(tau^2), 0.12^2, tolerance = 1e-12)
   expect_error(invitro_components(0.1, 0.7, 0.5))
+})
+
+test_that("TC-F7 invitro_delta0 puts eta at 0; invitro_scenario is reproducible", {
+  th <- ((log(1.11))^2 + 0.01) / 0.01
+  expect_equal(invitro_delta0(0.12), sqrt(th) * 0.12, tolerance = 1e-12)
+  expect_equal(invitro_delta0(0.05), sqrt(th) * 0.1, tolerance = 1e-12)   # constant-scaled
+  a <- invitro_scenario(0.12, delta = invitro_delta0(0.12), n_sim = 300)
+  b <- invitro_scenario(0.12, delta = invitro_delta0(0.12), n_sim = 300)
+  expect_identical(a, b)
+  expect_equal(a$eta, 0, tolerance = 1e-15)
+  # common random numbers: delta shifts only the T mean, variances are identical
+  z <- invitro_scenario(0.12, delta = 0, n_sim = 300)
+  expect_equal(z$fda_bias_s2R, a$fda_bias_s2R, tolerance = 1e-15)
+  expect_equal(z$ema_b_cover, a$ema_b_cover, tolerance = 1e-15)
 })

@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.29 · Son güncelleme: 15.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.30 · Son güncelleme: 15.10.2026"
 ---
 
 # Bu belge hakkında
@@ -365,6 +365,25 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Hız:** 3 × 10 × 3 tasarımı ve 10.000 tekrarla `pbe_fast` 0,04 sn sürdü. `calc_pbe` ile aynı iş yaklaşık 56 sn sürüyor (5,6 ms/veri seti), yani yaklaşık 1.400 kat hızlı. `ema_ci_fast` aynı iş için 0,5 sn. KK-34 kapsamındaki yaklaşık 620 senaryo × 10.000 tekrar birkaç dakikada koşulabilir.
 - **Sonraki:** Aşama 1 senaryolarının koşulması ve sonuç ızgarası. Ardından FSR-VAL-SIM-1 ve `invitro_fast.R` SHA-256 sabitlemesi.
 
+## G-33 · Aşama 1 koşuldu (360 senaryo × 10.000 tekrar) — 15.10.2026
+
+- **Ön düzeltme (G-32'ye ek):** R'de `rnorm(sd = 0)` rastgele sayı çekmiyor. Bu yüzden bir bileşeni 0 olan senaryo (ör. p_B = 0), sayı dizisinde diğerlerinden kayıyordu ve ortak seed (KK-35) bozuluyordu. `invitro_gen` artık her bileşen için standart normal çekip ölçekliyor (`invitro_fast.R` v0.1.1). G-32'deki doğrulama sonuçları bu değişiklikten etkilenmez: karşılaştırmalar aynı veri üzerinde yapılmıştı. Yeni test TC-F5'e eklendi.
+- **Yeni dosyalar:**
+  - `CNKfarmastatr/R/invitro_grid.R` v0.1.0: `invitro_scenario()` tek senaryo ve performans ölçütleri + MCSE (Morris Tablo 6); `invitro_delta0()` FDA tip I sınırı; `invitro_run_record()` koşu kaydı.
+  - TC-F7 eklendi; yeni dosyada toplam 628 kontrol GEÇTİ.
+  - `simulasyon/FSR-TN-PBE-01/asama1.R` (betik), `asama1_sonuc.csv` (360 satır), `asama1_kayit.csv` (seed 20261015, Mersenne-Twister/Inversion, R 4.3.3, paket 1.0.0.9000; 3,15 dk).
+- **Tasarım (KK-34 Aşama 1):** σ_R = σ_T = 0,12; p_L 0,15; m 3; q 0. p_B {0; 0,10; 0,30} × ℓ {2–6} × n {5, 8, 10, 15, 20, 30} × δ {FDA δ₀ = 0,1734 (GMR 1,189); GMR 1,18; 1,00; 1,05}. Güç oranlarında en büyük MCSE 0,005.
+- **Bulgular (simülasyon sonucu; yalnız bu temel senaryo için):**
+  - *FDA PBE tip I hata (δ₀):* p_B = 0 iken %3–5 (koruyucu). Seri varyansı varken şişiyor ve n ile artıyor, ℓ'ye pek bağlı değil: p_B 0,10 → 3 × 10'da %7,5, n = 30'da %13–14; p_B 0,30 → 3 × 10'da %13,2, n = 30'da %22. Bu, PSG tahmin edicisinin seri varyansını eksik sayması bulgusunun (teknik not 8.1) sayısal karşılığıdır.
+  - *EMA tip I hata (GMR 1,18):* (a) havuzlanmış birimler aynı örüntüyü daha güçlü gösteriyor (p_B 0,30, 3 × 10: %20,8). (b) ve (c) tüm tasarımlarda ≤ %5; ℓ = 2'de koruyucu (%2–4).
+  - *Güç (GMR 1,05), 3 × 10:* FDA %85 / %80 / %72; EMA (c) %92 / %68 / %36 (p_B 0 / 0,10 / 0,30). Seri varyansı varken EMA (b)/(c) gücünü n değil ℓ belirliyor: p_B 0,30'da n 5'ten 30'a çıkınca güç %31'den %41'e çıkıyor, ℓ 3'ten 6'ya çıkınca %36'dan %82'ye.
+  - *Proje sahibinin 4 × 7 / 3 × 10 sorusu (G-23) için ilk ipucu:* p_B 0,10'da 4 × 8 (32 birim) ile 3 × 10 (30 birim) karşılaştırması: FDA %84 / %80, EMA (c) %83 / %68. 4 × 7 Aşama 1 ızgarasında yok; platformda koşulabilir.
+- **Açık:**
+  - Sonuçların teknik nota ve şekillere işlenmesi.
+  - Aşama 2.
+  - SQLite'a aktarım. Bu ortamda RSQLite kurulamadı; şimdilik CSV.
+  - İş akışı etiketi "491 checks".
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -376,7 +395,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-8 | Otomatik doğrulama (GitHub Actions): her push'ta SHA-256 + 491 kontrol | Tamam: ilk koşu Linux + Windows GEÇTİ (G-12) |
 | A-6 | Lisans kararı (MIT / GPL-3 / diğer) | Üniversite görüşü bekleniyor (G-15); platform makalesinden önce |
 | A-7 | Fonksiyon belgeleri (İngilizce) ve PBE köprüsünün pakete alınması | Tamam: PBE köprüsü (G-13), belgeler (G-14) |
-| A-10 | Simülasyon altyapısı: validasyon belgesi FSR-VAL-SIM-1 ve SHA-256 sabitleme; ilk yayın senaryosu | Altyapı v0.1.0 tamam (G-15); ilk senaryo PBE güç / seri başına kap sayısı; teknik not v0.4 (G-31); hızlı motor `invitro_fast.R` v0.1.0 (G-32); Aşama 1 koşusu sırada |
+| A-10 | Simülasyon altyapısı: validasyon belgesi FSR-VAL-SIM-1 ve SHA-256 sabitleme; ilk yayın senaryosu | Altyapı v0.1.0 tamam (G-15); ilk senaryo PBE güç / seri başına kap sayısı; teknik not v0.4 (G-31); hızlı motor `invitro_fast.R` (G-32); Aşama 1 koşuldu (G-33); sırada sonuçların nota işlenmesi ve Aşama 2 |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
 | A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |

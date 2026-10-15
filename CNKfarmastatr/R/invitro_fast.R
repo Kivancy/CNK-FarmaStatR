@@ -3,6 +3,8 @@
 #
 # Purpose: fast, vectorised versions of the procedures studied in technical note
 #   FSR-TN-PBE-01 v0.4 (decisions KK-34, KK-35), for use inside simulations.
+#   v0.1.1: invitro_gen draws standard normals for every component (common
+#   random numbers also when a component is 0).
 #   - invitro_gen():  data-generating mechanism (TN Section 6, Eq. 8-9)
 #   - pbe_fast():     FDA PSG 020929 PBE procedure; must equal calc_pbe() exactly
 #   - ema_ci_fast():  90% CI of the T/R geometric mean ratio, three ways (TN 5.3)
@@ -12,7 +14,7 @@
 #   1..n, batch 2 units 1..n, ...), s = life stage. Log scale.
 #
 # The validated core calc_pbe() is not changed; pbe_fast() is tested against it
-#   (tests/testthat/test-invitro-fast.R). Base R only. Version 0.1.0
+#   (tests/testthat/test-invitro-fast.R). Base R only. Version 0.1.1
 # =============================================================================
 
 # -----------------------------------------------------------------------------
@@ -26,9 +28,11 @@ invitro_gen <- function(R, l, n, m, mu = 0, sB = 0, sC = 0, sW = 0,
                         tau = rep(0, m)) {
   stopifnot(length(tau) == m, R >= 1, l >= 1, n >= 1, m >= 1)
   N <- l * n
-  b  <- matrix(stats::rnorm(R * l, 0, sB), R, l)
-  cc <- matrix(stats::rnorm(R * N, 0, sC), R, N)
-  e  <- array(stats::rnorm(R * N * m, 0, sW), c(R, N, m))
+  # standard normals scaled afterwards: rnorm(sd = 0) draws nothing, which
+  # would shift the stream and break common random numbers across scenarios
+  b  <- matrix(stats::rnorm(R * l) * sB, R, l)
+  cc <- matrix(stats::rnorm(R * N) * sC, R, N)
+  e  <- array(stats::rnorm(R * N * m) * sW, c(R, N, m))
   unit_level <- mu + b[, rep(seq_len(l), each = n), drop = FALSE] + cc   # R x N
   X <- e + as.vector(unit_level)                       # recycles over stages
   X + rep(tau, each = R * N)
