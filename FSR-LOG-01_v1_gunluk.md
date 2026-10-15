@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.31 · Son güncelleme: 15.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.32 · Son güncelleme: 15.10.2026"
 ---
 
 # Bu belge hakkında
@@ -400,6 +400,24 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
   - Kriter seçim hatası p_B = 0 ve 2 × 5'te %24,9; tip I hata yine ≤ %5.
 - **Hp7 düzeltmesi:** v0.3'teki "(b) aşırı iyimser olabilir" beklentisi Aşama 1'de desteklenmedi. (b)'de tip I hata ≤ %5, kapsama ≥ %90.
 - **Onay bekleyen:** Bölüm 11'in sonuç ve yorumları.
+
+## G-35 · Ek B: SAS bağımsız kontrol paketi hazırlandı — 15.10.2026
+
+- **Gerekçe (K: proje sahibi Ek B'yi SAS OnDemand'da koşacak):** SAS kontrolü isteğe bağlıdır (KK-11). Bu kontrolün asıl hedefi EMA (c): notta FarmaStatR türetimi olarak işaretli tek hesap.
+- **Dosyalar** (`belgeler/teknik_notlar/FSR-TN-PBE-01_ek/sas/`):
+  - `r_beklenen.R`: veriyi ve R'nin beklenen sonuçlarını üretir.
+  - `sas_veri.csv`: 11 veri seti, 1.770 satır, log ölçeği.
+  - `r_beklenen.csv`: her veri seti için ortalamalar; PSG MSB ve MSW; Searle Tablo 4.10'daki kareler ortalamaları; REML varyans bileşenleri ve hangi tabakaların birleştirildiği; (a), (b), (c) için SE, serbestlik derecesi ve %90 GA.
+  - `sas_kontrol.sas`: PROC GLM ile tip I kareler toplamları; PROC MIXED REML, `ddfm=satterthwaite` ve `kenwardroger` ile. Sonuçlar 4 CSV dosyası olarak dışa aktarılıyor.
+- **Veri setleri:**
+  - K01–K06: Chow ham verisi.
+  - K07: PSG 020929 örneği.
+  - K08–K11: `invitro_gen` ile simüle edildi.
+  - REML'in dört durumunun hepsi kapsanıyor: birleştirme yok; seri+birim birleşik; birim+artık birleşik; hepsi birleşik.
+- **Ek B kodunda düzeltme (v0.5'teki hali):** `model y = product stage` yerine `product stage(product)` olmalı; teknik nottaki model evre etkisini ürün başına ayrı alıyor. Ayrıca iç içe evre etkisi varken `estimate 'T - R' product 1 -1` tahmin edilebilir olmayabilir; `lsmeans product / diff cl alpha=0.10` kullanıldı. Teknik not SAS sonuçlarıyla birlikte düzeltilecek.
+- **Beklenen:**
+  - Kareler ortalamaları, REML varyans bileşenleri, fark ve SE birebir aynı çıkmalı (deterministik).
+  - Serbestlik derecesi ve GA sınırları farklı çıkabilir: FarmaStatR türetimi ile Satterthwaite / Kenward-Roger farkı. Bu fark Bölüm 5.3 ve 11.8'deki sınırlılığın sayısal ölçüsü olacak.
 
 # 3. Açık işler
 
