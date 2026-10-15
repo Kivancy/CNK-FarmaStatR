@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.20 · Son güncelleme: 15.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.22 · Son güncelleme: 15.10.2026"
 ---
 
 # Bu belge hakkında
@@ -281,6 +281,21 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **PSG bulgusu (proje sahibinin gönderdiği sayfa görüntüsüyle doğrulandı):** PSG 020929 Appendix Adım 2'de X̄..k. formülünün indis aralıkları MSB/MSW ile ters yazılmıştır (Σ_{i=1}^{ℓk} Σ_{j=1}^{nk}); toplam tüm birimler üzerinden olduğundan sonuç değişmez. Adım 4 tablosu teknik not ve `calc_pbe` ile birebir uyumlu.
 - **Açık:** Varyans giriş biçimi kararı (B seçeneği: makale ızgarası toplam + paylarla, platform iki yolla) bekliyor.
 
+## G-24 · Varyans giriş biçimi kararı; PBE'nin ölçek değişmezliği — 15.10.2026
+
+- **Karar (K): KK-29.** Makalenin simülasyon ızgarası "toplam σ_R + ρ (= σ_T/σ_R) + paylar (p_B, p_C, p_L; toplamı 1)" ile kurulur. Pay = bileşen varyansı / toplam varyans (p_B, seri düzeyindeki sınıf içi korelasyon katsayısıdır). Platformda kullanıcı ister payları, ister bileşenleri (σ_B, σ_C, σ_W; ör. kendi REML tablosundan) girer; bileşenler paylara çevrilir ve iki gösterim birlikte gösterilir. Gerekçe: bir koşul (ör. seri payı) değiştirildiğinde toplam σ_R, dolayısıyla kriter ve tip I hata sınırı δ₀ sabit kalır; ℓ × n'nin etkisi farklı varyans yapılarında aynı noktada karşılaştırılır (FarmaStatR türetimi).
+- **δ₀ açıklaması:** σ_T = σ_R iken referans ölçekli kriterde η = 0 sınırı δ₀ = √θ_p·σ_R = 1,4454·σ_R (teknik not Denk. 12); örn. σ_R = 0,304 → 0,440 (GMR 1,55), 0,364 → 0,526 (GMR 1,69). Sabit ölçekli bölgede δ₀ = √(θ_p·0,01) = 0,1445 (GMR 1,155).
+- **Bulgu (FarmaStatR türetimi; sayısal olarak doğrulandı):** Referans ölçekli PBE ölçek değişmezdir: tüm log ölçümler c ile çarpılınca E_q, H_q, U_q bileşenleri c² (U_q c⁴) ile ölçeklenir, H_η işaretini korur. `calc_pbe` ile PSG örnek verisinde c = 0,5 ve 2 için H_η,Ref/c² = −0,03149874 (özgün değerle birebir). Sabit ölçekli kriter (θ_p·σ²_T0 sabit terimi) değişmez değildir; c = 0,2'de σ̂_R < 0,1 olduğundan sabit ölçekli kriter seçilir ve karar değişir. Sonuç: PBE'de tip I hata ve güç, σ_R > 0,1 bölgesinde σ_R'nin büyüklüğüne değil, paylara, ρ'ya, δ/σ_R'ye ve ℓ, n, m'ye bağlıdır; σ_R yalnızca 0,1 eşiğine göre konumuyla önemlidir. EMA %90 GA yönteminde sınırlar (85–118) sabit olduğundan σ_R'nin büyüklüğü doğrudan önemlidir.
+- **σ_R'nin planlama değeri:** FDA 1999 IX.B.1 ("will necessitate pilot studies"); EMA OIP §5.2.3 (referansın en az 5 seriyle karakterizasyonu). Referans ürün piyasadan alınarak ölçülebilir.
+- **Açık:** q (evre içi sistematik kayma) ve T ile R için payların aynı mı ayrı mı olacağı; faktör düzeyleri (teknik not Bölüm 8.2); teknik not v0.3.
+
+## G-25 · Test ve referans payları: ana senaryolarda aynı, hedefli senaryolarda ayrı — 15.10.2026
+
+- **Karar (K): KK-30.** Simülasyon senaryolarının çoğunda (ana ızgara) test ve referansın varyans payları (p_B, p_C, p_L) aynıdır; ürünler arasındaki toplam değişkenlik farkı ρ ile verilir. Ek olarak iki hedefli senaryo grubu birkaç seçilmiş σ_R ve ℓ × n değerinde koşulur: (i) seri varyansı yalnız referansta, (ii) seri varyansı yalnız testte. Platformda kullanıcı iki ürünün paylarını her zaman ayrı girebilir.
+- **Gerekçe:** Chow ve Liu 2008 Tablo 14.5.10'daki T–R pay farkı (lot payı R 0,25, T 0) 2 serbestlik derecesine dayanır; T'deki 0 REML'in sıfır sınırına takılmasıdır; gerçek bir yapı farkının kanıtı değildir. Hedefli senaryoların gerekçesi (FarmaStatR türetimi, teknik not Denk. 16'dan; hipotez): PSG havuzlaması nedeniyle eksik tahmin η̂ = Δ̂² + σ̂²_T − (1+θ_p)σ̂²_R üzerinde ters yönde işler: yalnız referansta seri varyansı → σ̂²_R eksik → η̂ büyür → tutucu (güç kaybı); yalnız testte → σ̂²_T eksik → η̂ küçülür → liberal (tip I hata artışı; hasta riski). Karşılıkları: EMA OIP §5.2.3 (referans serileri arası değişkenlik "can be significant"); yeni üreticinin henüz oturmamış süreci.
+- **Açıklama notları:** "Pay" = toplam varyansın kaynağa göre yüzdesi (pasta dilimi). "Izgara" = simülasyon senaryolarının tam listesi (faktör düzeylerinin kombinasyonları; Morris ve ark. 2019 §3.2 "data-generating mechanisms"); projede 2. hesaplama katmanı (SQLite sonuç ızgarası). Chow ve Liu 2008 Tablo 14.5.10 bağlamı: burun spreyi, lazer difraksiyon D50, 3 lot × 10 şişe × 3 evre, 3 mesafe (3, 5, 7 cm); tablonun mesafeleri nasıl ele aldığı belirtilmemiş. Kitap REML'i "as suggested by the FDA draft guidance" diye anar; FDA 1999 IX.B.2.b momentler yöntemini önerir.
+- **Açık:** q (evre içi sistematik kayma); faktör düzeyleri (teknik not Bölüm 8.2); teknik not v0.3.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -301,7 +316,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.20 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.22 | Bu belge |
 | FSR-TN-PBE-01 · PBE simülasyon modeli ve tasarımı | 0.2 | Taslak; v0.3 (EMA kolu, KK-26/27) yazılacak (G-22) |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
 | CNKfarmastatr (R paketi) | 1.0.0.9000 | 8 validasyonlu dosya; 516 kontrol GEÇTİ (G-13); yardım sayfaları (G-14) |
@@ -338,3 +353,5 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | KK-26 | Çalışma EMA OIP in vitro yöntemini de kapsar; FDA PBE ile karşılaştırılır | G-22 |
 | KK-27 | EMA %90 GA üç yöntemle: havuzlanmış, seri ortalamaları, karma model | G-22 |
 | KK-28 | Seri sayısı ℓ ve seri başına birim n birlikte araştırma faktörü; temel 3 × 10 | G-23 |
+| KK-29 | Izgara toplam σ_R + ρ + paylarla; platform paylar ya da bileşenlerle giriş | G-24 |
+| KK-30 | Paylar T ve R için aynı; hedefli senaryolar: seri varyansı yalnız R / yalnız T | G-25 |
