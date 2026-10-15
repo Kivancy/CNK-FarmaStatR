@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.25 · Son güncelleme: 15.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.26 · Son güncelleme: 15.10.2026"
 ---
 
 # Bu belge hakkında
@@ -319,6 +319,14 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Doğrulama:** Betik depo dosyasıyla yeniden koşuldu; `chow_vc.csv` değişmedi. G-27 commit'i sonrası GitHub Actions GEÇTİ (proje sahibi).
 - **Not:** `chow_vc.R` başlık yorumu güncellendi (veri artık depoda).
 
+## G-29 · Teknik not FSR-TN-PBE-01 v0.3 — 15.10.2026
+
+- **İş (K: "şimdi başla"):** KK-26 … KK-33 tek belgede toplandı. Dosya: `belgeler/teknik_notlar/FSR-TN-PBE-01_v0.3.docx` (11 sayfa). Başlık genişletildi: "In vitro eşdeğerlik: seri sayısı ve seri başına birim sayısı için istatistik model ve simülasyon tasarımı (FDA PBE ve EMA OIP)"; belge numarası korundu.
+- **Yeni bölümler:** sürüm geçmişi (0); gösterim (3; Chow ters gösterimi ve PSG indis tutarsızlığı); PSG tahmin edicisinin kaynağı olan tek yönlü ANOVA ve PSG sayılarıyla kontrol (4.2); EMA OIP yöntemi ve üç GA yolu (5); parametrelendirme ve T/R payları, q (6.1); ℓ × n yakalanan pay tablosu (8.1); ölçek değişmezliği (8.3); Hp6 (T/R asimetrisi) ve Hp7 (EMA yolları); gerçek veri varyans yapısı (9); veriye dayalı senaryo listesi ve zorlama düzeyleri (10.2); kaynakça (EMA OIP, ICH Q1A(R2), FDA ANDA S-C eklendi); Ek A.7 ve Ek B'ye PROC MIXED.
+- **Yeni bulgu (FarmaStatR türetimi; sayısal olarak doğrulandı):** Dengeli tasarımda REML seri varyansını pozitif tahmin ettiğinde EMA yolu (c) ile (b) aynı SE'yi verir (Var(X̄) = E[MS_seri]/(ℓnm)). Chow ham verisinde temel R ile yazılan REML: seri varyansı pozitif 7 veri setinde SE'ler birebir aynı (ör. D50 3 cm R 0,055751); sıfırda kesilen 5 veri setinde REML SE'si seri ortalaması SE'sinin 1,3–3,8 katı. (b) seri ortalamaları tesadüfen yakın düştüğünde aşırı iyimser olabilir.
+- **Senaryo sayısı:** m = 3 için tam faktöriyel ana liste 21.600 (6 σ_R × 2 ρ × 3 p_B × 3 p_L × 40 ℓ × n × 5 δ); m = 2 için 21.600; m = 1 için 7.200. Aşamalandırma açık.
+- **Açık (notun 13. bölümü):** aşamalandırma ve n_sim; hızlı PBE eşdeğeri ve EMA (c) kapalı biçimi; ortak seed; EMA'da tek büyüklükle başlama; Ting 1990; İngilizce sürüm.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -330,7 +338,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-8 | Otomatik doğrulama (GitHub Actions): her push'ta SHA-256 + 491 kontrol | Tamam: ilk koşu Linux + Windows GEÇTİ (G-12) |
 | A-6 | Lisans kararı (MIT / GPL-3 / diğer) | Üniversite görüşü bekleniyor (G-15); platform makalesinden önce |
 | A-7 | Fonksiyon belgeleri (İngilizce) ve PBE köprüsünün pakete alınması | Tamam: PBE köprüsü (G-13), belgeler (G-14) |
-| A-10 | Simülasyon altyapısı: validasyon belgesi FSR-VAL-SIM-1 ve SHA-256 sabitleme; ilk yayın senaryosu | Altyapı v0.1.0 tamam (G-15); ilk senaryo PBE güç / seri başına kap sayısı; teknik not v0.2 onay bekliyor (G-21) |
+| A-10 | Simülasyon altyapısı: validasyon belgesi FSR-VAL-SIM-1 ve SHA-256 sabitleme; ilk yayın senaryosu | Altyapı v0.1.0 tamam (G-15); ilk senaryo PBE güç / seri başına kap sayısı; teknik not v0.3 onay bekliyor (G-29) |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
 | A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
@@ -339,8 +347,8 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.25 | Bu belge |
-| FSR-TN-PBE-01 · PBE simülasyon modeli ve tasarımı | 0.2 | Taslak; v0.3 (EMA kolu, KK-26/27) yazılacak (G-22) |
+| FSR-LOG-01 · Proje günlüğü | 1.26 | Bu belge |
+| FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.3 | Taslak, onay bekliyor (G-29) |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
 | CNKfarmastatr (R paketi) | 1.0.0.9000 | 8 validasyonlu dosya; 516 kontrol GEÇTİ (G-13); yardım sayfaları (G-14) |
 
