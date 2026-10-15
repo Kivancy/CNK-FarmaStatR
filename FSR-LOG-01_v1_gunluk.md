@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.19 · Son güncelleme: 15.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.20 · Son güncelleme: 15.10.2026"
 ---
 
 # Bu belge hakkında
@@ -272,6 +272,15 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Karar (K): KK-27.** EMA %90 GA'sı üç yöntemle hesaplanır ve karşılaştırılır (hepsi FarmaStatR türetimi): (a) havuzlanmış birimler ("süper-seri" karşılığı); (b) seri ortalamaları; (c) seri rastgele etkili karma model (REML).
 - **Açık:** Format kararı (varyans girişi: toplam + paylar / bileşenler / iki yol) beklemede; proje sahibi önce bileşenlerin anlamının netleşmesini istedi. EMA insan ilaçları stabilite kılavuzu CPMP/QWP/122/02 Rev. 1 birincil metni yok (yalnız veteriner karşılığı görüldü; kullanılmadı). Teknik not v0.3 (EMA kolu, KK-26/27, düzeltmeler) yazılacak.
 
+## G-23 · Araştırma sorusu genişletildi: seri sayısı ve seri başına ampul birlikte — 15.10.2026
+
+- **Karar (K): KK-28.** KK-23 genişletildi. Seri sayısı ℓ ile seri başına birim (ampul) sayısı n birlikte araştırma faktörüdür. Temel tasarım 3 test + 3 referans seri × 10 ampuldür. Düzenleyici alt sınırların (ℓ ≥ 3: PSG "at least three batches", EMA OIP §5.1 "at least three consecutive batches"; n ≥ 10: PSG "no fewer than 10 units from each batch", EMA "a minimum of ten inhalers or units of each batch") dışındaki tasarımlar yalnızca karşılaştırma amacıyla ve etiketlenerek gösterilir. Toplam birim sayısı sabitken farklı ℓ × n dağılımları (ör. 2 × 15, 3 × 10, 4 × 7, 5 × 6) karşılaştırılır.
+- **Gerekçe (proje sahibi):** Seri değişkenliği PSG'de ayrı tahmin edilmediğine göre seri sayısının ve dağılımın etkisi sorulmalı; üretim serilerinden gelen değişkenlik gözden kaçırılmamalı.
+- **Destekleyici gözlem (FarmaStatR türetimi, teknik not Denk. 15, 18):** PSG'de yakalanan seri varyansı payı toplam varyansta n(ℓ−1)/(nℓ−1), ortalama farkı varyansında (ℓ−1)/(nℓ−1): 2 × 15: %52 / %3; 3 × 10: %69 / %7; 4 × 7: %78 / %11; 5 × 6: %83 / %14. Ortalamanın gerçek varyansındaki σ²_B/ℓ terimini yalnız seri sayısı küçültür. Kaynakta benzer ilke iki düzeyli modelde: Chow, Shao, Wang 2003 Bölüm 3 gözlem 3 ("having more canisters is preferred than having more replicates within each canister"); bizim modelde bir düzey yukarıda hipotez olarak sınanacak.
+- **Gösterim kararı:** ℓ seri sayısı, n seri başına birim (Budesonid'de ampul; PSG'de "canisters or bottles", "container", "unit"), m evre sayısı (B, M, E); indisler k ürün, j seri, i birim, s evre (PSG MSB/MSW gösterimi). Chow, Shao, Wang 2003'te m ile n ters anlamdadır.
+- **PSG bulgusu (proje sahibinin gönderdiği sayfa görüntüsüyle doğrulandı):** PSG 020929 Appendix Adım 2'de X̄..k. formülünün indis aralıkları MSB/MSW ile ters yazılmıştır (Σ_{i=1}^{ℓk} Σ_{j=1}^{nk}); toplam tüm birimler üzerinden olduğundan sonuç değişmez. Adım 4 tablosu teknik not ve `calc_pbe` ile birebir uyumlu.
+- **Açık:** Varyans giriş biçimi kararı (B seçeneği: makale ızgarası toplam + paylarla, platform iki yolla) bekliyor.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -292,7 +301,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.19 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.20 | Bu belge |
 | FSR-TN-PBE-01 · PBE simülasyon modeli ve tasarımı | 0.2 | Taslak; v0.3 (EMA kolu, KK-26/27) yazılacak (G-22) |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
 | CNKfarmastatr (R paketi) | 1.0.0.9000 | 8 validasyonlu dosya; 516 kontrol GEÇTİ (G-13); yardım sayfaları (G-14) |
@@ -328,3 +337,4 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | KK-25 | İkincil atıflar için birincil kaynak istenir ve ayrıntılı incelenir | G-20 |
 | KK-26 | Çalışma EMA OIP in vitro yöntemini de kapsar; FDA PBE ile karşılaştırılır | G-22 |
 | KK-27 | EMA %90 GA üç yöntemle: havuzlanmış, seri ortalamaları, karma model | G-22 |
+| KK-28 | Seri sayısı ℓ ve seri başına birim n birlikte araştırma faktörü; temel 3 × 10 | G-23 |
