@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.22 · Son güncelleme: 15.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.24 · Son güncelleme: 15.10.2026"
 ---
 
 # Bu belge hakkında
@@ -296,6 +296,23 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Açıklama notları:** "Pay" = toplam varyansın kaynağa göre yüzdesi (pasta dilimi). "Izgara" = simülasyon senaryolarının tam listesi (faktör düzeylerinin kombinasyonları; Morris ve ark. 2019 §3.2 "data-generating mechanisms"); projede 2. hesaplama katmanı (SQLite sonuç ızgarası). Chow ve Liu 2008 Tablo 14.5.10 bağlamı: burun spreyi, lazer difraksiyon D50, 3 lot × 10 şişe × 3 evre, 3 mesafe (3, 5, 7 cm); tablonun mesafeleri nasıl ele aldığı belirtilmemiş. Kitap REML'i "as suggested by the FDA draft guidance" diye anar; FDA 1999 IX.B.2.b momentler yöntemini önerir.
 - **Açık:** q (evre içi sistematik kayma); faktör düzeyleri (teknik not Bölüm 8.2); teknik not v0.3.
 
+## G-26 · Evre içi sistematik kayma (q) yalnız duyarlılık analizinde; faktör düzeylerinin rolü — 15.10.2026
+
+- **Karar (K): KK-31.** q (evre varyansının tüm birimlerde aynı yönde olan sistematik kaymadan gelen payı; ör. dozun B'den E'ye düzenli düşmesi) ana senaryolarda 0 alınır; q > 0 yalnız duyarlılık analizinde kullanılır.
+- **Gerekçe:** PSG rastgele ve sistematik evre farkını ayırmaz (ikisi de MSW, "within-bottle variability"); FDA 1999 IX.B.1 tekdüzelik eksikliğini varyans bileşeni sayar. Sistematik kayma MSW'yi merkezi olmayan χ²'ye dönüştürür (teknik not Bölüm 7.4, Hp5). Verilerde belirgin kayma yok: PSG 020929 örnek verisinde (simüle) evre etkisi p = 0,68; Chow ve Liu 2008 Tablo 14.5.7'de D50 için evrelere göre GMR %98,7–103,6.
+- **Açıklama (proje sahibinin sorusu):** Faktör düzeyleri kullanıcının yerine seçilmez; proje ilkesi gereği tüm parametreler platformda kullanıcı tarafından ayarlanabilir (1. katman, tarayıcıda koşu). Seçilen düzeyler yalnızca (i) makalenin önceden belirlenmiş senaryo listesini (Morris ve ark. 2019 §8.1: koşudan önce protokol; seçici raporlamaya karşı) ve (ii) önceden hesaplanmış SQLite sonuç ızgarasını (2. katman) tanımlar.
+- **Sıradaki:** faktör düzeyleri (σ_R, ρ, paylar, ℓ × n, δ); ardından teknik not v0.3 (EMA kolu ve KK-26 … KK-31).
+
+## G-27 · Faktör düzeyleri veriye dayandırıldı; zorlama senaryoları — 15.10.2026
+
+- **İlke (proje sahibi):** Düzey önerileri Chow ve Liu 2008 ve PSG'ye dayanmalı; veride karşılığı olmayan değer uydurulmamalı.
+- **Veri analizi (FarmaStatR türetimi; hesap Claude'a ait):** Chow ve Liu 2008 Tablo 14.5.2 (D50) ve 14.5.3 (SPAN) ham verisi (butorfanol burun spreyi T, Stadol NS R; 3 lot × 10 şişe × 3 evre; 3, 5, 7 cm; Bölüm 14.5.1) metinden aktarıldı ve her değişken, mesafe ve ürün için ayrı ayrı log ölçeğinde PSG MSB/MSW ile iki düzeyli iç içe ANOVA'nın lot satırından (Searle ve ark. 2006 Tablo 4.10) varyans bileşenleri hesaplandı. İki bağımsız uygulama (lm tabanlı ve temel R) aynı sonucu verdi. Sonuçlar: σ 0,059–0,164; R'de p_B 0,05–0,32 (D50'de lot farkı üç mesafede anlamlı, p ≈ 0,01), T'de p_B 0 (yalnız SPAN 3 cm 0,19, p = 0,027); p_L 0,07–0,31; ρ = σ_T/σ_R 1,00–1,14. PSG örneği (simüle): σ_R 0,41, ρ 1,16, p_B 0,03–0,05, p_L ≈ 0.
+- **Gözlem:** Tablo 14.5.10'daki evre bileşeni (R 0,0053) mesafe başına hesaplananlardan (0,001–0,003) büyüktür; mesafeler arası ortalama farkı (D50 yaklaşık 58, 52, 53 µm; log ölçeğinde yaklaşık 0,0026) farkı büyük ölçüde açıklar. Çıkarım: kitap tablosu mesafeleri birleştirmiş olabilir (kitap açıklamaz). Mesafe başına hesaplar esas alınır.
+- **Karar (K): KK-32.** Makale senaryo listesi düzeyleri (veriye dayalı): σ_R 0,06; 0,08; 0,10; 0,12; 0,16 (Chow) ve 0,40 (PSG örneği); ρ 1,00; 1,15; p_B 0; 0,10; 0,30; p_L 0,01; 0,15; 0,30 (p_C kalan); ℓ 2–6, n 5–30 (temel 3 × 10; KK-28); güç için GMR 1,00; 1,05; 1,10 (Chow Tablo 14.5.7: D50 0,99–1,04, SPAN 0,95–0,98; PSG örneği |Δ̂| = 0,149, GMR 1,16); tip I hata için δ₀ (teknik not Denk. 12). Veride karşılığı olmayan σ_R = 0,25, ρ = 0,8 ve p_B = 0,50 **"zorlama senaryosu"** etiketiyle tutulur.
+- **Sınırlılık:** Düzeyler tek bir gerçek ürüne (butorfanol burun spreyi) ve bir simüle veriye dayanır; Budesonid için varyans verisi yok. Makalede belirtilecek.
+- **Dosyalar:** `belgeler/teknik_notlar/FSR-TN-PBE-01_ek/chow_vc.R` ve `chow_vc.csv` (sonuçlar). Kitaptan aktarılan ham veri dosyası (chow1452.csv) telifli kaynaktan alındığı için depoya konmadı; depoya girip girmeyeceği proje sahibine sorulacak.
+- **Sıradaki:** teknik not v0.3 (EMA kolu ve KK-26 … KK-32).
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -316,7 +333,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.22 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.24 | Bu belge |
 | FSR-TN-PBE-01 · PBE simülasyon modeli ve tasarımı | 0.2 | Taslak; v0.3 (EMA kolu, KK-26/27) yazılacak (G-22) |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
 | CNKfarmastatr (R paketi) | 1.0.0.9000 | 8 validasyonlu dosya; 516 kontrol GEÇTİ (G-13); yardım sayfaları (G-14) |
@@ -355,3 +372,5 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | KK-28 | Seri sayısı ℓ ve seri başına birim n birlikte araştırma faktörü; temel 3 × 10 | G-23 |
 | KK-29 | Izgara toplam σ_R + ρ + paylarla; platform paylar ya da bileşenlerle giriş | G-24 |
 | KK-30 | Paylar T ve R için aynı; hedefli senaryolar: seri varyansı yalnız R / yalnız T | G-25 |
+| KK-31 | Evre içi sistematik kayma q ana senaryolarda 0; yalnız duyarlılık analizinde | G-26 |
+| KK-32 | Faktör düzeyleri Chow ham verisi ve PSG örneğine dayalı; veride olmayanlar "zorlama senaryosu" | G-27 |
