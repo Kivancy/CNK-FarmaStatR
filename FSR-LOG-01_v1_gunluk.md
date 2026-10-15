@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.15 · Son güncelleme: 14.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.18 · Son güncelleme: 15.10.2026"
 ---
 
 # Bu belge hakkında
@@ -230,6 +230,37 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Kaynaklar (K):** Chow & Liu 2008, FDA 2026 (Mayıs) ve FDA 1999 belgesi proje dosyalarına eklendi. Proje sahibinin notu: Chow & Liu 2008, f2 ve MSD gibi profil benzerliği değerlendirmelerinde de (Bölüm 15) kaynak olarak kullanılmalı.
 - **Sıradaki:** Teknik not (model, estimand, ADEMP, kaynak eşlemesi); kodlama notun onayından sonra.
 
+## G-19 · Teknik not FSR-TN-PBE-01 v0.1 (taslak) — 14.10.2026
+
+- **İş (K: "ben uyurken sen teknik notu yaz"):** Proje sahibi yokken yazıldı; verilen kararlar notun 0. bölümünde listelendi (dil TR, biçim Word, parametrelendirme, faktör düzeyleri, hızlı eşdeğer tahmin edici, belge numarası). Hepsi onay bekliyor.
+- **Dosya:** `belgeler/teknik_notlar/FSR-TN-PBE-01_v0.1.docx` (9 sayfa). Ekler: `FSR-TN-PBE-01_ek/ems_check.R` ve `ems_check.csv`.
+- **İçerik:** amaç ve araştırma sorusu; kaynak-katkı tablosu; PBE kriteri ve PSG prosedürü (PSG 020929 Adım 1-5); "süper-seri" kökeni (FDA 1999); tasarım ve gösterim (ℓ = 3, n araştırma faktörü, m = 1/2/3); veri üretme modeli (seri, kap rastgele; evre bileşeni σ²_L = σ²_W + Στ²/m); estimand (FDA 1999 IX.B.2.a); PSG tahmin edicisinin beklenen değerleri, yanlılığı, ortalama farkı varyansının eksik tahmini, χ² varsayımlarının bozulması (FarmaStatR türetimi); beş hipotez (Hp1-Hp5); ADEMP (önerilen ızgara, n_sim = 10.000); doğrulama planı; sınırlılıklar; SAS PROC GLM/MIXED kontrol kodu; adım adım türetimler.
+- **Doğrulama:** Beklenen kareler ortalamaları ve ortalama varyansı formülleri 30 konfigürasyonda (n ∈ {5, 10, 20}, m ∈ {1, 2, 3}, σ_B ∈ {0; 0,2}, evre kayması var/yok), her biri 20.000 veri setiyle sınandı: 150 karşılaştırmada en büyük |z| = 2,39. Satterthwaite etkin serbestlik derecesi örneği (σ_B = 0,2, σ_C = 0,3, σ_W = 0,05, m = 3): n = 10 için 16,7 (nominal 29). PSG'nin ortalama farkı varyans tahmini gerçeğin n = 10'da yaklaşık %24'ü.
+- **Bulunan nokta:** Evre kayması varsa MSW merkezi olmayan χ² dağılımına uyar (PSG merkezi χ² varsayar); hipotez Hp5 olarak eklendi.
+- **Açık:** Notun proje sahibince incelenmesi ve onayı; İngilizce sürüm onaydan sonra; kodlama onaydan sonra.
+
+## G-20 · Çalışma kuralı: ikincil atıflar için birincil kaynak istenir — 15.10.2026
+
+- **Karar (K): KK-25.** Claude, yalnızca başka bir kaynak üzerinden bildiği (birincil metnini okumadığı) her kaynağı listeler ve proje sahibinden proje dosyalarına yüklenmesini ister; yüklenen birincil kaynağı ayrıntılı inceler ve belgeleri ona göre günceller. Birincil metin okunana kadar atıf "aktaran: …" biçiminde işaretli kalır.
+- **Tespit (Claude):** Atıf denetimi yapıldı. Birincil metni okunmamış kaynaklar: Chow, Shao, Wang 2003a (Stat Med 22:55-68); Hyslop, Hsuan, Holder 2000 (Stat Med 19:2885-2897); Howe 1974 (JASA 69:789-794); Ting ve ark. 1990 (J Stat Comput Simul 35:135-143); Morris, White, Crowther 2019 (Stat Med 38:2074-2102; simülasyon altyapısının performans formülleri); Langenbucher 1972 (J Pharm Pharmacol 24:979-981); ICH M9 (2019). Teknik notta kaynaksız kullanılan Satterthwaite yaklaşımı (Satterthwaite 1946) ve iç içe ANOVA beklenen kareler ortalamaları için bir ders kitabı kaynağı da eklenmeli. Proje dosyalarındaki numaralı dosyaların eşlemesi doğrulandı (ör. dosya 8 = Sathe ve ark. 1996, DOI 10.1023/A:1016020822093).
+
+## G-21 · Birincil kaynaklar okundu; teknik not v0.2 — 15.10.2026
+
+- **İş (K: "kaynakları düzenledim … 5 değişikliği yeniden gözden geçir"):** G-19/G-20'deki beş değişiklik (teknik not, iki ek, OKUBENI, günlük) yeni yüklenen birincil kaynaklarla karşılaştırıldı (KK-25).
+- **Okunan birincil kaynaklar:** Chow, Shao, Wang 2003 (Stat Med 22:55-68); Hyslop, Hsuan, Holder 2000 (Stat Med 19:2885-2897); Howe 1974 (JASA 69:789-794); Satterthwaite 1946 (Biometrics Bull 2:110-114); Morris, White, Crowther 2019 (Stat Med 38:2074-2102); Searle, Casella, McCulloch 2006 (Variance Components; Tablo 4.10, Bölüm 4.5); ICH M9 (2019) Bölüm 3.2.2 ve ICH M9 Soru-Cevap.
+- **Sonuç:** v0.1'in hiçbir türetimi ya da sayısal sonucu değişmedi. Bulgular:
+  1. PSG'nin σ̂² ayrıştırması, Chow ve ark. 2003 Bölüm 2'deki s²_B ve (1 − 1/m)s²_W tahmin edicileriyle cebirsel olarak aynıdır. Dikkat: makalede m kap sayısı, n tekrar sayısıdır; bizde tersidir.
+  2. Üst sınırın E-H-U yapısı Hyslop ve ark. 2000 Bölüm 3 Adım 1-3'tür (Denk. 20-22); Howe 1974 Approximation I'in (Denk. 3.4) ikiden fazla değişkene genişletilmesidir. PSG ortalama teriminde t kantili kullanır (Hyslop Denk. 20); Chow ve ark. 2003 z kullanır. Bu yüzden Chow'un tip I hata tablosu ile karşılaştırma yalnızca niteldir.
+  3. Chow ve ark. 2003 modeli (5) "no period effect" varsayar; teknik notun evre kayması (q > 0) bu varsayımdan bilinçli sapmadır, FDA 1999 IX.B.1'e dayanır.
+  4. Denk. 14 (E[MSB]) artık Searle ve ark. 2006 Tablo 4.10'dan, PSG'nin iki satırı havuzlamasıyla doğrudan elde edilir. χ² ve bağımsızlık varsayımları Searle Bölüm 4.5a (Denk. 34), evre kaymasında merkeziyetsizlik de aynı bölümdendir. Etkin serbestlik derecesi Satterthwaite 1946 Denk. 6 (beklenen değerlerle); katsayılar pozitif olduğundan negatif katsayı uyarısı geçerli değildir.
+  5. Chow ve Liu 2008 kitabındaki aktarımda dizgi hataları var (sayısal örnekte üst sınırın işareti, s²_T = 0,29889 → makalede 0,292889, bir gözlemde σ_T² ile σ_R² arasındaki eşitsizliğin yönü); makale esas alınır.
+  6. `sim_performance.R`, Morris ve ark. 2019 Tablo 6'nın 9 ölçütünden 8'ini birebir uygular (eksik: göreli hassasiyet artışı; yalnız yöntem karşılaştırmasında gerekir). `sim_n_required` Denk. 1 ve Bölüm 7.1 örnekleriyle (1900, 1600) uyumlu. Kod değişikliği gerekmedi.
+  7. `f2_boot.R`'nin M9 CV kuralı (≤ 10 dk %20, sonrası %10; ihlal CV > sınır) ICH M9 Bölüm 3.2.2 metniyle aynı. Gözlem (değişiklik yok, A-9'a not): M9 "≥ %85" yazar, EMA Ek I "> %85"; kod EMA perspektifinde EMA metnini izler. ICH M9 Soru-Cevap 3.2.3: BCS Sınıf I ürünlerde yüksek değişkenlikte bootstrap gibi alternatif yöntemler "not considered applicable"; bu kısıt yalnız BCS biyomuafiyeti bağlamındadır ve `calc_f2_boot` belgesine kullanım notu olarak eklenmeli (A-9).
+  8. "An_Approximate_Confidence_Interval_for_the_Varianc.pdf" = Alamro, Al-Shiha, Almohisen 2023 (Int J Stat Probab 12(4):40-63). Ting ve ark. 1990'ın yerini tutmaz; teknik notta kullanılmadı.
+- **Dosyalar:** `belgeler/teknik_notlar/FSR-TN-PBE-01_v0.2.docx` (11 sayfa; Bölüm 0.1'de değişiklik listesi; v0.1 dosyası kayıt olarak kalır). `FSR-TN-PBE-01_ek/ems_check.R`: yalnızca başlık yorumu (kaynak satırı); sonuç tablosu değişmedi. OKUBENI değişmedi.
+- **Yeni açık noktalar (teknik not Bölüm 11):** (6) tüm senaryolarda ortak seed (Morris ve ark. 2019 Bölüm 5.4); (7) Ting ve ark. 1990 birincil metnine ulaşılamadı.
+- **Hâlâ eksik birincil kaynaklar:** Ting ve ark. 1990; Langenbucher 1972 (Weibull MSD; teknik notla ilgisiz).
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -241,15 +272,17 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-8 | Otomatik doğrulama (GitHub Actions): her push'ta SHA-256 + 491 kontrol | Tamam: ilk koşu Linux + Windows GEÇTİ (G-12) |
 | A-6 | Lisans kararı (MIT / GPL-3 / diğer) | Üniversite görüşü bekleniyor (G-15); platform makalesinden önce |
 | A-7 | Fonksiyon belgeleri (İngilizce) ve PBE köprüsünün pakete alınması | Tamam: PBE köprüsü (G-13), belgeler (G-14) |
-| A-10 | Simülasyon altyapısı: validasyon belgesi FSR-VAL-SIM-1 ve SHA-256 sabitleme; ilk yayın senaryosu | Altyapı v0.1.0 tamam (G-15); ilk senaryo PBE güç / seri başına kap sayısı, model tasarım aşamasında (G-16) |
+| A-10 | Simülasyon altyapısı: validasyon belgesi FSR-VAL-SIM-1 ve SHA-256 sabitleme; ilk yayın senaryosu | Altyapı v0.1.0 tamam (G-15); ilk senaryo PBE güç / seri başına kap sayısı; teknik not v0.2 onay bekliyor (G-21) |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
+| A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
 
 # 4. Belge ve sürüm dizini
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.15 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.18 | Bu belge |
+| FSR-TN-PBE-01 · PBE simülasyon modeli ve tasarımı | 0.2 | Taslak, onay bekliyor (G-21; v0.1: G-19) |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
 | CNKfarmastatr (R paketi) | 1.0.0.9000 | 8 validasyonlu dosya; 516 kontrol GEÇTİ (G-13); yardım sayfaları (G-14) |
 
@@ -281,3 +314,4 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | KK-22 | PBE modelinde seri etkisi rastgele; toplam varyans seri varyansını içerir | G-16 |
 | KK-23 | PBE araştırma sorusu: seri başına kap sayısı n (ℓ = 3, m = 3 sabit) | G-16 |
 | KK-24 | Yaşam evresi değişkenliği toplam varyansa dahil (FDA 1999 IX.B.1); m = 1, 2 ya da 3 | G-18 |
+| KK-25 | İkincil atıflar için birincil kaynak istenir ve ayrıntılı incelenir | G-20 |

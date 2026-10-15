@@ -10,5 +10,6 @@ Araştırma ve eğitim amaçlıdır; GxP ortamında valide edilmiş sistem deği
 - `CNKfarmastatr/` — R paketi (istatistik çekirdeği ve validasyon testleri)
 - `araclar/` — yardımcı betikler (`cekirdek_kontrol.R`: çekirdeklerin parmak izi kontrolü)
 - `devralinan/v0.5.1/` — önceki çalışmadan alınan malzeme (değiştirilmeden; SHA-256 değerleri günlükte)
+- `belgeler/` — teknik notlar ve validasyon belgeleri (Word); ekleri (betik, sonuç tabloları) yanlarında
 
 Özel GitHub deposu: github.com/Kivancy/CNK-FarmaStatR
