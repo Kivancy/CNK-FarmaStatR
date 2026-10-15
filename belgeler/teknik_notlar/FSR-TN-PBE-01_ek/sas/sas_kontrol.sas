@@ -6,6 +6,7 @@
      sas_covparms.csv   PROC MIXED REML variance components (per product)
      sas_diffs_sat.csv  T-R difference, SE, df, 90% CI (ddfm=satterthwaite)
      sas_diffs_kr.csv   same with ddfm=kenwardroger
+     sas_conv_sat.csv, sas_conv_kr.csv  convergence status per data set
    Model (TN Eq. 8, per product k): y = mu_k + tau_ks + b_jk + c_ijk + e_ijks
    Research and education only; not a system validated for GxP environments.
    =========================================================================== */
@@ -20,6 +21,13 @@ proc import datafile="&yol./sas_veri.csv" out=veri dbms=csv replace;
   guessingrows=max;
 run;
 proc sort data=veri; by set product; run;
+
+/* Export with full precision (proc export otherwise uses the display formats,
+   e.g. 4 significant digits).                                               */
+%macro fsr_exp(ds, file);
+  data _exp; set &ds; format _numeric_ best32.; run;
+  proc export data=_exp outfile="&yol./&file" dbms=csv replace; run;
+%mend;
 
 /* 2. PSG mean squares: one GLM per data set and product.
       MSB_PSG = (SS_batch + SS_unit(batch)) / (N - 1)
@@ -39,7 +47,7 @@ data sas_glm_ss;
   set ss_model(keep=set product source df ss ms) ss_err(in=e);
   if e then source = "Error";
 run;
-proc export data=sas_glm_ss outfile="&yol./sas_glm_ss.csv" dbms=csv replace; run;
+%fsr_exp(sas_glm_ss, sas_glm_ss.csv);
 
 /* 3. EMA method (c): REML, batch and unit random, stage fixed within product,
       separate variances for T and R. lsmeans = product means (balanced).   */
@@ -52,15 +60,18 @@ proc export data=sas_glm_ss outfile="&yol./sas_glm_ss.csv" dbms=csv replace; run
     random batch unit(batch) / group=product;
     repeated / group=product;
     lsmeans product / diff cl alpha=0.10;
-    ods output CovParms=cp_&tag Diffs=dif_&tag LSMeans=lsm_&tag;
+    ods output CovParms=cp_&tag Diffs=dif_&tag LSMeans=lsm_&tag
+               ConvergenceStatus=cs_&tag;
   run;
   ods exclude none;
-  proc export data=dif_&tag outfile="&yol./sas_diffs_&tag..csv" dbms=csv replace; run;
+  %fsr_exp(dif_&tag, sas_diffs_&tag..csv);
+  %fsr_exp(cs_&tag, sas_conv_&tag..csv);
 %mend;
 %mixed(satterthwaite, sat);
 %mixed(kenwardroger, kr);
-proc export data=cp_sat outfile="&yol./sas_covparms.csv" dbms=csv replace; run;
+%fsr_exp(cp_sat, sas_covparms.csv);
 
 /* 4. Quick look in the Results window */
 proc print data=dif_sat noobs; var set product _product estimate stderr df lower upper; run;
 proc print data=cp_sat noobs; run;
+proc print data=cs_sat noobs; run;

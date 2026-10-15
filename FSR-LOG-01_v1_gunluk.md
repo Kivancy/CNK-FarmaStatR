@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.32 · Son güncelleme: 15.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.33 · Son güncelleme: 15.10.2026"
 ---
 
 # Bu belge hakkında
@@ -419,6 +419,26 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
   - Kareler ortalamaları, REML varyans bileşenleri, fark ve SE birebir aynı çıkmalı (deterministik).
   - Serbestlik derecesi ve GA sınırları farklı çıkabilir: FarmaStatR türetimi ile Satterthwaite / Kenward-Roger farkı. Bu fark Bölüm 5.3 ve 11.8'deki sınırlılığın sayısal ölçüsü olacak.
 
+## G-36 · SAS bağımsız kontrolü tamamlandı; teknik not v0.6 — 15.10.2026
+
+- **Koşu (proje sahibi; SAS masaüstü, 15.10.2026):**
+  - `sas_kontrol.sas` iki kez koşuldu; ikisinde de hata yok.
+  - İlk koşuda çıktılar 4 anlamlı basamakla yazıldı. Program tam hassasiyetle (best32.) ve yakınsama durumunu da dışa aktaracak şekilde düzeltildi, sonra yeniden koşuldu.
+  - Çıktılar: `sas_glm_ss.csv`, `sas_covparms.csv`, `sas_diffs_sat.csv`, `sas_diffs_kr.csv`, `sas_conv_sat.csv`, `sas_conv_kr.csv`.
+- **Karşılaştırma:** `sas_karsilastir.R` → `sas_karsilastir.csv`. Sonuçlar:
+  - PSG MSB ve MSW; Searle Tablo 4.10 kareler ortalamaları: en çok 7,7 × 10⁻¹¹ göreli fark. Birebir aynı.
+  - T − R farkı: en çok 9,3 × 10⁻¹³. Aynı.
+  - Varyans bileşenlerinin sıfırda kesilmediği (iç çözüm) veri setleri (K04, K07, K08, K09):
+    - REML varyans bileşenleri en çok 4,3 × 10⁻¹².
+    - SE en çok 3,6 × 10⁻¹³ göreli.
+    - Serbestlik derecesi: SAS Satterthwaite ve Kenward-Roger ile 10⁻¹² düzeyinde aynı.
+  - Bir bileşenin sıfırda kesildiği (sınır) veri setleri (K01–K03, K05, K06, K10, K11):
+    - Varyans bileşenleri en çok 2,2 × 10⁻⁴, SE en çok 9,8 × 10⁻⁵ göreli; serbestlik derecesi en çok 0,0067 (K10); %90 GA sınırı en çok 5 × 10⁻⁶.
+    - Bu farkların nedeni SAS'ın yakınsama toleransı. REML ölçütü SAS tahminlerinde ve R kapalı biçiminde ayrı ayrı hesaplandı; R kapalı biçimi her durumda daha yüksek olabilirlik verdi (fark 2 × 10⁻¹¹ – 3 × 10⁻⁷).
+  - K07 (PSG örneği): SAS "WARNING: Stopped because of infinite likelihood" ile durdu ve fark/GA üretmedi. Varyans bileşenleri R ile 6 × 10⁻¹⁴ düzeyinde aynı. Nedeni incelenmedi.
+- **Sonuç:** EMA (c)'nin kapalı biçimi ve serbestlik derecesi seçimi SAS ile bağımsız olarak doğrulandı. Teknik notta (Bölüm 5.3, 11.8) "SAS farklı sd verebilir" uyarısı kaldırıldı; bulgu Ek B.1'e yazıldı.
+- **Teknik not v0.6** (`FSR-TN-PBE-01_v0.6.docx`, 15 sayfa): Ek B kodu düzeltildi (G-35); yeni Ek B.1 sonuç tablosu; Bölüm 5.3, 11.8 ve 12 güncellendi.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -440,7 +460,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
 | FSR-LOG-01 · Proje günlüğü | 1.27 | Bu belge |
-| FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.5 | Taslak; Bölüm 11 onay bekliyor (G-34) |
+| FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.6 | Taslak; Bölüm 11 onay bekliyor; SAS kontrolü tamam (G-36) |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
 | CNKfarmastatr (R paketi) | 1.0.0.9000 | 8 validasyonlu dosya; 516 kontrol GEÇTİ (G-13); yardım sayfaları (G-14) |
 

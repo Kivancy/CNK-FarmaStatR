@@ -1,0 +1,12 @@
+set,Reason,Status,pdG,pdH
+K01,Convergence criteria met.,0,0,1
+K02,Convergence criteria met.,0,0,1
+K03,Convergence criteria met.,0,0,1
+K04,Convergence criteria met.,0,1,1
+K05,Convergence criteria met.,0,0,1
+K06,Convergence criteria met.,0,0,1
+K07,WARNING: Stopped because of infinite likelihood.,1,1,1
+K08,Convergence criteria met.,0,1,1
+K09,Convergence criteria met.,0,1,1
+K10,Convergence criteria met.,0,0,1
+K11,Convergence criteria met.,0,0,1
