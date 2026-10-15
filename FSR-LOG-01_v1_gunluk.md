@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.26 · Son güncelleme: 15.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.27 · Son güncelleme: 15.10.2026"
 ---
 
 # Bu belge hakkında
@@ -327,6 +327,18 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Senaryo sayısı:** m = 3 için tam faktöriyel ana liste 21.600 (6 σ_R × 2 ρ × 3 p_B × 3 p_L × 40 ℓ × n × 5 δ); m = 2 için 21.600; m = 1 için 7.200. Aşamalandırma açık.
 - **Açık (notun 13. bölümü):** aşamalandırma ve n_sim; hızlı PBE eşdeğeri ve EMA (c) kapalı biçimi; ortak seed; EMA'da tek büyüklükle başlama; Ting 1990; İngilizce sürüm.
 
+## G-30 · Senaryo listesi iki aşamaya indirildi (yaklaşık 620 senaryo) — 15.10.2026
+
+- **Gerekçe (proje sahibi):** Tam faktöriyel liste (m = 3 için 21.600 senaryo) yönetilebilir değil.
+- **Karar (K): KK-34.** Morris ve ark. 2019 §3.2 (temel senaryo + birlikte değiştirilen ana faktörler + birer birer değiştirilen koşullar; uç noktalarda etkileşim kontrolü).
+  - **Temel senaryo (veriye dayalı öneri):** σ_R 0,12 (Chow 0,06–0,16 ortası, 0,1 eşiği üzerinde); ρ 1,00 (Chow 1,00–1,14); p_L 0,15 (Chow 0,07–0,31); m 3 (Budesonid); q 0 (KK-31).
+  - **Aşama 1 (araştırma sorusunun çekirdeği):** p_B {0; 0,10; 0,30} × ℓ {2, 3, 4, 5, 6} × n {5, 8, 10, 15, 20, 30} × δ {FDA δ₀; EMA GMR 1,18; GMR 1,00; GMR 1,05} = 360 senaryo; her senaryoda FDA PBE ve EMA yolları (a), (b), (c) aynı veri setlerine uygulanır.
+  - **Aşama 2 (birer birer):** temelden tek faktör değiştirilir; 4 tasarım (3 × 10, 3 × 20, 5 × 10, 6 × 5) × 4 δ: σ_R {0,06; 0,08; 0,10; 0,16; 0,40}; ρ 1,15; p_L {0,01; 0,30}; m {1; 2}; q 0,5; T/R hedefli (yalnız R / yalnız T); zorlama (σ_R 0,25; ρ 0,80; p_B 0,50) = yaklaşık 256 senaryo.
+  - **Toplam** yaklaşık 620 senaryo; n_sim 10.000 ile yaklaşık 6 milyon veri seti.
+  - **Dayanak:** ölçek değişmezliği (G-24; teknik not 8.3): σ_R > 0,1 bölgesinde PBE sonuçları σ_R'nin büyüklüğüne bağlı değil; çok sayıda σ_R düzeyi yalnız EMA ve eşik çevresi için gerekli.
+  - Listede olmayan her kombinasyon platformda kullanıcı tarafından koşulabilir.
+- **Açık:** n_sim onayı; hızlı PBE eşdeğeri ve EMA (c) kapalı biçimi; ortak seed; EMA'da tek büyüklük; teknik not v0.4'te Bölüm 10.2'nin bu kararla güncellenmesi.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -347,7 +359,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.26 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.27 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.3 | Taslak, onay bekliyor (G-29) |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
 | CNKfarmastatr (R paketi) | 1.0.0.9000 | 8 validasyonlu dosya; 516 kontrol GEÇTİ (G-13); yardım sayfaları (G-14) |
@@ -389,3 +401,4 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | KK-31 | Evre içi sistematik kayma q ana senaryolarda 0; yalnız duyarlılık analizinde | G-26 |
 | KK-32 | Faktör düzeyleri Chow ham verisi ve PSG örneğine dayalı; veride olmayanlar "zorlama senaryosu" | G-27 |
 | KK-33 | Chow Tablo 14.5.2–14.5.3 ham verisi kaynağıyla depoda | G-28 |
+| KK-34 | Senaryo listesi iki aşamalı: temel senaryo + Aşama 1 (360) + Aşama 2 (yaklaşık 256) | G-30 |
