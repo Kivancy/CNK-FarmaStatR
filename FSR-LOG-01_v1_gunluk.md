@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.18 · Son güncelleme: 15.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.19 · Son güncelleme: 15.10.2026"
 ---
 
 # Bu belge hakkında
@@ -261,6 +261,17 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Yeni açık noktalar (teknik not Bölüm 11):** (6) tüm senaryolarda ortak seed (Morris ve ark. 2019 Bölüm 5.4); (7) Ting ve ark. 1990 birincil metnine ulaşılamadı.
 - **Hâlâ eksik birincil kaynaklar:** Ting ve ark. 1990; Langenbucher 1972 (Weibull MSD; teknik notla ilgisiz).
 
+## G-22 · Varyans bileşenlerinin anlamı; "3 seri"nin kaynağı; EMA kapsama alındı — 15.10.2026
+
+- **Açıklama (proje sahibinin isteği):** PSG 020929 formüllerinin kaynağı olan ANOVA modeli açıklandı. PSG'nin MSB ve MSW'si, kaplar grup, evreler tekrar olmak üzere tek yönlü rastgele etkili ANOVA'nın kareler ortalamalarıdır (Chow, Shao, Wang 2003 model 5; Searle ve ark. 2006 Tablo 4.8). PSG'deki "(MSB − MSW)/m: between-bottle variability" ve "MSW: within-bottle variability" tanımları ile σ̂² = MSB/m + (m−1)MSW/m bu modelin momentler yöntemi tahminleridir. Kontrol: PSG'nin kendi E3s/E4s değerlerinden 0,163603 + 0,000125 = 0,163728 = PSG'deki σ²_R. FDA 1999'un üç bileşenli tanımı iki düzeyli iç içe ANOVA'ya karşılık gelir (Searle Tablo 4.10); PSG seri satırını kaplarla havuzlar.
+- **Düzeltmeler (Claude):** (1) PSG 020929 örnek verisi simüle edilmiştir ("The data given in this example are simulated"). (2) Claude, Budesonid'de evre olmadığını (m = 1) önermişti; proje sahibi düzeltti: B/M/E evreleri vardır; teknik nottaki m = 3 doğrudur. (3) Claude "FDA seri değişkenliğini dikkate almıyor" demişti; doğrusu: ayrı tahmin etmiyor ve kısmen eksik sayıyor (toplam varyansta n = 10'da yaklaşık %69'u, ortalama farkının varyansında yaklaşık %7'si yakalanır; teknik not Denk. 15, 17-18).
+- **Veri gözlemleri:** Chow ve Liu 2008 Tablo 14.5.10 (log D50, REML) payları: R için seri 0,25, kap 0,49, evre 0,26; T için 0, 0,70, 0,30 (bileşenler toplamla tutarlı). Tablo 14.5.11 (log SPAN): bileşenler "Total" satırıyla tutmuyor (R: 0,0144 ≠ 0,0347). PSG örnek verisinde (simüle) payların neredeyse tamamı kaplar arası.
+- **"En az 3 seri"nin kaynağı (birincil metinler okundu):** ICH Q1A(R2) §2.2.3 "at least three primary batches", §2.2.9 "a minimum of three batches … The degree of variability of individual batches affects the confidence that a future production batch will remain within specification"; §1.2 jenerikleri ("abbreviated or abridged applications") kapsam dışı bırakır. FDA ANDA Stability Q&A (Mayıs 2014): "please follow ICH Q1A(R2) recommendations for all ANDAs", "three batches". PSG 020929 "three primary stability batches". Hiçbir halka "3"ü istatistiksel olarak türetmez; asgari düzenleyici sayıdır. Q1A §2.2.9 seri havuzlamasını bir ön teste bağlar (p > 0,25); PSG koşulsuz havuzlar.
+- **EMA (birincil metin okundu): CPMP/EWP/4151/00 Rev. 2** (CHMP 14.07.2025; yürürlük 01.02.2026). Basamaklı yaklaşım (§4.1); nebülizasyon ürünleri kapsamda, Q1/Q2 aynıysa APSD karşılaştırmasından muafiyet mümkün (§4.2.2). §5.1: istatistik gerektiren üç ölçüt: 6 hava akışı direnci ±%15, 7 hedef verilen doz ±%15 (ikisinde de yöntem tanımlı değil), 8 APSD: geometrik ortalamalar oranının %90 GA'sı 85-118 (log-normal). "At least three consecutive batches … minimum of ten inhalers or units of each batch. If there is a high variability, a larger number of batches and/or more inhalers per batch needs to be tested." Seri ve birim sayısı tip II hata riskini en aza indirmeli (dipnotta "patient risk" olarak tanımlı; klasik eşdeğerlik terminolojisinden farklı). §5.2.3: referans serileri arası değişkenlik "can be significant"; karakterizasyon için en az 5 seri. Evreler (B/M/E) metinde geçmez. %90 GA'nın seri ve evre yapısıyla nasıl hesaplanacağı tanımlı değil.
+- **Karar (K): KK-26.** Çalışma EMA'yı da kapsar: FDA PSG PBE prosedürü ile EMA OIP in vitro yöntemi aynı veri üretme modelinde karşılaştırılır. Proje sahibinin önceliği EMA.
+- **Karar (K): KK-27.** EMA %90 GA'sı üç yöntemle hesaplanır ve karşılaştırılır (hepsi FarmaStatR türetimi): (a) havuzlanmış birimler ("süper-seri" karşılığı); (b) seri ortalamaları; (c) seri rastgele etkili karma model (REML).
+- **Açık:** Format kararı (varyans girişi: toplam + paylar / bileşenler / iki yol) beklemede; proje sahibi önce bileşenlerin anlamının netleşmesini istedi. EMA insan ilaçları stabilite kılavuzu CPMP/QWP/122/02 Rev. 1 birincil metni yok (yalnız veteriner karşılığı görüldü; kullanılmadı). Teknik not v0.3 (EMA kolu, KK-26/27, düzeltmeler) yazılacak.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -281,8 +292,8 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.18 | Bu belge |
-| FSR-TN-PBE-01 · PBE simülasyon modeli ve tasarımı | 0.2 | Taslak, onay bekliyor (G-21; v0.1: G-19) |
+| FSR-LOG-01 · Proje günlüğü | 1.19 | Bu belge |
+| FSR-TN-PBE-01 · PBE simülasyon modeli ve tasarımı | 0.2 | Taslak; v0.3 (EMA kolu, KK-26/27) yazılacak (G-22) |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
 | CNKfarmastatr (R paketi) | 1.0.0.9000 | 8 validasyonlu dosya; 516 kontrol GEÇTİ (G-13); yardım sayfaları (G-14) |
 
@@ -315,3 +326,5 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | KK-23 | PBE araştırma sorusu: seri başına kap sayısı n (ℓ = 3, m = 3 sabit) | G-16 |
 | KK-24 | Yaşam evresi değişkenliği toplam varyansa dahil (FDA 1999 IX.B.1); m = 1, 2 ya da 3 | G-18 |
 | KK-25 | İkincil atıflar için birincil kaynak istenir ve ayrıntılı incelenir | G-20 |
+| KK-26 | Çalışma EMA OIP in vitro yöntemini de kapsar; FDA PBE ile karşılaştırılır | G-22 |
+| KK-27 | EMA %90 GA üç yöntemle: havuzlanmış, seri ortalamaları, karma model | G-22 |
