@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.27 · Son güncelleme: 15.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.29 · Son güncelleme: 15.10.2026"
 ---
 
 # Bu belge hakkında
@@ -339,6 +339,32 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
   - Listede olmayan her kombinasyon platformda kullanıcı tarafından koşulabilir.
 - **Açık:** n_sim onayı; hızlı PBE eşdeğeri ve EMA (c) kapalı biçimi; ortak seed; EMA'da tek büyüklük; teknik not v0.4'te Bölüm 10.2'nin bu kararla güncellenmesi.
 
+## G-31 · Simülasyon yürütme kararları; teknik not v0.4 — 15.10.2026
+
+- **Karar (K): KK-35** (proje sahibi dört öneriyi onayladı: "ok … ilerleyebilirsin"):
+  1. Senaryo başına tekrar sayısı n_sim = 10.000 (Morris ve ark. 2019 §5.3, Denklem 1: oran 0,5 iken MCSE ≤ 0,005).
+  2. Simülasyonda dengeli tasarım için vektörleştirilmiş hızlı PBE tahmin edicisi kullanılır; sonuçları validasyonlu `calc_pbe` ile birebir aynı olmalıdır. EMA yolu (c) dengeli tasarımda kapalı biçimle hesaplanır; sayısal REML ile doğrulanır.
+  3. Ortak seed: bir senaryoda FDA PBE ve EMA yolları (a), (b), (c) aynı veri setlerine uygulanır (Morris ve ark. 2019 §4.3); senaryolar aynı seed ile koşar (§4.1.1, §5.4).
+  4. EMA tarafında başlangıçta tek büyüklük (tek uç nokta) incelenir; çoklu uç nokta sonraki aşama.
+- **Teknik not v0.4:** `belgeler/teknik_notlar/FSR-TN-PBE-01_v0.4.docx` (11 sayfa). Değişiklikler: Bölüm 10.2 iki aşamalı senaryo tablosu (KK-34); 10.4, 10.5 ve 5.3 KK-35 olarak işaretlendi; Bölüm 13'te açık kalanlar yalnız Ting 1990 ve İngilizce sürüm.
+
+## G-32 · Simülasyon motoru: hızlı PBE ve EMA %90 GA (invitro_fast.R v0.1.0) — 15.10.2026
+
+- **Dosyalar:** `CNKfarmastatr/R/invitro_fast.R` (yeni; yalnız temel R), `tests/testthat/test-invitro-fast.R` (TC-F1 … TC-F6), `DESCRIPTION` (Collate'e eklendi). Validasyonlu çekirdek dosyalara dokunulmadı (SHA-256: 8/8 AYNI).
+- **İçerik:**
+  - `invitro_gen()`: veri üretim modeli X = μ + b + c + τ_s + e (teknik not Bölüm 6); `invitro_components()` paylardan bileşenlere (KK-29); `invitro_drift()` doğrusal kayma (KK-31).
+  - `pbe_fast()`: PSG 020929 Ek Adım 1–5, tekrarlar üzerinde vektörleştirilmiş.
+  - `ema_ci_fast()`: EMA OIP Rev. 2 §5.1 ölçüt 8 kuralı (GMR %90 GA, 85–118) üç yolla: (a) havuzlanmış birimler, (b) seri ortalamaları, (c) REML. Test ve referans varyansları Welch–Satterthwaite serbestlik derecesiyle birleştirilir (FarmaStatR türetimi; EMA yöntem belirtmiyor).
+  - `invitro_array()`: `calc_pbe` biçimindeki uzun veriyi diziye çevirir.
+- **(c) kapalı biçimi (FarmaStatR türetimi):** Dengeli tasarımda üç tabaka (seri, seri içi birim, artık) ortogonaldir. REML tahminleri, beklenen kareler ortalamalarının sırası (seri ≥ birim ≥ artık) altında, gözlenen kareler ortalamalarının serbestlik derecesi ağırlıklı izotonik regresyonudur. Var(X̄) = θ̂_seri/(ℓnm). Birleştirme yoksa (b) ile aynıdır (G-29 bulgusu); seri ile birim birleşirse (a) ile aynıdır. Serbestlik derecesi, birleştirilen tabakaların sd toplamıdır (FarmaStatR türetimi).
+- **Doğrulama:**
+  - `pbe_fast` ile `calc_pbe` arasındaki en büyük göreli fark 2,6 × 10⁻¹⁵. Sınanan durumlar: PSG örnek verisi; m = 1, 2, 3; 3 × 10 / 3 × 10 ve 4 × 7 / 2 × 5 tasarımları. PASS/FAIL kararı ve ölçüt seçimi her durumda aynı.
+  - (c), temel R ile yazılan sayısal REML (L-BFGS-B) ile karşılaştırıldı. 40 veri setinde en büyük göreli fark 2 × 10⁻⁷, yani optimizasyon duyarlılığı düzeyinde. Bu 40 setin içinde iç çözüm ve sınır durumları birlikte var.
+  - Ayrıca (a), (b) ve (c) için elle hesaplanmış küçük bir örnek kullanıldı (TC-F3).
+- **Testler:** Yeni 621 kontrolün tamamı GEÇTİ. Mevcut testler değişmedi.
+- **Hız:** 3 × 10 × 3 tasarımı ve 10.000 tekrarla `pbe_fast` 0,04 sn sürdü. `calc_pbe` ile aynı iş yaklaşık 56 sn sürüyor (5,6 ms/veri seti), yani yaklaşık 1.400 kat hızlı. `ema_ci_fast` aynı iş için 0,5 sn. KK-34 kapsamındaki yaklaşık 620 senaryo × 10.000 tekrar birkaç dakikada koşulabilir.
+- **Sonraki:** Aşama 1 senaryolarının koşulması ve sonuç ızgarası. Ardından FSR-VAL-SIM-1 ve `invitro_fast.R` SHA-256 sabitlemesi.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -350,7 +376,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-8 | Otomatik doğrulama (GitHub Actions): her push'ta SHA-256 + 491 kontrol | Tamam: ilk koşu Linux + Windows GEÇTİ (G-12) |
 | A-6 | Lisans kararı (MIT / GPL-3 / diğer) | Üniversite görüşü bekleniyor (G-15); platform makalesinden önce |
 | A-7 | Fonksiyon belgeleri (İngilizce) ve PBE köprüsünün pakete alınması | Tamam: PBE köprüsü (G-13), belgeler (G-14) |
-| A-10 | Simülasyon altyapısı: validasyon belgesi FSR-VAL-SIM-1 ve SHA-256 sabitleme; ilk yayın senaryosu | Altyapı v0.1.0 tamam (G-15); ilk senaryo PBE güç / seri başına kap sayısı; teknik not v0.3 onay bekliyor (G-29) |
+| A-10 | Simülasyon altyapısı: validasyon belgesi FSR-VAL-SIM-1 ve SHA-256 sabitleme; ilk yayın senaryosu | Altyapı v0.1.0 tamam (G-15); ilk senaryo PBE güç / seri başına kap sayısı; teknik not v0.4 (G-31); hızlı motor `invitro_fast.R` v0.1.0 (G-32); Aşama 1 koşusu sırada |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
 | A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
@@ -360,7 +386,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
 | FSR-LOG-01 · Proje günlüğü | 1.27 | Bu belge |
-| FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.3 | Taslak, onay bekliyor (G-29) |
+| FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.4 | Taslak (G-31) |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
 | CNKfarmastatr (R paketi) | 1.0.0.9000 | 8 validasyonlu dosya; 516 kontrol GEÇTİ (G-13); yardım sayfaları (G-14) |
 
@@ -402,3 +428,4 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | KK-32 | Faktör düzeyleri Chow ham verisi ve PSG örneğine dayalı; veride olmayanlar "zorlama senaryosu" | G-27 |
 | KK-33 | Chow Tablo 14.5.2–14.5.3 ham verisi kaynağıyla depoda | G-28 |
 | KK-34 | Senaryo listesi iki aşamalı: temel senaryo + Aşama 1 (360) + Aşama 2 (yaklaşık 256) | G-30 |
+| KK-35 | n_sim = 10.000; hızlı PBE + EMA (c) kapalı biçim; ortak seed; EMA tek büyüklükle başlar | G-31 |
