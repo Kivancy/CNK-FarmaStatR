@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.33 · Son güncelleme: 15.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.34 · Son güncelleme: 15.10.2026"
 ---
 
 # Bu belge hakkında
@@ -439,6 +439,37 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Sonuç:** EMA (c)'nin kapalı biçimi ve serbestlik derecesi seçimi SAS ile bağımsız olarak doğrulandı. Teknik notta (Bölüm 5.3, 11.8) "SAS farklı sd verebilir" uyarısı kaldırıldı; bulgu Ek B.1'e yazıldı.
 - **Teknik not v0.6** (`FSR-TN-PBE-01_v0.6.docx`, 15 sayfa): Ek B kodu düzeltildi (G-35); yeni Ek B.1 sonuç tablosu; Bölüm 5.3, 11.8 ve 12 güncellendi.
 
+## G-37 · Süreç gözden geçirmesi (oturum sonu) — 15.10.2026
+
+- **İstek (K):** "Sen de yarına kadar kendi süreçlerini gözden geçir." Proje sahibi teknik not v0.6'yı 16.10.2026'da okuyacak.
+- **Yapılan kontroller:**
+  1. Depo ile proje sahibinin klasörü dosya dosya karşılaştırıldı: dosya listesi ve boyutlar aynı (.git hariç).
+  2. Paket için `R CMD check` (testler hariç) koşuldu.
+  3. Paket testleri yeniden koşuldu.
+  4. Teknik not v0.6'da, sonradan gelen sonuçlarla çelişen ya da artık geçerli olmayan gelecek zamanlı ifadeler tarandı.
+- **Bulgular ve düzeltmeler:**
+  - **Bulgu 1 (düzeltildi):** Bu oturumda eklenen 9 fonksiyonun yardım sayfası yoktu (`R CMD check`: undocumented code objects). Fonksiyonlar: `invitro_gen`, `invitro_components`, `invitro_drift`, `invitro_array`, `pbe_fast`, `ema_ci_fast`, `invitro_scenario`, `invitro_delta0`, `invitro_run_record`. `man/invitro_fast.Rd` ve `man/invitro_scenario.Rd` eklendi (İngilizce, örnekli); örnekler hatasız çalıştı.
+  - **Bulgu 2 (bilgi):** `R CMD check` ASCII dışı karakter uyarısı verdi. Uyarı devralınan validasyonlu dosyalardan geliyor (`f2_boot.R`, `msd_core.R`, `msd_weibull.R`, `pbe_kopru.R`). SHA-256 ile sabitli oldukları için değiştirilmedi; ilk revizyonlarında ele alınacak (proje kuralı: devralınan çekirdekler ilk revizyona kadar olduğu gibi kalır).
+  - **Bulgu 3 (açık, düşük öncelik):** İş akışı etiketi yalnızca "491 checks" diyor, oysa iş akışı bütün paket testlerini koşuyor. Davranışta sorun yok; atlanan test olursa iş akışı duruyor. `.github/workflows/dogrulama.yml` uzak araçlarla yazılamayan korumalı bir dosya. Etiketi proje sahibi elle düzeltebilir ya da konu bir sonraki iş akışı değişikliğine bırakılır.
+  - **Bulgu 4 (v0.6 için düzeltme listesi; v0.7'de uygulanacak):**
+    - D1: Bölüm 5.3'teki "Bulgu" paragrafının sonu ("(b) … aşırı iyimser olabilir; (c) bunu düzeltir. Üç yolun tip I hata ve gücü simülasyonla karşılaştırılacaktır.") Aşama 1 sonucuyla güncellenmedi. Tek veri setinde (b)'nin SE'si (c)'den küçük olabilir, ancak Aşama 1'de (b)'nin tip I hatası ≤ %5 ve kapsaması ≥ %90 (Bölüm 11.7).
+    - D2: Ek A.7 yalnız "seri varyansı sıfırda kesilir → birim düzeyine döner" durumunu anlatıyor; kapalı biçimin tamamı (izotonik regresyon, dört durum) Bölüm 5.3'te. A.7 oraya atıf yapmalı.
+  - **Bulgu 5 (bilgi):** 3. ve 4. bölümdeki tablolar güncel değildi; bu sürümde güncellendi (paket satırı, A-10, yeni A-12).
+- **Bu oturumdaki süreç hataları ve bundan sonraki kurallar (Claude):**
+  1. *Atıf numarası sonradan düzeltildi* (Morris §5.2 → §5.3 Denk. 1; §5.4 → §4.3, G-31). Kural: bölüm/denklem numarası yazılmadan önce kaynakta aranıp doğrulanır.
+  2. *Sınanmamış kod belgeye girdi* (Ek B SAS kodu v0.3–v0.5'te hatalıydı, G-35). Kural: koşulmamış kod belgede "sınanmadı" etiketi taşır.
+  3. *Yeni fonksiyon yardım sayfasız eklendi* (Bulgu 1). Kural: her yeni dışa açık fonksiyon testi ve yardım sayfasıyla birlikte teslim edilir; teslimden önce `R CMD check` koşulur.
+  4. *Ortak seed varsayımı başta sınanmadı* (`rnorm(sd = 0)`, G-33). Kural: simülasyon tasarımındaki her varsayım (ortak rastgele sayılar dahil) için bir test yazılır.
+  5. *Spekülatif uyarılar yanlış çıktı:* "SAS farklı sd verebilir" (G-36) ve Hp7'deki "(b) aşırı iyimser" (G-34). Kural: beklenti ve hipotezler metinde öyle etiketlenir; sonuç gelince belgede ilgili bütün ifadeler taranır (D1 bu taramanın eksikliğiydi).
+  6. *Dış araç çıktısının hassasiyeti baştan istenmedi* (SAS 4 basamak, ek koşu gerekti). Kural: dış araçtan tam hassasiyet ve yakınsama/durum bilgisi baştan istenir.
+  7. *Proje sahibinin klasörüne yazma bu oturumda en az iki kez eski içerikle sonuçlandı* (G-35, G-36). Her seferinde `cmp` ile yakalandı ve yeniden yazıldı. Kural (sürüyor): her yazımdan sonra bayt karşılaştırması yapılır.
+- **Sonraki oturum için:**
+  - Proje sahibinin v0.6 değerlendirmesi.
+  - Ardından v0.7 (D1, D2 ve proje sahibinin notları).
+  - Aşama 2.
+  - EMS testinin pakete eklenmesi.
+  - 4 × 7 koşusu.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -450,7 +481,8 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-8 | Otomatik doğrulama (GitHub Actions): her push'ta SHA-256 + 491 kontrol | Tamam: ilk koşu Linux + Windows GEÇTİ (G-12) |
 | A-6 | Lisans kararı (MIT / GPL-3 / diğer) | Üniversite görüşü bekleniyor (G-15); platform makalesinden önce |
 | A-7 | Fonksiyon belgeleri (İngilizce) ve PBE köprüsünün pakete alınması | Tamam: PBE köprüsü (G-13), belgeler (G-14) |
-| A-10 | Simülasyon altyapısı: validasyon belgesi FSR-VAL-SIM-1 ve SHA-256 sabitleme; ilk yayın senaryosu | Altyapı v0.1.0 tamam (G-15); ilk senaryo PBE güç / seri başına kap sayısı; teknik not v0.4 (G-31); hızlı motor `invitro_fast.R` (G-32); Aşama 1 koşuldu (G-33) ve nota işlendi (G-34); sırada Aşama 2 |
+| A-10 | Simülasyon altyapısı: validasyon belgesi FSR-VAL-SIM-1 ve SHA-256 sabitleme; ilk yayın senaryosu | Altyapı v0.1.0 tamam (G-15); ilk senaryo PBE güç / seri başına kap sayısı; teknik not v0.4 (G-31); hızlı motor `invitro_fast.R` (G-32); Aşama 1 koşuldu (G-33) ve nota işlendi (G-34); SAS kontrolü (G-36); sırada Aşama 2 |
+| A-12 | `invitro_fast.R` ve `invitro_grid.R` için validasyon belgesi (FSR-VAL-SIM-1 kapsamında) ve SHA-256 sabitleme; EMS testi (teknik not 8.5) pakete | Açık; kanıtlar hazır: TC-F1–F7, sayısal REML, SAS (G-32, G-36) |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
 | A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
@@ -462,7 +494,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | FSR-LOG-01 · Proje günlüğü | 1.27 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.6 | Taslak; Bölüm 11 onay bekliyor; SAS kontrolü tamam (G-36) |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
-| CNKfarmastatr (R paketi) | 1.0.0.9000 | 8 validasyonlu dosya; 516 kontrol GEÇTİ (G-13); yardım sayfaları (G-14) |
+| CNKfarmastatr (R paketi) | 1.0.0.9000 | 8 validasyonlu dosya (SHA-256); devralınan validasyon 491 kontrol + simülasyon çatısı (TC-S) + in vitro motoru `invitro_fast.R` 0.1.1 / `invitro_grid.R` 0.1.0 (TC-F1–F7, 628 beklenti) GEÇTİ (G-37); yardım sayfaları tamam (G-14, G-37) |
 
 # 5. Kullanıcı kararları dizini
 
