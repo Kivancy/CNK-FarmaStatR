@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.24 · Son güncelleme: 15.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.25 · Son güncelleme: 15.10.2026"
 ---
 
 # Bu belge hakkında
@@ -313,6 +313,12 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Dosyalar:** `belgeler/teknik_notlar/FSR-TN-PBE-01_ek/chow_vc.R` ve `chow_vc.csv` (sonuçlar). Kitaptan aktarılan ham veri dosyası (chow1452.csv) telifli kaynaktan alındığı için depoya konmadı; depoya girip girmeyeceği proje sahibine sorulacak.
 - **Sıradaki:** teknik not v0.3 (EMA kolu ve KK-26 … KK-32).
 
+## G-28 · Chow ham verisi depoya eklendi — 15.10.2026
+
+- **Karar (K): KK-33.** Chow ve Liu 2008 Tablo 14.5.2 ve 14.5.3'ten aktarılan ham veri (`chow1452.csv`, 1080 satır) kaynağı belirtilerek depoya konur. Gerekçe (proje sahibi): kitap artık kamuya açık. Böylece `chow_vc.R` depodaki verilerle birebir yeniden üretilebilir.
+- **Doğrulama:** Betik depo dosyasıyla yeniden koşuldu; `chow_vc.csv` değişmedi. G-27 commit'i sonrası GitHub Actions GEÇTİ (proje sahibi).
+- **Not:** `chow_vc.R` başlık yorumu güncellendi (veri artık depoda).
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -333,7 +339,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.24 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.25 | Bu belge |
 | FSR-TN-PBE-01 · PBE simülasyon modeli ve tasarımı | 0.2 | Taslak; v0.3 (EMA kolu, KK-26/27) yazılacak (G-22) |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
 | CNKfarmastatr (R paketi) | 1.0.0.9000 | 8 validasyonlu dosya; 516 kontrol GEÇTİ (G-13); yardım sayfaları (G-14) |
@@ -374,3 +380,4 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | KK-30 | Paylar T ve R için aynı; hedefli senaryolar: seri varyansı yalnız R / yalnız T | G-25 |
 | KK-31 | Evre içi sistematik kayma q ana senaryolarda 0; yalnız duyarlılık analizinde | G-26 |
 | KK-32 | Faktör düzeyleri Chow ham verisi ve PSG örneğine dayalı; veride olmayanlar "zorlama senaryosu" | G-27 |
+| KK-33 | Chow Tablo 14.5.2–14.5.3 ham verisi kaynağıyla depoda | G-28 |

@@ -3,8 +3,9 @@
 #   Bioequivalence Studies, 3rd ed., Tables 14.5.2 (D50) and 14.5.3 (SPAN):
 #   butorphanol nasal spray (test) vs Stadol NS (reference), laser diffraction,
 #   3 lots x 10 bottles x 3 life stages (Beg, Mid, End), at 3, 5 and 7 cm.
-# The transcribed data file (chow1452.csv: var, dist, prod, lot, stage, bottle, y)
-#   is kept outside the repository (taken from a copyrighted book).
+# Transcribed data file: chow1452.csv (var, dist, prod, lot, stage, bottle, y;
+#   1080 rows; values as printed in the book). Added to the repository by decision
+#   of the project owner (FSR-LOG-01 G-28).
 # Method (FarmaStatR derivation): log scale, separately per variable, distance and
 #   product; PSG 020929 mean squares (MSB pooled over bottles, MSW within bottle)
 #   plus the lot line of the two-level nested ANOVA (Searle et al. 2006, Table 4.10).
