@@ -10,9 +10,11 @@
    Research and education only; not a system validated for GxP environments.
    =========================================================================== */
 
-/* 1. Set this to the folder where you uploaded sas_veri.csv (SAS OnDemand:
-      right-click the folder in "Server Files and Folders" > Properties).    */
-%let yol = /home/uXXXXXXXX/fsr;
+/* 1. Folder of sas_veri.csv; the output CSV files are written to the same
+      folder. Default: this folder in the local repository (SAS for Windows).
+      SAS OnDemand: upload sas_veri.csv and use the folder path shown under
+      "Server Files and Folders" > Properties, e.g. /home/uXXXXXXXX/fsr.     */
+%let yol = C:/cloud/CNK-FarmaStatR/CNK-FarmaStatR/belgeler/teknik_notlar/FSR-TN-PBE-01_ek/sas;
 
 proc import datafile="&yol./sas_veri.csv" out=veri dbms=csv replace;
   guessingrows=max;
