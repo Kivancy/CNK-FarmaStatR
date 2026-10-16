@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.45 · Son güncelleme: 16.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.46 · Son güncelleme: 16.10.2026"
 ---
 
 # Bu belge hakkında
@@ -635,6 +635,44 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** teknik not v0.11, bu günlük.
 - **Açık:** teknik not v0.11'in proje sahibince okunması; İngilizce sürüm (içerik onayından sonra). Sıradaki öneri: platform tarafı (SQLite sonuç ızgarası, webR arayüzü).
 
+## G-49 · Oturum sonu: eleştirel süreç değerlendirmesi — 16.10.2026
+
+- **Depo:** G-48 dosyaları (teknik not v0.11, günlük) commit + push edildi; GitHub Actions GEÇTİ (proje sahibi: "action ok").
+- **İstek (K):** "Buraya kadar olan süreci eleştirel bir açıdan değerlendir. Günlük çalışma notuna dönüştür ve projeye ekle. Yarın devam edelim."
+- **Oturumun dökümü (16.10.2026, G-38 … G-48):**
+  - Teknik not v0.7 → v0.11. Proje sahibinin iki kontrol raporu işlendi, Aşama 2 (725 senaryo) koşuldu ve nota işlendi, hedefli deney yapıldı.
+  - Validasyon belgesi FSR-VAL-SIM-1 v0.1 → 1.0: kabul ölçütleri yeniden yazıldı, TC-F11 eklendi, beş dosya SHA-256 ile sabitlendi (13 dosya).
+  - Yedi karar: KK-36 … KK-42.
+  - Paket testleri 722 → 968 beklenti. Bütün commit'ler GitHub Actions'ta geçti.
+- **İyi işleyenler:**
+  1. Proje sahibinin incelemeleri sonucu gerçekten değiştirdi. Örnekler: m kararı (KK-36); üç sınıflı tip I etiketi (KK-38); kabul ölçütlerinin nicel hale gelmesi (KK-41); ifadelerin "destekler" düzeyine çekilmesi (KK-42). Rapor → değerlendirme → onay zinciri çalışıyor.
+  2. Her yazımdan sonra bayt karşılaştırması bir kez daha işe yaradı. G-47'de günlüğün eski içeriği yazılmıştı; karşılaştırma bunu yakaladı ve dosya yeniden yazıldı (G-37 kural 7).
+  3. Kanıt yeniden üretilebilir hale geldi. `kanit.R` belgedeki bütün sayıları üretiyor; `mekanizma.R`, `asama2_ozet.R` ve diğer betikler sonuçları CSV'den doğrudan tabloya taşıyor, elle aktarım yok.
+  4. Sabitleme için açık onay istendi. "actions ok" belge onayı sayılmadı (G-47).
+- **Claude'un hataları ve zayıf noktaları:**
+  1. *Günlükte kararı verilmiş konular yeniden soruldu.* "FSR-VAL-PBE-SIM-1" diye var olmayan bir belge önerilip soruldu, oysa A-12'de karar yazılıydı (G-44). `dogrulama.yml`'nin korumalı olduğu G-37 Bulgu 3'te kayıtlıydı; buna rağmen G-47'de yazılmaya çalışıldı ve proje sahibine önce "4 dosya" denildi. Kök neden ikisinde de aynı: günlük, soru sormadan ya da plan bildirmeden önce taranmadı.
+  2. *Kabul ölçütleri sonuçlardan sonra tanımlandı ve ilk hali zayıftı* (FSR-VAL-SIM-1 v0.1). Toleranslar yalnız göreliydi (gerçek değer 0'da tanımsız). SAS için "birebir" yazıldı, oysa aynı belge 7,7 × 10⁻¹¹ fark bildiriyordu. Sınır çözümü için ölçüt nicel değildi. Proje sahibi yakaladı (G-45). SAS sınır eşikleri sonuçlar görüldükten sonra seçildi. İlkeye dayandırıldı ve belgede açıkça yazıldı, ama sonradan seçilmiş olma zayıflığı ortadan kalkmıyor.
+  3. *Sonuçlar olduğundan güçlü ifade edildi.* Örnekler: Hp4 için "≤ 1 yüzde puanı" (G-43), mekanizma için "sınandı / doğrulandı / desteklendi" (G-48). İkisini de proje sahibi düzeltti. G-37 kural 5 hipotezlerin etiketlenmesini istiyordu; yorumların gücü için bir kural yoktu.
+  4. *Bilinen bir kusur sabitlemeden önce giderilmedi.* `invitro_fast.R` ve `invitro_grid.R` başlıkları teknik not v0.4'e atıf yapıyor; G-44'te fark edildi ama dosyalar bu haliyle sabitlendi. Düzeltmek artık bir revizyon gerektiriyor (SHA-256 değişir). Önce düzeltip sonra sabitlemek daha doğruydu.
+  5. *Dosya sayısı yine yanlış bildirildi.* G-47'de "4 dosya" denildi, GitHub Desktop 3 gösterdi (bkz. hata 1). Önceki oturumdaki 21/19 hatasıyla aynı türden. Sayı, gerçekte yazılıp doğrulanan dosyalardan verilmeli.
+  6. *Proje sahibine kısa sürede çok sayıda onay sunuldu.* Bir günde beş teknik not sürümü, dört validasyon belgesi sürümü ve yedi karar. Proje sahibi bir noktada "Tablo 5.1, TC-F11, Bölüm 7 benden ne istiyor" diye sordu; onay istekleri yeterince açık değildi. Hafıza yükü projenin bilinen kısıtı. Daha az sayıda, belge başına toplanmış ve "sizden istenen tek karar şu" biçiminde onay istekleri daha uygun.
+  7. *Kod tekrarı.* `kanit.R`, TC-F2 ve TC-F4 testlerinin veri üretimini kopyalıyor. Testler değişirse kanıt betiği sessizce ayrışabilir. REML araçları `helper-reml.R`'de ortak; aynı yol veri üretimi için de izlenmeli.
+- **Açık kalan teknik maddeler:**
+  - SAS K07 uyarısının nedeni incelenmedi.
+  - Testler webR'de koşulmadı.
+  - Kod başlıklarındaki eski atıf (ilk revizyonda).
+  - Teknik notun İngilizce sürümü.
+  - Lisans kararı (A-6).
+  - Paket testleri yaklaşık 45 sn sürüyor; TC-F11 tek başına 11 sn. Henüz sorun değil.
+- **Bundan sonraki kurallar (Claude; G-37'deki kurallara ek):**
+  8. Bir soru sormadan ya da bir dosya/yol hakkında plan bildirmeden önce günlükte ilgili karar ve bulgular taranır (KK dizini, açık işler, önceki bulgular).
+  9. Kabul ölçütleri, karşılaştırma koşulmadan önce yazılır; sonuç görüldükten sonra belirlenen bir eşik belgede öyle etiketlenir.
+  10. Yorumlarda varsayılan dil "uyumludur / destekler"dir. "Doğrulandı" yalnız deterministik eşitlikler ve önceden tanımlı kabul ölçütleri için, "kanıtlandı" yalnız matematiksel türetim için kullanılır.
+  11. Sabitlemeden önce dosyalardaki bilinen kusurlar (yorum, atıf, ad) giderilir.
+  12. Proje sahibine bildirilen dosya sayısı yalnız yazılıp bayt karşılaştırması yapılan dosyalardan verilir. Proje sahibinin elle yapacağı dosyalar ayrı listelenir.
+  13. Onay istekleri belge başına toplanır ve "sizden istenen karar" tek cümleyle yazılır.
+- **Sonraki oturum (17.10.2026):** Platform tasarım notu: SQLite tabloları (yayın veri setleri, test vakaları ve beklenen sonuçlar, simülasyon sonuç ızgarası, modül/sürüm kaydı) ve webR arayüzünün ilk ekranı. Kodlamadan önce proje sahibinin onayına sunulur.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -658,7 +696,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.45 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.46 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.0 | Onaylandı; beş dosya sabitlendi (G-47) |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
