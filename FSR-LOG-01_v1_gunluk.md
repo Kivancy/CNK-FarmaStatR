@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.44 · Son güncelleme: 16.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.45 · Son güncelleme: 16.10.2026"
 ---
 
 # Bu belge hakkında
@@ -627,6 +627,14 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Kapanan:** A-12. A-10'un validasyon ve sabitleme kısmı tamam.
 - **Sıradaki öneri:** Platform tarafı (SQLite sonuç ızgarası, webR arayüzü); teknik not v0.10 Bölüm 12.10 onayı açık (G-43).
 
+## G-48 · Sabitleme Actions'ta geçti; teknik not v0.10 onayı; v0.11 — 16.10.2026
+
+- **Depo:** G-47'nin dört dosyası (`CEKIRDEK_SHA256.txt`, `dogrulama.yml`, FSR-VAL-SIM-1 1.0, günlük) commit + push edildi; GitHub Actions GEÇTİ (proje sahibi: "4 dosya action oldu"). 1. adım 13 dosyayı Linux ve Windows'ta denetledi. Not: GitHub Desktop önce 3 dosya gösterdi; `dogrulama.yml`'yi korumalı klasör nedeniyle proje sahibi yerleştirdi.
+- **Onay (K): KK-42.** Teknik not v0.10 Bölüm 12.10 kalır: "Evet, kalabilir. Ancak 'mekanizma tamamen kanıtlandı' anlamında kullanılmamalı." Hedefli deney mekanizmayı destekler ve sonuçlar onunla uyumludur; kesin kanıt değildir (tek tasarım; başka etkenler dışlanmış değil).
+- **Teknik not v0.11:** `belgeler/teknik_notlar/FSR-TN-PBE-01_v0.11.docx` (24 sayfa). İfadeler düzeltildi: Bölüm 12.2 "sınandı" → "hedefli deneyin sonuçlarıyla uyumlu; tamamen kanıtlanmış değildir"; 12.3 "doğrulandı" → "incelendi" ve "incelenen tasarımla (3 × 10) sınırlıdır"; Tablo 12.7 Hp4 ve "Yeni" satırları; 12.10 Sonuç ("uyumludur ve onu destekler; tamamen kanıtlandığı anlamına gelmez"; başka etkenler dışlanmış değil); 12.11 sınırlar; onay bölümü; sürüm geçmişine 0.11.
+- **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** teknik not v0.11, bu günlük.
+- **Açık:** teknik not v0.11'in proje sahibince okunması; İngilizce sürüm (içerik onayından sonra). Sıradaki öneri: platform tarafı (SQLite sonuç ızgarası, webR arayüzü).
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -641,7 +649,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-10 | Simülasyon altyapısı: validasyon belgesi FSR-VAL-SIM-1 ve SHA-256 sabitleme; ilk yayın senaryosu | Altyapı v0.1.0 tamam (G-15); ilk senaryo PBE güç / seri başına kap sayısı; teknik not v0.4 (G-31); hızlı motor `invitro_fast.R` (G-32); Aşama 1 koşuldu (G-33) ve nota işlendi (G-34); SAS kontrolü (G-36); sırada Aşama 2; Aşama 2 listesi sabitlendi, 725 senaryo (G-38); motor 0.2.0, Aşama 2 koşuldu (G-40); FSR-VAL-SIM-1 v0.1 taslak (G-44); FSR-VAL-SIM-1 1.0 ve sabitleme tamam (G-47) |
 | A-12 | `invitro_fast.R` ve `invitro_grid.R` için validasyon belgesi (FSR-VAL-SIM-1 kapsamında) ve SHA-256 sabitleme; EMS testi (teknik not 8.5) pakete | Tamam: FSR-VAL-SIM-1 1.0 onaylandı, beş dosya SHA-256 ile sabitlendi (G-47) |
 | A-13 | Teknik not v0.7: D1–D13 (G-38) | Tamam: v0.7 (G-39) |
-| A-14 | Tip I uyum ölçütü kararı; teknik not v0.8 (rapor 02) ve Aşama 2 sonuçları; yeniden üretim paketi (G-40) | Tamam: ölçüt (KK-38), v0.8, paket (G-41), Aşama 2 sonuçları v0.9 (G-42); v0.9 onaylandı, hedefli deney ve v0.10 (G-43); 12.10 onay bekliyor |
+| A-14 | Tip I uyum ölçütü kararı; teknik not v0.8 (rapor 02) ve Aşama 2 sonuçları; yeniden üretim paketi (G-40) | Tamam: ölçüt (KK-38), v0.8, paket (G-41), Aşama 2 sonuçları v0.9 (G-42); v0.9 onaylandı, hedefli deney ve v0.10 (G-43); 12.10 onay bekliyor; v0.10 onaylandı, v0.11 (G-48) |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
 | A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
@@ -650,8 +658,8 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.44 | Bu belge |
-| FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.10 | Taslak; v0.9 onaylandı; hedefli deney Bölüm 12.10 (G-43); 12.10 onay bekliyor |
+| FSR-LOG-01 · Proje günlüğü | 1.45 | Bu belge |
+| FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.0 | Onaylandı; beş dosya sabitlendi (G-47) |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
 | CNKfarmastatr (R paketi) | 1.0.0.9000 | 13 dosya SHA-256 ile sabit (8 devralınan çekirdek + simülasyon çatısı ve in vitro motoru; FSR-VAL-SIM-1 1.0, G-47); testler 26 blok, 968 beklenti GEÇTİ (G-46) |
@@ -701,3 +709,4 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | KK-39 | v0.9 onayı: Hp4 ifadesi; mekanizma hedefli deneyle (eşleşik karar, üst sınır düzeyinde); Tablo 11.3b başlığı; ek tekrarda 10k/40k ayrı, 50k yalnız bağımsız akışla, eşiğe yakın güç kesin sayılmaz | G-43 |
 | KK-40 | Motor validasyonu FSR-VAL-SIM-1 içinde ayrı bölüm; EMA (c) bağımsız analiz olursa kendi belgesi (ör. FSR-VAL-EMA-1) | G-44 |
 | KK-41 | Validasyon kabul ölçütleri: birleşik mutlak + göreli tolerans; SAS nicel (deterministik 10⁻¹⁰/10⁻⁹; sınırda ölçüt, GA, karar); REML'de ölçüt, kısıt, GA, karar; MC ortak |z| < 4, 3–4 uyarı; yeniden üretim koşulları | G-45 |
+| KK-42 | Teknik not Bölüm 12.10 kalır; hedefli deney mekanizmayı destekler, "tamamen kanıtladı" anlamında kullanılmaz | G-48 |
