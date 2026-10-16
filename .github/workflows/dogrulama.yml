@@ -1,9 +1,12 @@
 # CNK-FarmaStatR · automatic integrity check on every push.
 # Not a re-validation: it shows that the validated models are unchanged and
 # still reproduce their documented results (project instructions, "Validasyon").
-#   Step 1: SHA-256 of the 7 validated core files must match CEKIRDEK_SHA256.txt
-#   Step 2: install the package and run the inherited validation tests
-#           (491 checks: MSD 60, Weibull 98, f2 120, PBE 213)
+#   Step 1: SHA-256 of the 13 pinned files must match CEKIRDEK_SHA256.txt
+#           (8 inherited validated cores; 5 simulation files, FSR-VAL-SIM-1 1.0)
+#   Step 2: install the package and run the whole test folder: inherited
+#           validation (491 checks: MSD 60, Weibull 98, f2 120, PBE 213),
+#           simulation framework TC-S1...S10 and in vitro engine TC-F1...F11
+#           (testthat: 26 blocks, 968 expectations on 16.10.2026)
 # Runs on Linux and on Windows (the user's platform).
 
 name: dogrulama
@@ -55,7 +58,7 @@ jobs:
         shell: bash
         run: R CMD INSTALL CNKfarmastatr
 
-      - name: "Step 2: inherited validation tests (491 checks)"
+      - name: "Step 2: package tests (inherited validation, TC-S, TC-F)"
         shell: Rscript {0}
         run: |
           res <- testthat::test_dir("CNKfarmastatr/tests/testthat",
@@ -66,5 +69,5 @@ jobs:
           df <- as.data.frame(res)
           cat("\nExpectations:", sum(df$nb), " Failed:", sum(df$failed),
               " Skipped:", sum(df$skipped), "\n")
-          if (sum(df$skipped) > 0) quit(status = 1)   # all 491 checks must run
+          if (sum(df$skipped) > 0) quit(status = 1)   # every test must run
           sessionInfo()
