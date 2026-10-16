@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.40 · Son güncelleme: 16.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.41 · Son güncelleme: 16.10.2026"
 ---
 
 # Bu belge hakkında
@@ -576,6 +576,21 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Onay bekleyen:** Bölüm 12.10'un sonuç ve yorumu.
 - **Sıradaki öneri:** Motor için validasyon belgesi ve SHA-256 sabitleme (A-12); platform tarafı (SQLite, webR arayüzü).
 
+## G-44 · Validasyon belgesi FSR-VAL-SIM-1 v0.1 (simülasyon çatısı ve in vitro motoru) — 16.10.2026
+
+- **Depo:** G-42 ve G-43 dosyaları commit + push edildi; GitHub Actions GEÇTİ (proje sahibi: "actions ok").
+- **Karar (K, Claude önerisi üzerine): KK-40.** Motorun (`invitro_fast.R`, `invitro_grid.R`) validasyonu A-12'deki plana göre FSR-VAL-SIM-1 içinde ayrı bir bölüm olarak yapılır; ayrı bir belge açılmaz (motor yeni bir PBE modeli değil, validasyonlu `calc_pbe` ile birebir aynı sonucu verdiği gösterilerek doğrulanır). EMA (c) yolu önceden valide edilmiş bir çekirdeğe dayanmadığı için belgede not düşülür; EMA yöntemi platformda bağımsız bir analiz olarak sunulursa kendi belgesi (ör. FSR-VAL-EMA-1) açılır. Not: Claude önce "FSR-VAL-PBE-SIM-1" adlı ayrı bir belge seçeneğini sordu; bu ad var olan bir belge değildi ve soru A-12'deki plan nedeniyle gereksizdi.
+- **Kanıt betiği:** `belgeler/validasyon/FSR-VAL-SIM-1_ek/kanit.R` → `test_sonuclari.csv`, `sha256.csv`, `sayisal_ozet.csv`, `sessionInfo.txt` (R 4.3.3, Linux; yaklaşık 40 sn).
+  - Paket testleri: 25 test bloğu, 722 beklenti, başarısız 0, atlanan 0 (çatı TC-S1–S10: 58; motor TC-F1–F10: 649; devralınan: 15 = 491 kontrol).
+  - `pbe_fast` – `calc_pbe`: 49 veri seti, en büyük göreli fark 6,2 × 10⁻¹⁶; karar ve kriter seçimi her sette aynı.
+  - EMA (c) – sayısal REML: 40 veri seti (17 birleştirmeli), en büyük göreli fark 4,4 × 10⁻⁷.
+  - SHA-256 (temel R `araclar/sha256.R`; GNU sha256sum ile aynı; depo ve proje sahibinin klasörü aynı): `sim_performance.R` 9a0fd323…032f, `sim_run.R` e45b2d32…0cd2, `sim_scenario_demo.R` e32b2b6a…203c, `invitro_fast.R` 98350729…44b4, `invitro_grid.R` a10a0427…aba0 (tam değerler `sha256.csv` ve belgenin Tablo 3.1'inde).
+- **Belge:** `belgeler/validasyon/FSR-VAL-SIM-1_v0.1.docx` (7 sayfa; teknik notun biçim şablonuyla). Bölümler: kapsam ve EMA (c) notu; dayanaklar (Morris 2019 Tablo 6, §4.1, §4.3, §5.3 Denk. 1; PSG 020929 Ek; EMA OIP §5.1 ölçüt 8; Searle 2006 §3.8 Denk. 145–146, §4.8; Satterthwaite 1946); yazılım tanımı ve SHA-256; hesabın tanımı; doğrulama yolları ve kabul ölçütleri (FarmaStatR seçimi); 20 test vakası; sonuçlar (paket testleri, sayısal uyum, SAS Ek B.1); geliştirmede bulunan üç hata (G-15, G-33, G-40); sınırlar; sabitleme önerisi.
+- **Bulunan noktalar (belgeye yazıldı):** (i) `invitro_fast.R` ve `invitro_grid.R` başlıkları teknik not v0.4'e atıf yapıyor; düzeltmek SHA-256'yı değiştireceği için ilk kod revizyonunda. (ii) GitHub Actions iş akışının açıklama metni ("7 validated core files", "491 checks") güncel değil: listede 8 dosya var ve iş akışı bütün test klasörünü (722 beklenti) koşuyor; sabitlemeyle birlikte güncellenecek. (iii) webR'de koşu henüz yok (platform aşaması).
+- **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** FSR-VAL-SIM-1 v0.1, `FSR-VAL-SIM-1_ek/` (kanıt betiği ve dört çıktı), bu günlük.
+- **Onay bekleyen:** FSR-VAL-SIM-1 v0.1 içeriği; onaydan sonra beş dosyanın `CEKIRDEK_SHA256.txt`'ye eklenmesi ve iş akışı açıklamasının güncellenmesi. Teknik not v0.10 Bölüm 12.10 onayı da açık (G-43).
+- **Sıradaki öneri:** Onaydan sonra sabitleme (A-12 kapanır); ardından platform tarafı (SQLite, webR arayüzü).
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -587,8 +602,8 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-8 | Otomatik doğrulama (GitHub Actions): her push'ta SHA-256 + 491 kontrol | Tamam: ilk koşu Linux + Windows GEÇTİ (G-12) |
 | A-6 | Lisans kararı (MIT / GPL-3 / diğer) | Üniversite görüşü bekleniyor (G-15); platform makalesinden önce |
 | A-7 | Fonksiyon belgeleri (İngilizce) ve PBE köprüsünün pakete alınması | Tamam: PBE köprüsü (G-13), belgeler (G-14) |
-| A-10 | Simülasyon altyapısı: validasyon belgesi FSR-VAL-SIM-1 ve SHA-256 sabitleme; ilk yayın senaryosu | Altyapı v0.1.0 tamam (G-15); ilk senaryo PBE güç / seri başına kap sayısı; teknik not v0.4 (G-31); hızlı motor `invitro_fast.R` (G-32); Aşama 1 koşuldu (G-33) ve nota işlendi (G-34); SAS kontrolü (G-36); sırada Aşama 2; Aşama 2 listesi sabitlendi, 725 senaryo (G-38); motor 0.2.0, Aşama 2 koşuldu (G-40) |
-| A-12 | `invitro_fast.R` ve `invitro_grid.R` için validasyon belgesi (FSR-VAL-SIM-1 kapsamında) ve SHA-256 sabitleme; EMS testi (teknik not 8.5) pakete | Açık; kanıtlar hazır: TC-F1–F7, sayısal REML, SAS (G-32, G-36) |
+| A-10 | Simülasyon altyapısı: validasyon belgesi FSR-VAL-SIM-1 ve SHA-256 sabitleme; ilk yayın senaryosu | Altyapı v0.1.0 tamam (G-15); ilk senaryo PBE güç / seri başına kap sayısı; teknik not v0.4 (G-31); hızlı motor `invitro_fast.R` (G-32); Aşama 1 koşuldu (G-33) ve nota işlendi (G-34); SAS kontrolü (G-36); sırada Aşama 2; Aşama 2 listesi sabitlendi, 725 senaryo (G-38); motor 0.2.0, Aşama 2 koşuldu (G-40); FSR-VAL-SIM-1 v0.1 taslak (G-44) |
+| A-12 | `invitro_fast.R` ve `invitro_grid.R` için validasyon belgesi (FSR-VAL-SIM-1 kapsamında) ve SHA-256 sabitleme; EMS testi (teknik not 8.5) pakete | EMS testi pakette (TC-F10, G-40); FSR-VAL-SIM-1 v0.1 taslak (G-44, KK-40); onay ve sabitleme bekliyor |
 | A-13 | Teknik not v0.7: D1–D13 (G-38) | Tamam: v0.7 (G-39) |
 | A-14 | Tip I uyum ölçütü kararı; teknik not v0.8 (rapor 02) ve Aşama 2 sonuçları; yeniden üretim paketi (G-40) | Tamam: ölçüt (KK-38), v0.8, paket (G-41), Aşama 2 sonuçları v0.9 (G-42); v0.9 onaylandı, hedefli deney ve v0.10 (G-43); 12.10 onay bekliyor |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
@@ -599,8 +614,9 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.40 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.41 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.10 | Taslak; v0.9 onaylandı; hedefli deney Bölüm 12.10 (G-43); 12.10 onay bekliyor |
+| FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 0.1 | Taslak (G-44); onay ve SHA-256 sabitleme bekliyor |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
 | CNKfarmastatr (R paketi) | 1.0.0.9000 | 8 validasyonlu dosya (SHA-256); devralınan validasyon 491 kontrol + simülasyon çatısı (TC-S) + in vitro motoru `invitro_fast.R` 0.1.1 / `invitro_grid.R` 0.1.0 (TC-F1–F7, 628 beklenti) GEÇTİ (G-37); yardım sayfaları tamam (G-14, G-37) |
 
@@ -647,3 +663,4 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | KK-37 | Aşama 2 listesi koşudan önce sabit: p_B {0; 0,30} çaprazlı + rapor ekleri; 725 senaryo | G-38 |
 | KK-38 | Tip I hata üç sınıflı etiket (nominali aşıyor / kontrol kanıtlı / ayırt edilemiyor); tasarım ölçütü "nominali aşmıyor" | G-41 |
 | KK-39 | v0.9 onayı: Hp4 ifadesi; mekanizma hedefli deneyle (eşleşik karar, üst sınır düzeyinde); Tablo 11.3b başlığı; ek tekrarda 10k/40k ayrı, 50k yalnız bağımsız akışla, eşiğe yakın güç kesin sayılmaz | G-43 |
+| KK-40 | Motor validasyonu FSR-VAL-SIM-1 içinde ayrı bölüm; EMA (c) bağımsız analiz olursa kendi belgesi (ör. FSR-VAL-EMA-1) | G-44 |

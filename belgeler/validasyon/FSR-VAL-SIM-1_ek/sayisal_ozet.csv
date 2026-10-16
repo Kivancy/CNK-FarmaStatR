@@ -1,0 +1,7 @@
+"check","value"
+"pbe_fast_vs_calc_pbe_max_rel_diff",6.19e-16
+"pbe_fast_vs_calc_pbe_data_sets",49
+"pbe_fast_vs_calc_pbe_decisions_identical",1
+"ema_c_vs_reml_max_rel_diff",4.42e-07
+"ema_c_vs_reml_data_sets",40
+"ema_c_vs_reml_pooled_sets",17

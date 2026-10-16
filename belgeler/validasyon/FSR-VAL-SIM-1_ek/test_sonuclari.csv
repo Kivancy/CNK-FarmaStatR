@@ -1,0 +1,26 @@
+"file","test_case","expectations","failed","skipped","error"
+"test-devralinan-validasyon.R","1A model-independent MSD: 60/60 (Tsong 1996, analytic cases)",3,0,0,FALSE
+"test-devralinan-validasyon.R","1B Weibull MSD: 98/98 (Sathe 1996, analytic cases, time-unit invariance)",3,0,0,FALSE
+"test-devralinan-validasyon.R","2 f2 and bootstrap f2, EMA and FDA perspectives: 120/120 (Noce 2020, Xu 2021)",3,0,0,FALSE
+"test-devralinan-validasyon.R","PBE core: 213/213 (FDA PSG 020929, independent Python reference)",3,0,0,FALSE
+"test-devralinan-validasyon.R","PBE bridge (input checks B-2, B-4): 25/25 (bridge = core; invalid input rejected)",3,0,0,FALSE
+"test-invitro-fast.R","TC-F1",14,0,0,FALSE
+"test-invitro-fast.R","TC-F2",576,0,0,FALSE
+"test-invitro-fast.R","TC-F3",8,0,0,FALSE
+"test-invitro-fast.R","TC-F4",14,0,0,FALSE
+"test-invitro-fast.R","TC-F5",6,0,0,FALSE
+"test-invitro-fast.R","TC-F6",4,0,0,FALSE
+"test-invitro-fast.R","TC-F7",6,0,0,FALSE
+"test-invitro-fast.R","TC-F8",10,0,0,FALSE
+"test-invitro-fast.R","TC-F9",6,0,0,FALSE
+"test-invitro-fast.R","TC-F10",5,0,0,FALSE
+"test-simulation.R","TC-S1",15,0,0,FALSE
+"test-simulation.R","TC-S2",3,0,0,FALSE
+"test-simulation.R","TC-S3",3,0,0,FALSE
+"test-simulation.R","TC-S4",6,0,0,FALSE
+"test-simulation.R","TC-S5",5,0,0,FALSE
+"test-simulation.R","TC-S6",6,0,0,FALSE
+"test-simulation.R","TC-S7",3,0,0,FALSE
+"test-simulation.R","TC-S8",11,0,0,FALSE
+"test-simulation.R","TC-S9",4,0,0,FALSE
+"test-simulation.R","TC-S10",2,0,0,FALSE
