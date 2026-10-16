@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.38 · Son güncelleme: 16.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.39 · Son güncelleme: 16.10.2026"
 ---
 
 # Bu belge hakkında
@@ -537,6 +537,26 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Yeniden üretim paketi:** `belgeler/teknik_notlar/FSR-TN-PBE-01_ek/yeniden_uretim/FSR-TN-PBE-01_yeniden_uretim_v0.8.zip` (1,1 MB). İçerik: paket kaynağı (tar.gz), simülasyon betikleri ve bütün CSV'ler, şekiller, teknik not v0.8, ek dosyaları (EMS, Chow, SAS), `sessionInfo.txt`, `test_sonuclari.csv` (25 blok, 722 beklenti, başarısız 0, atlanan 0), `SHA256SUMS.txt` (43 dosya), `OKUBENI.md` (raporun (a)–(g) maddeleriyle eşleştirme ve adımlar). Paketten bir betik çalıştırılarak yolların doğruluğu sınandı.
 - **Sıradaki:** Aşama 2 sonuçlarının değerlendirilmesi ve teknik nota işlenmesi (v0.9); motor dosyaları için validasyon belgesi ve SHA-256 sabitleme (A-12).
 
+## G-42 · Aşama 2 sonuçları değerlendirildi; teknik not v0.9 — 16.10.2026
+
+- **Depo:** G-40 ve G-41 dosyaları (19 dosya; son commit'ten sonra değişen dosyalar klasörde mtime ile sayılarak doğrulandı) commit + push edildi; GitHub Actions GEÇTİ (proje sahibi: "actions ok"). Not: Claude önce dosya sayısını 21 diye yanlış toplamıştı; liste doğruydu, toplam 19.
+- **İş (K: "başla"):** Aşama 2 sonuçlarının değerlendirilmesi ve teknik nota işlenmesi.
+- **Özet betiği:** `simulasyon/FSR-TN-PBE-01/asama2_ozet.R` → `asama2_ozet_t121.csv` … `t126.csv`, `asama2_ozet_havuz.csv`, `sekil/sekil3_asama2.png`. Teknik nottaki tablolar bu CSV'lerden doğrudan üretildi (elle aktarım yok); etiketler KK-38'e göre.
+- **Teknik not v0.9:** `belgeler/teknik_notlar/FSR-TN-PBE-01_v0.9.docx` (23 sayfa; v0.8 üzerinde). Yeni Bölüm 12 "Aşama 2 sonuçları" (12.1–12.10; Şekil 3; Tablo 12.1–12.7); eski 12–14. bölümler 13–15 oldu; çapraz atıflar güncellendi.
+- **Bulgular (3 × 10; simülasyon sonucu):**
+  - FDA ±δ₀ simetrisi ve ölçek değişmezliği (Bölüm 8.3) doğrulandı: σ_R 0,16 / 0,25 / 0,40'ta FDA tip I hatası ortak seed altında birebir aynı (p_B 0: %4,2; 0,30: %12,5). σ_R 0,12 hâlâ eşikten etkileniyor (%13,2).
+  - Hp4 desteklendi: p_B 0'da eşik çevresinde (σ_R 0,099–0,101) FDA %5,2–5,9 (çoğu "nominali aşıyor"), kriter seçim hatası %42–51; uzakta %4,2–4,9. Seri varyansıyla (p_B 0,30) gerçek σ_R 0,101'de tekrarların %68'inde sabit ölçekli kriter seçiliyor.
+  - Sabit ölçekli bölgede seri varyansıyla FDA daha liberal: p_B 0,30'da σ_R ≤ 0,101'de %19,1–20,0, σ_R ≥ 0,16'da %12,5. Mekanizma hipotezi (FarmaStatR türetimi, sınanmadı): referans ölçekli kriterde σ̂²_R eksikliği (1 + θ_p) katsayısıyla tutucu pay bırakır, sabit ölçekli kriterde σ̂²_T ve σ̂²_R eksiklikleri birbirini götürür.
+  - Hp6 kısmen: seri varyansı yalnız testte FDA %11,8; yalnız referansta %7,2 (liberal; "tutucu" beklentisi desteklenmedi). Açıklama Denk. 15'ten (H_D'de σ²_B/ℓ eksik temsili).
+  - Hp5 bu parametrelendirmede desteklenmedi (q 0,5'in etkisi MC belirsizliği düzeyinde). ρ 1,15 FDA gücünü düşürür (%85,2 → %61,8); m azaldıkça FDA tip I hata ve gücü biraz düşer.
+  - EMA (b)/(c) Aşama 2'nin hiçbir koşulunda "nominali aşıyor" değil; σ_R büyüdükçe çok tutucu ve güçsüz (EMA (c), GMR 1,05, p_B 0: σ_R 0,25 %31,3; 0,40 %1,7). Alt sınırda (GMR 0,85) "kontrol kanıtlı" hücre sayısı daha az (fark ortalama 0,2 yüzde puanı); kuramsal olarak iki sınır eşit (FarmaStatR türetimi), fark tek akışın asimetrisi.
+  - Eşit toplam 60 birim, p_B 0,30: EMA (c) gücü 3 × 20 → 6 × 10: %40,2 → %82,2; FDA tip I hata %18,2 → %13,9 (hep nominali aşıyor).
+  - EMA (c) REML sınır payı: p_B 0'da %56–63, 0,30'da %5–16, 0,50'de %1–8.
+  - Ek tekrar: 10 senaryo / 11 hücre; iki FDA hücresi %80'in altına geçti (%80,37 → %79,98; %80,26 → %79,66).
+- **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `asama2_ozet.R`, 7 özet CSV, `sekil/sekil3_asama2.png`, teknik not v0.9, bu günlük.
+- **Onay bekleyen:** Bölüm 12'nin sonuç ve yorumları (özellikle Hp4, Hp6 ve Bölüm 12.2'deki mekanizma hipotezi); v0.8'den açık: KK-38 uygulaması, ek tekrar kapsamı, Tablo 11.3a/b.
+- **Sıradaki öneri:** Bölüm 12.2 mekanizma hipotezinin hedefli bir simülasyonla sınanması (isteğe bağlı); motor için validasyon belgesi ve SHA-256 sabitleme (A-12); platform tarafına geçiş (G-37 / genel durum özeti).
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -551,7 +571,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-10 | Simülasyon altyapısı: validasyon belgesi FSR-VAL-SIM-1 ve SHA-256 sabitleme; ilk yayın senaryosu | Altyapı v0.1.0 tamam (G-15); ilk senaryo PBE güç / seri başına kap sayısı; teknik not v0.4 (G-31); hızlı motor `invitro_fast.R` (G-32); Aşama 1 koşuldu (G-33) ve nota işlendi (G-34); SAS kontrolü (G-36); sırada Aşama 2; Aşama 2 listesi sabitlendi, 725 senaryo (G-38); motor 0.2.0, Aşama 2 koşuldu (G-40) |
 | A-12 | `invitro_fast.R` ve `invitro_grid.R` için validasyon belgesi (FSR-VAL-SIM-1 kapsamında) ve SHA-256 sabitleme; EMS testi (teknik not 8.5) pakete | Açık; kanıtlar hazır: TC-F1–F7, sayısal REML, SAS (G-32, G-36) |
 | A-13 | Teknik not v0.7: D1–D13 (G-38) | Tamam: v0.7 (G-39) |
-| A-14 | Tip I uyum ölçütü kararı; teknik not v0.8 (rapor 02) ve Aşama 2 sonuçları; yeniden üretim paketi (G-40) | Ölçüt (KK-38), v0.8 ve paket tamam (G-41); Aşama 2 sonuçlarının nota işlenmesi açık |
+| A-14 | Tip I uyum ölçütü kararı; teknik not v0.8 (rapor 02) ve Aşama 2 sonuçları; yeniden üretim paketi (G-40) | Tamam: ölçüt (KK-38), v0.8, paket (G-41), Aşama 2 sonuçları v0.9 (G-42); onay bekliyor |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
 | A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
@@ -560,8 +580,8 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.38 | Bu belge |
-| FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.8 | Taslak; kontrol raporu 02 işlendi (G-41); Aşama 2 sonuçları bekliyor |
+| FSR-LOG-01 · Proje günlüğü | 1.39 | Bu belge |
+| FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.9 | Taslak; Aşama 2 sonuçları Bölüm 12 (G-42); onay bekliyor |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
 | CNKfarmastatr (R paketi) | 1.0.0.9000 | 8 validasyonlu dosya (SHA-256); devralınan validasyon 491 kontrol + simülasyon çatısı (TC-S) + in vitro motoru `invitro_fast.R` 0.1.1 / `invitro_grid.R` 0.1.0 (TC-F1–F7, 628 beklenti) GEÇTİ (G-37); yardım sayfaları tamam (G-14, G-37) |
 
