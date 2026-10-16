@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.34 · Son güncelleme: 15.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.35 · Son güncelleme: 16.10.2026"
 ---
 
 # Bu belge hakkında
@@ -470,6 +470,31 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
   - EMS testinin pakete eklenmesi.
   - 4 × 7 koşusu.
 
+## G-38 · v0.6 incelemesi, metodolojik kontrol raporu, m kararı ve Aşama 2 listesi — 16.10.2026
+
+- **Oturum başı:** Günlük okundu (v1.34). Bölüm 4'te günlüğün sürümü 1.27 yazılıydı; düzeltildi.
+- **Konuşulanlar (proje sahibinin soruları):**
+  - ADEMP = Aims, Data-generating mechanisms, Estimands, Methods, Performance measures (Morris ve ark. 2019, Bölüm 3, Tablo 1). Teknik notun 0. bölümünde açılmadan kullanılmış → düzeltme D3.
+  - Proje dosyalarındaki PBE kaynaklarının listesi (kod, başlık, yıl) çıkarıldı.
+  - Chow ve Liu 2008 §14.3: BE limiti = [(ln ortalama limiti)² + varyans payı] / ölçekleme varyansı. FDA 1999 değerleriyle (0,90; 0; 0,10) θ_BE = 1,11 (Denk. 14.3.1); güncel PSG ve FDA 2022/2026 değerleriyle (ln 1,11; 0,01; 0,10) θ_P = 2,0891. PDR karşılığı 1,25 ve yaklaşık 1,43 (FarmaStatR hesabı). Kitapta 1,125 de geçer (PDR 1,25'ten geri hesap; §14.7 simülasyonu bununla ve σ₀ = 0,2 ile yapılmış).
+  - Ölçekleme varyansı log dönüşümünden kaynaklanmaz; kriterin referansa göre ölçeklenmesinden gelir (Chow ve Liu 2008 §14.3; FDA 2026 §III.A.1). Log dönüşümü sabit σ₀'ı birimsiz kılar (σ = 0,10 → CV ≈ %10; FarmaStatR yorumu).
+  - İç içe yapı: veri üretme modeli tam iç içe (seri, seri içinde birim; evre birimle çaprazlı sabit etki). FDA PSG tahmin edicisi seri düzeyini bilinçli olarak havuzlar (FDA 1999, 18 Ağustos). EMA (a) yapıyı yok sayar, (b) dolaylı olarak hesaba katar, (c) iç içe karma modeldir.
+- **Proje sahibinin metodolojik kontrol raporu:** `FSR-TN-PBE-01_v06_Metodolojik_Kontrol_ve_Dogrulama_Raporu01.docx` (16.10.2026; K01–K13; 5 karar kapısı). Claude değerlendirmesi:
+  - Bölüm 4'teki sayısal örnek yeniden hesaplandı ve doğru bulundu (oran 4,46; teknik not Denk. 15 ve 18 ile uyumlu).
+  - **K13 doğrudan hata (Claude):** 4 × 7 = 28, 30 değil (G-23'ten beri; v0.6 Bölüm 1). 30 birimde iki düzenleyici alt sınırı birlikte karşılayan tek tasarım 3 × 10'dur; eşit toplamlı karşılaştırma 60 birimde yapılır. Chow, Shao, Wang 2003 §4'te örneklem büyüklüğü yöntemi var; katkı iddiası daraltılacak.
+  - **K05:** FDA PBE istatistiği Δ̂'yı yalnız Δ̂² ve |Δ̂| üzerinden kullanır; bu yüzden −δ₀ ve +δ₀'ın ret olasılıkları aynıdır (FarmaStatR türetimi; S2-725 ile sınanacak). EMA sınırları simetrik değildir (ln 0,85 = −0,1625; ln 1,18 = 0,1655); alt sınır sınanmamıştı. ρ > 1,758'de δ = 0 da H₀ içindedir.
+  - **K02 (kodda kontrol edildi):** T ve R ayrı üretiliyor (`invitro_scenario`: önce XT, sonra XR); `pB_T` ve `pB_R` asimetriyi destekliyor.
+  - **K10:** G-33 düzeltmesinden sonra aynı tasarım içinde (p_B, δ değişince) veriler eşleşik; ℓ ya da n değişince eşleşme yok. v0.6 §10.5'teki "senaryolar arası farkların MCSE'si küçülür" ifadesi bununla sınırlanacak.
+  - **K11:** "SAS toleransı" açıklaması REML ölçütü karşılaştırmasına dayanır (G-36); metne yazılacak. SAS'ın K07 veri setindeki "infinite likelihood" uyarısı incelenmedi, açık.
+  - Kalan maddeler (K03, K06, K07, K08, K12) v0.7 metnine işlenecek; K04 açık iş A-12'dir.
+- **Karar (K): KK-36.** Model m = 1, 2 ve 3 için geneldir; Budesonid tek bir m değerine bağlanmaz. Dayanak: PSG 020929 ana metninde yaşam evresi tanımlı değildir ("The number of ampules per determination should be one"); B/M/E yalnız Ek'teki simüle örnekte geçer. Evreleri etiketli puf sayısına göre tanımlayan PSG'ler çok dozlu cihazlar içindir: 020121 (SAC, damlacık boyutu: B, E; m = 2), 021433 ve 205625 (SAC: B, M, E; m = 3; APSD: B, E; m = 2). G-22'deki "Budesonid'de m = 3" düzeltmesi bu kararla değişti. Aşama 1 sonuçları "m = 3, çok dozlu cihaz" senaryosu olarak etiketlenir.
+- **Düzeltme (Claude):** m = 1'de evre payının birim düzeyine katılmasını "FarmaStatR türetimi" diye etiketleme önerisi yanlıştı (proje sahibi düzeltti). m = 1 kaynakta tanımlı: PSG 020929 Ek Adım 4 ve PSG 020121 Ek Adım 3D (E2, E4 ve karşılık gelen H, U terimleri hesaba katılmaz). Birim başına tek ölçümde evre ve birim bileşenleri ayırt edilemez; bu bir model seçimi değil, aynı modelin farklı yazılışıdır.
+- **Bulgu:** v0.6'da Aşama 2 "temelden tek faktör değişir" diye tanımlı, ama temel senaryoda p_B değeri yazılı değildi (256 sayısı tek bir p_B'ye göre).
+- **Karar (K, Claude önerisi): KK-37.** Aşama 2 senaryo listesi koşudan önce sabitlendi (Morris ve ark. 2019 §3.2, §8.1). Tek faktörlü değişimler p_B {0; 0,30} ile çaprazlanır (0 nominal karşılaştırma noktası; 0,30 veride karşılığı olan üst uç, KK-32). Raporun ekleri: EMA GMR 0,85 (Aşama 1 ızgarasının tamamı); σ_R eşik çevresi {0,099; 0,100; 0,101} × ρ {1; 1,15}; 2 × 2 T/R seri asimetrisi (KK-30'un yerine; 0/0 ve 0,30/0,30 Aşama 1'de); 60 birimlik tasarım 5 × 12 (3 × 20, 4 × 15, 6 × 10 Aşama 1'de); FDA −δ₀ simetri kontrolü (tek hücre). Ek tekrar kuralı: güç hücrelerinde |güç − 0,80| < 2 MCSE ise 40.000 tekrar ve yeni, kayıtlı seed. Toplam **725 senaryo** (A 416, B 16, C 32, D 160, E 90, F 10, G 1); 527'si düzenleyici alt sınırlar içinde.
+- **Dosyalar:** `simulasyon/FSR-TN-PBE-01/asama2_liste.R` (liste betiği; simülasyon koşmaz) ve `asama2_senaryolar.csv` (725 satır). Claude ortamında (R 4.3.3) koşuldu; satır sayısı ve tekrarsızlık betikte denetleniyor. δ₀ elle kontrol edildi (σ_R 0,06: 0,14454; ρ 0,80: 0,18780).
+- **v0.7 düzeltme listesi:** D1 (§5.3 "Bulgu" paragrafı), D2 (Ek A.7 → §5.3 atfı), D3 (ADEMP açılımı), D4 (K13: 4 × 7; katkı iddiası), D5 (K03: estimandın koşullu ve marjinal tanımı), D6 (K06/K07: Tablo 11.3 ikiye, MCSE ile), D7 (K08: "EMA ölçütü için aday uygulama"), D8 (K12: seri payının belirsizliği), D9 (K11: REML ölçütü kanıtı), D10 (KK-36: Bölüm 3, temel senaryo gerekçesi, ürün–ölçüm–m tablosu), D11 (m = 1 için PSG atfı), D12 (K10: §10.5 ortak seed ifadesi), D13 (KK-37: §10.2 Aşama 2 tablosu).
+- **Sıradaki:** teknik not v0.7; ardından Aşama 2 koşu betiği ve koşu.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -481,8 +506,9 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-8 | Otomatik doğrulama (GitHub Actions): her push'ta SHA-256 + 491 kontrol | Tamam: ilk koşu Linux + Windows GEÇTİ (G-12) |
 | A-6 | Lisans kararı (MIT / GPL-3 / diğer) | Üniversite görüşü bekleniyor (G-15); platform makalesinden önce |
 | A-7 | Fonksiyon belgeleri (İngilizce) ve PBE köprüsünün pakete alınması | Tamam: PBE köprüsü (G-13), belgeler (G-14) |
-| A-10 | Simülasyon altyapısı: validasyon belgesi FSR-VAL-SIM-1 ve SHA-256 sabitleme; ilk yayın senaryosu | Altyapı v0.1.0 tamam (G-15); ilk senaryo PBE güç / seri başına kap sayısı; teknik not v0.4 (G-31); hızlı motor `invitro_fast.R` (G-32); Aşama 1 koşuldu (G-33) ve nota işlendi (G-34); SAS kontrolü (G-36); sırada Aşama 2 |
+| A-10 | Simülasyon altyapısı: validasyon belgesi FSR-VAL-SIM-1 ve SHA-256 sabitleme; ilk yayın senaryosu | Altyapı v0.1.0 tamam (G-15); ilk senaryo PBE güç / seri başına kap sayısı; teknik not v0.4 (G-31); hızlı motor `invitro_fast.R` (G-32); Aşama 1 koşuldu (G-33) ve nota işlendi (G-34); SAS kontrolü (G-36); sırada Aşama 2; Aşama 2 listesi sabitlendi, 725 senaryo (G-38) |
 | A-12 | `invitro_fast.R` ve `invitro_grid.R` için validasyon belgesi (FSR-VAL-SIM-1 kapsamında) ve SHA-256 sabitleme; EMS testi (teknik not 8.5) pakete | Açık; kanıtlar hazır: TC-F1–F7, sayısal REML, SAS (G-32, G-36) |
+| A-13 | Teknik not v0.7: D1–D13 (G-38) | Açık |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
 | A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
@@ -491,8 +517,8 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.27 | Bu belge |
-| FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.6 | Taslak; Bölüm 11 onay bekliyor; SAS kontrolü tamam (G-36) |
+| FSR-LOG-01 · Proje günlüğü | 1.35 | Bu belge |
+| FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.6 | Proje sahibince incelendi; kontrol raporu (G-38); v0.7 bekliyor (D1–D13) |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
 | CNKfarmastatr (R paketi) | 1.0.0.9000 | 8 validasyonlu dosya (SHA-256); devralınan validasyon 491 kontrol + simülasyon çatısı (TC-S) + in vitro motoru `invitro_fast.R` 0.1.1 / `invitro_grid.R` 0.1.0 (TC-F1–F7, 628 beklenti) GEÇTİ (G-37); yardım sayfaları tamam (G-14, G-37) |
 
@@ -535,3 +561,5 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | KK-33 | Chow Tablo 14.5.2–14.5.3 ham verisi kaynağıyla depoda | G-28 |
 | KK-34 | Senaryo listesi iki aşamalı: temel senaryo + Aşama 1 (360) + Aşama 2 (yaklaşık 256) | G-30 |
 | KK-35 | n_sim = 10.000; hızlı PBE + EMA (c) kapalı biçim; ortak seed; EMA tek büyüklükle başlar | G-31 |
+| KK-36 | m = 1, 2, 3 genel; Budesonid tek m değerine bağlanmaz | G-38 |
+| KK-37 | Aşama 2 listesi koşudan önce sabit: p_B {0; 0,30} çaprazlı + rapor ekleri; 725 senaryo | G-38 |
