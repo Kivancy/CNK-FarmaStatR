@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.35 · Son güncelleme: 16.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.36 · Son güncelleme: 16.10.2026"
 ---
 
 # Bu belge hakkında
@@ -495,6 +495,19 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **v0.7 düzeltme listesi:** D1 (§5.3 "Bulgu" paragrafı), D2 (Ek A.7 → §5.3 atfı), D3 (ADEMP açılımı), D4 (K13: 4 × 7; katkı iddiası), D5 (K03: estimandın koşullu ve marjinal tanımı), D6 (K06/K07: Tablo 11.3 ikiye, MCSE ile), D7 (K08: "EMA ölçütü için aday uygulama"), D8 (K12: seri payının belirsizliği), D9 (K11: REML ölçütü kanıtı), D10 (KK-36: Bölüm 3, temel senaryo gerekçesi, ürün–ölçüm–m tablosu), D11 (m = 1 için PSG atfı), D12 (K10: §10.5 ortak seed ifadesi), D13 (KK-37: §10.2 Aşama 2 tablosu).
 - **Sıradaki:** teknik not v0.7; ardından Aşama 2 koşu betiği ve koşu.
 
+## G-39 · Teknik not FSR-TN-PBE-01 v0.7 — 16.10.2026
+
+- **Depo:** G-38 dosyaları proje sahibince commit + push edildi; GitHub Actions GEÇTİ (proje sahibi: "action ok").
+- **İş (K: "başla"):** `belgeler/teknik_notlar/FSR-TN-PBE-01_v0.7.docx` (17 sayfa). v0.6 dosyası üzerinde düzenlendi (biçim ve şekiller korundu); v0.6 kayıt olarak kalır. Sürüm geçmişine 0.7 satırı eklendi.
+- **İşlenen düzeltmeler (G-38'deki D1–D13):** §1 katkı iddiası daraltıldı (Chow ve ark. 2003 §4; Chow ve Liu 2008 §14.7) ve 4 × 7 örneği 60 birimlik tasarımlarla değiştirildi; §3 ürün–ölçüm–evre tablosu (KK-36); §5.3 "Statü" paragrafı (aday uygulama), (b) beklentisi Aşama 1 sonucuyla güncellendi, REML sınır durumunun kanıtı yazıldı; §6 m = 1 için PSG 020929 Ek Adım 4 ve PSG 020121 Ek Adım 3D atfı; §6.1 2 × 2 T/R asimetrisi; §7 koşullu ve marjinal estimand, bileşik H₀, ±δ₀ simetrisi ve EMA sınırlarının asimetrisi; §9 seri payının belirsizliği; §10 ADEMP açılımı, faktör tablosu ve Aşama 2 satırı (725; toplam 1.085 senaryo); §10.5 ortak seed tasarım içiyle sınırlandı, ek tekrar kuralı; §11.5 Tablo 11.3a (yalnız güç) ve yeni Tablo 11.3b (güç + tip I hata + düzenleyici alt sınırlar); §11.7 Hp5/Hp6 satırı; §11.8, §12, §13, §14; kaynakçaya PSG 205625; Ek A.7.
+- **Ek düzeltme:** v0.6 §5.3'te dosya adı "`invitrofast.R`" olarak bozuk görünüyordu (alt çizgi alt simgeye dönüşmüştü); "invitro_fast.R" yapıldı.
+- **Yeni sonuç (Aşama 1 verisinden; asama1_sonuc.csv):**
+  - Tablo 11.3b: düzenleyici alt sınırlar içinde gücü ≥ %80 ve tip I hatası ≤ %5 + 2 MCSE olan en küçük tasarım. p_B = 0'da bütün yollarda 3 × 10. Seri varyansı varken FDA PBE ve EMA (a) için Aşama 1 ızgarasında (ℓ ≤ 6, n ≤ 30) böyle bir tasarım yok. EMA (b)/(c): p_B 0,10'da 4 × 10, p_B 0,30'da 6 × 10.
+  - 60 birim (3 × 20, 4 × 15, 6 × 10), GMR 1,05, p_B 0,30: FDA güç %84,6 / 87,5 / 91,2, tip I hata %18,2 / 16,3 / 13,9; EMA (c) güç %40,2 / 61,4 / 82,2, tip I hata %3,9 / 4,3 / 4,0.
+  - Tablo 11.3a'daki 80,0 ve 80,7 güç değerleri %80'e 2 MCSE'den yakın; ek tekrar kuralı kapsamında.
+- **Doğrulama:** belge XSD doğrulamasından geçti; PDF'e çevrilip sayfalar görsel olarak kontrol edildi; 4 × 8 / 3 × 10 sayıları CSV'den yeniden hesaplandı.
+- **Onay bekleyen:** v0.7'deki düzeltmelerin metne işlenişi ve Tablo 11.3b.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -508,7 +521,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-7 | Fonksiyon belgeleri (İngilizce) ve PBE köprüsünün pakete alınması | Tamam: PBE köprüsü (G-13), belgeler (G-14) |
 | A-10 | Simülasyon altyapısı: validasyon belgesi FSR-VAL-SIM-1 ve SHA-256 sabitleme; ilk yayın senaryosu | Altyapı v0.1.0 tamam (G-15); ilk senaryo PBE güç / seri başına kap sayısı; teknik not v0.4 (G-31); hızlı motor `invitro_fast.R` (G-32); Aşama 1 koşuldu (G-33) ve nota işlendi (G-34); SAS kontrolü (G-36); sırada Aşama 2; Aşama 2 listesi sabitlendi, 725 senaryo (G-38) |
 | A-12 | `invitro_fast.R` ve `invitro_grid.R` için validasyon belgesi (FSR-VAL-SIM-1 kapsamında) ve SHA-256 sabitleme; EMS testi (teknik not 8.5) pakete | Açık; kanıtlar hazır: TC-F1–F7, sayısal REML, SAS (G-32, G-36) |
-| A-13 | Teknik not v0.7: D1–D13 (G-38) | Açık |
+| A-13 | Teknik not v0.7: D1–D13 (G-38) | Tamam: v0.7 (G-39); onay bekliyor |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
 | A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
@@ -517,8 +530,8 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.35 | Bu belge |
-| FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.6 | Proje sahibince incelendi; kontrol raporu (G-38); v0.7 bekliyor (D1–D13) |
+| FSR-LOG-01 · Proje günlüğü | 1.36 | Bu belge |
+| FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.7 | Taslak; D1–D13 işlendi (G-39); onay bekliyor |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
 | CNKfarmastatr (R paketi) | 1.0.0.9000 | 8 validasyonlu dosya (SHA-256); devralınan validasyon 491 kontrol + simülasyon çatısı (TC-S) + in vitro motoru `invitro_fast.R` 0.1.1 / `invitro_grid.R` 0.1.0 (TC-F1–F7, 628 beklenti) GEÇTİ (G-37); yardım sayfaları tamam (G-14, G-37) |
 
