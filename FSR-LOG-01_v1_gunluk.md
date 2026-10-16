@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.39 · Son güncelleme: 16.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.40 · Son güncelleme: 16.10.2026"
 ---
 
 # Bu belge hakkında
@@ -557,6 +557,25 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Onay bekleyen:** Bölüm 12'nin sonuç ve yorumları (özellikle Hp4, Hp6 ve Bölüm 12.2'deki mekanizma hipotezi); v0.8'den açık: KK-38 uygulaması, ek tekrar kapsamı, Tablo 11.3a/b.
 - **Sıradaki öneri:** Bölüm 12.2 mekanizma hipotezinin hedefli bir simülasyonla sınanması (isteğe bağlı); motor için validasyon belgesi ve SHA-256 sabitleme (A-12); platform tarafına geçiş (G-37 / genel durum özeti).
 
+## G-43 · v0.9 onayı; hedefli deney (kriter seçimi ve mekanizma); teknik not v0.10 — 16.10.2026
+
+- **Onay (K):** Proje sahibi G-42'deki altı öneriyi üç metodolojik açıklamayla onayladı: "Altı öneriyi, yukarıdaki üç metodolojik açıklama ile birlikte onaylıyorum." Böylece v0.8'den açık kalan onaylar (KK-38 uygulaması, ek tekrar kapsamı, Tablo 11.3a/b) da kapandı. → **KK-39**.
+  - **Hp4 ifadesi:** "≤ 1 yüzde puanı" yerine "yaklaşık 1 yüzde puanı düzeyinde, bazı karşılaştırmalarda biraz daha büyük" (ör. %5,5 ile %4,2: 1,3). Kriter seçim hatası tip I hata artışı demek değildir; gerçek σ_R = 0,10'da iki kriter eşittir. Sonuç cümlesi: "Hp4, incelenen sınır senaryolarında desteklenmiştir. FDA Tip I hata oranında küçük fakat tekrarlanan bir artış gözlenmiştir. Bu artışta veri temelli kriter seçiminin katkısı, ayrıca hedefli algoritmik karşılaştırmayla doğrulanmalıdır."
+  - **Mekanizma testi:** E[η̂] ile kararı belirleyen üst sınırın örnekleme dağılımı farklıdır. Aynı veride referans ve sabit ölçekli üst sınırlar ayrı hesaplanır, FDA kararları tekrar düzeyinde eşleştirilir. Yeni bir faktöriyel değil, kısa bir hedefli deney.
+  - **Tablo 11.3b:** 3 × 10 ve † korunur; başlık "Nominal Tip I hata aşımı saptanmayan ve en az %80 tahmini güce ulaşan keşifsel tasarımlar". 3 × 15'e geçmek kendiliğinden daha doğru değildir.
+  - **Ek tekrar:** Kuralı karşılayan bütün Aşama 1 hücreleri için onaylandı. %80,2, %80 gücün kesin sağlandığı biçiminde okunmaz. 10.000 ve 40.000 tekrar ayrı raporlanır; 50.000 birleşik tahmin yalnız akışlar bağımsızsa.
+- **Hedefli deney:** `simulasyon/FSR-TN-PBE-01/mekanizma.R` → `mekanizma.csv`, `mekanizma_kayit.csv`. 3 × 10, ρ 1, p_L 0,15, m 3, q 0; σ_R {0,08; 0,099; 0,10; 0,101; 0,12; 0,16} × p_B {0; 0,30}; δ = δ₀; n_sim 40.000; seed 20261020; 0,22 dk. Aynı veride dört FDA kararı: PSG (σ̂_R ile seçim), kâhin (gerçek σ_R ile seçim), yalnız referans ölçekli, yalnız sabit ölçekli; eşleşik MCSE.
+- **Bulgular (simülasyon sonucu):**
+  - Kriter seçiminin katkısı (PSG − kâhin), p_B 0: σ_R 0,10'da +1,34 puan (MCSE 0,07; PSG %5,7, iki kriter de %4,3, aralarındaki fark 0,09 ± 0,09); 0,099 ve 0,101'de +1,03 ve +1,15; eşikten uzakta 0. Hp4'ün artışının kaynağı veri temelli seçimdir. Neden (FarmaStatR türetimi): Eq_Ref − Eq_Const = −θ_p(σ̂²_R − σ²_T0); seçim kuralı nokta tahmininde her zaman küçük Eq'yu veren kriteri seçer.
+  - Seri varyansı, p_B 0,30, σ_R 0,10: yalnız sabit %18,9, yalnız referans %12,6 (fark 6,33; MCSE 0,15). σ_R 0,101'deki %19,3'ün kâhine (%12,6) göre fazlası tümüyle seçimden (+6,76; σ̂_R eksik tahmini tekrarların %67,5'inde sabit kriteri seçtiriyor). σ_R 0,12'de seçimin katkısı 0,75.
+  - Yanlılık ayrıştırması (Denk. 14–15): E[Eq_Ref] − η = Var(X̄_T − X̄_R) + θ_p·b, E[Eq_Const] − η = Var(X̄_T − X̄_R); 12 hücrede fark < 1 MCSE (aynı yönde, ortak seed). Üst sınırın kullandığı ortalama farkı varyansı 0,00054, gerçek 0,00240 (oran 4,5).
+  - Sonuç: G-42'deki mekanizma hipotezi desteklendi. Liberalliğin ortak kaynağı üst sınırdaki varyansın seri varyansını eksik temsil etmesi; referans ölçekli kriterde θ_p·b kayması bunun bir kısmını telafi ediyor.
+- **Teknik not v0.10:** `belgeler/teknik_notlar/FSR-TN-PBE-01_v0.10.docx` (24 sayfa; v0.9 üzerinde). Hp4 ifadesi (12.3, Tablo 12.7); 12.2 mekanizma "sınandı"; yeni Bölüm 12.10 "Hedefli deney" (Tablo 12.8); "Yorumun sınırları" 12.11; Tablo 11.3b başlığı ve † tanımı; Tablo 11.1'e KK-38 etiketleri (FDA p_B 0,10 ve 0,30, EMA (a) p_B 0,10 ve 0,30 nominali aşıyor; EMA (a) p_B 0 ayırt edilemiyor); 11.5'e %80,2 yorumu (MCSE 0,2; 50.000 birleşik %80,1).
+- **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `mekanizma.R`, `mekanizma.csv`, `mekanizma_kayit.csv`, teknik not v0.10, bu günlük.
+- **Depo:** G-42 (v0.9) dosyaları henüz commit edilmedi; G-42 ve G-43 dosyaları birlikte commit + push edilebilir.
+- **Onay bekleyen:** Bölüm 12.10'un sonuç ve yorumu.
+- **Sıradaki öneri:** Motor için validasyon belgesi ve SHA-256 sabitleme (A-12); platform tarafı (SQLite, webR arayüzü).
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -571,7 +590,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-10 | Simülasyon altyapısı: validasyon belgesi FSR-VAL-SIM-1 ve SHA-256 sabitleme; ilk yayın senaryosu | Altyapı v0.1.0 tamam (G-15); ilk senaryo PBE güç / seri başına kap sayısı; teknik not v0.4 (G-31); hızlı motor `invitro_fast.R` (G-32); Aşama 1 koşuldu (G-33) ve nota işlendi (G-34); SAS kontrolü (G-36); sırada Aşama 2; Aşama 2 listesi sabitlendi, 725 senaryo (G-38); motor 0.2.0, Aşama 2 koşuldu (G-40) |
 | A-12 | `invitro_fast.R` ve `invitro_grid.R` için validasyon belgesi (FSR-VAL-SIM-1 kapsamında) ve SHA-256 sabitleme; EMS testi (teknik not 8.5) pakete | Açık; kanıtlar hazır: TC-F1–F7, sayısal REML, SAS (G-32, G-36) |
 | A-13 | Teknik not v0.7: D1–D13 (G-38) | Tamam: v0.7 (G-39) |
-| A-14 | Tip I uyum ölçütü kararı; teknik not v0.8 (rapor 02) ve Aşama 2 sonuçları; yeniden üretim paketi (G-40) | Tamam: ölçüt (KK-38), v0.8, paket (G-41), Aşama 2 sonuçları v0.9 (G-42); onay bekliyor |
+| A-14 | Tip I uyum ölçütü kararı; teknik not v0.8 (rapor 02) ve Aşama 2 sonuçları; yeniden üretim paketi (G-40) | Tamam: ölçüt (KK-38), v0.8, paket (G-41), Aşama 2 sonuçları v0.9 (G-42); v0.9 onaylandı, hedefli deney ve v0.10 (G-43); 12.10 onay bekliyor |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
 | A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
@@ -580,8 +599,8 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.39 | Bu belge |
-| FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.9 | Taslak; Aşama 2 sonuçları Bölüm 12 (G-42); onay bekliyor |
+| FSR-LOG-01 · Proje günlüğü | 1.40 | Bu belge |
+| FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.10 | Taslak; v0.9 onaylandı; hedefli deney Bölüm 12.10 (G-43); 12.10 onay bekliyor |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
 | CNKfarmastatr (R paketi) | 1.0.0.9000 | 8 validasyonlu dosya (SHA-256); devralınan validasyon 491 kontrol + simülasyon çatısı (TC-S) + in vitro motoru `invitro_fast.R` 0.1.1 / `invitro_grid.R` 0.1.0 (TC-F1–F7, 628 beklenti) GEÇTİ (G-37); yardım sayfaları tamam (G-14, G-37) |
 
@@ -627,3 +646,4 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | KK-36 | m = 1, 2, 3 genel; Budesonid tek m değerine bağlanmaz | G-38 |
 | KK-37 | Aşama 2 listesi koşudan önce sabit: p_B {0; 0,30} çaprazlı + rapor ekleri; 725 senaryo | G-38 |
 | KK-38 | Tip I hata üç sınıflı etiket (nominali aşıyor / kontrol kanıtlı / ayırt edilemiyor); tasarım ölçütü "nominali aşmıyor" | G-41 |
+| KK-39 | v0.9 onayı: Hp4 ifadesi; mekanizma hedefli deneyle (eşleşik karar, üst sınır düzeyinde); Tablo 11.3b başlığı; ek tekrarda 10k/40k ayrı, 50k yalnız bağımsız akışla, eşiğe yakın güç kesin sayılmaz | G-43 |
