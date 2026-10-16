@@ -7,7 +7,13 @@
 #   Crowther 2019, Section 4.3). Every scenario starts from the same seed
 #   (common random numbers; Morris et al. 2019, Sections 4.1.1 and 5.4).
 # Performance measures and Monte Carlo SEs: Morris et al. 2019, Table 6.
-# Base R only. Version 0.1.0
+# v0.2.0 (decision of 16.10.2026, review report 02, M-07/M-09): paired Monte
+#   Carlo SEs for method differences (sd of per-replicate decision differences
+#   / sqrt(n_sim); Morris et al. 2019, Section 5.2), the share of replicates in
+#   which EMA method (c) pools strata (REML boundary), and optional per-replicate
+#   decisions (keep_reps). No extra random numbers are drawn: results of v0.1.0
+#   are reproduced exactly.
+# Base R only. Version 0.2.0
 # =============================================================================
 
 # -----------------------------------------------------------------------------
@@ -22,7 +28,11 @@
 invitro_scenario <- function(sigma_R, rho = 1, pB = 0, pL = 0.15, q = 0,
                              l = 3, n = 10, m = 3, delta = 0,
                              pB_T = pB, pB_R = pB, n_sim = 10000, seed = 20261015,
-                             alpha = 0.05, sigma_T0 = 0.1, ema_limits = c(0.85, 1.18)) {
+                             alpha = 0.05, sigma_T0 = 0.1, ema_limits = c(0.85, 1.18),
+                             keep_reps = FALSE) {
+  # m = 1: one measurement per unit; the life-stage share is part of the unit
+  # level (PSG 020929 Appendix Step 4) and a systematic stage drift cannot exist
+  if (m == 1 && q > 0) stop("q > 0 needs m >= 2 (with m = 1 there is no stage drift).")
   sigma_T <- rho * sigma_R
   cT <- invitro_components(sigma_T, pB_T, pL, q)
   cR <- invitro_components(sigma_R, pB_R, pL, q)
@@ -56,6 +66,22 @@ invitro_scenario <- function(sigma_R, rho = 1, pB = 0, pL = 0.15, q = 0,
     add(paste0("ema_", me, "_pass"), pr(x$pass))
     add(paste0("ema_", me, "_cover"), pr(x$lower <= exp(delta) & exp(delta) <= x$upper))
   }
+  # EMA (c): share of replicates in which the REML solution pools strata
+  # (boundary: a variance component estimated as 0), per product
+  pooled <- function(X) {
+    s <- .iv_stats(X, l, n); s$msw_resid <- .iv_msw_resid(X)
+    .iv_var_mean(s, "c")$df != l - 1
+  }
+  pT <- pooled(XT); pR <- pooled(XR)
+  add("ema_c_pooled_T", pr(pT)); add("ema_c_pooled_R", pr(pR))
+  # paired differences of pass decisions on the same data sets
+  dec <- data.frame(fda = f$pass, ema_a = e$a$pass, ema_b = e$b$pass, ema_c = e$c$pass)
+  pairs <- list(c("fda", "ema_a"), c("fda", "ema_b"), c("fda", "ema_c"),
+                c("ema_a", "ema_c"), c("ema_b", "ema_c"))
+  for (pp in pairs) add(paste0("diff_", pp[1], "_", pp[2]),
+                        mn(as.numeric(dec[[pp[1]]]) - as.numeric(dec[[pp[2]]])))
+  if (keep_reps) attr(out, "reps") <- cbind(rep = seq_len(n_sim), dec,
+                                            ema_c_pooled_T = pT, ema_c_pooled_R = pR)
   out
 }
 
@@ -75,6 +101,6 @@ invitro_run_record <- function(grid_id, seed, n_sim) {
   data.frame(grid_id = grid_id, seed = seed, n_sim = n_sim,
              rng = paste(RNGkind()[1:2], collapse = "/"),
              r_version = R.version.string, package_version = pv,
-             engine = "invitro_fast.R 0.1.1; invitro_grid.R 0.1.0",
+             engine = "invitro_fast.R 0.1.1; invitro_grid.R 0.2.0",
              run_time = format(Sys.time(), "%Y-%m-%d %H:%M:%S %Z"))
 }

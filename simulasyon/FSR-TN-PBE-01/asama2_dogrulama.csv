@@ -1,0 +1,25 @@
+"check","expected","observed","pass"
+"rows","725","725",TRUE
+"unique scenario id","725","725",TRUE
+"unique parameter rows","725","725",TRUE
+"block counts A..G","416 16 32 160 90 10 1","416 16 32 160 90 10 1",TRUE
+"regulatory rows (l >= 3, n >= 10)","527","527",TRUE
+"regulatory flag consistent","TRUE","TRUE",TRUE
+"sigma_R levels","0.06 0.08 0.099 0.1 0.101 0.12 0.16 0.25 0.4","0.06 0.08 0.099 0.1 0.101 0.12 0.16 0.25 0.4",TRUE
+"rho levels","0.8 1 1.15","0.8 1 1.15",TRUE
+"pB_T levels","0 0.1 0.3 0.5","0 0.1 0.3 0.5",TRUE
+"pB_R levels","0 0.1 0.3 0.5","0 0.1 0.3 0.5",TRUE
+"pL levels","0.01 0.15 0.3","0.01 0.15 0.3",TRUE
+"q levels","0 0.5","0 0.5",TRUE
+"m levels","1 2 3","1 2 3",TRUE
+"T/R asymmetry only in block C","TRUE","TRUE",TRUE
+"block C pairs","0.3/0 0/0.3","0.3/0 0/0.3",TRUE
+"m = 1 rows have q = 0","TRUE","TRUE",TRUE
+"q > 0 rows have m >= 2","TRUE","TRUE",TRUE
+"GMR 1.10 rows (not in the article list; platform only)","0","0",TRUE
+"delta ids","ema_0.85 ema_1.18 fda_delta0 fda_minus_delta0 gmr_1.00 gmr_1.05","ema_0.85 ema_1.18 fda_delta0 fda_minus_delta0 gmr_1.00 gmr_1.05",TRUE
+"delta values recomputed (max abs diff < 1e-12)","TRUE","TRUE",TRUE
+"delta0 defined in every row","TRUE","TRUE",TRUE
+"total variance T = (rho sigma_R)^2","TRUE","TRUE",TRUE
+"total variance R = sigma_R^2","TRUE","TRUE",TRUE
+"rows duplicating Stage 1 cells","0","0",TRUE

@@ -1,0 +1,2 @@
+"grid_id","seed","n_sim","rng","r_version","package_version","engine","run_time","scenarios","extra_cells","seed_extra","n_extra","elapsed_min"
+"FSR-TN-PBE-01 Asama 2 (KK-37)",20261015,10000,"Mersenne-Twister/Inversion","R version 4.3.3 (2024-02-29)","1.0.0.9000","invitro_fast.R 0.1.1; invitro_grid.R 0.2.0","2026-10-16 20:05:57 +03",725,10,20261016,40000,10.16

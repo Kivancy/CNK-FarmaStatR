@@ -1,5 +1,5 @@
 # In vitro simulation engine (invitro_fast.R): pbe_fast, ema_ci_fast, invitro_gen
-# Test cases TC-F1 ... TC-F6. Reference for pbe_fast is the validated calc_pbe().
+# Test cases TC-F1 ... TC-F10. Reference for pbe_fast is the validated calc_pbe().
 
 to_long <- function(X, r, l, n, prod) {
   N <- l * n; m <- dim(X)[3]
@@ -141,4 +141,74 @@ test_that("TC-F7 invitro_delta0 puts eta at 0; invitro_scenario is reproducible"
   z <- invitro_scenario(0.12, delta = 0, n_sim = 300)
   expect_equal(z$fda_bias_s2R, a$fda_bias_s2R, tolerance = 1e-15)
   expect_equal(z$ema_b_cover, a$ema_b_cover, tolerance = 1e-15)
+})
+
+test_that("TC-F8 paired Monte Carlo SEs, REML boundary share and keep_reps (v0.2.0)", {
+  a <- invitro_scenario(0.12, pB = 0.1, l = 3, n = 5, delta = log(1.05), n_sim = 400,
+                        keep_reps = TRUE)
+  r <- attr(a, "reps")
+  expect_equal(nrow(r), 400)
+  expect_equal(a$fda_pass, mean(r$fda)); expect_equal(a$ema_c_pass, mean(r$ema_c))
+  D <- as.numeric(r$fda) - as.numeric(r$ema_c)
+  expect_equal(a$diff_fda_ema_c, mean(D), tolerance = 1e-15)
+  expect_equal(a$diff_fda_ema_c_mcse, sd(D) / sqrt(400), tolerance = 1e-15)
+  expect_equal(a$ema_c_pooled_T, mean(r$ema_c_pooled_T))
+  expect_true(a$ema_c_pooled_R > 0 && a$ema_c_pooled_R < 1)
+  # keep_reps does not change any result
+  b <- invitro_scenario(0.12, pB = 0.1, l = 3, n = 5, delta = log(1.05), n_sim = 400)
+  attr(a, "reps") <- NULL
+  expect_identical(a, b)
+  # pooling indicator agrees with the REML degrees of freedom
+  set.seed(20261015, kind = "Mersenne-Twister", normal.kind = "Inversion")
+  cp <- invitro_components(0.12, 0.1, 0.15)
+  XT <- invitro_gen(400, 3, 5, 3, mu = log(1.05), sB = cp$sB, sC = cp$sC, sW = cp$sW)
+  s <- CNKfarmastatr:::.iv_stats(XT, 3, 5); s$msw_resid <- CNKfarmastatr:::.iv_msw_resid(XT)
+  expect_equal(mean(CNKfarmastatr:::.iv_var_mean(s, "c")$df != 2), a$ema_c_pooled_T)
+  expect_error(invitro_scenario(0.12, m = 1, q = 0.5, n_sim = 10))
+})
+
+test_that("TC-F9 end-to-end flow (generation -> calc_pbe decision) for m = 1 and q > 0", {
+  flow <- function(m, q, pB, n_sim = 40) {
+    seed <- 20261015; l <- 3; n <- 10; sR <- 0.12; d <- invitro_delta0(sR)
+    sc <- invitro_scenario(sR, pB = pB, pL = 0.15, q = q, l = l, n = n, m = m, delta = d,
+                           n_sim = n_sim, seed = seed, keep_reps = TRUE)
+    set.seed(seed, kind = "Mersenne-Twister", normal.kind = "Inversion")
+    cp <- invitro_components(sR, pB, 0.15, q)
+    XT <- invitro_gen(n_sim, l, n, m, mu = d, sB = cp$sB, sC = cp$sC, sW = cp$sW,
+                      tau = invitro_drift(m, cp$drift_var))
+    XR <- invitro_gen(n_sim, l, n, m, mu = 0, sB = cp$sB, sC = cp$sC, sW = cp$sW,
+                      tau = invitro_drift(m, cp$drift_var))
+    ref <- vapply(seq_len(n_sim), function(i)
+      calc_pbe(rbind(to_long(XT, i, l, n, "TEST"), to_long(XR, i, l, n, "REF")))$pass_fail == "PASS",
+      logical(1))
+    expect_identical(attr(sc, "reps")$fda, ref, info = paste(m, q, pB))
+    expect_equal(sc$eta, 0, tolerance = 1e-15)
+  }
+  flow(m = 1, q = 0,   pB = 0.3)
+  flow(m = 2, q = 0.5, pB = 0.3)
+  flow(m = 3, q = 0.5, pB = 0)
+})
+
+test_that("TC-F10 expected mean squares (TN Eq. 12-15) incl. drift and m = 1", {
+  # Monte Carlo check with the package generator; FarmaStatR derivation, TN 8.5
+  chk <- function(m, pB, q, R = 4000, l = 3, n = 10, sig = 0.12, pL = 0.15) {
+    cp <- invitro_components(sig, pB, pL, q); tau <- invitro_drift(m, cp$drift_var)
+    set.seed(20261016 + m)
+    X <- invitro_gen(R, l, n, m, sB = cp$sB, sC = cp$sC, sW = cp$sW, tau = tau)
+    s <- CNKfarmastatr:::.iv_stats(X, l, n)
+    s2hat <- s$msb / m + (m - 1) * s$msw / m
+    sB2 <- cp$sB^2; sC2 <- cp$sC^2; sW2 <- cp$sW^2; st2 <- sum(tau^2)
+    f <- c(msb = m * sC2 + sW2 + m * n * (l - 1) / (n * l - 1) * sB2,
+           msw = if (m > 1) sW2 + st2 / (m - 1) else 0,
+           s2  = sC2 + sW2 + st2 / m + n * (l - 1) / (n * l - 1) * sB2,
+           vm  = sB2 / l + sC2 / (n * l) + sW2 / (n * l * m))
+    sim <- c(mean(s$msb), mean(s$msw), mean(s2hat), var(s$g))
+    se  <- c(sd(s$msb), sd(s$msw), sd(s2hat), 0) / sqrt(R); se[4] <- var(s$g) * sqrt(2 / (R - 1))
+    z <- ifelse(se > 0, (sim - f) / se, 0)
+    expect_true(all(abs(z) < 4), info = paste(m, pB, q, paste(round(z, 2), collapse = " ")))
+    # with pB = 0 the PSG estimator is unbiased for the marginal total variance
+    if (pB == 0) expect_equal(unname(f["s2"]), sig^2, tolerance = 1e-12)
+  }
+  chk(m = 3, pB = 0.3, q = 0.5); chk(m = 3, pB = 0, q = 0.5)
+  chk(m = 2, pB = 0.1, q = 0.5); chk(m = 1, pB = 0.3, q = 0)
 })

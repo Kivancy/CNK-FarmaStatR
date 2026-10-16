@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.36 · Son güncelleme: 16.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.38 · Son güncelleme: 16.10.2026"
 ---
 
 # Bu belge hakkında
@@ -508,6 +508,35 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Doğrulama:** belge XSD doğrulamasından geçti; PDF'e çevrilip sayfalar görsel olarak kontrol edildi; 4 × 8 / 3 × 10 sayıları CSV'den yeniden hesaplandı.
 - **Onay bekleyen:** v0.7'deki düzeltmelerin metne işlenişi ve Tablo 11.3b.
 
+## G-40 · Kontrol raporu 02; motor 0.2.0; Aşama 1 ek tekrar; Aşama 2 koşuldu — 16.10.2026
+
+- **Depo:** G-39 dosyaları commit + push edildi; GitHub Actions GEÇTİ (proje sahibi: "action ok").
+- **Proje sahibinin kontrol raporu 02** (`FSR-TN-PBE-01_v06_Metodolojik_Kontrol_ve_Dogrulama_Raporu02.docx`, v0.7 üzerine; M-01–M-13, kapılar G1–G5). Proje sahibi ek tekrar kuralının Aşama 1'e uygulanmasını ve `invitro_fast.R` adının düzeltilmesini onayladı. Claude değerlendirmesi: M-01 (tip I uyum ölçütü), M-06 (GMR 1,10 listede yok), M-08 (MCSE ifadesi), M-07/M-09 (eşleşik MCSE, REML sınır payı), M-03 (m = 1 akış testi), M-11 (adlandırma) haklı; M-05 ve M-12 kısmen karşılanmıştı. İş sırası (K: "başla"): motor → G1 → G5 → G4 → Aşama 2 → yeniden üretim paketi.
+- **Motor `invitro_grid.R` 0.2.0:** yöntem farklarının eşleşik MCSE'si (sd(D_i)/√n_sim; Morris ve ark. 2019 §5.2), EMA (c)'nin ürün başına sınır (birleştirme) payı, `keep_reps` ile tekrar düzeyinde kararlar; m = 1 ile q > 0 birlikte verilirse hata. Ek rastgele sayı çekilmez: Aşama 1'in üç senaryosu 4 × 10⁻¹⁵ içinde birebir yeniden üretildi. Bulunan nokta: m = 1 ve q > 0'da eski kod evre kayması varyansını sessizce düşürüyordu (Aşama 2 listesinde bu durum yoktu).
+- **Yeni testler:** TC-F8 (eşleşik MCSE, sınır payı, keep_reps sonucu değiştirmez), TC-F9 (uçtan uca akış: veri üretimi → `calc_pbe` kararı; m = 1, m = 2 ve m = 3 ile q = 0,5; birebir aynı), TC-F10 (Denk. 12–15'in Monte Carlo kontrolü; q > 0 ve m = 1 dahil; p_B = 0'da PSG tahmin edicisi marjinal toplam varyans için yansız). Paket testleri: 25 test bloğu, 722 beklenti, başarısız 0, atlanan 0 (R 4.3.3, Linux). `R CMD check`: yalnız bilinen ASCII uyarısı. Not: bu ortamda UTF-8 yerel ayarı tanımlı değilken devralınan Türkçe test betikleri okunamıyor; `LANG=C.UTF-8` ile geçti.
+- **G1, senaryo listesi:** `asama2_dogrula.R` → `asama2_dogrulama.csv`: 24 kontrol, hepsi geçti (satır ve blok sayıları, faktör düzeyleri, T ve R toplam varyansı, m = 1'de q = 0, δ değerleri, Aşama 1 ile çakışma yok, GMR 1,10 satırı yok).
+- **G5, Aşama 1 ek tekrar (`asama1_ektekrar.R`; seed 20261016, 40.000 tekrar):** KK-37 kuralı yalnız Tablo 11.3a'daki iki hücreye değil, kuralı karşılayan bütün Aşama 1 güç hücrelerine uygulandı: 9 senaryo, 12 yöntem hücresi (Ö, Claude: nesnel kuralın seçici uygulanmaması için; proje sahibinin onayına sunuldu). FDA p_B 0,10, 3 × 10: %80,0 → %80,7; EMA (b)/(c) p_B 0,30, 6 × 8: %80,7 → %81,2. EMA (b) p_B 0,10, 3 × 30: %79,7 → %80,2. Hiçbir tablo hücresi değişmedi. Süre 0,8 dk.
+- **G4, Tablo 11.3a/b (`asama1_tablo113.R`):** raporun M-01 önerisiyle (p̂ + 1,645·MCSE ≤ 0,05) yeniden kuruldu. Tablo 11.3b'de yalnız EMA (a), p_B = 0 değişti: 3 × 10 → 3 × 15 = 45.
+- **Aşama 2 koşuldu (`asama2.R`):** 725 senaryo × 10.000 tekrar, seed 20261015, 10,2 dk; kurala giren 10 güç senaryosu 40.000 tekrarla yeniden koşuldu (`asama2_sonuc.csv`, `asama2_ektekrar.csv`, `asama2_kayit.csv`). İlk bulgular (3 × 10; değerlendirme ve teknik nota işleme sonraki iş):
+  - FDA ±δ₀ simetrisi: 10.000 tekrarlık eşleşik karşılaştırmada %13,2 ve %14,1 (eşleşik z = −1,88); bağımsız 40.000'er tekrarda %13,5 ve %13,3 (z = 0,88). Simetri türetimiyle uyumlu.
+  - EMA alt sınırı (GMR 0,85): (b) ve (c) en çok %5,2; (a) p_B 0,30'da %22,3.
+  - σ_R eşik çevresi, p_B = 0: FDA tip I hata %5,2–5,5 (Hp4 lehine). p_B 0,30 ve σ_R ≤ 0,10'da FDA %19–20, σ_R ≥ 0,12'de %12,5.
+  - T/R asimetrisi: seri varyansı yalnız testte FDA %11,8; yalnız referansta %7,2. Hp6'nın "yalnız R → tutucu" beklentisi desteklenmedi.
+  - m = 1: FDA p_B 0,30'da %11,6. EMA (c) σ_R 0,40'ta %0,2–0,5 (çok tutucu).
+  - EMA (c) sınır payı (birleştirme) senaryolara göre %0,3–67,6.
+- **Bulunan sorun (Claude): M-01 ölçütü sınırda nominal bir yöntemi de "uyumsuz" sayıyor.** EMA (b)/(c) gibi tip I hatası sınırda tam %5 olan bir yöntemde p̂ + 1,645·MCSE ≤ 0,05 koşulu, gerçek oran 0,05 iken yalnız yaklaşık %5 olasılıkla sağlanır; Aşama 2'nin E bloğunda (b) 38/90, (c) 22/90 hücrede bu ölçüt sağlanmıyor. Ölçüt "kontrol kanıtı" sorusunu yanıtlıyor; "nominali aşma kanıtı" (p̂ − 1,645·MCSE > 0,05) ayrı bir sorudur. Karar proje sahibinde; teknik not v0.8 taslağı (KK-38'i tek ölçütle yazan) bu yüzden teslim edilmedi.
+- **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `CNKfarmastatr/R/invitro_grid.R`, `man/invitro_scenario.Rd`, `tests/testthat/test-invitro-fast.R`; `simulasyon/FSR-TN-PBE-01/` altında `asama1_ektekrar.R/.csv`, `asama1_ektekrar_kayit.csv`, `asama1_tablo113.R/.csv`, `asama2_dogrula.R`, `asama2_dogrulama.csv`, `asama2.R`, `asama2_sonuc.csv`, `asama2_ektekrar.csv`, `asama2_kayit.csv`.
+- **Açık:** tip I uyum ölçütü kararı; teknik not v0.8 (ölçüt kararından sonra) ve Aşama 2 sonuçlarının nota işlenmesi; yeniden üretim paketi.
+
+## G-41 · Üç sınıflı tip I hata etiketi; teknik not v0.8; yeniden üretim paketi — 16.10.2026
+
+- **Karar (K, Claude önerisi üzerine): KK-38.** Tip I hata tahmini tek taraflı %95 Monte Carlo sınırlarıyla (z = 1,645) üç sınıfa ayrılır: p̂ − z·MCSE > 0,05 *nominali aşıyor*; p̂ + z·MCSE ≤ 0,05 *kontrol kanıtlı*; arası *ayırt edilemiyor*. Tasarım karşılaştırmasında ölçüt "nominali aşmıyor"dur. Gerekçe: raporun tek ölçütü (p̂ + z·MCSE ≤ 0,05), sınırda tam nominal düzeyde çalışan bir yöntemi gerçek oran 0,05 iken yalnız yaklaşık %5 olasılıkla kabul eder (G-40). Raporun ölçütü "kontrol kanıtlı" sınıfına karşılık gelir. v0.7'deki "%5 + 2 MCSE" kuralı geri çekildi.
+- **Tablolar (`asama1_tablo113.R` güncellendi):** Tablo 11.3b'nin hücreleri v0.7 ile aynı; EMA (a), p_B = 0, 3 × 10 "ayırt edilemiyor" (%4,9; sınırlar %4,5–5,2). Tablo 11.3a'da FDA ve EMA (a)'nın seri varyanslı hücreleri "nominali aşıyor". Aşama 2 EMA alt sınırı bloğunda (90 hücre): EMA (b) 52 kontrol kanıtlı / 38 ayırt edilemiyor; EMA (c) 68 / 22; ikisinde de nominali aşan yok; EMA (a) 61 hücrede aşıyor.
+- **Teknik not v0.8:** `belgeler/teknik_notlar/FSR-TN-PBE-01_v0.8.docx` (18 sayfa; v0.7 üzerinde düzenlendi). Kontrol raporu 02'nin işlenen maddeleri: M-01 (KK-38, Tablo 11.3a/b), M-06 (GMR 1,10 yalnız platformda), M-07/M-09 (eşleşik MCSE, sınır payı; örnek oran), M-08 (MCSE ifadesi; ek tekrar sonuçları), M-11 (işlem karakteristiği), M-03/M-05 (TC-F9, TC-F10), G1 (liste doğrulaması). Aşama 2 sonuçları henüz nota işlenmedi.
+- **Bağımsız seed ile yeniden üretim (M-12; `bagimsiz_tekrar.R`):** Tablo 11.1–11.2'nin 48 yöntem hücresi seed 20261019 ve 40.000 tekrarla yeniden koşuldu: en büyük |z| = 2,65, |z| > 3 yok. Aşama 1'de ortak seed kullanıldığından karşılaştırmalar bağımsız değil. En büyük farklı hücre (EMA (a), p_B 0,30, δ₀) iki ek seed'le daha koşuldu: %17,5 ve %17,7 (Aşama 1: %17,1 ± 0,4); sistematik fark yok.
+- **Yeniden üretim paketi:** `belgeler/teknik_notlar/FSR-TN-PBE-01_ek/yeniden_uretim/FSR-TN-PBE-01_yeniden_uretim_v0.8.zip` (1,1 MB). İçerik: paket kaynağı (tar.gz), simülasyon betikleri ve bütün CSV'ler, şekiller, teknik not v0.8, ek dosyaları (EMS, Chow, SAS), `sessionInfo.txt`, `test_sonuclari.csv` (25 blok, 722 beklenti, başarısız 0, atlanan 0), `SHA256SUMS.txt` (43 dosya), `OKUBENI.md` (raporun (a)–(g) maddeleriyle eşleştirme ve adımlar). Paketten bir betik çalıştırılarak yolların doğruluğu sınandı.
+- **Sıradaki:** Aşama 2 sonuçlarının değerlendirilmesi ve teknik nota işlenmesi (v0.9); motor dosyaları için validasyon belgesi ve SHA-256 sabitleme (A-12).
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -519,9 +548,10 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-8 | Otomatik doğrulama (GitHub Actions): her push'ta SHA-256 + 491 kontrol | Tamam: ilk koşu Linux + Windows GEÇTİ (G-12) |
 | A-6 | Lisans kararı (MIT / GPL-3 / diğer) | Üniversite görüşü bekleniyor (G-15); platform makalesinden önce |
 | A-7 | Fonksiyon belgeleri (İngilizce) ve PBE köprüsünün pakete alınması | Tamam: PBE köprüsü (G-13), belgeler (G-14) |
-| A-10 | Simülasyon altyapısı: validasyon belgesi FSR-VAL-SIM-1 ve SHA-256 sabitleme; ilk yayın senaryosu | Altyapı v0.1.0 tamam (G-15); ilk senaryo PBE güç / seri başına kap sayısı; teknik not v0.4 (G-31); hızlı motor `invitro_fast.R` (G-32); Aşama 1 koşuldu (G-33) ve nota işlendi (G-34); SAS kontrolü (G-36); sırada Aşama 2; Aşama 2 listesi sabitlendi, 725 senaryo (G-38) |
+| A-10 | Simülasyon altyapısı: validasyon belgesi FSR-VAL-SIM-1 ve SHA-256 sabitleme; ilk yayın senaryosu | Altyapı v0.1.0 tamam (G-15); ilk senaryo PBE güç / seri başına kap sayısı; teknik not v0.4 (G-31); hızlı motor `invitro_fast.R` (G-32); Aşama 1 koşuldu (G-33) ve nota işlendi (G-34); SAS kontrolü (G-36); sırada Aşama 2; Aşama 2 listesi sabitlendi, 725 senaryo (G-38); motor 0.2.0, Aşama 2 koşuldu (G-40) |
 | A-12 | `invitro_fast.R` ve `invitro_grid.R` için validasyon belgesi (FSR-VAL-SIM-1 kapsamında) ve SHA-256 sabitleme; EMS testi (teknik not 8.5) pakete | Açık; kanıtlar hazır: TC-F1–F7, sayısal REML, SAS (G-32, G-36) |
-| A-13 | Teknik not v0.7: D1–D13 (G-38) | Tamam: v0.7 (G-39); onay bekliyor |
+| A-13 | Teknik not v0.7: D1–D13 (G-38) | Tamam: v0.7 (G-39) |
+| A-14 | Tip I uyum ölçütü kararı; teknik not v0.8 (rapor 02) ve Aşama 2 sonuçları; yeniden üretim paketi (G-40) | Ölçüt (KK-38), v0.8 ve paket tamam (G-41); Aşama 2 sonuçlarının nota işlenmesi açık |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
 | A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
@@ -530,8 +560,8 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.36 | Bu belge |
-| FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.7 | Taslak; D1–D13 işlendi (G-39); onay bekliyor |
+| FSR-LOG-01 · Proje günlüğü | 1.38 | Bu belge |
+| FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.8 | Taslak; kontrol raporu 02 işlendi (G-41); Aşama 2 sonuçları bekliyor |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
 | CNKfarmastatr (R paketi) | 1.0.0.9000 | 8 validasyonlu dosya (SHA-256); devralınan validasyon 491 kontrol + simülasyon çatısı (TC-S) + in vitro motoru `invitro_fast.R` 0.1.1 / `invitro_grid.R` 0.1.0 (TC-F1–F7, 628 beklenti) GEÇTİ (G-37); yardım sayfaları tamam (G-14, G-37) |
 
@@ -576,3 +606,4 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | KK-35 | n_sim = 10.000; hızlı PBE + EMA (c) kapalı biçim; ortak seed; EMA tek büyüklükle başlar | G-31 |
 | KK-36 | m = 1, 2, 3 genel; Budesonid tek m değerine bağlanmaz | G-38 |
 | KK-37 | Aşama 2 listesi koşudan önce sabit: p_B {0; 0,30} çaprazlı + rapor ekleri; 725 senaryo | G-38 |
+| KK-38 | Tip I hata üç sınıflı etiket (nominali aşıyor / kontrol kanıtlı / ayırt edilemiyor); tasarım ölçütü "nominali aşmıyor" | G-41 |
