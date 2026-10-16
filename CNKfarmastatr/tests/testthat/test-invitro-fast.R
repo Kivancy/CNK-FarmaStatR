@@ -249,4 +249,19 @@ test_that("TC-F11 EMA (c): REML objective, constraints, 90% CI and decision vs n
   }
   expect_true(all(seen))     # both decisions occur among the 24 data-set pairs
   expect_equal(flagged, 0, tolerance = 0)
+  # (v) the flagging rule itself (FSR-VAL-SIM-1 v0.3): one pair shifted so that the
+  #     upper limit lies inside 1.18 by a relative 3e-6. A shift of the T data moves
+  #     the mean difference only; variances, df and the CI width are unchanged.
+  XT <- invitro_gen(1, l, n, 3, mu = log(1.10), sB = 0.03, sC = 0.02, sW = 0.02)
+  XR <- invitro_gen(1, l, n, 3, sB = 0.03, sC = 0.02, sW = 0.02)
+  up0 <- ema_ci_fast(XT, XR, l, n, l, n, methods = "c")$c$upper
+  XT <- XT + log(1.18 * (1 - 3e-6)) - log(up0)
+  ci <- ema_ci_fast(XT, XR, l, n, l, n, methods = "c")$c
+  MT <- matrix(XT[1, , ], l * n, 3); MR <- matrix(XR[1, , ], l * n, 3)
+  ci_num <- ci_from_var(mean(MT) - mean(MR), reml_numeric(MT, l, n)$v_mean, reml_numeric(MR, l, n)$v_mean,
+                        reml_closed(MT, l, n)$df, reml_closed(MR, l, n)$df)
+  expect_close(ci$upper, 1.18 * (1 - 3e-6), atol = 1e-12, rtol = 1e-12)
+  expect_true(ci$pass)                                                   # inside 1.18
+  expect_true(any(abs(c(ci$lower, ci$upper) - c(0.85, 1.18)) <= 1e-5 * c(0.85, 1.18)))   # flagged
+  expect_close(c(ci$lower, ci$upper), ci_num, atol = 1e-10, rtol = 1e-5)  # limits still agree
 })

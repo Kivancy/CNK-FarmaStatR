@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.42 · Son güncelleme: 16.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.43 · Son güncelleme: 16.10.2026"
 ---
 
 # Bu belge hakkında
@@ -606,6 +606,16 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `CNKfarmastatr/tests/testthat/test-simulation.R`, `test-invitro-fast.R`, `helper-tolerance.R`, `helper-reml.R`; `belgeler/validasyon/FSR-VAL-SIM-1_v0.2.docx`; `FSR-VAL-SIM-1_ek/` (`kanit.R` ve altı çıktı); bu günlük. Validasyonlu çekirdek ve motor dosyaları değişmedi (SHA-256 aynı).
 - **Onay bekleyen:** FSR-VAL-SIM-1 v0.2 (Tablo 5.1, TC-F11, Bölüm 7). Onaydan sonra sabitleme (A-12). GitHub Actions'ta v0.2 testlerinin ilk koşusu bir sonraki push'ta.
 
+## G-46 · Eşik onayı; TC-F11'e sınır çifti; FSR-VAL-SIM-1 v0.3 — 16.10.2026
+
+- **Depo:** G-45 dosyaları commit + push edildi; GitHub Actions GEÇTİ (proje sahibi: "action ok"). v0.2 testleri (`expect_close`, TC-F11, TC-S5 |z| < 4) Linux ve Windows'ta ilk kez koştu ve geçti.
+- **Onay (K):** Claude'un seçtiği iki eşik onaylandı (KK-41 kapsamında): SAS sınır çözümünde %90 GA sınırları farkı ≤ 10⁻⁴; REML ölçütü payı 10⁻⁸ ("ikisi de uygun").
+- **TC-F11 eki (Ö, Claude; proje sahibi itiraz etmedi):** İşaretleme kuralı yazılıydı ama 24 rastgele çiftte hiç devreye girmemişti. Bir veri seti çifti, T verisine sabit eklenerek üst sınırı 1,18·(1 − 3 × 10⁻⁶) olacak biçimde kaydırıldı (sabit ekleme yalnız ortalama farkını değiştirir; varyanslar, sd ve GA genişliği aynı kalır). Sonuç: karar işaretlendi; motor üst sınırı 1,1799965, sayısal REML 1,1799965; iki yolda da geçer; GA oranı 3,7 × 10⁻⁴. TC-F11: 246 beklenti.
+- **Sonuçlar:** 26 test bloğu, 968 beklenti, başarısız 0, atlanan 0 (çatı 58, motor 895). Diğer kanıtlar değişmedi.
+- **Belge:** `belgeler/validasyon/FSR-VAL-SIM-1_v0.3.docx` (8 sayfa): sürüm geçmişi, Tablo 6.1 (TC-F11), Tablo 7.1 (Actions), Tablo 7.2'ye işaretleme satırı, onay bölümü.
+- **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `test-invitro-fast.R`, `kanit.R`, `sayisal_ozet.csv`, `test_sonuclari.csv`, FSR-VAL-SIM-1 v0.3, bu günlük.
+- **Onay bekleyen:** FSR-VAL-SIM-1 v0.3 (onayla 1.0); ardından beş dosyanın SHA-256 sabitlemesi ve iş akışı açıklamasının güncellenmesi (A-12).
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -618,7 +628,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-6 | Lisans kararı (MIT / GPL-3 / diğer) | Üniversite görüşü bekleniyor (G-15); platform makalesinden önce |
 | A-7 | Fonksiyon belgeleri (İngilizce) ve PBE köprüsünün pakete alınması | Tamam: PBE köprüsü (G-13), belgeler (G-14) |
 | A-10 | Simülasyon altyapısı: validasyon belgesi FSR-VAL-SIM-1 ve SHA-256 sabitleme; ilk yayın senaryosu | Altyapı v0.1.0 tamam (G-15); ilk senaryo PBE güç / seri başına kap sayısı; teknik not v0.4 (G-31); hızlı motor `invitro_fast.R` (G-32); Aşama 1 koşuldu (G-33) ve nota işlendi (G-34); SAS kontrolü (G-36); sırada Aşama 2; Aşama 2 listesi sabitlendi, 725 senaryo (G-38); motor 0.2.0, Aşama 2 koşuldu (G-40); FSR-VAL-SIM-1 v0.1 taslak (G-44) |
-| A-12 | `invitro_fast.R` ve `invitro_grid.R` için validasyon belgesi (FSR-VAL-SIM-1 kapsamında) ve SHA-256 sabitleme; EMS testi (teknik not 8.5) pakete | EMS testi pakette (TC-F10, G-40); FSR-VAL-SIM-1 v0.1 (G-44, KK-40), v0.2 kabul ölçütleri yeniden yazıldı (G-45, KK-41); onay ve sabitleme bekliyor |
+| A-12 | `invitro_fast.R` ve `invitro_grid.R` için validasyon belgesi (FSR-VAL-SIM-1 kapsamında) ve SHA-256 sabitleme; EMS testi (teknik not 8.5) pakete | EMS testi pakette (TC-F10, G-40); FSR-VAL-SIM-1 v0.1 (G-44, KK-40), v0.2 kabul ölçütleri yeniden yazıldı (G-45, KK-41), v0.3 (G-46); onay ve sabitleme bekliyor |
 | A-13 | Teknik not v0.7: D1–D13 (G-38) | Tamam: v0.7 (G-39) |
 | A-14 | Tip I uyum ölçütü kararı; teknik not v0.8 (rapor 02) ve Aşama 2 sonuçları; yeniden üretim paketi (G-40) | Tamam: ölçüt (KK-38), v0.8, paket (G-41), Aşama 2 sonuçları v0.9 (G-42); v0.9 onaylandı, hedefli deney ve v0.10 (G-43); 12.10 onay bekliyor |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
@@ -629,9 +639,9 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.42 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.43 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.10 | Taslak; v0.9 onaylandı; hedefli deney Bölüm 12.10 (G-43); 12.10 onay bekliyor |
-| FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 0.2 | Taslak (G-44, G-45); onay ve SHA-256 sabitleme bekliyor |
+| FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 0.3 | Taslak (G-44 … G-46); onay ve SHA-256 sabitleme bekliyor |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
 | CNKfarmastatr (R paketi) | 1.0.0.9000 | 8 validasyonlu dosya (SHA-256); devralınan validasyon 491 kontrol + simülasyon çatısı (TC-S) + in vitro motoru `invitro_fast.R` 0.1.1 / `invitro_grid.R` 0.1.0 (TC-F1–F7, 628 beklenti) GEÇTİ (G-37); yardım sayfaları tamam (G-14, G-37) |
 

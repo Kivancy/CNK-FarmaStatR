@@ -14,7 +14,7 @@
 "test-invitro-fast.R","TC-F8",10,0,0,FALSE
 "test-invitro-fast.R","TC-F9",6,0,0,FALSE
 "test-invitro-fast.R","TC-F10",5,0,0,FALSE
-"test-invitro-fast.R","TC-F11",242,0,0,FALSE
+"test-invitro-fast.R","TC-F11",246,0,0,FALSE
 "test-simulation.R","TC-S1",15,0,0,FALSE
 "test-simulation.R","TC-S2",3,0,0,FALSE
 "test-simulation.R","TC-S3",3,0,0,FALSE

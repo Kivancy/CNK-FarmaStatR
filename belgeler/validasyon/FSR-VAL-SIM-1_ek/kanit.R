@@ -1,6 +1,7 @@
 # =============================================================================
 # FSR-VAL-SIM-1 - Evidence script (simulation framework and in vitro engine)
 #   v0.2 (decision KK-41): acceptance rules of Table 5.1 applied explicitly.
+#   v0.3: TC-F11 near-limit pair (flagging rule) reported in sayisal_ozet.csv.
 #   Numerical rule: |x_hat - x| <= atol + rtol * max(|x|, |x_hat|); reported as
 #   the largest ratio |diff| / (atol + rtol * max), which must be <= 1.
 #   Outputs (this folder):
@@ -95,6 +96,15 @@ for (m in c(1, 3)) for (cs in cases) for (mu in log(c(1.00, 1.10, 1.15))) {
   nagree <- nagree + (!near && ci$pass == (cn[1] >= 0.85 && cn[2] <= 1.18))
   npass <- npass + ci$pass; npair <- npair + 1
 }
+# 3c. Flagging rule (v0.3): the TC-F11 pair shifted so that the upper limit is 1.18 (1 - 3e-6)
+XT <- invitro_gen(1, l, n, 3, mu = log(1.10), sB = 0.03, sC = 0.02, sW = 0.02)
+XR <- invitro_gen(1, l, n, 3, sB = 0.03, sC = 0.02, sW = 0.02)
+XT <- XT + log(1.18 * (1 - 3e-6)) - log(ema_ci_fast(XT, XR, l, n, l, n, methods = "c")$c$upper)
+ci <- ema_ci_fast(XT, XR, l, n, l, n, methods = "c")$c
+MT <- matrix(XT[1, , ], l * n, 3); MR <- matrix(XR[1, , ], l * n, 3)
+cn <- ci_from_var(mean(MT) - mean(MR), reml_numeric(MT, l, n)$v_mean, reml_numeric(MR, l, n)$v_mean,
+                  reml_closed(MT, l, n)$df, reml_closed(MR, l, n)$df)
+near_flag <- any(abs(c(ci$lower, ci$upper) - c(0.85, 1.18)) <= 1e-5 * c(0.85, 1.18))
 utils::write.csv(data.frame(
   check = c("pbe_fast_vs_calc_pbe_data_sets", "pbe_fast_vs_calc_pbe_max_ratio_atol1e-12_rtol1e-12",
             "pbe_fast_vs_calc_pbe_decisions_and_criteria_identical",
@@ -103,9 +113,13 @@ utils::write.csv(data.frame(
             "ema_c_vs_reml_max_criterion_closed_minus_numerical",
             "ema_c_vs_reml_ci_max_ratio_atol1e-10_rtol1e-5",
             "ema_c_vs_reml_decisions_identical", "ema_c_vs_reml_decisions_flagged_near_limit",
-            "ema_c_vs_reml_pairs_passing_0.85_1.18"),
+            "ema_c_vs_reml_pairs_passing_0.85_1.18",
+            "near_limit_pair_engine_upper", "near_limit_pair_numerical_upper", "near_limit_pair_flagged",
+            "near_limit_pair_engine_pass", "near_limit_pair_numerical_pass", "near_limit_pair_ci_max_ratio"),
   value = c(nset, signif(rp, 3), as.character(all(agree)), npair, npool, signif(rv, 3),
-            signif(dnll, 3), signif(rci, 3), nagree, nflag, npass)),
+            signif(dnll, 3), signif(rci, 3), nagree, nflag, npass,
+            sprintf("%.10f", ci$upper), sprintf("%.10f", cn[2]), near_flag, ci$pass,
+            cn[1] >= 0.85 && cn[2] <= 1.18, signif(ratio(c(ci$lower, ci$upper), cn, 1e-10, 1e-5), 3))),
   file.path(out, "sayisal_ozet.csv"), row.names = FALSE)
 
 # ---- 4. SAS comparison against Table 5.1 -----------------------------------
