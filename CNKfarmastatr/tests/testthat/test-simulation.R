@@ -1,6 +1,8 @@
 # Simulation framework (sim_performance, sim_run, run record, export)
 # Test cases TC-S1 ... TC-S10. Expected values of TC-S1 are computed by hand
 # from the formulas of Morris, White & Crowther (2019), Table 6.
+# Acceptance rules (FSR-VAL-SIM-1 v0.2, KK-41): expect_close() = combined absolute
+# and relative tolerance (helper-tolerance.R); Monte Carlo checks |z| < 4.
 
 perf_value <- function(tab, m, col = "estimate") tab[tab$measure == m, col]
 
@@ -13,39 +15,39 @@ test_that("TC-S1 performance measures and MCSE equal the hand-computed values", 
   tab <- sim_performance(est, truth, se, lower, upper, p, alpha = 0.05)
   tol <- 1e-12
   # Bias = 3 - 2.5;            MCSE = sqrt(10 / (5 * 4))
-  expect_equal(perf_value(tab, "bias"), 0.5, tolerance = tol)
-  expect_equal(perf_value(tab, "bias", "mcse"), sqrt(0.5), tolerance = tol)
+  expect_close(perf_value(tab, "bias"), 0.5, atol = tol, rtol = tol)
+  expect_close(perf_value(tab, "bias", "mcse"), sqrt(0.5), atol = tol, rtol = tol)
   # EmpSE = sqrt(10 / 4);      MCSE = EmpSE / sqrt(8)
-  expect_equal(perf_value(tab, "empse"), sqrt(2.5), tolerance = tol)
-  expect_equal(perf_value(tab, "empse", "mcse"), 0.5590169943749475, tolerance = tol)
+  expect_close(perf_value(tab, "empse"), sqrt(2.5), atol = tol, rtol = tol)
+  expect_close(perf_value(tab, "empse", "mcse"), 0.5590169943749475, atol = tol, rtol = tol)
   # MSE: (est - 2.5)^2 = 2.25, .25, .25, 2.25, 6.25 -> 2.25; MCSE = sqrt(24 / 20)
-  expect_equal(perf_value(tab, "mse"), 2.25, tolerance = tol)
-  expect_equal(perf_value(tab, "mse", "mcse"), sqrt(1.2), tolerance = tol)
+  expect_close(perf_value(tab, "mse"), 2.25, atol = tol, rtol = tol)
+  expect_close(perf_value(tab, "mse", "mcse"), sqrt(1.2), atol = tol, rtol = tol)
   # ModSE = sqrt(2.8);         MCSE = sqrt(2.7 / (4 * 5 * 2.8))
-  expect_equal(perf_value(tab, "modse"), sqrt(2.8), tolerance = tol)
-  expect_equal(perf_value(tab, "modse", "mcse"), 0.21957751641341997, tolerance = tol)
+  expect_close(perf_value(tab, "modse"), sqrt(2.8), atol = tol, rtol = tol)
+  expect_close(perf_value(tab, "modse", "mcse"), 0.21957751641341997, atol = tol, rtol = tol)
   # Relative error = 100 (sqrt(2.8 / 2.5) - 1)
-  expect_equal(perf_value(tab, "relerr_modse"), 5.830052442583611, tolerance = 1e-10)
-  expect_equal(perf_value(tab, "relerr_modse", "mcse"), 39.91061441342569, tolerance = 1e-10)
+  expect_close(perf_value(tab, "relerr_modse"), 5.830052442583611, atol = 1e-10, rtol = 1e-10)
+  expect_close(perf_value(tab, "relerr_modse", "mcse"), 39.91061441342569, atol = 1e-10, rtol = 1e-10)
   # Coverage of 2.5 by [0,2],[1,3],[2,4],[3,5],[4,6] = 2/5; of mean 3 = 3/5
-  expect_equal(perf_value(tab, "coverage"), 0.4, tolerance = tol)
-  expect_equal(perf_value(tab, "coverage", "mcse"), sqrt(0.24 / 5), tolerance = tol)
-  expect_equal(perf_value(tab, "be_coverage"), 0.6, tolerance = tol)
+  expect_close(perf_value(tab, "coverage"), 0.4, atol = tol, rtol = tol)
+  expect_close(perf_value(tab, "coverage", "mcse"), sqrt(0.24 / 5), atol = tol, rtol = tol)
+  expect_close(perf_value(tab, "be_coverage"), 0.6, atol = tol, rtol = tol)
   # Rejection at alpha = 0.05: p <= 0.05 in 3 of 5
-  expect_equal(perf_value(tab, "rejection"), 0.6, tolerance = tol)
-  expect_equal(perf_value(tab, "rejection", "mcse"), sqrt(0.24 / 5), tolerance = tol)
+  expect_close(perf_value(tab, "rejection"), 0.6, atol = tol, rtol = tol)
+  expect_close(perf_value(tab, "rejection", "mcse"), sqrt(0.24 / 5), atol = tol, rtol = tol)
 })
 
 test_that("TC-S2 missing estimates are excluded and counted", {
   tab <- sim_performance(c(1:5, NA, NaN), truth = 2.5)
-  expect_equal(attr(tab, "n_missing"), 2L)
-  expect_equal(perf_value(tab, "bias"), 0.5)
+  expect_equal(attr(tab, "n_missing"), 2L, tolerance = 0)
+  expect_close(perf_value(tab, "bias"), 0.5, atol = 1e-12, rtol = 1e-12)
   expect_error(sim_performance(1:5), "truth")
 })
 
 test_that("TC-S3 number of replicates for a target MCSE", {
-  expect_equal(sim_n_required(mcse = 0.005, p = 0.95), 1900)      # 0.0475 / 0.000025
-  expect_equal(sim_n_required(mcse = 0.01, var_est = 0.25), 2500)
+  expect_equal(sim_n_required(mcse = 0.005, p = 0.95), 1900, tolerance = 0)      # 0.0475 / 0.000025
+  expect_equal(sim_n_required(mcse = 0.01, var_est = 0.25), 2500, tolerance = 0)
   expect_error(sim_n_required(0.01))
 })
 
@@ -63,12 +65,14 @@ test_that("TC-S4 same seed reproduces the run; caller's RNG is untouched", {
   expect_true(all(c("r_version", "package_version", "params", "started") %in% names(a$record)))
 })
 
-test_that("TC-S5 demo scenario reproduces the analytic values within 3 MCSE", {
+test_that("TC-S5 demo scenario reproduces the analytic values within 4 MCSE", {
+  # common Monte Carlo acceptance rule |z| < 4 (FSR-VAL-SIM-1 v0.2, KK-41);
+  # 3 <= |z| < 4 is reported as a warning by the evidence script, not here
   r <- sim_run("demo_mean_ci", params = list(n = 10L), n_sim = 4000, seed = 2026)
   pf <- r$performance
   within <- function(m, meas, true) {
     row <- pf[pf$method == m & pf$measure == meas, ]
-    abs(row$estimate - true) < 3 * row$mcse
+    abs(row$estimate - true) < 4 * row$mcse
   }
   expect_true(within("t", "coverage", 0.95))
   expect_true(within("z", "coverage", 2 * pt(qnorm(0.975), 9) - 1))   # 0.9183509
@@ -81,9 +85,9 @@ test_that("TC-S5 demo scenario reproduces the analytic values within 3 MCSE", {
 
 test_that("TC-S6 user parameters override the defaults; invalid ones are rejected", {
   r <- sim_run("demo_mean_ci", params = list(n = 125, dist = "lognormal"), n_sim = 50, seed = 1)
-  expect_equal(r$record$params$n, 125)
-  expect_equal(r$record$ademp$truth, exp(0.5))
-  expect_equal(r$record$params$sigma, 1)                     # default kept
+  expect_equal(r$record$params$n, 125, tolerance = 0)
+  expect_close(r$record$ademp$truth, exp(0.5), atol = 1e-12, rtol = 1e-12)
+  expect_equal(r$record$params$sigma, 1, tolerance = 0)                     # default kept
   expect_error(sim_run("demo_mean_ci", params = list(N = 5)), "Unknown parameter")
   expect_error(sim_run("demo_mean_ci", params = list(n = 1)), "n must be")
   expect_error(sim_run("no_such_scenario"), "Unknown scenario")
@@ -123,8 +127,8 @@ test_that("TC-S9 failing replicates are caught, counted and do not stop the run"
   r <- sim_run(scn, n_sim = 500, seed = 5)
   f <- r$record$failed
   expect_true(f$fragile > 100 && f$fragile < 200)            # about 30% of 500
-  expect_equal(f$robust, 0)
-  expect_equal(sum(r$raw$method == "fragile" & !is.na(r$raw$error)), f$fragile)
+  expect_equal(f$robust, 0, tolerance = 0)
+  expect_equal(sum(r$raw$method == "fragile" & !is.na(r$raw$error)), f$fragile, tolerance = 0)
   expect_true(all(r$raw$error[!is.na(r$raw$error)] == "too small"))
 })
 

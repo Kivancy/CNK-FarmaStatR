@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.41 · Son güncelleme: 16.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.42 · Son güncelleme: 16.10.2026"
 ---
 
 # Bu belge hakkında
@@ -591,6 +591,21 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Onay bekleyen:** FSR-VAL-SIM-1 v0.1 içeriği; onaydan sonra beş dosyanın `CEKIRDEK_SHA256.txt`'ye eklenmesi ve iş akışı açıklamasının güncellenmesi. Teknik not v0.10 Bölüm 12.10 onayı da açık (G-43).
 - **Sıradaki öneri:** Onaydan sonra sabitleme (A-12 kapanır); ardından platform tarafı (SQLite, webR arayüzü).
 
+## G-45 · FSR-VAL-SIM-1 değerlendirmesi; kabul ölçütleri yeniden yazıldı; v0.2 — 16.10.2026
+
+- **Depo:** G-44 dosyaları commit + push edildi; GitHub Actions GEÇTİ (proje sahibi: "action ok").
+- **Proje sahibinin değerlendirmesi (K):** Doğrulama yaklaşımı ve beş yol uygun; Tablo 5.1 koşulsuz onaylanmadı, sınırlı revizyon istendi. Eşiklerin Claude tarafından seçilmiş olması sorun değil; eşikler hesabın sayısal hassasiyetine uygun, yanlış algoritmayı kabul riskini düşük tutan, doğru algoritmayı gereksiz reddetmeyen ve önceden tanımlı olmalı. İstenenler (öncelik sırasıyla): (1) SAS kabul ölçütleri nicel (deterministik için öneri: göreli 10⁻⁹, mutlak 10⁻¹⁰; sınır çözümünde amaç fonksiyonu, varyans bileşenleri, SH ve GA farkları ayrı kaydedilsin; eşikler sonuca göre sonradan genişletilmesin); (2) analitik ve referans karşılaştırmalarında mutlak ve göreli tolerans birlikte, |x̂ − x| ≤ 10⁻¹² + 10⁻¹²·max(|x|, |x̂|); (3) Monte Carlo eşiği tutarlı: Seçenek B, TC-S5 ve TC-F10'da ortak 4 MCSE, 3–4 MCSE arası uyarı; (4) REML'de parametreye ek olarak amaç fonksiyonu, kısıtlar, %90 GA ve karar; sınırdaki karar farkları işaretlensin; (5) yeniden üretim koşulları (aynı kod, girdi, RNG, ortam). Ölçütler değişince testler yeniden koşulup kaydedilmeli; yeni kapsamlı simülasyon gerekmez. K07 açık kontrol maddesi olarak kalmalı. → **KK-41**.
+- **Uygulama (Claude):**
+  - `tests/testthat/helper-tolerance.R` (yeni): `expect_close()` her eleman için |x̂ − x| ≤ a + r·max(|x|, |x̂|). testthat'in `expect_equal(tolerance = )` ortalama farkı ortalama değere böldüğü için iki test dosyasındaki 60 sayısal karşılaştırma `expect_close()`'a çevrildi; tam sayı, sayım ve özdeşlik kontrolleri `tolerance = 0` ile birebir kaldı. TC-F4'te REML: mutlak 10⁻¹⁰, göreli 10⁻⁵.
+  - TC-S5: 3 → 4 MCSE.
+  - Yeni TC-F11 ve `tests/testthat/helper-reml.R` (motordan bağımsız PAVA, REML ölçütü, sayısal REML): 24 veri seti çifti (m = 1 ve 3), (i) motorun kapalı biçimi = bağımsız PAVA, (ii) bileşenler ≥ 0, (iii) kapalı biçimdeki REML ölçütü ≤ sayısal optimum + 10⁻⁸, (iv) %90 GA K(10⁻¹⁰, 10⁻⁵) ve karar birebir; sınıra göreli 10⁻⁵ yakın kararlar işaretlenir. 242 beklenti, yaklaşık 11 sn.
+  - `kanit.R` v0.2: oranlar Tablo 5.1 kuralıyla; yeni `sas_kabul.csv` (SAS, set başına) ve `mc_z.csv` (z ve uyarı).
+- **SAS eşiklerinin seçimi (Claude, belgeye yazıldı):** SAS sonuçları G-36'da görülmüştü. Sınır çözümü eşikleri bu yüzden gözlenen farklardan değil iki ilkeden seçildi: kapalı biçim kısıtlı REML optimumu olduğundan ölçütte SAS'tan kötü olamaz (10⁻⁸ yuvarlama payı); GA eşiği 10⁻⁴, EMA sınırlarının yazım çözünürlüğünün iki basamak altı. İç çözümlü setlere deterministik kural (10⁻¹⁰, 10⁻⁹) uygulandı.
+- **Sonuçlar (R 4.3.3, Linux):** 26 test bloğu, 964 beklenti, başarısız 0, atlanan 0 (çatı 58, motor 891). `pbe_fast` – `calc_pbe` en büyük oran 3,4 × 10⁻⁶ (≤ 1). EMA (c) – sayısal REML: Var(X̄) oranı 0,032; REML ölçütünde kapalı biçim hiçbir sette kötü değil; GA oranı 8,1 × 10⁻⁴; karar 24/24 aynı (19 geçen), işaretlenen 0. SAS: 10 set GEÇTİ (iç çözüm K04, K08, K09; sınır K01–K03, K05, K06, K10, K11; GA farkı en çok 5,4 × 10⁻⁶), K07'de SAS sonuç üretmedi (açık madde). MC: TC-S5 en büyük |z| 1,25; TC-F10 1,90; uyarı 0.
+- **Belge:** `belgeler/validasyon/FSR-VAL-SIM-1_v0.2.docx` (8 sayfa): Tablo 5.1 yeniden yazıldı; eşiklerin gerekçesi, SAS eşiklerinin seçimi, MC eşiği (Bonferroni: TC-S5 4 karşılaştırma 2,5 × 10⁻⁴; TC-F10 16 karşılaştırma 1,0 × 10⁻³); Tablo 6.1'e TC-F11; yeni Tablo 7.3 (SAS) ve Bölüm 7.4 (MC); sınırlara test kapsamı notu; K07 açık kontrol maddesi. Not: değerlendirmede TC-S5 için 5 MC karşılaştırması varsayılmıştı; 5 beklentinin 4'ü MC karşılaştırmasıdır (beşincisi t ve z yanlılığının özdeşliği).
+- **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `CNKfarmastatr/tests/testthat/test-simulation.R`, `test-invitro-fast.R`, `helper-tolerance.R`, `helper-reml.R`; `belgeler/validasyon/FSR-VAL-SIM-1_v0.2.docx`; `FSR-VAL-SIM-1_ek/` (`kanit.R` ve altı çıktı); bu günlük. Validasyonlu çekirdek ve motor dosyaları değişmedi (SHA-256 aynı).
+- **Onay bekleyen:** FSR-VAL-SIM-1 v0.2 (Tablo 5.1, TC-F11, Bölüm 7). Onaydan sonra sabitleme (A-12). GitHub Actions'ta v0.2 testlerinin ilk koşusu bir sonraki push'ta.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -603,7 +618,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-6 | Lisans kararı (MIT / GPL-3 / diğer) | Üniversite görüşü bekleniyor (G-15); platform makalesinden önce |
 | A-7 | Fonksiyon belgeleri (İngilizce) ve PBE köprüsünün pakete alınması | Tamam: PBE köprüsü (G-13), belgeler (G-14) |
 | A-10 | Simülasyon altyapısı: validasyon belgesi FSR-VAL-SIM-1 ve SHA-256 sabitleme; ilk yayın senaryosu | Altyapı v0.1.0 tamam (G-15); ilk senaryo PBE güç / seri başına kap sayısı; teknik not v0.4 (G-31); hızlı motor `invitro_fast.R` (G-32); Aşama 1 koşuldu (G-33) ve nota işlendi (G-34); SAS kontrolü (G-36); sırada Aşama 2; Aşama 2 listesi sabitlendi, 725 senaryo (G-38); motor 0.2.0, Aşama 2 koşuldu (G-40); FSR-VAL-SIM-1 v0.1 taslak (G-44) |
-| A-12 | `invitro_fast.R` ve `invitro_grid.R` için validasyon belgesi (FSR-VAL-SIM-1 kapsamında) ve SHA-256 sabitleme; EMS testi (teknik not 8.5) pakete | EMS testi pakette (TC-F10, G-40); FSR-VAL-SIM-1 v0.1 taslak (G-44, KK-40); onay ve sabitleme bekliyor |
+| A-12 | `invitro_fast.R` ve `invitro_grid.R` için validasyon belgesi (FSR-VAL-SIM-1 kapsamında) ve SHA-256 sabitleme; EMS testi (teknik not 8.5) pakete | EMS testi pakette (TC-F10, G-40); FSR-VAL-SIM-1 v0.1 (G-44, KK-40), v0.2 kabul ölçütleri yeniden yazıldı (G-45, KK-41); onay ve sabitleme bekliyor |
 | A-13 | Teknik not v0.7: D1–D13 (G-38) | Tamam: v0.7 (G-39) |
 | A-14 | Tip I uyum ölçütü kararı; teknik not v0.8 (rapor 02) ve Aşama 2 sonuçları; yeniden üretim paketi (G-40) | Tamam: ölçüt (KK-38), v0.8, paket (G-41), Aşama 2 sonuçları v0.9 (G-42); v0.9 onaylandı, hedefli deney ve v0.10 (G-43); 12.10 onay bekliyor |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
@@ -614,9 +629,9 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.41 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.42 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.10 | Taslak; v0.9 onaylandı; hedefli deney Bölüm 12.10 (G-43); 12.10 onay bekliyor |
-| FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 0.1 | Taslak (G-44); onay ve SHA-256 sabitleme bekliyor |
+| FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 0.2 | Taslak (G-44, G-45); onay ve SHA-256 sabitleme bekliyor |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
 | CNKfarmastatr (R paketi) | 1.0.0.9000 | 8 validasyonlu dosya (SHA-256); devralınan validasyon 491 kontrol + simülasyon çatısı (TC-S) + in vitro motoru `invitro_fast.R` 0.1.1 / `invitro_grid.R` 0.1.0 (TC-F1–F7, 628 beklenti) GEÇTİ (G-37); yardım sayfaları tamam (G-14, G-37) |
 
@@ -664,3 +679,4 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | KK-38 | Tip I hata üç sınıflı etiket (nominali aşıyor / kontrol kanıtlı / ayırt edilemiyor); tasarım ölçütü "nominali aşmıyor" | G-41 |
 | KK-39 | v0.9 onayı: Hp4 ifadesi; mekanizma hedefli deneyle (eşleşik karar, üst sınır düzeyinde); Tablo 11.3b başlığı; ek tekrarda 10k/40k ayrı, 50k yalnız bağımsız akışla, eşiğe yakın güç kesin sayılmaz | G-43 |
 | KK-40 | Motor validasyonu FSR-VAL-SIM-1 içinde ayrı bölüm; EMA (c) bağımsız analiz olursa kendi belgesi (ör. FSR-VAL-EMA-1) | G-44 |
+| KK-41 | Validasyon kabul ölçütleri: birleşik mutlak + göreli tolerans; SAS nicel (deterministik 10⁻¹⁰/10⁻⁹; sınırda ölçüt, GA, karar); REML'de ölçüt, kısıt, GA, karar; MC ortak |z| < 4, 3–4 uyarı; yeniden üretim koşulları | G-45 |
