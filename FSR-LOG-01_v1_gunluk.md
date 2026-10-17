@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.57 · Son güncelleme: 17.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.58 · Son güncelleme: 17.10.2026"
 ---
 
 # Bu belge hakkında
@@ -936,6 +936,18 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
   - README'de iki sayfanın (prototip ve kabul aracı) yan yana anlatımı.
 - **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `platform_input.R`, `test-platform-input.R`, `web/p1/index.html`, `app.js`, `ceviri.json`, `FSR-TN-PLT-01_v0.5.docx`, bu günlük.
 
+## G-61 · FSR-TN-PLT-01 v0.5 onaylandı; P1 kapandı — 18.10.2026
+
+- **Depo:** G-60 commit edildi; Actions GEÇTİ (proje sahibi: "action tamam").
+- **Proje sahibinin kararı (K):** "onaylıyorum" → **KK-48**. FSR-TN-PLT-01 v0.5 onaylandı. KK-46'nın koşulu sağlandı: yeni sınır ölçüldü, uygulandı ve belgelendi. **P1 kapandı.** Sıradaki aşama P2.
+- **Ara soru:** Proje sahibi, simülasyon dışında gerçek veriyle PBE hesabının yapılıp yapılamayacağını sordu. Claude'un cevabı:
+  - Yapılabilir, ama şimdilik yalnız R'de: önce `kp_hazirla()` ile giriş kontrolü, sonra `kp_pbe()` (validasyonlu `calc_pbe`). Tarayıcıda veri analizi ekranı henüz yok; ileride ayrı bir modül olacak.
+  - PSG 020929 örneğinde beklenen sonuç: Reference-scaled, σ_R 0,405, GMR 1,16, Hη −0,0315, PASS.
+  - Log dönüşümü uyarısı verildi.
+- **Sunucuyu kapatma:** R konsolunda Esc (RStudio'da Dur simgesi); gerekirse `httpuv::stopAllServers()`.
+- **Not:** v0.5'in künye tablosu "v0.5 onayı bekliyor" diyor. Onay bu girdiyle kayıtlı; künye bir sonraki sürümde güncellenecek.
+- **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** bu günlük.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -953,17 +965,17 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-14 | Tip I uyum ölçütü kararı; teknik not v0.8 (rapor 02) ve Aşama 2 sonuçları; yeniden üretim paketi (G-40) | Tamam: ölçüt (KK-38), v0.8, paket (G-41), Aşama 2 sonuçları v0.9 (G-42); v0.9 onaylandı, hedefli deney ve v0.10 (G-43); 12.10 onay bekliyor; v0.10 onaylandı, v0.11 (G-48) |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
 | A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
-| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P1 koşullu başarılı (KK-46); koşu büyüklüğü sınırı uygulandı (KK-47, G-60); v0.5 onaylanırsa P1 kapanır; sonra P2 (sınıflandırma fonksiyonu, D-03, D-04, SQLite) |
+| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0 ve P1 kapandı (KK-45, KK-48); sırada P2: sınıflandırma fonksiyonu, D-03, D-04, SQLite; açık: kabul aracının 20.000 tekrarlık adımları, dogrulama.yml sayıları, README düzeni |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
 
 # 4. Belge ve sürüm dizini
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.57 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.58 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.0 | Onaylandı; beş dosya sabitlendi (G-47) |
-| FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.5 | P1 kabul sonuçları ve koşu büyüklüğü sınırı (G-60, KK-47); onaylanırsa P1 kapanır |
+| FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.5 | Onaylandı (KK-48); P0 ve P1 kapandı |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
 | CNKfarmastatr (R paketi) | 1.0.0.9000 | 13 dosya SHA-256 ile sabit (8 devralınan çekirdek + simülasyon çatısı ve in vitro motoru; FSR-VAL-SIM-1 1.0, G-47); testler 26 blok, 968 beklenti GEÇTİ (G-46) |
 
@@ -1018,3 +1030,4 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | KK-45 | FSR-TN-PLT-01 v0.3 nihai görüşü: temel tasarım onaylandı; 10⁻¹² mutlak tolerans korunur, D-02 gerekçesi proje sahibinin metniyle; P1 test koşulları onaylandı ve Tablo 11.1 ile donduruldu; P0 kapandı, P1'e geçildi; P1 başarısına dondurulmuş kabul testleri koşulduktan sonra karar verilir | G-53 |
 | KK-46 | P1 koşullu başarılı: bellek eşiği aşıldı (1.068 > 1.024 MB) ve açıkça kaydedilir; donmuş kurala göre geçici n_sim üst sınırı düşürülür, yeni sınır ölçümle belirlenir; P1 kapanışı bu ölçüm ve belgelemeye bağlı | G-58 |
 | KK-47 | Geçici üst sınır: n_sim ≤ 20.000 ve ℓ·n·m·n_sim ≤ 8,1 × 10⁶ (dayanak: prototip tek başına 15.000 tekrarda 688 MB; FarmaStatR türetimi; tek cihaz) | G-60 |
+| KK-48 | FSR-TN-PLT-01 v0.5 onaylandı; KK-46 koşulu sağlandı; P1 kapandı, P2'ye geçilir | G-61 |
