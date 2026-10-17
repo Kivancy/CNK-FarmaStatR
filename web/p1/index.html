@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CNK-FarmaStatR · P1</title>
+<!-- FSR-TN-PLT-01 v0.4 - P1 minimal browser prototype (D-05). Research and education only;
+     not a system validated for GxP environments. The page does no statistics itself: every
+     number comes from the R engine (CNKfarmastatr/R) running in webR. -->
+<link rel="stylesheet" href="stil.css">
+</head>
+<body>
+<header>
+  <div>
+    <h1 data-i18n="title"></h1>
+    <p class="sub" data-i18n="subtitle"></p>
+  </div>
+  <button id="lang" type="button" class="ghost" data-i18n="lang"></button>
+</header>
+<p class="disclaimer" data-i18n="disclaimer"></p>
+<p class="note" data-i18n="proto_note"></p>
+
+<main>
+<form id="form" autocomplete="off" novalidate>
+  <fieldset>
+    <legend data-i18n="grp_variance"></legend>
+    <label><span data-i18n="sigma_R"></span><input name="sigma_R" value="0.12" inputmode="decimal"></label>
+    <label><span data-i18n="rho"></span><input name="rho" value="1" inputmode="decimal"></label>
+    <label><span data-i18n="pB"></span><input name="pB" value="0" inputmode="decimal"></label>
+    <label><span data-i18n="pL"></span><input name="pL" value="0.15" inputmode="decimal"></label>
+    <label><span data-i18n="q"></span><input name="q" value="0" inputmode="decimal"></label>
+  </fieldset>
+  <fieldset>
+    <legend data-i18n="grp_design"></legend>
+    <label><span data-i18n="l"></span><input name="l" value="3" inputmode="numeric"></label>
+    <label><span data-i18n="n"></span><input name="n" value="10" inputmode="numeric"></label>
+    <label><span data-i18n="m"></span><input name="m" value="3" inputmode="numeric"></label>
+  </fieldset>
+  <fieldset>
+    <legend data-i18n="grp_effect"></legend>
+    <label><span data-i18n="delta_choice"></span>
+      <select name="delta_choice">
+        <option value="fda_delta0" data-i18n="opt_fda_delta0"></option>
+        <option value="gmr_1.00" data-i18n="opt_gmr_1.00"></option>
+        <option value="gmr_1.05" data-i18n="opt_gmr_1.05"></option>
+        <option value="ema_upper" data-i18n="opt_ema_upper"></option>
+        <option value="ema_lower" data-i18n="opt_ema_lower"></option>
+        <option value="custom" data-i18n="opt_custom"></option>
+      </select>
+    </label>
+    <label id="custom_wrap" hidden><span data-i18n="custom_gmr"></span><input name="custom_gmr" value="1.10" inputmode="decimal"></label>
+  </fieldset>
+  <fieldset>
+    <legend data-i18n="grp_mc"></legend>
+    <label><span data-i18n="n_sim"></span><input name="n_sim" value="10000" inputmode="numeric"></label>
+    <label><span data-i18n="seed"></span><input name="seed" value="20261015" inputmode="numeric"></label>
+    <p class="hint"><span data-i18n="expected_mcse"></span>: <b id="mcse_exp"></b></p>
+  </fieldset>
+  <div class="actions">
+    <button id="run" type="submit" disabled data-i18n="run"></button>
+    <button id="cancel" type="button" class="ghost" disabled data-i18n="cancel"></button>
+    <button id="download" type="button" class="ghost" disabled data-i18n="download"></button>
+  </div>
+</form>
+
+<section class="panel">
+  <p id="status" role="status" aria-live="polite"></p>
+  <p id="times" class="hint"></p>
+  <div id="errors" class="errors" hidden></div>
+  <div id="result" hidden>
+    <h2 data-i18n="res_title"></h2>
+    <table id="res_table"><thead><tr><th data-i18n="col_method"></th><th data-i18n="col_est"></th><th data-i18n="col_mcse"></th></tr></thead><tbody></tbody></table>
+    <p class="hint" id="truth"></p>
+  </div>
+  <details id="engine_box">
+    <summary data-i18n="engine"></summary>
+    <table id="engine_table"><tbody></tbody></table>
+  </details>
+</section>
+</main>
+<footer><span data-i18n="disclaimer"></span> · FSR-TN-PLT-01 v0.4 · P1</footer>
+<script type="module" src="app.js"></script>
+</body>
+</html>

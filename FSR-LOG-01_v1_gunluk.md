@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.51 · Son güncelleme: 17.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.52 · Son güncelleme: 17.10.2026"
 ---
 
 # Bu belge hakkında
@@ -774,6 +774,34 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Sıradaki iş (P1):** minimal tarayıcı prototipi (webR; tek koşu ve sonuç tablosu; hash kontrolü; iptal), ardından `p1_kabul.R` ve Tablo 11.1–11.2 testleri.
 - **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `R/platform_input.R`, `tests/testthat/test-platform-input.R`, `DESCRIPTION`, bu günlük.
 
+## G-55 · P1: minimal tarayıcı prototipi — 17.10.2026
+
+- **Depo:** G-54 dosyaları commit + push edildi; GitHub Actions GEÇTİ (proje sahibi: "action ok. 4 dosya yüklü").
+- **Yeni klasör `web/p1/`:** `index.html`, `app.js`, `stil.css`, `ceviri.json` (TR/EN, 78 anahtar), `README.md`. Sayfa hesap yapmaz. İşleyiş:
+  1. `invitro_fast.R` ve `invitro_grid.R` indirilir; SHA-256 değerleri tarayıcıda hesaplanıp `CEKIRDEK_SHA256.txt` ile karşılaştırılır. Uyuşmazlıkta hiçbir dosya yüklenmez, dosya adı gösterilir.
+  2. Doğrulanan baytlar (ikinci bir indirme değil) webR 0.5.4'e PostMessage kanalıyla yüklenir. Bu kanal, çapraz köken yalıtımı olmayan GitHub Pages koşuludur.
+  3. `platform_run_invitro()` çağrılır.
+  4. Oranlar "BE kabul olasılığı" adıyla ve MCSE ile gösterilir.
+  5. Koşu kaydı JSON olarak indirilebilir: girdiler, seed, RNG, R ve webR sürümü, dosya hash'leri, süreler, tarayıcı bilgisi ve sonuç.
+- **Ortalama farkı:** adlandırılmış seçeneklerle seçilir: FDA δ₀, GMR 1,00, GMR 1,05, EMA üst sınır, EMA alt sınır ve özel GMR. δ₀ R'de `invitro_delta0()` ile hesaplanır; tanımsızsa açıklayıcı bir iletiyle durulur.
+- **`platform_input.R`:** P1'de sabitlenmiş değil; hash'i yalnız kayda yazılır.
+- **İptal:** webR, PostMessage kanalında R hesabını kesemez. İptal webR'yi kapatıp doğrulanmış baytlardan yeniden başlatır; kısmi sonuç tutulmaz.
+- **Kapsayıcıda yapılan ön deneme (Claude; Playwright, başsız Chromium; resmi P1 testi değildir, Tablo 11.2 koşulları sağlanmadı):**
+  - **Özdeşlik:** 3 × 10, FDA δ₀, n_sim 2.000 koşusunda FDA ve EMA (c) geçme oranları ve δ yerel R ile 17 hanede aynı (0,0445; 0,0130; 0,17344468406326474).
+  - **Hata yakalama:**
+    - negatif σ_R, ℓ = 1 ve n = 1 birlikte raporlandı; sonuç gösterilmedi;
+    - pB = 0,9'da motorun kendi iletisi göründü;
+    - ρ = 3'te δ₀ iletisi çıktı;
+    - dil değişince iletiler çevrildi.
+  - **Hash:** sunulan dosyada bir bayt değiştirildi (`invitro_fast.R` 100. ve 5000. bayt, `invitro_grid.R` 2000. bayt). Üç denemenin üçünde hesap engellendi, uyuşmayan dosya adı gösterildi, webR yüklenmedi.
+  - **İptal:** 6 × 30 ve n_sim 20.000 koşusu 3 sn sonra iptal edildi. Arayüz 53 ms'de yanıt verdi, sonuç gösterilmedi; motor 1,8 sn'de yeniden hazırdı ve sonraki koşu doğru sonuç verdi.
+  - **Süre:** açılış 4,7 sn; 3 × 10 ve 10.000 tekrar 2,1 sn; 6 × 30 ve 20.000 tekrar 20,8 sn.
+  - **Mobil (390 px):** düzen tek sütuna geçiyor.
+  - **Yerel sunucu:** `httpuv::runStaticServer()` dosyaları doğru türlerle sunuyor.
+  - **Denenmedi:** webR'nin CDN'den (`webr.r-wasm.org`) yüklenmesi; kapsayıcının internet erişimi yok, denemede webR npm paketinden yerel olarak sunuldu.
+- **Sıradaki iş (P1):** kabul aracı. Tarayıcıda 36 koşuluk test kümesi ve ara değer testi (CSV çıktısı), `p1_kabul.R` karşılaştırması, ardından Tablo 11.2 koşullarında proje sahibinin makinesinde resmi koşu.
+- **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `web/p1/` altındaki 5 dosya ve bu günlük.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -791,14 +819,14 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-14 | Tip I uyum ölçütü kararı; teknik not v0.8 (rapor 02) ve Aşama 2 sonuçları; yeniden üretim paketi (G-40) | Tamam: ölçüt (KK-38), v0.8, paket (G-41), Aşama 2 sonuçları v0.9 (G-42); v0.9 onaylandı, hedefli deney ve v0.10 (G-43); 12.10 onay bekliyor; v0.10 onaylandı, v0.11 (G-48) |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
 | A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
-| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0 kapandı (G-53, KK-45); P1: R giriş kontrolü yazıldı (G-54), sırada tarayıcı prototipi; kabul Tablo 11.1–11.2 ile; D-03, D-04 P2 öncesi |
+| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0 kapandı (G-53, KK-45); P1: R giriş kontrolü (G-54) ve tarayıcı prototipi `web/p1/` (G-55); sırada kabul aracı ve Tablo 11.1–11.2 testleri; D-03, D-04 P2 öncesi |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
 
 # 4. Belge ve sürüm dizini
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.51 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.52 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.0 | Onaylandı; beş dosya sabitlendi (G-47) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.4 | P0 onaylandı ve kapandı (KK-45); P1 kabul ölçütleri ve test koşulları donduruldu (G-53) |
