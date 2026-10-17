@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.53 · Son güncelleme: 17.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.54 · Son güncelleme: 17.10.2026"
 ---
 
 # Bu belge hakkında
@@ -835,6 +835,34 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Sıradaki iş:** proje sahibinin makinesinde Tablo 11.2 koşullarında resmi koşu ve `p1_kabul.R` karşılaştırması. Sonra P1 kararı proje sahibinindir (KK-45).
 - **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `web/p1/` altında `motor.js`, `app.js`, `ceviri.json`, `README.md`, `kabul.html`, `kabul.js`, `kabul/kabul.R`, `kabul/p1_kabul.R`; bu günlük.
 
+## G-57 · P1 resmi kabul koşusu — 17.10.2026
+
+- **Kod:** G-56 commit + push edildi (commit `671d1ae`). Claude, depodaki `.git/index` kaydından G-55 ve G-56 dosyalarının commit'te ve güncel olduğunu doğruladı. Commit kodu 0. adımda "Not" alanına yazıldı; CSV'ye girdi.
+- **Ortam (Tablo 11.2):**
+  - **Cihaz:** Intel Core i7-11370H (8 mantıksal çekirdek), 16 GB RAM, Windows 11 Home Single Language.
+  - **Tarayıcı:** Chrome 155; webR 0.5.4 CDN'den (`webr.r-wasm.org`).
+  - **R sürümleri:** webR içindeki R 4.5.1; yerel R 4.6.1 (ucrt). Tablo 11.2 aynı R sürümünü şart koşmuyor; aynı seed, aynı RNG türü ve aynı motor dosyaları (SHA-256 ile) şart koşuyor.
+  - **Ölçüm:** Soğuk açılış için DevTools'ta "Disable cache" açık beyan edildi. Bellek, Chrome görev yöneticisinde "CNK-FarmaStatR · P1 kabul testleri" sekme satırından okundu: 1.094.000 K = 1.068 MB.
+- **`p1_kabul.R` sonucu** (`belgeler/teknik_notlar/FSR-TN-PLT-01_ek/p1/`):
+  - **Test kümesi:** GECTI; 36/36 koşu.
+  - **Nihai karar birebirliği:** GECTI; 396 sayımın 0'ı farklı.
+  - **Ara değerler ve özetler, K(10⁻¹², 10⁻¹²):** GECTI; 2.115 değer, en büyük mutlak fark 2,2 × 10⁻¹⁶. Son bitte farklı değer 13 (göreli fark ≤ 5,4 × 10⁻¹⁶): 8 sapma payı, 4 eşleşik fark MCSE'si ve 1 EMA üst güven sınırı. Kararlar birebir aynı.
+  - **Hata yakalama:** GECTI; 6/6.
+  - **Hash:** GECTI; 3/3 engellendi.
+  - **İptal:** GECTI; durma 1 ms, arayüz gecikmesi 2 ms, iptal iletisi göründü, kısmi sonuç gösterilmedi, motor 0,97 sn'de yeniden hazır.
+  - **Soğuk açılış:** GECTI; medyan 1,4 sn, en kötü 2,8 sn. Sıcak açılış (yalnız rapor): medyan 1,1 sn.
+  - **Performans 3 × 10, 10.000 tekrar:** GECTI; en kötü 2,6 sn.
+  - **Performans 6 × 30, 20.000 tekrar:** GECTI; en kötü 29,5 sn. Her iki düzende 5 tekrarın sonucu aynı.
+  - **Tepe bellek:** betiğe göre "KALDI"; 1.068 MB, eşik 1.024 MB.
+  - **Mobil:** gözlem girilmedi.
+- **Claude'un hatası (betik donmuş ölçütü yanlış uyguladı):** Tablo 11.1'in "Performans ve bellek" satırı (v0.4, KK-45 ile donduruldu) aynen şöyle: "3 × 10 ve 10.000 ≤ 10 sn; 6 × 30 ve 20.000 ≤ 60 sn; tepe bellek ≤ 1 GB. **Aşılırsa test kalmaz; geçici üst sınır düşürülür.**" `p1_kabul.R` aşımı KALDI olarak yazdı ve genel sonucu KALDI yaptı. Donmuş ölçüte göre bellek aşımı testi düşürmez; sonucu, geçici n_sim üst sınırının (20.000) düşürülmesidir. Bu bir ölçüt gevşetmesi değil, betiğin donmuş metne uydurulmasıdır. Düzeltme proje sahibinin onayına sunuldu.
+- **Gözlem:** Ölçülen sekme, kabul sayfasının kendisini ve prototipin çerçevede defalarca yeniden açıldığı hâli içeriyor. Prototip tek başına daha az bellek kullanıyor olabilir; bu ayrıca ölçülmedi. Ayrıca WebAssembly belleği büyüdükten sonra işletim sistemine geri verilmez; tepe değer, sekmenin en büyük koşusunu yansıtır.
+- **Karar bekleyen (proje sahibi, KK-45):**
+  - Bellek satırının donmuş metne göre uygulanması: test kalmaz, geçici üst sınır düşer;
+  - P1'in başarılı sayılması;
+  - yeni geçici üst sınırın nasıl belirleneceği.
+- **Dosyalar:** `FSR-TN-PLT-01_ek/p1/` altındaki 4 çıktı dosyasını proje sahibi oluşturdu (`p1_tarayici.csv`, `p1_karsilastirma.csv`, `p1_yerel_r.csv`, `p1_yerel_sessionInfo.txt`); Claude dokunmadı. Bu günlük depoya yazıldı ve bayt bayt doğrulandı.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -852,14 +880,14 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-14 | Tip I uyum ölçütü kararı; teknik not v0.8 (rapor 02) ve Aşama 2 sonuçları; yeniden üretim paketi (G-40) | Tamam: ölçüt (KK-38), v0.8, paket (G-41), Aşama 2 sonuçları v0.9 (G-42); v0.9 onaylandı, hedefli deney ve v0.10 (G-43); 12.10 onay bekliyor; v0.10 onaylandı, v0.11 (G-48) |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
 | A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
-| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0 kapandı (G-53, KK-45); P1: R giriş kontrolü (G-54), tarayıcı prototipi (G-55), kabul aracı (G-56); sırada proje sahibinin makinesinde resmi kabul koşusu; D-03, D-04 P2 öncesi |
+| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0 kapandı (G-53, KK-45); P1 resmi kabul koşusu yapıldı (G-57): bellek dışındaki ölçütler GECTI; bellek 1.068 MB, donmuş metne göre üst sınır düşürülür; P1 kararı proje sahibinde; D-03, D-04 P2 öncesi |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
 
 # 4. Belge ve sürüm dizini
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.53 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.54 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.0 | Onaylandı; beş dosya sabitlendi (G-47) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.4 | P0 onaylandı ve kapandı (KK-45); P1 kabul ölçütleri ve test koşulları donduruldu (G-53) |
