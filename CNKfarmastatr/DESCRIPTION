@@ -21,4 +21,4 @@ Config/testthat/edition: 3
 Collate: 'msd_core.R' 'msd_weibull.R' 'f2_boot.R' 'f2_noce_data.R'
     'dis_ornek_veri.R' 'pbe_core.R' 'pbe_kopru.R' 'pbe_ornek_veri.R'
     'sim_performance.R' 'sim_run.R' 'sim_scenario_demo.R' 'invitro_fast.R'
-    'invitro_grid.R'
+    'invitro_grid.R' 'platform_input.R'

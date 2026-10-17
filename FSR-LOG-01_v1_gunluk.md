@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.50 · Son güncelleme: 17.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.51 · Son güncelleme: 17.10.2026"
 ---
 
 # Bu belge hakkında
@@ -736,6 +736,44 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Durum:** P0 kapandı; P1 (minimal tarayıcı prototipi ve R giriş kontrolü) başlıyor. P1'in başarısına dondurulmuş Tablo 11.1 testleri koşulduktan sonra proje sahibi karar verecek. D-03 ve D-04 P2 öncesinde kapatılacak.
 - **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** FSR-TN-PLT-01 v0.4, bu günlük.
 
+## G-54 · P1 başladı: platform giriş kontrolü (R) — 17.10.2026
+
+- **Depo:** G-53 dosyaları commit + push edildi; GitHub Actions GEÇTİ (proje sahibi: "action tamam"). P1 başladı.
+- **Motorun sınanması (Claude):** sabitlenmiş motor (`invitro_scenario`) uç girdilerle denendi. Sessizce sonuç veren girdiler:
+  - σ_R = 0 → FDA geçme 1,000, EMA (c) NA;
+  - ρ = 0 → iki yöntemde de geçme 1,000;
+  - α = 0,6;
+  - ters EMA sınırları (1,2; 0,8) → EMA (c) geçme 0;
+  - σ_T0 < 0.
+
+  Uyarıyla NaN üreten girdi: q < 0 ya da q > 1. Anlamsız iletiyle duran girdiler: m = 2,5 ("length(tau) == m is not TRUE"), δ = Inf ("NAs are not allowed…"). Bunlar G-52 bulgusunu (negatif σ_R; ℓ = 1, n = 1) genişletiyor.
+- **Yeni dosya `CNKfarmastatr/R/platform_input.R` (0.1.0):** `platform_check_invitro(params, n_sim_max = 20000)` her sorunu alan, kod ve İngilizce iletiyle bir tabloya yazar; kodlar TR/EN çeviri dosyası içindir. `platform_run_invitro(params)` önce kontrol eder; sorun varsa `farmastat_input_error` sınıfında durur, yoksa `invitro_scenario`'yu değiştirmeden çağırır.
+  - **Kapsam (P1):** yalnız matematiksel geçerlilik [FarmaStatR türetimi]:
+    - σ_R, ρ, σ_T0 > 0;
+    - q ∈ [0, 1];
+    - ℓ, n tam sayı ve ≥ 2; m tam sayı ve ≥ 1;
+    - δ sonlu;
+    - n_sim tam sayı ve [1, 20.000] aralığında (geçici platform sınırı);
+    - seed R tam sayı aralığında;
+    - α ∈ (0, 0,5);
+    - 0 < alt EMA sınırı < 1 < üst EMA sınırı;
+    - bilinmeyen, eksik ya da yinelenen parametre reddedilir.
+  - **Motora bırakılanlar:** motorun açık bir iletiyle reddettiği girdiler (paylar; m = 1 iken q > 0). Tablo 11.1 uyarınca tarayıcıda ve yerel R'de aynı motor iletisi görünür.
+  - **Sonraya kalanlar:** kullanıcı parametre alanının sınırları P2'de (H-7).
+- **Testler `test-platform-input.R` (PLT-IN-1…4, 151 beklenti):**
+  - geçerli girdi motorla birebir aynı sonucu verir (`identical`);
+  - 26 geçersiz girdi doğru alan ve kodla reddedilir, koşu başlamaz;
+  - birden çok sorun birlikte raporlanır;
+  - motorun reddettiği girdilerde ileti motorunkiyle aynıdır.
+- **Sonuçlar:**
+  - Tam test kümesi (yüklü paket, NOT_CRAN = true): 30 blok, 1.119 beklenti, 0 hata, 0 atlanan.
+  - Çekirdek SHA-256 kontrolü: 13 dosyanın 13'ü AYNI; motor dosyalarına dokunulmadı.
+  - `DESCRIPTION` Collate listesine `platform_input.R` eklendi.
+  - Yeni dosya validasyonlu çekirdek değil; SHA-256 listesine alınmadı.
+- **Açık:** `dogrulama.yml` başlığındaki sayılar (26 blok, 968 beklenti) eskidi. Dosya korumalı; yalnız yorum satırı olduğu için CI'yi etkilemez, P1 sonunda proje sahibi günceller.
+- **Sıradaki iş (P1):** minimal tarayıcı prototipi (webR; tek koşu ve sonuç tablosu; hash kontrolü; iptal), ardından `p1_kabul.R` ve Tablo 11.1–11.2 testleri.
+- **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `R/platform_input.R`, `tests/testthat/test-platform-input.R`, `DESCRIPTION`, bu günlük.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -753,14 +791,14 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-14 | Tip I uyum ölçütü kararı; teknik not v0.8 (rapor 02) ve Aşama 2 sonuçları; yeniden üretim paketi (G-40) | Tamam: ölçüt (KK-38), v0.8, paket (G-41), Aşama 2 sonuçları v0.9 (G-42); v0.9 onaylandı, hedefli deney ve v0.10 (G-43); 12.10 onay bekliyor; v0.10 onaylandı, v0.11 (G-48) |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
 | A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
-| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0 kapandı (G-53, KK-45); P1 başlıyor: tarayıcı prototipi ve R giriş kontrolü, Tablo 11.1–11.2 ile kabul; D-03, D-04 P2 öncesi |
+| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0 kapandı (G-53, KK-45); P1: R giriş kontrolü yazıldı (G-54), sırada tarayıcı prototipi; kabul Tablo 11.1–11.2 ile; D-03, D-04 P2 öncesi |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
 
 # 4. Belge ve sürüm dizini
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.50 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.51 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.0 | Onaylandı; beş dosya sabitlendi (G-47) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.4 | P0 onaylandı ve kapandı (KK-45); P1 kabul ölçütleri ve test koşulları donduruldu (G-53) |
