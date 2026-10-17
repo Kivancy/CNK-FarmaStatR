@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.47 · Son güncelleme: 17.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.48 · Son güncelleme: 17.10.2026"
 ---
 
 # Bu belge hakkında
@@ -684,6 +684,26 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `CNKfarmastatr/tests/testthat/helper-cases.R` (yeni), `test-invitro-fast.R`, `test-simulation.R`, `belgeler/validasyon/FSR-VAL-SIM-1_ek/kanit.R`, `belgeler/teknik_notlar/FSR-TN-PLT-01_v0.1.docx`, `FSR-TN-PLT-01_ek/webr_hiz.mjs`, `webr_hiz.csv`, bu günlük.
 - **Onay bekleyen:** FSR-TN-PLT-01 v0.1, öneriler Ö1–Ö7. Onaylanırsa P1 (prototip sayfa).
 
+## G-51 · FSR-TN-PLT-01 v0.1 incelemesi; P0 spesifikasyonu; v0.2 — 17.10.2026
+
+- **Depo:** G-50 dosyaları commit + push edildi; GitHub Actions GEÇTİ (proje sahibi: "Action tamam").
+- **Proje sahibinin incelemesi (K):** "FSR-TN-PLT-01 v0.1 Metodolojik Değerlendirme ve Değişiklik Talepleri" (17.10.2026). Genel karar: temel mimari korunur; Ö1 ve Ö6 onay (minör), Ö2 ve Ö3 koşullu (majör), Ö4, Ö5 ve Ö7 revizyon (majör). İlk iş P0 teknik spesifikasyonu; P0 tamamlanmadan kullanıcıya açık tam arayüz geliştirilmez. → **KK-43**. Ana istekler:
+  - Ö1: kapsam sınırları yazılı (dengeli, eksiksiz, tek log-normal ölçüt; FDA PBE ve EMA (a), (b), (c)); çekirdeğin doğrudan çağrısı = arayüz çağrısı.
+  - Ö2: SHA-256 "onaylanan baytlarla aynı dosya" kanıtıdır, tedarik zinciri garantisi değil; gerçek tarayıcı testi; hash uyuşmazlığında durma; koşu kaydına webR sürümü, webR'deki R sürümü, çekirdek sürümü, hash'ler, RNG, seed. Node sonucu tarayıcı geneline genişletilmez.
+  - Ö3: varsayılan 10.000; 20.000 yalnız prototip performans sınırı; MCSE, süre, ilerleme, iptal; kalıcı sınır cihaz testinden sonra.
+  - Ö4: senaryo, koşu ve sonuç bağımsız kimliklerle; yöntem–ölçüt ilişkisi; hipotez tablosu; KK-38 sınıfı, MCSE ve eşleşik farklar inşada R'de; webR başlamadan hazır sonuç okunur; yuvarlanmış metin kimlik olmaz; sürüm uyuşmazlığı gösterilir.
+  - Ö5 ve Bölüm 4 ("zorunlu iş kuralı"): her senaryo ve yöntem için gerçek H0/H1; H0'da geçme oranı noktasal tip I hata, H1'de güç, sınıfsız ise "BE kabul olasılığı"; KK-38 yalnız H0'da; tek H0 noktası bileşik H0 kontrolünün kanıtı değil; girdiler A/B/C gruplarında; m ön ayarları; bağlantıda ham veri yok, eski sürüm bağlantısı sessizce yeni sürüme çevrilmez.
+  - Ö6: hesap, etiket ve yuvarlama R'de, DOCX biçimi JavaScript'te; R–ekran–Word uyumu otomatik test; koşu kimliği raporda.
+  - Ö7: P0 eklendi; betik dışa aktarma P3'e; GitHub Pages koşulları P1'de.
+- **Doğrulama (Claude):** İncelemedeki MCSE tablosu, GMR 1,189 (FDA δ₀, temel senaryo), Tablo 4.2'deki FDA ve EMA (c) değerleri yeniden hesaplanarak ya da teknik notla karşılaştırılarak doğru bulundu.
+- **P0 prototipi:** `belgeler/teknik_notlar/FSR-TN-PLT-01_ek/hipotez_siniflandirma.R` → `hipotez_siniflandirma.csv`. Kurallar (FarmaStatR türetimi): FDA, gerçek η (kriter gerçek σ_R ile) ≥ 0 ise H0; EMA, gerçek GMR ≤ 0,85 ya da ≥ 1,18 ise H0; sınır toleransı 10⁻¹². Izgaraya (1.085 senaryo) uygulandı:
+  - Teknik notun okuması tutarlı: tip I hata olarak raporlanan bütün hücreler H0 sınırında, güç olarak raporlananların hepsi iki yöntemde H1'de.
+  - Yeni: Aşama 2'nin 72 senaryosunda (ρ 1'de σ_R 0,06–0,101; ρ 1,15'te σ_R 0,099–0,12) GMR 1,18 FDA için H0 içinde (FDA geçme oranı orada noktasal tip I hata); aynı senaryolarda FDA δ₀ EMA için H1. Teknik not bu hücreleri raporlamadığı için yorum değişmiyor.
+  - Sınır toleransı gerekli: δ₀'da η ±2 × 10⁻¹⁶; yalnız işarete bakılsaydı 72 FDA δ₀ senaryosu H1 (güç) sayılırdı.
+- **Teknik not FSR-TN-PLT-01 v0.2** (`belgeler/teknik_notlar/FSR-TN-PLT-01_v0.2.docx`, 8 sayfa): inceleme kararları tablosu; denemeler (webR, SQLite, sınıflandırma prototipi); katmanlar, hash iddiasının sınırı, koşu kaydı alanları, P1 geçiş koşulu, n_sim ve MCSE tablosu; FDA/EMA hipotezleri; P0 hipotez sınıflandırması (kurallar, metrik etiketi, KK-38, kabul testleri H-1…H-6, K-1…K-3); P0 veri sözleşmesi (senaryo, koşu, yöntem, ölçüt, sonuç, hipotez; kanonik parametre anahtarı `.num_exact` kuralıyla; sürüm uyuşmazlığı); ekran (A/B/C girdi grupları; ürün tipine göre m ön ayarları, KK-36 ile tutarlı; sürüme bağlı bağlantı); rapor sorumlulukları; platform doğrulaması; P0–P6 ve geçiş ölçütleri.
+- **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** FSR-TN-PLT-01 v0.2, `hipotez_siniflandirma.R`, `hipotez_siniflandirma.csv`, bu günlük.
+- **Onay bekleyen:** v0.2'nin incelemeyi doğru işlediği ve P0'ın tamamlandığı; sınıflandırma toleransı 10⁻¹².
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -701,17 +721,17 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-14 | Tip I uyum ölçütü kararı; teknik not v0.8 (rapor 02) ve Aşama 2 sonuçları; yeniden üretim paketi (G-40) | Tamam: ölçüt (KK-38), v0.8, paket (G-41), Aşama 2 sonuçları v0.9 (G-42); v0.9 onaylandı, hedefli deney ve v0.10 (G-43); 12.10 onay bekliyor; v0.10 onaylandı, v0.11 (G-48) |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
 | A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
-| A-15 | Platform: tasarım notu FSR-TN-PLT-01, prototip (P1) ve ilk ekran (P2–P6) | Tasarım notu v0.1 (G-50); onay bekliyor |
+| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | v0.1 (G-50), inceleme ve v0.2 + P0 (G-51); onay bekliyor |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
 
 # 4. Belge ve sürüm dizini
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.47 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.48 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.0 | Onaylandı; beş dosya sabitlendi (G-47) |
-| FSR-TN-PLT-01 · Platform tasarımı: hesaplama katmanları, SQLite, ilk ekran | 0.1 | Taslak; Ö1–Ö7 onay bekliyor (G-50) |
+| FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.2 | Taslak; v0.1 incelendi (KK-43); P0 onay bekliyor (G-51) |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
 | CNKfarmastatr (R paketi) | 1.0.0.9000 | 13 dosya SHA-256 ile sabit (8 devralınan çekirdek + simülasyon çatısı ve in vitro motoru; FSR-VAL-SIM-1 1.0, G-47); testler 26 blok, 968 beklenti GEÇTİ (G-46) |
 
@@ -761,3 +781,4 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | KK-40 | Motor validasyonu FSR-VAL-SIM-1 içinde ayrı bölüm; EMA (c) bağımsız analiz olursa kendi belgesi (ör. FSR-VAL-EMA-1) | G-44 |
 | KK-41 | Validasyon kabul ölçütleri: birleşik mutlak + göreli tolerans; SAS nicel (deterministik 10⁻¹⁰/10⁻⁹; sınırda ölçüt, GA, karar); REML'de ölçüt, kısıt, GA, karar; MC ortak |z| < 4, 3–4 uyarı; yeniden üretim koşulları | G-45 |
 | KK-42 | Teknik not Bölüm 12.10 kalır; hedefli deney mekanizmayı destekler, "tamamen kanıtladı" anlamında kullanılmaz | G-48 |
+| KK-43 | FSR-TN-PLT-01 v0.1 incelemesi: Ö1, Ö6 onay; Ö2, Ö3 koşullu; Ö4, Ö5, Ö7 revizyon; önce P0; yöntem bazında H0/H1 ve metrik etiketi zorunlu; n_sim varsayılan 10.000, geçici üst sınır 20.000 | G-51 |
