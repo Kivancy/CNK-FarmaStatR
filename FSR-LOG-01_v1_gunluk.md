@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.55 · Son güncelleme: 17.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.56 · Son güncelleme: 17.10.2026"
 ---
 
 # Bu belge hakkında
@@ -882,6 +882,31 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
   - Yeni sınır, bellek ile n_sim·ℓ·n·m arasındaki ilişkiden önerilecek ve FSR-TN-PLT-01 v0.5'e işlenecek.
 - **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `web/p1/kabul/p1_kabul.R`, bu günlük.
 
+## G-59 · Bellek ölçümü: prototip tek başına — 17.10.2026
+
+- **Depo:** G-57 ve G-58 commit edildi. `p1_kabul.R` 0.2 proje sahibinin makinesinde yeniden koşuldu: bellek `ASILDI_SINIR_DUSER`, diğer ölçütler GECTI. Çıktılar ayrı bir commit'te.
+- **Ölçüm:** proje sahibi, aynı makine ve Chrome; her ölçüm yeni bir sekmede; prototip `web/p1/` tek başına; 6 × 30, m = 3, FDA δ₀. Değerler "Sekme: CNK-FarmaStatR · P1 prototipi" satırının tepe değeri (K ÷ 1024 = MB):
+
+  | Durum | K | MB | ℓ·n·m·n_sim (hücre) |
+  |---|---|---|---|
+  | Taban ("Hazır") | 156.692 | 153,0 | – |
+  | n_sim 10.000 | 602.960 | 588,8 | 5,4 × 10⁶ |
+  | n_sim 15.000 | 704.920 | 688,4 | 8,1 × 10⁶ |
+  | n_sim 20.000 | 959.652 | 937,2 | 10,8 × 10⁶ |
+
+- **Okuma (Claude):**
+  - Prototip tek başına 20.000 tekrarda 937 MB kullanıyor. Bu 1 GB'ın altında, ama yalnız %8,5 pay bırakıyor.
+  - Resmi koşudaki 1.068 MB'ın yaklaşık 130 MB'ı kabul sayfasının kendi yükü; sayfa prototipi defalarca yeniden açtı.
+  - Artış doğrusal değil: 10.000'den 15.000'e +100 MB, 15.000'den 20.000'e +249 MB. Bu, WebAssembly belleğinin parça parça büyümesiyle uyumlu bir gözlem, ama ayrıca doğrulanmadı.
+  - Ölçüm tek makinede ve birer kez, elle okundu.
+- **Kural gereği (KK-46):** Resmi ölçüm eşiği aştığı için geçici üst sınır yine de düşürülür. Prototipin tek başına eşiğin altında kalması bu sonucu değiştirmez; yalnız sınırın ne kadar düşeceğine bilgi verir.
+- **Öneri (Claude) [FarmaStatR türetimi]:** Geçici sınırı yalnız n_sim'e değil, koşunun büyüklüğüne (hücre sayısı ℓ·n·m·n_sim) bağlamak:
+  - n_sim ≤ 20.000 ve ℓ·n·m·n_sim ≤ 8,1 × 10⁶ (ölçülen 15.000 noktası, 688 MB, yaklaşık %33 pay). Örneğin 6 × 30, m = 3 düzeninde en çok 15.000 tekrar; 3 × 10 düzeni ve varsayılan 10.000 tekrar etkilenmez.
+  - Ayrıca P1'deki girdi kontrolünde ℓ ve n için üst sınır yok; hücre sınırı bunu da kapsar.
+  - Uygulama yeri: `platform_input.R` (sabitlenmiş değil) ve testleri; arayüzde iletisi. Belge: FSR-TN-PLT-01 v0.5. P1 kapanışı bunlardan sonra.
+- **Karar bekleyen:** önerilen kural.
+- **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** bu günlük.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -899,14 +924,14 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-14 | Tip I uyum ölçütü kararı; teknik not v0.8 (rapor 02) ve Aşama 2 sonuçları; yeniden üretim paketi (G-40) | Tamam: ölçüt (KK-38), v0.8, paket (G-41), Aşama 2 sonuçları v0.9 (G-42); v0.9 onaylandı, hedefli deney ve v0.10 (G-43); 12.10 onay bekliyor; v0.10 onaylandı, v0.11 (G-48) |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
 | A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
-| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P1 koşullu başarılı (G-58, KK-46): bellek 1.068 MB > 1 GB, geçici n_sim üst sınırı ölçümle düşürülecek, sonra v0.5 ve P1 kapanışı; D-03, D-04 P2 öncesi |
+| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P1 koşullu başarılı (KK-46); bellek ölçüldü (G-59): prototip tek başına 20.000 tekrarda 937 MB; hücre sayısına bağlı yeni geçici sınır önerildi, karar bekliyor; sonra v0.5 ve P1 kapanışı; D-03, D-04 P2 öncesi |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
 
 # 4. Belge ve sürüm dizini
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.55 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.56 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.0 | Onaylandı; beş dosya sabitlendi (G-47) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.4 | P0 onaylandı ve kapandı (KK-45); P1 kabul ölçütleri ve test koşulları donduruldu (G-53) |
