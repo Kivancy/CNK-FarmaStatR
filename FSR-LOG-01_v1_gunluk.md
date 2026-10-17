@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.58 · Son güncelleme: 17.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.60 · Son güncelleme: 17.10.2026"
 ---
 
 # Bu belge hakkında
@@ -948,6 +948,42 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Not:** v0.5'in künye tablosu "v0.5 onayı bekliyor" diyor. Onay bu girdiyle kayıtlı; künye bir sonraki sürümde güncellenecek.
 - **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** bu günlük.
 
+## G-62 · Gerçek veriyle PBE için yardımcı betik — 18.10.2026
+
+- **Depo:** G-61 commit edildi; Actions GEÇTİ.
+- **Sorun:** Proje sahibi G-61'de verilen kodla analiz yapamadı ("olmadı"); kendi verisini nasıl gireceğini ve PSG örneğini nasıl çalıştıracağını sordu. Hata iletisi paylaşılmadı. Claude'un değerlendirmesi:
+  - Verilen kod `verim.csv` adlı, var olmayan bir dosyayı okuyordu; sütun adlarının ne olması gerektiği yalnız yorum satırında yazıyordu.
+  - Türkçe Excel'in "CSV" çıktısı noktalı virgül ve ondalık virgül kullanır; `read.csv` bunu okuyamaz.
+  - Açıklama yetersizdi.
+- **Yeni dosya `araclar/pbe_hesapla.R`:** `pbe_hesapla(dosya, log_d, test, ref, tek_yonlu)` fonksiyonu.
+  - CSV'yi okur: virgüllü ya da noktalı virgüllü, ondalık nokta ya da virgül, Excel'in BOM'u. Türkçe sütun başlıklarını (Aşama, Ölçüm) tanır.
+  - Validasyonlu çekirdeği değiştirmeden çağırır: `kp_hazirla()`, ardından `kp_pbe()`, o da `calc_pbe()`'yi.
+  - Tasarımı, uyarıları ve sonucu beyanla birlikte yazdırır. Dosya bulunamazsa çalışma klasörünü de söyler.
+- **Yeni dosya `araclar/pbe_ornek_psg020929.csv`:** PSG 020929 örnek verisi (180 satır), şablon biçiminde: `parti, kap, asama, urun, olcum`.
+- **Denendi (Claude, kapsayıcı):**
+  - **Virgüllü CSV, log_d = FALSE:** Reference-scaled, σ_T 0,4688, σ_R 0,4046, Eη −0,263896, Hη −0,031499, PASS. Hη, `calc_pbe(ornek_psg020929())` ile birebir aynı (`identical`).
+  - **Excel biçimi** (noktalı virgül, ondalık virgül, BOM, "Aşama" ve "Ölçüm" başlıkları): aynı sonuç.
+  - **log_d = TRUE:** Constant-scaled, Hη −0,014189, PASS.
+  - **Olmayan dosya:** açıklayıcı ileti.
+- **Not:** PSG örneği, validasyondaki gibi `log_d = FALSE` ile çalıştırılıyor. Örnek verinin kılavuzda hangi ölçekte verildiği bu girdide doğrulanmadı.
+- **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `araclar/pbe_hesapla.R`, `araclar/pbe_ornek_psg020929.csv`, bu günlük.
+
+## G-63 · PBE, m = 1 ve Excel dosyası — 18.10.2026
+
+- **Soru (proje sahibi):** Elindeki veri tek aşamalı (m = 1). Ek bir şey yapması gerekip gerekmediğini sordu. Dosya `C:\cloud\CNK-pharmastat-depo\data01\sample\pbe_ornek_psg020929m1.xlsx`; depo dışında.
+- **Erişim:** Proje sahibi bu klasöre okuma erişimi verdi. Dosya yalnız okundu, değiştirilmedi ve depoya alınmadı. İçerik: 60 satır; sütunlar `parti, kap, asama, urun, olcum`; tek aşama "B"; TEST ve REF için 3'er parti ve 30'ar kap. PSG 020929 örneğinin B aşaması.
+- **Cevap:**
+  - m = 1 için ek bir şey gerekmiyor. Validasyonlu çekirdek tek aşamayı işler: E2 = E4 = 0 ve MSW = 0. Devralınan validasyonda m = 1 vakası var (`devralinan/v0.5.1/validasyon/pbe/R/test_verisi/P2_m1.csv`).
+  - Eksik olan Excel okumasıydı.
+- **`araclar/pbe_hesapla.R` değişikliği:**
+  - `.xlsx` ve `.xls` dosyalarının ilk sayfası `readxl` paketiyle metin olarak okunuyor; paket yoksa kurulum ya da CSV'ye kaydetme öneren bir ileti çıkıyor.
+  - Boş Excel satırları atlanıyor.
+  - Sütun eşleme ortak bir fonksiyona taşındı.
+- **Denendi (Claude, kapsayıcı):**
+  - **m = 1 Excel dosyası, log_d = FALSE:** Reference-scaled, σ_T 0,4691, σ_R 0,4052, Eη −0,264966, Hη −0,031920, PASS. Sonuç, `calc_pbe(ornek_psg020929()[Stage == "B", ])` ile birebir aynı (`identical`).
+  - **CSV ve Excel biçimli CSV:** G-62'deki sonuçlar değişmedi.
+- **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `araclar/pbe_hesapla.R`, bu günlük.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -972,7 +1008,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.58 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.60 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.0 | Onaylandı; beş dosya sabitlendi (G-47) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.5 | Onaylandı (KK-48); P0 ve P1 kapandı |
