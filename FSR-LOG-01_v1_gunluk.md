@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.52 · Son güncelleme: 17.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.53 · Son güncelleme: 17.10.2026"
 ---
 
 # Bu belge hakkında
@@ -802,6 +802,39 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Sıradaki iş (P1):** kabul aracı. Tarayıcıda 36 koşuluk test kümesi ve ara değer testi (CSV çıktısı), `p1_kabul.R` karşılaştırması, ardından Tablo 11.2 koşullarında proje sahibinin makinesinde resmi koşu.
 - **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `web/p1/` altındaki 5 dosya ve bu günlük.
 
+## G-56 · Prototip proje sahibinin makinesinde çalıştı; P1 kabul aracı — 17.10.2026
+
+- **Proje sahibinin makinesi:** `httpuv::runStaticServer()` ilk denemede "there is no package called 'httpuv'" hatası verdi. Claude paketin kurulu olduğunu varsaymıştı. `install.packages("httpuv")` sonrasında prototip açıldı: durum "Hazır", hesap çalıştı (proje sahibi: "Hazır. çalıştı."). Böylece webR'nin CDN'den yüklenmesi de ilk kez denenmiş oldu. README'ye kurulum satırı eklendi.
+- **Ortak modül `web/p1/motor.js`:** dosya doğrulama, webR başlatma ve sonuç dönüştürme, `app.js` ve `kabul.js` tarafından ortak kullanılır.
+  - **Hash testi için kanca:** `?bozuk=<dosya>:<bayt>` indirilen dosyanın bir baytını değiştirir. Yalnız doğrulamayı düşürebilir; sayfada gösterilir ve koşu kaydına yazılır.
+- **Prototipte düzeltme:** İptal edildi iletisi, motor yeniden başlarken anında "webR yükleniyor" ile eziliyordu; kullanıcı iptal iletisini hiç görmüyordu. Kabul aracının ilk kuru denemesi bunu yakaladı. Artık motor hazır olunca "İptal edildi; sonuç üretilmedi. Motor yeniden hazır." gösteriliyor. Yeni çeviri anahtarı: `st_cancelled_ready` (TR/EN, 79 anahtar).
+- **Kabul aracı:**
+  - **`web/p1/kabul.html` ve `kabul.js` (yalnız Türkçe, iç araç):** Tablo 11.2 adımlarını sayfada sırayla yönetir:
+    0. ortam bilgisi;
+    1. soğuk açılış ×5 (DevTools'ta "Disable cache" açık, beyan kutusuyla);
+    2. sıcak açılış ×5;
+    3. ayrı bir webR'de 36 koşu, ara değerler ve hata yakalama; çerçevedeki prototipte 3 hash denemesi, iptal testi ve 5 + 5 performans koşusu;
+    4. tepe bellek (görev yöneticisinden elle) ve mobil gözlem;
+    5. `p1_tarayici.csv` indirme. CSV'nin tek uzun biçimi: bolum, anahtar, ad, deger.
+  - **`web/p1/kabul/kabul.R`:** tarayıcıda ve yerel R'de aynı kod koşar. Sayılar `%.17g` ile yazılır.
+    - **Test kümesi:** Tablo 11.1'deki 36 koşu. Tabloda adı geçmeyen parametreler prototip varsayılanlarında tutuldu (σ_R 0,12, ρ 1, p_L 0,15, q 0) [FarmaStatR türetimi; donmuş tabloda belirtilmemişti].
+    - **Ara değerler:** PSG 020929 örneği ve TC-F2'nin ilk veri seti üzerinde `pbe_fast` ve `ema_ci_fast`.
+    - **Hata vakaları:** 3 motor, 3 platform.
+  - **`web/p1/kabul/p1_kabul.R`:** sabitlenmiş dosyaların SHA-256 değerlerini denetler, yerel hesabı yapar ve ölçütleri yalnız uygular (GECTI, KALDI, EKSIK, KOSUL_SAGLANMADI). Çıktılar `FSR-TN-PLT-01_ek/p1/` klasörüne yazılır: `p1_karsilastirma.csv`, `p1_yerel_r.csv`, gerekirse `p1_fark_ayrinti.csv`, `p1_yerel_sessionInfo.txt`.
+  - **Tanımsız eşik:** "arayüz yanıt verir" için donmuş tabloda sayısal eşik yok. Ölçüt iptal iletisinin görünmesi olarak uygulandı; zamanlayıcı gecikmesi yalnız raporlanıyor.
+- **Kuru deneme (Claude, kapsayıcı; resmi koşu değildir):** Tüm ölçütler GECTI. Ayrıntılar:
+  - **Karar sayımları:** 396 sayımın hepsi aynı.
+  - **Ara değerler ve koşu özetleri:** 2.115 değer K(10⁻¹², 10⁻¹²) içinde. 2.121 değerin 13'ü son bitte farklı (göreli fark ≤ 4,3 × 10⁻¹⁶): sapma payı ortalamaları ve eşleşik fark MCSE'leri. Olası neden: yerel R `mean()` hesabında uzun çift duyarlık (long double) kullanıyor, WebAssembly'de bu yok. Kararlar ve ara büyüklükler birebir aynı. Bu, G-50'deki "17 hanede aynı" gözlemini daraltıyor: o gözlem yalnız dört değer üzerindeydi.
+  - **Diğer ölçümler:**
+    - hash 3/3 engellendi;
+    - iptalde durma ≤ 1 ms, motor 1,3 sn'de yeniden hazır;
+    - soğuk açılış en kötü 2,7 sn;
+    - 3 × 10 ve 10.000 tekrarda en kötü 1,9 sn; 6 × 30 ve 20.000 tekrarda en kötü 18,7 sn.
+
+  Bellek değeri kuru denemede elle uyduruldu (650 MB); resmi koşuda görev yöneticisinden okunacak.
+- **Sıradaki iş:** proje sahibinin makinesinde Tablo 11.2 koşullarında resmi koşu ve `p1_kabul.R` karşılaştırması. Sonra P1 kararı proje sahibinindir (KK-45).
+- **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `web/p1/` altında `motor.js`, `app.js`, `ceviri.json`, `README.md`, `kabul.html`, `kabul.js`, `kabul/kabul.R`, `kabul/p1_kabul.R`; bu günlük.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -819,14 +852,14 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-14 | Tip I uyum ölçütü kararı; teknik not v0.8 (rapor 02) ve Aşama 2 sonuçları; yeniden üretim paketi (G-40) | Tamam: ölçüt (KK-38), v0.8, paket (G-41), Aşama 2 sonuçları v0.9 (G-42); v0.9 onaylandı, hedefli deney ve v0.10 (G-43); 12.10 onay bekliyor; v0.10 onaylandı, v0.11 (G-48) |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
 | A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
-| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0 kapandı (G-53, KK-45); P1: R giriş kontrolü (G-54) ve tarayıcı prototipi `web/p1/` (G-55); sırada kabul aracı ve Tablo 11.1–11.2 testleri; D-03, D-04 P2 öncesi |
+| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0 kapandı (G-53, KK-45); P1: R giriş kontrolü (G-54), tarayıcı prototipi (G-55), kabul aracı (G-56); sırada proje sahibinin makinesinde resmi kabul koşusu; D-03, D-04 P2 öncesi |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
 
 # 4. Belge ve sürüm dizini
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.52 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.53 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.0 | Onaylandı; beş dosya sabitlendi (G-47) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.4 | P0 onaylandı ve kapandı (KK-45); P1 kabul ölçütleri ve test koşulları donduruldu (G-53) |

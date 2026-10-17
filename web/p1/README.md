@@ -20,6 +20,7 @@ Sınıflandırma P2'nin işidir.
 yolundan okur. R konsolunda şunları çalıştırın:
 
 ```r
+install.packages("httpuv")   # bir kez / once
 setwd("C:/cloud/CNK-FarmaStatR/CNK-FarmaStatR")
 httpuv::runStaticServer(".", port = 8000)
 ```
@@ -44,3 +45,17 @@ open `http://127.0.0.1:8000/web/p1/`. webR loads from `webr.r-wasm.org`. The pag
 from `file://`.
 
 **Cancel** closes webR and restarts it from the verified files; no partial result is kept.
+
+## Kabul testleri / Acceptance tests (Tablo 11.1–11.2)
+
+1. Sunucu açıkken Chrome'da `http://127.0.0.1:8000/web/p1/kabul.html` adresini açın ve sayfadaki
+   0–5. adımları sırayla izleyin. Sonunda `p1_tarayici.csv` iner.
+2. Dosyayı `belgeler/teknik_notlar/FSR-TN-PLT-01_ek/p1/` klasörüne koyun.
+3. R konsolunda, depo kökündeyken `source("web/p1/kabul/p1_kabul.R", encoding = "UTF-8")` komutunu
+   çalıştırın. Betik aynı hesapları (`web/p1/kabul/kabul.R`) yerel R'de yapar, her ölçütü GECTI,
+   KALDI ya da EKSIK olarak yazar ve sonuçları aynı klasöre kaydeder.
+
+Open `kabul.html` and follow steps 0–5; put `p1_tarayici.csv` into
+`belgeler/teknik_notlar/FSR-TN-PLT-01_ek/p1/` and source `web/p1/kabul/p1_kabul.R` from the
+repository root. The same R code runs in the browser and in local R; each Table 11.1 criterion is
+marked GECTI (pass), KALDI (fail) or EKSIK (missing).

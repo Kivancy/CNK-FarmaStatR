@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CNK-FarmaStatR · P1 kabul testleri</title>
+<!-- FSR-TN-PLT-01 v0.4, Table 11.1 (criteria) and Table 11.2 (test conditions), frozen by KK-45.
+     Internal acceptance tool (Turkish only). Research and education only; not validated for GxP use. -->
+<link rel="stylesheet" href="stil.css">
+<style>
+  main.k { display: block; max-width: 1100px; }
+  .step { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; margin-bottom: 12px; }
+  .step h2 { margin-top: 0; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; }
+  @media (max-width: 700px) { .grid2 { grid-template-columns: 1fr; } }
+  #log { font: 12px/1.4 ui-monospace, Consolas, monospace; white-space: pre-wrap; max-height: 260px; overflow: auto; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 8px; }
+  iframe { width: 100%; height: 560px; border: 1px solid var(--line); border-radius: 6px; background: var(--card); }
+  .chk { flex-direction: row; align-items: center; gap: 8px; color: var(--fg); }
+  .chk input { width: auto; }
+  ol { margin: 4px 0 8px; padding-left: 20px; }
+</style>
+</head>
+<body>
+<header><div><h1>CNK-FarmaStatR · P1 kabul testleri</h1>
+<p class="sub">FSR-TN-PLT-01 v0.4 · Tablo 11.1 ölçütleri ve Tablo 11.2 koşulları (KK-45 ile donduruldu)</p></div></header>
+<p class="disclaimer">Araştırma ve eğitim amaçlıdır; GxP ortamında valide edilmiş sistem değildir.</p>
+<main class="k">
+
+<section class="step">
+  <h2>0. Koşullar ve ortam (Tablo 11.2)</h2>
+  <ol>
+    <li>Masaüstü Chrome, güncel sürüm. Bu sekme dışında sekme ya da yoğun uygulama açık olmasın.</li>
+    <li>Testler sürerken bu sekme önde kalsın (arka plandaki sekmeyi tarayıcı yavaşlatır).</li>
+    <li>Chrome görev yöneticisini açın (Shift + Esc): bellek ölçümü 3. adımda.</li>
+  </ol>
+  <div class="grid2">
+    <label>İşlemci (model)<input id="env_cpu" placeholder="ör. Intel Core i7-1165G7"></label>
+    <label>RAM (GB)<input id="env_ram" inputmode="decimal"></label>
+    <label>İşletim sistemi<input id="env_os" placeholder="ör. Windows 11 23H2"></label>
+    <label>Not<input id="env_note"></label>
+  </div>
+  <p class="hint" id="env_auto"></p>
+</section>
+
+<section class="step">
+  <h2>1. Soğuk açılış (5 tekrar)</h2>
+  <ol>
+    <li>F12 ile geliştirici araçlarını açın → Network sekmesi → "Disable cache" kutusunu işaretleyin. Araçlar açık kalsın.</li>
+    <li>Aşağıdaki kutuyu işaretleyip düğmeye basın. Prototip aşağıdaki çerçevede 5 kez sıfırdan açılır.</li>
+  </ol>
+  <label class="chk"><input type="checkbox" id="cache_off"> Önbellek kapalı ("Disable cache" işaretli)</label>
+  <div class="actions"><button id="b_cold" type="button">Soğuk açılışı ölç</button></div>
+</section>
+
+<section class="step">
+  <h2>2. Sıcak açılış (5 tekrar)</h2>
+  <ol><li>"Disable cache" işaretini kaldırın (geliştirici araçlarını kapatabilirsiniz), sonra düğmeye basın.</li></ol>
+  <div class="actions"><button id="b_warm" type="button">Sıcak açılışı ölç</button></div>
+</section>
+
+<section class="step">
+  <h2>3. Hesap, hata, hash, iptal ve performans testleri</h2>
+  <ol>
+    <li>Düğmeye basın; süre birkaç dakikadır. Sırayla: 36 koşu + ara değerler + hata yakalama (ayrı bir webR'de), 3 hash denemesi, iptal testi, 5 + 5 performans koşusu (çerçevedeki prototipte).</li>
+    <li>Performans koşuları sürerken Chrome görev yöneticisinde bu sekmenin "Bellek" değerini izleyin ve gördüğünüz en yüksek değeri 4. adıma yazın.</li>
+  </ol>
+  <div class="actions"><button id="b_tests" type="button">Testleri başlat</button></div>
+</section>
+
+<section class="step">
+  <h2>4. Bellek ve mobil gözlem</h2>
+  <div class="grid2">
+    <label>Tepe bellek (MB, görev yöneticisinden)<input id="mem_mb" inputmode="decimal"></label>
+    <label>Mobil gözlem (cihaz, tarayıcı, kısa not; isteğe bağlı)<input id="mobile_note"></label>
+  </div>
+</section>
+
+<section class="step">
+  <h2>5. Sonuçları indir</h2>
+  <p class="hint">İndirilen <code>p1_tarayici.csv</code> dosyasını <code>belgeler/teknik_notlar/FSR-TN-PLT-01_ek/p1/</code> klasörüne koyun; karşılaştırmayı <code>web/p1/kabul/p1_kabul.R</code> yapar.</p>
+  <div class="actions"><button id="b_csv" type="button">p1_tarayici.csv indir</button></div>
+</section>
+
+<section class="step">
+  <h2>Kayıt</h2>
+  <p id="status" role="status" aria-live="polite"></p>
+  <div id="log"></div>
+</section>
+
+<section class="step">
+  <h2>Prototip çerçevesi</h2>
+  <iframe id="fr" title="P1 prototipi" src="about:blank"></iframe>
+</section>
+</main>
+<script type="module" src="kabul.js"></script>
+</body>
+</html>
