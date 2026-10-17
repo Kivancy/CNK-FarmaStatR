@@ -80,3 +80,24 @@ test_that("PLT-IN-4: inputs the engine rejects itself keep the engine's message"
                           "farmastat_input_error"))
   }
 })
+
+test_that("PLT-IN-5: run size l * n * m * n_sim <= 8.1e6 (G-60, KK-47)", {
+  big <- modifyList(base, list(l = 6, n = 30, m = 3))
+  expect_equal(nrow(platform_check_invitro(modifyList(big, list(n_sim = 15000)))), 0)
+  pr <- platform_check_invitro(modifyList(big, list(n_sim = 15001)))
+  expect_equal(pr$code, "run_size"); expect_equal(pr$field, "n_sim")
+  expect_match(pr$message, "n_sim <= 15000", fixed = TRUE)
+  expect_equal(nrow(platform_check_invitro(modifyList(big, list(n_sim = 20000, m = 1)))), 0)
+  expect_equal(nrow(platform_check_invitro(modifyList(base, list(n_sim = 20000)))), 0)   # 3 x 10, m = 3
+  huge <- modifyList(base, list(l = 100, n = 100, m = 3))
+  expect_equal(nrow(platform_check_invitro(modifyList(huge, list(n_sim = 270)))), 0)
+  expect_equal(platform_check_invitro(modifyList(huge, list(n_sim = 271)))$code, "run_size")
+  # defaults of the engine are used when l, n, m are not given
+  expect_equal(nrow(platform_check_invitro(list(sigma_R = 0.12, n_sim = 20000))), 0)
+  # no run-size message when a dimension itself is invalid
+  expect_equal(platform_check_invitro(modifyList(big, list(n_sim = 20000, l = 1)))$code, "integer_min_2")
+  # the limit can be set by the caller
+  expect_equal(nrow(platform_check_invitro(modifyList(big, list(n_sim = 20000)), cells_max = 1.08e7)), 0)
+  err <- tryCatch(platform_run_invitro(modifyList(big, list(n_sim = 20000))), error = function(e) e)
+  expect_s3_class(err, "farmastat_input_error")
+})

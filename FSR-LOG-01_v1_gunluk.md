@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.56 · Son güncelleme: 17.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.57 · Son güncelleme: 17.10.2026"
 ---
 
 # Bu belge hakkında
@@ -907,6 +907,35 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Karar bekleyen:** önerilen kural.
 - **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** bu günlük.
 
+## G-60 · Koşu büyüklüğü sınırı uygulandı; FSR-TN-PLT-01 v0.5 — 17.10.2026
+
+- **Depo:** G-59 commit edildi; Actions GEÇTİ (proje sahibi: "commit edildi action ok").
+- **Proje sahibinin kararı (K):** "onaylıyorum" → **KK-47**: geçici üst sınır n_sim ≤ 20.000 ve ℓ·n·m·n_sim ≤ 8,1 × 10⁶ [FarmaStatR türetimi; dayanak G-59].
+- **`CNKfarmastatr/R/platform_input.R` 0.2.0:** `platform_check_invitro()` ve `platform_run_invitro()` fonksiyonlarına `cells_max = 8.1e6` bağımsız değişkeni eklendi.
+  - Koşu büyüklüğü yalnız ℓ, n, m ve n_sim geçerliyse denetlenir. Verilmeyen boyut için motorun varsayılanı kullanılır (3, 10, 3).
+  - Aşımda kod `run_size`, alan `n_sim`; ileti tasarıma göre üst sınırı söyler (6 × 30, m = 3 için 15.000).
+  - Dosya sabitlenmiş değil; SHA-256 listesi değişmedi.
+- **Test PLT-IN-5 (13 beklenti):**
+  - 6 × 30, m = 3: 15.000 geçer, 15.001 reddedilir. m = 1 ve 20.000 geçer.
+  - 3 × 10, m = 3 ve 20.000 geçer. 100 × 100, m = 3: 270 geçer, 271 reddedilir.
+  - Varsayılan boyutlar doğru işler; geçersiz boyutta ikinci bir ileti çıkmaz; sınır değiştirilebilir.
+
+  Tam test kümesi (yüklü paket, NOT_CRAN): 31 blok, 1.131 beklenti, 0 hata, 0 atlanan. Çekirdek SHA-256: 13/13 AYNI.
+- **Arayüz (`web/p1/index.html`, `app.js`, `ceviri.json`):** Monte Carlo grubunda "Bu tasarımda nsim üst sınırı" satırı gösteriliyor. Bu yalnız gösterim; sınırı R uygular. Yeni çeviri anahtarları: `code_run_size`, `nsim_max_design` (TR/EN, 81 anahtar). Kapsayıcıda denendi:
+  - varsayılan düzende 20.000, 6 × 30'da 15.000 gösteriliyor;
+  - 20.000 girilince Türkçe ve İngilizce ileti çıkıyor, koşu başlamıyor;
+  - 2.000 tekrarlık koşu çalışıyor.
+- **Teknik not FSR-TN-PLT-01 v0.5** (11 sayfa):
+  - **Bölüm 3.3:** sınır kuralı.
+  - **Yeni Bölüm 11.3:** resmi koşunun sonuç tablosu, betik düzeltmesi ve KK-46.
+  - **Yeni Bölüm 11.4:** bellek ölçümü tablosu, kural, sınırlılıklar ve açık madde.
+  - **Bölüm 12 ve 13:** güncellendi. 13'te karar isteği: v0.5 onaylanırsa P1 kapanır.
+- **Açık maddeler:**
+  - Kabul aracının iptal ve performans adımları 6 × 30 ve 20.000 tekrar kullanıyor; bu girdi artık reddedilir. Araç yeniden kullanılmadan önce (P2 kabul ölçütleriyle) ölçüt revizyonu olarak düzeltilecek.
+  - `dogrulama.yml` başlığındaki sayılar eskidi (şimdi 31 blok, 1.131 beklenti).
+  - README'de iki sayfanın (prototip ve kabul aracı) yan yana anlatımı.
+- **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `platform_input.R`, `test-platform-input.R`, `web/p1/index.html`, `app.js`, `ceviri.json`, `FSR-TN-PLT-01_v0.5.docx`, bu günlük.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -924,17 +953,17 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-14 | Tip I uyum ölçütü kararı; teknik not v0.8 (rapor 02) ve Aşama 2 sonuçları; yeniden üretim paketi (G-40) | Tamam: ölçüt (KK-38), v0.8, paket (G-41), Aşama 2 sonuçları v0.9 (G-42); v0.9 onaylandı, hedefli deney ve v0.10 (G-43); 12.10 onay bekliyor; v0.10 onaylandı, v0.11 (G-48) |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
 | A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
-| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P1 koşullu başarılı (KK-46); bellek ölçüldü (G-59): prototip tek başına 20.000 tekrarda 937 MB; hücre sayısına bağlı yeni geçici sınır önerildi, karar bekliyor; sonra v0.5 ve P1 kapanışı; D-03, D-04 P2 öncesi |
+| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P1 koşullu başarılı (KK-46); koşu büyüklüğü sınırı uygulandı (KK-47, G-60); v0.5 onaylanırsa P1 kapanır; sonra P2 (sınıflandırma fonksiyonu, D-03, D-04, SQLite) |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
 
 # 4. Belge ve sürüm dizini
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.56 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.57 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.0 | Onaylandı; beş dosya sabitlendi (G-47) |
-| FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.4 | P0 onaylandı ve kapandı (KK-45); P1 kabul ölçütleri ve test koşulları donduruldu (G-53) |
+| FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.5 | P1 kabul sonuçları ve koşu büyüklüğü sınırı (G-60, KK-47); onaylanırsa P1 kapanır |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
 | CNKfarmastatr (R paketi) | 1.0.0.9000 | 13 dosya SHA-256 ile sabit (8 devralınan çekirdek + simülasyon çatısı ve in vitro motoru; FSR-VAL-SIM-1 1.0, G-47); testler 26 blok, 968 beklenti GEÇTİ (G-46) |
 
@@ -988,3 +1017,4 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | KK-44 | FSR-TN-PLT-01 v0.2 incelemesi: P0'a koşullu olumlu görüş; D-01, D-02, D-05 belge düzeyinde, D-06 P1 ölçütleri sabitlenince P1; D-03, D-04 P2 öncesi | G-52 |
 | KK-45 | FSR-TN-PLT-01 v0.3 nihai görüşü: temel tasarım onaylandı; 10⁻¹² mutlak tolerans korunur, D-02 gerekçesi proje sahibinin metniyle; P1 test koşulları onaylandı ve Tablo 11.1 ile donduruldu; P0 kapandı, P1'e geçildi; P1 başarısına dondurulmuş kabul testleri koşulduktan sonra karar verilir | G-53 |
 | KK-46 | P1 koşullu başarılı: bellek eşiği aşıldı (1.068 > 1.024 MB) ve açıkça kaydedilir; donmuş kurala göre geçici n_sim üst sınırı düşürülür, yeni sınır ölçümle belirlenir; P1 kapanışı bu ölçüm ve belgelemeye bağlı | G-58 |
+| KK-47 | Geçici üst sınır: n_sim ≤ 20.000 ve ℓ·n·m·n_sim ≤ 8,1 × 10⁶ (dayanak: prototip tek başına 15.000 tekrarda 688 MB; FarmaStatR türetimi; tek cihaz) | G-60 |

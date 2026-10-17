@@ -9,6 +9,7 @@ const Q = new URLSearchParams(location.search);
 const ENGINE = ['invitro_fast.R', 'invitro_grid.R'];      // pinned: must match the SHA list
 const PLATFORM = ['platform_input.R'];                    // not pinned in P1: hash recorded
 const N_SIM_MAX = 20000;
+const CELLS_MAX = 8.1e6;      // display only; the limit is enforced by platform_input.R (G-60, KK-47)
 
 const $ = (s) => document.querySelector(s);
 let T = {}, lang = Q.get('lang') === 'en' ? 'en' : 'tr';
@@ -138,7 +139,9 @@ async function run(ev) {
     setStatus('st_error', 'bad');
     if (out.kind === 'input') {
       const fields = [].concat(out.field), codes = [].concat(out.code);
-      showErrors(() => [t('err_input'), ...codes.map((c, i) => t('code_' + c, T[lang] && T[lang][fields[i]] ? t(fields[i]) : fields[i]))]);
+      const mx = nsimMax(p);
+      showErrors(() => [t('err_input'), ...codes.map((c, i) => t('code_' + c, T[lang] && T[lang][fields[i]] ? t(fields[i]) : fields[i])
+        .replace('{max}', mx === null ? '—' : fmtInt(mx)))]);
     } else if (out.kind === 'delta0') showErrors(() => [t('err_delta0')]);
     else showErrors(() => [t('err_engine'), out.message]);
     return;
@@ -205,9 +208,18 @@ function showErrors(fn) {
   for (const l of lines.slice(1)) { const li = document.createElement('li'); li.textContent = l; el.querySelector('ul').appendChild(li); }
   el.hidden = false;
 }
+function fmtInt(x) { return x.toLocaleString(lang === 'tr' ? 'tr-TR' : 'en-US'); }
+// Largest n_sim allowed for the design in the form (min of N_SIM_MAX and CELLS_MAX / (l n m))
+function nsimMax(p) {
+  const d = [p.l, p.n, p.m];
+  if (!d.every((v) => Number.isInteger(v) && v >= 1)) return null;
+  return Math.min(N_SIM_MAX, Math.floor(CELLS_MAX / (p.l * p.n * p.m)));
+}
 function updateMcse() {
   const n = Number(String(new FormData($('#form')).get('n_sim')).replace(',', '.'));
   $('#mcse_exp').textContent = Number.isInteger(n) && n >= 1 && n <= N_SIM_MAX ? fmt(Math.sqrt(0.25 / n), 4) : '—';
+  const mx = nsimMax(readForm().p);
+  $('#nsim_max').textContent = mx === null ? '—' : fmtInt(mx);
 }
 function download() {
   if (!record) return;

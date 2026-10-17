@@ -14,8 +14,13 @@
 #   Domain limits for the user parameter space are set in P2 (TN Table 5.3, H-7).
 # Rules: FarmaStatR derivation (no guideline source); n_sim upper limit 20,000 is
 #   the temporary platform limit (FSR-TN-PLT-01 Section 3, decision KK-43).
+# Run size (version 0.2.0, G-60, KK-47): l * n * m * n_sim <= 8.1e6 cells. Basis:
+#   P1 acceptance (G-57) exceeded the 1 GB memory threshold at 6 x 30, m = 3,
+#   n_sim 20,000; the frozen rule lowers the temporary limit (KK-46). Prototype
+#   alone (G-59): 6 x 30, m = 3 used 688 MB at n_sim 15,000 (8.1e6 cells) and
+#   937 MB at 20,000. FarmaStatR derivation; one device, single readings.
 # Each problem has a code (for the TR/EN translation file) and an English message.
-# Base R only. Version 0.1.0
+# Base R only. Version 0.2.0
 # Research and education only; not a system validated for GxP environments.
 # =============================================================================
 
@@ -27,9 +32,10 @@
 # platform_check_invitro(): check a parameter list for invitro_scenario()
 #   params    : named list of arguments for invitro_scenario()
 #   n_sim_max : platform upper limit for n_sim
+#   cells_max : platform upper limit for l * n * m * n_sim (run size)
 # Returns a data frame of problems (field, code, message); zero rows = valid.
 # -----------------------------------------------------------------------------
-platform_check_invitro <- function(params, n_sim_max = 20000) {
+platform_check_invitro <- function(params, n_sim_max = 20000, cells_max = 8.1e6) {
   out <- data.frame(field = character(0), code = character(0), message = character(0),
                     stringsAsFactors = FALSE)
   bad <- function(field, code, message)
@@ -69,6 +75,16 @@ platform_check_invitro <- function(params, n_sim_max = 20000) {
   if (has("n_sim") && num1("n_sim") &&
       (!whole(params$n_sim) || params$n_sim < 1 || params$n_sim > n_sim_max))
     bad("n_sim", "n_sim_range", paste0("n_sim must be a whole number in [1, ", n_sim_max, "]."))
+  # run size: checked only when l, n, m and n_sim are themselves valid
+  dims <- c(l = 3, n = 10, m = 3)                      # engine defaults (invitro_scenario)
+  for (f in names(dims)) if (has(f)) dims[[f]] <- params[[f]]
+  if (has("n_sim") && !any(c("l", "n", "m", "n_sim") %in% out$field) &&
+      all(vapply(c(as.list(dims), list(params$n_sim)), function(v) is.numeric(v) && length(v) == 1 && is.finite(v), TRUE))) {
+    size <- prod(dims) * params$n_sim
+    if (size > cells_max)
+      bad("n_sim", "run_size", paste0("l * n * m * n_sim must be <= ", format(cells_max, scientific = FALSE, big.mark = ","),
+                                     "; for this design n_sim <= ", floor(cells_max / prod(dims)), "."))
+  }
   if (has("seed") && num1("seed") &&
       (!whole(params$seed) || abs(params$seed) > .Machine$integer.max))
     bad("seed", "seed_integer", "seed must be a whole number within the R integer range.")
@@ -90,8 +106,8 @@ platform_check_invitro <- function(params, n_sim_max = 20000) {
 #   Stops with a condition of class "farmastat_input_error" that carries the
 #   problem table (element $problems) when the check fails.
 # -----------------------------------------------------------------------------
-platform_run_invitro <- function(params, n_sim_max = 20000) {
-  pr <- platform_check_invitro(params, n_sim_max = n_sim_max)
+platform_run_invitro <- function(params, n_sim_max = 20000, cells_max = 8.1e6) {
+  pr <- platform_check_invitro(params, n_sim_max = n_sim_max, cells_max = cells_max)
   if (nrow(pr) > 0) {
     msg <- paste0("Invalid input:\n", paste0("- ", pr$message, collapse = "\n"))
     stop(structure(class = c("farmastat_input_error", "error", "condition"),
