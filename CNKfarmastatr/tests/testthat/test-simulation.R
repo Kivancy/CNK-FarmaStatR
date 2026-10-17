@@ -68,16 +68,8 @@ test_that("TC-S4 same seed reproduces the run; caller's RNG is untouched", {
 test_that("TC-S5 demo scenario reproduces the analytic values within 4 MCSE", {
   # common Monte Carlo acceptance rule |z| < 4 (FSR-VAL-SIM-1 v0.2, KK-41);
   # 3 <= |z| < 4 is reported as a warning by the evidence script, not here
-  r <- sim_run("demo_mean_ci", params = list(n = 10L), n_sim = 4000, seed = 2026)
-  pf <- r$performance
-  within <- function(m, meas, true) {
-    row <- pf[pf$method == m & pf$measure == meas, ]
-    abs(row$estimate - true) < 4 * row$mcse
-  }
-  expect_true(within("t", "coverage", 0.95))
-  expect_true(within("z", "coverage", 2 * pt(qnorm(0.975), 9) - 1))   # 0.9183509
-  expect_true(within("t", "rejection", 0.05))
-  expect_true(within("t", "bias", 0))
+  d <- mc_tcs5(); pf <- attr(d, "performance")          # helper-cases.R
+  for (k in seq_len(nrow(d))) expect_true(abs(d$z[k]) < 4, info = d$item[k])
   # t and z share the estimate, so bias and EmpSE are identical
   expect_identical(pf$estimate[pf$method == "t" & pf$measure == "bias"],
                    pf$estimate[pf$method == "z" & pf$measure == "bias"])

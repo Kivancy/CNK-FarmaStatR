@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.46 · Son güncelleme: 16.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.47 · Son güncelleme: 17.10.2026"
 ---
 
 # Bu belge hakkında
@@ -673,6 +673,17 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
   13. Onay istekleri belge başına toplanır ve "sizden istenen karar" tek cümleyle yazılır.
 - **Sonraki oturum (17.10.2026):** Platform tasarım notu: SQLite tabloları (yayın veri setleri, test vakaları ve beklenen sonuçlar, simülasyon sonuç ızgarası, modül/sürüm kaydı) ve webR arayüzünün ilk ekranı. Kodlamadan önce proje sahibinin onayına sunulur.
 
+## G-50 · Kod tekrarı giderildi; webR ve SQLite denemeleri; platform tasarım notu FSR-TN-PLT-01 v0.1 — 17.10.2026
+
+- **Oturum başı:** Günlük okundu (v1.46); proje sahibinin klasöründeki ve proje dosyalarındaki günlük aynı. G-49 commit'inin durumu bu oturumda proje sahibince ayrıca bildirilmedi.
+- **Kod tekrarı (G-49 hata 7):** Yeni `tests/testthat/helper-cases.R`: `to_long`, `pbe_cols`, `cases_tcf2()`, `cases_tcf11()` (24 çift + sınır çifti), `mc_tcs5()`, `mc_tcf10()`. TC-F2, TC-F10, TC-F11 ve TC-S5 bu yardımcıları kullanıyor; TC-F4'teki satır içi sayısal REML yerine `helper-reml.R`'deki `reml_numeric()`. `kanit.R` (v0.4) aynı yardımcıları `source` ediyor; kopyalanmış veri üretimi kalmadı. Kontrol: testler 26 blok, 968 beklenti, başarısız 0, atlanan 0 (blok başına sayılar aynı); kanıt betiğinin beş çıktısı (`sayisal_ozet.csv`, `sas_kabul.csv`, `mc_z.csv`, `test_sonuclari.csv`, `sha256.csv`) önceki hâliyle bayt bayt aynı. Sabitlenmiş dosyalara dokunulmadı.
+- **webR denemesi (Ö):** webR 0.5.4 (R 4.5.1), Node 22 üzerinde; motorun iki dosyası paket kurulmadan `source` edildi. `invitro_scenario()` (p_B 0,10, δ₀, seed 20261015) yerel R 4.3.3 ile 17 anlamlı basamakta aynı sonucu verdi (FDA, EMA (c), EMA (b) geçme oranı, FDA σ̂²_R yanlılığı). Süre: 3 × 10, 10.000 tekrar 2,1 sn (yerel 0,5); 6 × 30, 10.000 tekrar 11,0 sn (yerel 3,9); açılış 1,5 sn. Tarayıcıda ölçülmedi. Dosyalar: `belgeler/teknik_notlar/FSR-TN-PLT-01_ek/webr_hiz.mjs`, `webr_hiz.csv`.
+- **SQLite denemesi (Ö):** Aşama 1 (360 × 38) ve Aşama 2 (725 × 55) sonuçları denemelik SQLite dosyasında 0,66 MB; sql.js 1.12.0 ile Node'da okundu (0,03 sn). webR'de RSQLite sınanamadı (webR paket deposuna bu ortamdan erişim yok). Deneme veri tabanı depoya konmadı.
+- **Bulunan eksik:** `sim_export_script()` yalnız `sim_run()` koşularını betiğe çeviriyor; `invitro_scenario()` için dışa aktarma yok (hesaplama katmanı 3). Yeni fonksiyon gerekir (FSR-VAL-SIM-1 revizyonu).
+- **Teknik not FSR-TN-PLT-01 v0.1** (`belgeler/teknik_notlar/FSR-TN-PLT-01_v0.1.docx`, 4 sayfa): amaç ve değişmez ilkeler; denemeler (Tablo 2.1); üç hesaplama katmanı; SQLite şeması (8 tablo; sonuçlar uzun biçimde; inşa betiği); ilk ekran (PBE simülasyonu); rapor (.docx; sayılar R'de, biçim JavaScript ile; denenmedi); platform doğrulaması (FSR-VAL-PLT-1); uygulama sırası P1–P6; açık sorular (tarayıcı hızı, GitHub Pages'te çapraz köken yalıtımı, özel depoda Pages, lisans); onaya sunulan yedi öneri (Ö1–Ö7, Tablo 10.1).
+- **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `CNKfarmastatr/tests/testthat/helper-cases.R` (yeni), `test-invitro-fast.R`, `test-simulation.R`, `belgeler/validasyon/FSR-VAL-SIM-1_ek/kanit.R`, `belgeler/teknik_notlar/FSR-TN-PLT-01_v0.1.docx`, `FSR-TN-PLT-01_ek/webr_hiz.mjs`, `webr_hiz.csv`, bu günlük.
+- **Onay bekleyen:** FSR-TN-PLT-01 v0.1, öneriler Ö1–Ö7. Onaylanırsa P1 (prototip sayfa).
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -690,15 +701,17 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-14 | Tip I uyum ölçütü kararı; teknik not v0.8 (rapor 02) ve Aşama 2 sonuçları; yeniden üretim paketi (G-40) | Tamam: ölçüt (KK-38), v0.8, paket (G-41), Aşama 2 sonuçları v0.9 (G-42); v0.9 onaylandı, hedefli deney ve v0.10 (G-43); 12.10 onay bekliyor; v0.10 onaylandı, v0.11 (G-48) |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
 | A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
+| A-15 | Platform: tasarım notu FSR-TN-PLT-01, prototip (P1) ve ilk ekran (P2–P6) | Tasarım notu v0.1 (G-50); onay bekliyor |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
 
 # 4. Belge ve sürüm dizini
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.46 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.47 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.0 | Onaylandı; beş dosya sabitlendi (G-47) |
+| FSR-TN-PLT-01 · Platform tasarımı: hesaplama katmanları, SQLite, ilk ekran | 0.1 | Taslak; Ö1–Ö7 onay bekliyor (G-50) |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
 | CNKfarmastatr (R paketi) | 1.0.0.9000 | 13 dosya SHA-256 ile sabit (8 devralınan çekirdek + simülasyon çatısı ve in vitro motoru; FSR-VAL-SIM-1 1.0, G-47); testler 26 blok, 968 beklenti GEÇTİ (G-46) |
 

@@ -3,15 +3,6 @@
 # Acceptance rules (FSR-VAL-SIM-1 v0.2, KK-41): expect_close() = combined absolute
 # and relative tolerance (helper-tolerance.R); Monte Carlo checks |z| < 4.
 
-to_long <- function(X, r, l, n, prod) {
-  N <- l * n; m <- dim(X)[3]
-  g <- expand.grid(u = seq_len(N), s = seq_len(m))
-  data.frame(Batches = paste0(prod, (g$u - 1) %/% n + 1), Container = paste0("c", g$u),
-             Stage = g$s, Product = prod, score = X[cbind(r, g$u, g$s)])
-}
-pbe_cols <- c("msb_t", "msw_t", "msb_r", "msw_r", "Eq_Ref", "Uq_Ref", "H_eta_Ref",
-              "Eq_Const", "Uq_Const", "H_eta_Const")
-
 test_that("TC-F1 pbe_fast equals calc_pbe on the PSG 020929 example data", {
   d <- ornek_psg020929()
   t <- invitro_array(d, "TEST"); r <- invitro_array(d, "REF")
@@ -25,16 +16,11 @@ test_that("TC-F1 pbe_fast equals calc_pbe on the PSG 020929 example data", {
 })
 
 test_that("TC-F2 pbe_fast equals calc_pbe for m = 1, 2, 3 and unequal designs", {
-  set.seed(20261015)
-  for (m in 1:3) for (cfg in list(c(3, 10, 3, 10), c(4, 7, 2, 5))) {
-    lT <- cfg[1]; nT <- cfg[2]; lR <- cfg[3]; nR <- cfg[4]
-    XT <- invitro_gen(8, lT, nT, m, mu = 0.05, sB = 0.05, sC = 0.08, sW = 0.04,
-                      tau = invitro_drift(m, 0.0005))
-    XR <- invitro_gen(8, lR, nR, m, sB = if (m > 1) 0.12 else 0.02, sC = 0.06, sW = 0.03)
-    f <- pbe_fast(XT, XR, lT, nT, lR, nR)
+  for (cs in cases_tcf2()) {                       # data: helper-cases.R
+    f <- pbe_fast(cs$XT, cs$XR, cs$lT, cs$nT, cs$lR, cs$nR)
     for (i in 1:8) {
-      o <- calc_pbe(rbind(to_long(XT, i, lT, nT, "TEST"), to_long(XR, i, lR, nR, "REF")))
-      for (k in pbe_cols) expect_close(f[[k]][i], o[[k]], atol = 1e-12, rtol = 1e-12, info = paste(m, k, i))
+      o <- calc_pbe(rbind(to_long(cs$XT, i, cs$lT, cs$nT, "TEST"), to_long(cs$XR, i, cs$lR, cs$nR, "REF")))
+      for (k in pbe_cols) expect_close(f[[k]][i], o[[k]], atol = 1e-12, rtol = 1e-12, info = paste(cs$m, k, i))
       expect_identical(f$pass[i], o$pass_fail == "PASS")
       expect_identical(f$ref_scaled[i], o$criterion == "Reference-scaled")
     }
@@ -65,29 +51,8 @@ test_that("TC-F3 ema_ci_fast methods a, b, c equal hand-computed values", {
 })
 
 test_that("TC-F4 method c equals numerical REML (base R) including boundary cases", {
-  reml_var <- function(X, l, n) {
-    m <- dim(X)[3]; g <- expand.grid(u = seq_len(l * n), s = seq_len(m))
-    y <- X[cbind(1, g$u, g$s)]
-    S <- factor(g$s)
-    Xf <- if (m > 1) model.matrix(~ S, contrasts.arg = list(S = "contr.sum")) else matrix(1, length(y))
-    ZL <- outer((g$u - 1) %/% n, seq_len(l) - 1, "==") * 1
-    ZC <- outer(g$u, seq_len(l * n), "==") * 1
-    JL <- ZL %*% t(ZL); JC <- ZC %*% t(ZC); I <- diag(length(y))
-    nll <- function(th) {
-      v <- exp(th); V <- v[1] * JL + v[2] * JC + v[3] * I
-      Rc <- chol(V); Vi <- chol2inv(Rc); A <- t(Xf) %*% Vi %*% Xf
-      r <- y - Xf %*% solve(A, t(Xf) %*% Vi %*% y)
-      0.5 * (2 * sum(log(diag(Rc))) + as.numeric(determinant(A)$modulus) + sum(r * (Vi %*% r)))
-    }
-    best <- NULL
-    for (s0 in list(c(-5, -5, -5), c(-25, -5, -5), c(-5, -25, -5), c(-25, -25, -5))) {
-      o <- optim(s0, nll, method = "L-BFGS-B", lower = -30, upper = 2,
-                 control = list(factr = 1, maxit = 2000))
-      if (is.null(best) || o$value < best$value) best <- o
-    }
-    v <- exp(best$par); V <- v[1] * JL + v[2] * JC + v[3] * I
-    solve(t(Xf) %*% solve(V) %*% Xf)[1, 1]
-  }
+  # numerical REML: reml_numeric() in helper-reml.R
+  reml_var <- function(X, l, n) reml_numeric(matrix(X[1, , ], l * n, dim(X)[3]), l, n)$v_mean
   set.seed(7)
   cases <- list(c(0.05, 0.04), c(0, 0.04), c(0, 0), c(0.03, 0))   # (sB, sC), sW = 0.05
   seen_pool <- FALSE; seen_b <- FALSE
@@ -191,24 +156,12 @@ test_that("TC-F9 end-to-end flow (generation -> calc_pbe decision) for m = 1 and
 })
 
 test_that("TC-F10 expected mean squares (TN Eq. 12-15) incl. drift and m = 1", {
-  # Monte Carlo check with the package generator; FarmaStatR derivation, TN 8.5
-  chk <- function(m, pB, q, R = 4000, l = 3, n = 10, sig = 0.12, pL = 0.15) {
-    cp <- invitro_components(sig, pB, pL, q); tau <- invitro_drift(m, cp$drift_var)
-    set.seed(20261016 + m)
-    X <- invitro_gen(R, l, n, m, sB = cp$sB, sC = cp$sC, sW = cp$sW, tau = tau)
-    s <- CNKfarmastatr:::.iv_stats(X, l, n)
-    s2hat <- s$msb / m + (m - 1) * s$msw / m
-    sB2 <- cp$sB^2; sC2 <- cp$sC^2; sW2 <- cp$sW^2; st2 <- sum(tau^2)
-    f <- c(msb = m * sC2 + sW2 + m * n * (l - 1) / (n * l - 1) * sB2,
-           msw = if (m > 1) sW2 + st2 / (m - 1) else 0,
-           s2  = sC2 + sW2 + st2 / m + n * (l - 1) / (n * l - 1) * sB2,
-           vm  = sB2 / l + sC2 / (n * l) + sW2 / (n * l * m))
-    sim <- c(mean(s$msb), mean(s$msw), mean(s2hat), var(s$g))
-    se  <- c(sd(s$msb), sd(s$msw), sd(s2hat), 0) / sqrt(R); se[4] <- var(s$g) * sqrt(2 / (R - 1))
-    z <- ifelse(se > 0, (sim - f) / se, 0)
-    expect_true(all(abs(z) < 4), info = paste(m, pB, q, paste(round(z, 2), collapse = " ")))
+  # Monte Carlo check with the package generator; FarmaStatR derivation, TN 8.5 (mc_tcf10: helper-cases.R)
+  chk <- function(m, pB, q, sig = 0.12) {
+    d <- mc_tcf10(m, pB, q, sig = sig)
+    expect_true(all(abs(d$z) < 4), info = paste(m, pB, q, paste(round(d$z, 2), collapse = " ")))
     # with pB = 0 the PSG estimator is unbiased for the marginal total variance
-    if (pB == 0) expect_close(unname(f["s2"]), sig^2, atol = 1e-12, rtol = 1e-12)
+    if (pB == 0) expect_close(d$truth[3], sig^2, atol = 1e-12, rtol = 1e-12)
   }
   chk(m = 3, pB = 0.3, q = 0.5); chk(m = 3, pB = 0, q = 0.5)
   chk(m = 2, pB = 0.1, q = 0.5); chk(m = 1, pB = 0.3, q = 0)
@@ -221,12 +174,11 @@ test_that("TC-F11 EMA (c): REML objective, constraints, 90% CI and decision vs n
   # form is not worse than the numerical optimum, (iv) 90% CI limits and the EMA
   # decision (0.85-1.18) agree with those from numerical REML; decisions with a
   # limit within a relative 1e-5 of 0.85 or 1.18 are flagged, not compared.
-  set.seed(11); l <- 3; n <- 6
-  cases <- list(c(0.03, 0.02, 0.02), c(0, 0.02, 0.02), c(0, 0, 0.03), c(0.02, 0, 0.02))
+  # Data: cases_tcf11() in helper-cases.R.
+  cs <- cases_tcf11(); l <- cs$l; n <- cs$n
   flagged <- 0; seen <- c(pass = FALSE, fail = FALSE)
-  for (m in c(1, 3)) for (cs in cases) for (mu in log(c(1.00, 1.10, 1.15))) {
-    XT <- invitro_gen(1, l, n, m, mu = mu, sB = cs[1], sC = cs[2], sW = cs[3])
-    XR <- invitro_gen(1, l, n, m, sB = cs[1], sC = cs[2], sW = cs[3])
+  for (pr in cs$pairs) {
+    m <- pr$m; XT <- pr$XT; XR <- pr$XR
     MT <- matrix(XT[1, , ], l * n, m); MR <- matrix(XR[1, , ], l * n, m)
     cl <- list(T = reml_closed(MT, l, n), R = reml_closed(MR, l, n))
     nu <- list(T = reml_numeric(MT, l, n), R = reml_numeric(MR, l, n))
@@ -252,10 +204,7 @@ test_that("TC-F11 EMA (c): REML objective, constraints, 90% CI and decision vs n
   # (v) the flagging rule itself (FSR-VAL-SIM-1 v0.3): one pair shifted so that the
   #     upper limit lies inside 1.18 by a relative 3e-6. A shift of the T data moves
   #     the mean difference only; variances, df and the CI width are unchanged.
-  XT <- invitro_gen(1, l, n, 3, mu = log(1.10), sB = 0.03, sC = 0.02, sW = 0.02)
-  XR <- invitro_gen(1, l, n, 3, sB = 0.03, sC = 0.02, sW = 0.02)
-  up0 <- ema_ci_fast(XT, XR, l, n, l, n, methods = "c")$c$upper
-  XT <- XT + log(1.18 * (1 - 3e-6)) - log(up0)
+  XT <- cs$near$XT; XR <- cs$near$XR
   ci <- ema_ci_fast(XT, XR, l, n, l, n, methods = "c")$c
   MT <- matrix(XT[1, , ], l * n, 3); MR <- matrix(XR[1, , ], l * n, 3)
   ci_num <- ci_from_var(mean(MT) - mean(MR), reml_numeric(MT, l, n)$v_mean, reml_numeric(MR, l, n)$v_mean,

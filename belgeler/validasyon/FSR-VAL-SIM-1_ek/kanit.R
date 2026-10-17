@@ -2,6 +2,7 @@
 # FSR-VAL-SIM-1 - Evidence script (simulation framework and in vitro engine)
 #   v0.2 (decision KK-41): acceptance rules of Table 5.1 applied explicitly.
 #   v0.3: TC-F11 near-limit pair (flagging rule) reported in sayisal_ozet.csv.
+#   v0.4: test data come from tests/testthat/helper-cases.R (no copied code; G-49).
 #   Numerical rule: |x_hat - x| <= atol + rtol * max(|x|, |x_hat|); reported as
 #   the largest ratio |diff| / (atol + rtol * max), which must be <= 1.
 #   Outputs (this folder):
@@ -22,7 +23,7 @@ library(CNKfarmastatr)
 out <- file.path("belgeler", "validasyon", "FSR-VAL-SIM-1_ek")
 tdir <- file.path("CNKfarmastatr", "tests", "testthat")
 Sys.setenv(NOT_CRAN = "true")
-source(file.path(tdir, "helper-reml.R"))
+source(file.path(tdir, "helper-reml.R")); source(file.path(tdir, "helper-cases.R"))   # shared test data
 ratio <- function(x, y, atol, rtol) max(abs(x - y) / (atol + rtol * pmax(abs(x), abs(y))))
 
 # ---- 1. Tests ---------------------------------------------------------------
@@ -46,25 +47,16 @@ utils::write.csv(data.frame(file = files, sha256 = unname(sha),
                  file.path(out, "sha256.csv"), row.names = FALSE)
 
 # ---- 3. Reference comparisons ----------------------------------------------
-to_long <- function(X, r, l, n, prod) {
-  N <- l * n; m <- dim(X)[3]; g <- expand.grid(u = seq_len(N), s = seq_len(m))
-  data.frame(Batches = paste0(prod, (g$u - 1) %/% n + 1), Container = paste0("c", g$u),
-             Stage = g$s, Product = prod, score = X[cbind(r, g$u, g$s)])
-}
-cols <- c("msb_t", "msw_t", "msb_r", "msw_r", "Eq_Ref", "Uq_Ref", "H_eta_Ref", "Eq_Const", "Uq_Const", "H_eta_Const")
+cols <- pbe_cols                                   # helper-cases.R
 # 3a. pbe_fast vs calc_pbe: PSG example + the TC-F2 designs (rule: atol = rtol = 1e-12)
 dd <- ornek_psg020929(); t <- invitro_array(dd, "TEST"); r <- invitro_array(dd, "REF")
 f <- pbe_fast(t$X, r$X, t$l, t$n, r$l, r$n); o <- calc_pbe(dd)
 rp <- max(sapply(cols, function(k) ratio(f[[k]], o[[k]], 1e-12, 1e-12)))
 nset <- 1; agree <- f$pass == (o$pass_fail == "PASS")
-set.seed(20261015)
-for (m in 1:3) for (cfg in list(c(3, 10, 3, 10), c(4, 7, 2, 5))) {
-  lT <- cfg[1]; nT <- cfg[2]; lR <- cfg[3]; nR <- cfg[4]
-  XT <- invitro_gen(8, lT, nT, m, mu = 0.05, sB = 0.05, sC = 0.08, sW = 0.04, tau = invitro_drift(m, 0.0005))
-  XR <- invitro_gen(8, lR, nR, m, sB = if (m > 1) 0.12 else 0.02, sC = 0.06, sW = 0.03)
-  f <- pbe_fast(XT, XR, lT, nT, lR, nR)
+for (cs in cases_tcf2()) {                         # helper-cases.R (TC-F2 data)
+  f <- pbe_fast(cs$XT, cs$XR, cs$lT, cs$nT, cs$lR, cs$nR)
   for (i in 1:8) {
-    o <- calc_pbe(rbind(to_long(XT, i, lT, nT, "TEST"), to_long(XR, i, lR, nR, "REF")))
+    o <- calc_pbe(rbind(to_long(cs$XT, i, cs$lT, cs$nT, "TEST"), to_long(cs$XR, i, cs$lR, cs$nR, "REF")))
     rp <- max(rp, sapply(cols, function(k) ratio(f[[k]][i], o[[k]], 1e-12, 1e-12)))
     agree <- c(agree, f$pass[i] == (o$pass_fail == "PASS"), f$ref_scaled[i] == (o$criterion == "Reference-scaled"))
     nset <- nset + 1
@@ -73,12 +65,10 @@ for (m in 1:3) for (cfg in list(c(3, 10, 3, 10), c(4, 7, 2, 5))) {
 # 3b. EMA (c) vs numerical REML, TC-F11 data sets (rules: variance and CI atol 1e-10,
 #     rtol 1e-5; criterion closed <= numerical + 1e-8; decision identical unless a
 #     CI limit is within a relative 1e-5 of 0.85 or 1.18)
-set.seed(11); l <- 3; n <- 6
-cases <- list(c(0.03, 0.02, 0.02), c(0, 0.02, 0.02), c(0, 0, 0.03), c(0.02, 0, 0.02))
+c11 <- cases_tcf11(); l <- c11$l; n <- c11$n        # helper-cases.R (TC-F11 data)
 rv <- rci <- 0; dnll <- -Inf; npair <- npool <- nagree <- nflag <- npass <- 0
-for (m in c(1, 3)) for (cs in cases) for (mu in log(c(1.00, 1.10, 1.15))) {
-  XT <- invitro_gen(1, l, n, m, mu = mu, sB = cs[1], sC = cs[2], sW = cs[3])
-  XR <- invitro_gen(1, l, n, m, sB = cs[1], sC = cs[2], sW = cs[3])
+for (pr in c11$pairs) {
+  m <- pr$m; XT <- pr$XT; XR <- pr$XR
   MT <- matrix(XT[1, , ], l * n, m); MR <- matrix(XR[1, , ], l * n, m)
   cl <- list(T = reml_closed(MT, l, n), R = reml_closed(MR, l, n))
   nu <- list(T = reml_numeric(MT, l, n), R = reml_numeric(MR, l, n))
@@ -97,9 +87,7 @@ for (m in c(1, 3)) for (cs in cases) for (mu in log(c(1.00, 1.10, 1.15))) {
   npass <- npass + ci$pass; npair <- npair + 1
 }
 # 3c. Flagging rule (v0.3): the TC-F11 pair shifted so that the upper limit is 1.18 (1 - 3e-6)
-XT <- invitro_gen(1, l, n, 3, mu = log(1.10), sB = 0.03, sC = 0.02, sW = 0.02)
-XR <- invitro_gen(1, l, n, 3, sB = 0.03, sC = 0.02, sW = 0.02)
-XT <- XT + log(1.18 * (1 - 3e-6)) - log(ema_ci_fast(XT, XR, l, n, l, n, methods = "c")$c$upper)
+XT <- c11$near$XT; XR <- c11$near$XR
 ci <- ema_ci_fast(XT, XR, l, n, l, n, methods = "c")$c
 MT <- matrix(XT[1, , ], l * n, 3); MR <- matrix(XR[1, , ], l * n, 3)
 cn <- ci_from_var(mean(MT) - mean(MR), reml_numeric(MT, l, n)$v_mean, reml_numeric(MR, l, n)$v_mean,
@@ -184,29 +172,8 @@ sas <- do.call(rbind, lapply(seq_len(nrow(rb)), function(i) {
 utils::write.csv(sas, file.path(out, "sas_kabul.csv"), row.names = FALSE)
 
 # ---- 5. Monte Carlo checks with z and warning flag (|z| < 4 accept; 3 <= |z| < 4 warn)
-mc <- list()
-rr <- sim_run("demo_mean_ci", params = list(n = 10L), n_sim = 4000, seed = 2026); pf <- rr$performance
-for (ck in list(c("t", "coverage", 0.95), c("z", "coverage", 2 * pt(qnorm(0.975), 9) - 1),
-                c("t", "rejection", 0.05), c("t", "bias", 0))) {
-  row <- pf[pf$method == ck[1] & pf$measure == ck[2], ]
-  mc[[length(mc) + 1]] <- data.frame(test = "TC-S5", item = paste(ck[1], ck[2]), estimate = row$estimate,
-                                     truth = as.numeric(ck[3]), mcse = row$mcse,
-                                     z = (row$estimate - as.numeric(ck[3])) / row$mcse)
-}
-chk <- function(m, pB, q, R = 4000, l = 3, n = 10, sig = 0.12, pL = 0.15) {
-  cp <- invitro_components(sig, pB, pL, q); tau <- invitro_drift(m, cp$drift_var)
-  set.seed(20261016 + m)
-  X <- invitro_gen(R, l, n, m, sB = cp$sB, sC = cp$sC, sW = cp$sW, tau = tau)
-  s <- CNKfarmastatr:::.iv_stats(X, l, n); s2hat <- s$msb / m + (m - 1) * s$msw / m
-  sB2 <- cp$sB^2; sC2 <- cp$sC^2; sW2 <- cp$sW^2; st2 <- sum(tau^2)
-  f <- c(msb = m * sC2 + sW2 + m * n * (l - 1) / (n * l - 1) * sB2, msw = if (m > 1) sW2 + st2 / (m - 1) else 0,
-         s2 = sC2 + sW2 + st2 / m + n * (l - 1) / (n * l - 1) * sB2, vm = sB2 / l + sC2 / (n * l) + sW2 / (n * l * m))
-  sim <- c(mean(s$msb), mean(s$msw), mean(s2hat), var(s$g))
-  se <- c(sd(s$msb), sd(s$msw), sd(s2hat), 0) / sqrt(R); se[4] <- var(s$g) * sqrt(2 / (R - 1))
-  data.frame(test = "TC-F10", item = paste0(names(f), " (m ", m, ", pB ", pB, ", q ", q, ")"),
-             estimate = sim, truth = f, mcse = se, z = ifelse(se > 0, (sim - f) / se, 0))
-}
-mc <- rbind(do.call(rbind, mc), chk(3, 0.3, 0.5), chk(3, 0, 0.5), chk(2, 0.1, 0.5), chk(1, 0.3, 0))
+mc_s5 <- mc_tcs5(); attr(mc_s5, "performance") <- NULL   # helper-cases.R
+mc <- rbind(mc_s5, mc_tcf10(3, 0.3, 0.5), mc_tcf10(3, 0, 0.5), mc_tcf10(2, 0.1, 0.5), mc_tcf10(1, 0.3, 0))
 mc$status <- ifelse(abs(mc$z) >= 4, "KALDI", ifelse(abs(mc$z) >= 3, "UYARI", "GECTI"))
 utils::write.csv(mc, file.path(out, "mc_z.csv"), row.names = FALSE)
 
