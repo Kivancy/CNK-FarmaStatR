@@ -10,6 +10,11 @@
 # Run from the repository root:
 #   Rscript web/p1/kabul/p1_kabul.R [browser_csv] [output_folder]
 # Defaults: belgeler/teknik_notlar/FSR-TN-PLT-01_ek/p1/p1_tarayici.csv and that folder.
+# Version 0.2 (G-58, KK-46): the "Performans ve bellek" row is applied as frozen in
+#   Table 11.1: "Aşılırsa test kalmaz; geçici üst sınır düşürülür". An exceeded time
+#   or memory threshold is reported as ASILDI_SINIR_DUSER (threshold exceeded; the
+#   temporary n_sim upper limit is lowered), not as KALDI. Version 0.1 wrote KALDI
+#   (G-57), which did not follow the frozen text. The thresholds are unchanged.
 # Base R only. Research and education only; not validated for GxP environments.
 # =============================================================================
 args <- commandArgs(trailingOnly = TRUE)
@@ -112,12 +117,14 @@ put("Başlatma: soğuk açılış ≤ 15 sn (en kötü / 5)",
 p1 <- rep5("perf|3x10|10000"); p2 <- rep5("perf|6x30|20000")
 mem <- suppressWarnings(as.numeric(get("bellek", "tepe_mb")))
 pdet <- function(k) { v <- sapply(1:5, function(i) get(k, paste0("fda_pass_tekrar", i))); length(unique(v[!is.na(v)])) == 1 }
-put("Performans: 3 × 10, nsim 10.000 ≤ 10 sn", if (any(is.na(p1))) "EKSIK" else if (max(p1) <= 10000) "GECTI" else "KALDI",
+ASILDI <- "ASILDI_SINIR_DUSER"   # Table 11.1: exceeded -> test does not fail; temporary limit lowered
+put("Performans: 3 × 10, nsim 10.000 ≤ 10 sn", if (any(is.na(p1))) "EKSIK" else if (max(p1) <= 10000) "GECTI" else ASILDI,
     sprintf("medyan %s ms, en kötü %s ms; 5 tekrarda aynı sonuç: %s", stats::median(p1), max(p1), pdet("perf|3x10|10000")))
-put("Performans: 6 × 30, nsim 20.000 ≤ 60 sn", if (any(is.na(p2))) "EKSIK" else if (max(p2) <= 60000) "GECTI" else "KALDI",
+put("Performans: 6 × 30, nsim 20.000 ≤ 60 sn", if (any(is.na(p2))) "EKSIK" else if (max(p2) <= 60000) "GECTI" else ASILDI,
     sprintf("medyan %s ms, en kötü %s ms; 5 tekrarda aynı sonuç: %s", stats::median(p2), max(p2), pdet("perf|6x30|20000")))
-put("Tepe bellek ≤ 1 GB", if (is.na(mem)) "EKSIK" else if (mem <= 1024) "GECTI" else "KALDI",
-    sprintf("%s MB (Chrome görev yöneticisi, elle girildi)", get("bellek", "tepe_mb")))
+put("Tepe bellek ≤ 1 GB", if (is.na(mem)) "EKSIK" else if (mem <= 1024) "GECTI" else ASILDI,
+    sprintf("%s MB (Chrome görev yöneticisi, elle girildi)%s", get("bellek", "tepe_mb"),
+            if (!is.na(mem) && mem > 1024) "; eşik aşıldı: Tablo 11.1'e göre test kalmaz, geçici nsim üst sınırı düşürülür" else ""))
 
 # 9 Mobil
 mn <- get("mobil", "gozlem")
@@ -137,3 +144,6 @@ cat(sprintf("Tarayıcı: %s\n", paste(env$deger[env$ad %in% c("islemci", "isleti
 for (i in seq_len(nrow(res))) cat(sprintf("  %-46s %-16s %s\n", res$olcut[i], res$sonuc[i], res$ayrinti[i]))
 genel <- if (any(res$sonuc %in% c("KALDI"))) "KALDI" else if (any(res$sonuc %in% c("EKSIK", "KOSUL_SAGLANMADI"))) "EKSIK" else "GECTI"
 cat("\nGenel:", genel, "(P1'in başarısına proje sahibi karar verir; KK-45)\n")
+if (any(res$sonuc == ASILDI))
+  cat("Eşik aşımı:", paste(res$olcut[res$sonuc == ASILDI], collapse = "; "),
+      "\n  -> Tablo 11.1: test kalmaz; geçici nsim üst sınırı düşürülür (yeni sınır ölçümle belirlenir).\n")

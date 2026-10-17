@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.54 · Son güncelleme: 17.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.55 · Son güncelleme: 17.10.2026"
 ---
 
 # Bu belge hakkında
@@ -863,6 +863,25 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
   - yeni geçici üst sınırın nasıl belirleneceği.
 - **Dosyalar:** `FSR-TN-PLT-01_ek/p1/` altındaki 4 çıktı dosyasını proje sahibi oluşturdu (`p1_tarayici.csv`, `p1_karsilastirma.csv`, `p1_yerel_r.csv`, `p1_yerel_sessionInfo.txt`); Claude dokunmadı. Bu günlük depoya yazıldı ve bayt bayt doğrulandı.
 
+## G-58 · P1 koşullu başarılı; bellek kuralı; yeni üst sınır için ölçüm — 17.10.2026
+
+- **Proje sahibinin sorusu ve Claude'un değerlendirmesi:** Proje sahibi, sınırı aşan değeri başarılı saymanın ileride sorun çıkarıp çıkarmayacağını sordu. Claude'un değerlendirmesi:
+  - Kural testten önce donduruldu (v0.4, KK-45). Aşımı yok saymıyor; bir sonuç bağlıyor: üst sınır düşürülür.
+  - Sorun çıkaracak durumlar şunlar: belgelerde "bellek GEÇTİ" yazmak, 20.000 sınırını bırakmak, yeni sınırı tahminle koymak, tek ve elle okunmuş ölçüme fazla güvenmek.
+  - Önerisi: P1 koşullu başarılı sayılsın; kapanış, yeni sınırın ölçümle doğrulanmasına bağlansın.
+- **Proje sahibinin kararı (K):** "sağla" → **KK-46**.
+  - P1 koşullu başarılı.
+  - Bellek eşiğinin aşıldığı (1.068 > 1.024 MB) açıkça kaydedilir; hiçbir belgede "bellek geçti" denmez.
+  - Donmuş kurala göre geçici n_sim üst sınırı (20.000) düşürülür; yeni sınır ölçümle belirlenir.
+  - P1'in kapanışı bu ölçüme ve belgeye işlenmesine bağlıdır.
+- **`web/p1/kabul/p1_kabul.R` 0.2:** "Performans ve bellek" satırı donmuş metne göre uygulanır. Aşım `ASILDI_SINIR_DUSER` olarak yazılır, KALDI olarak değil; eşikler değişmedi. Resmi CSV ile yeniden koşuldu (Claude, kapsayıcı): bellek `ASILDI_SINIR_DUSER`, diğer ölçütler GECTI, genel GECTI ve eşik aşımı notu. Proje sahibinin makinesinde yeniden koşulacak; 0.1'in çıktıları G-57 commit'inde kalır.
+- **Yeni üst sınır için ölçüm planı (Claude önerisi):**
+  - Prototip (`web/p1/`) tek başına; her ölçüm yeni bir sekmede, çünkü WebAssembly belleği küçülmez.
+  - Sabit girdiler: 6 × 30, m = 3, FDA δ₀.
+  - Ölçümler: "Hazır" durumunda taban değer, ardından n_sim 10.000, 15.000 ve 20.000. Her biri sekmenin görev yöneticisindeki tepe bellek değeri.
+  - Yeni sınır, bellek ile n_sim·ℓ·n·m arasındaki ilişkiden önerilecek ve FSR-TN-PLT-01 v0.5'e işlenecek.
+- **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `web/p1/kabul/p1_kabul.R`, bu günlük.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -880,14 +899,14 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-14 | Tip I uyum ölçütü kararı; teknik not v0.8 (rapor 02) ve Aşama 2 sonuçları; yeniden üretim paketi (G-40) | Tamam: ölçüt (KK-38), v0.8, paket (G-41), Aşama 2 sonuçları v0.9 (G-42); v0.9 onaylandı, hedefli deney ve v0.10 (G-43); 12.10 onay bekliyor; v0.10 onaylandı, v0.11 (G-48) |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
 | A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
-| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0 kapandı (G-53, KK-45); P1 resmi kabul koşusu yapıldı (G-57): bellek dışındaki ölçütler GECTI; bellek 1.068 MB, donmuş metne göre üst sınır düşürülür; P1 kararı proje sahibinde; D-03, D-04 P2 öncesi |
+| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P1 koşullu başarılı (G-58, KK-46): bellek 1.068 MB > 1 GB, geçici n_sim üst sınırı ölçümle düşürülecek, sonra v0.5 ve P1 kapanışı; D-03, D-04 P2 öncesi |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
 
 # 4. Belge ve sürüm dizini
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.54 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.55 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.0 | Onaylandı; beş dosya sabitlendi (G-47) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.4 | P0 onaylandı ve kapandı (KK-45); P1 kabul ölçütleri ve test koşulları donduruldu (G-53) |
@@ -943,3 +962,4 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | KK-43 | FSR-TN-PLT-01 v0.1 incelemesi: Ö1, Ö6 onay; Ö2, Ö3 koşullu; Ö4, Ö5, Ö7 revizyon; önce P0; yöntem bazında H0/H1 ve metrik etiketi zorunlu; n_sim varsayılan 10.000, geçici üst sınır 20.000 | G-51 |
 | KK-44 | FSR-TN-PLT-01 v0.2 incelemesi: P0'a koşullu olumlu görüş; D-01, D-02, D-05 belge düzeyinde, D-06 P1 ölçütleri sabitlenince P1; D-03, D-04 P2 öncesi | G-52 |
 | KK-45 | FSR-TN-PLT-01 v0.3 nihai görüşü: temel tasarım onaylandı; 10⁻¹² mutlak tolerans korunur, D-02 gerekçesi proje sahibinin metniyle; P1 test koşulları onaylandı ve Tablo 11.1 ile donduruldu; P0 kapandı, P1'e geçildi; P1 başarısına dondurulmuş kabul testleri koşulduktan sonra karar verilir | G-53 |
+| KK-46 | P1 koşullu başarılı: bellek eşiği aşıldı (1.068 > 1.024 MB) ve açıkça kaydedilir; donmuş kurala göre geçici n_sim üst sınırı düşürülür, yeni sınır ölçümle belirlenir; P1 kapanışı bu ölçüm ve belgelemeye bağlı | G-58 |
