@@ -8,5 +8,5 @@
 "Başlatma: soğuk açılış ≤ 15 sn (en kötü / 5)","GECTI","soğuk: medyan 1430 ms, en kötü 2837 ms, önbellek kapalı beyanı TRUE; sıcak (yalnız rapor): medyan 1084 ms, en kötü 1246 ms"
 "Performans: 3 × 10, nsim 10.000 ≤ 10 sn","GECTI","medyan 2585 ms, en kötü 2638 ms; 5 tekrarda aynı sonuç: TRUE"
 "Performans: 6 × 30, nsim 20.000 ≤ 60 sn","GECTI","medyan 28684 ms, en kötü 29462 ms; 5 tekrarda aynı sonuç: TRUE"
-"Tepe bellek ≤ 1 GB","KALDI","1068 MB (Chrome görev yöneticisi, elle girildi)"
+"Tepe bellek ≤ 1 GB","ASILDI_SINIR_DUSER","1068 MB (Chrome görev yöneticisi, elle girildi); eşik aşıldı: Tablo 11.1'e göre test kalmaz, geçici nsim üst sınırı düşürülür"
 "Mobil","GOZLEM","gözlem girilmedi"
