@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.48 · Son güncelleme: 17.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.49 · Son güncelleme: 17.10.2026"
 ---
 
 # Bu belge hakkında
@@ -704,6 +704,22 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** FSR-TN-PLT-01 v0.2, `hipotez_siniflandirma.R`, `hipotez_siniflandirma.csv`, bu günlük.
 - **Onay bekleyen:** v0.2'nin incelemeyi doğru işlediği ve P0'ın tamamlandığı; sınıflandırma toleransı 10⁻¹².
 
+## G-52 · FSR-TN-PLT-01 v0.2 incelemesi; D-01 … D-06; v0.3 — 17.10.2026
+
+- **Depo:** G-51 dosyaları commit + push edildi; GitHub Actions GEÇTİ (proje sahibi: "actio ok"). Claude bunu v0.2 onayı saymadı ve onay istedi.
+- **Proje sahibinin incelemesi (K):** "FSR-TN-PLT-01 v0.2 Metodolojik Değerlendirme" (17.10.2026). P0 tasarımına koşullu olumlu görüş; Ö1–Ö7 büyük ölçüde karşılandı. D-01, D-02 ve D-05 belge düzeyinde kapatılıp D-06 kabul ölçütleri sabitlenince P1'e geçilir; D-03 ve D-04 P2 öncesinde kapatılır. Yeni faktöriyel simülasyon ya da yeniden tasarım gerekmez. → **KK-44**.
+  - D-01 (majör): "ρ > 1,758 ve δ = 0 ⇒ FDA H0" yalnız referans ölçekli bölgede geçerli; H-5 iki varyans bölgesini kapsamalı.
+  - D-02 (minör): 10⁻¹² toleransın sayısal niteliği ve geçerlilik alanı yazılsın; kullanıcı girişinde sınır yakınlığı ele alınsın.
+  - D-03 (majör, P2 öncesi): GMR ya da δ girişinde ondalık dönüşüm anahtarı bozmasın; tek iç gösterim ve kayıpsızlık testleri.
+  - D-04 (majör, P2 öncesi): birleşik sonuçların kaynak run_id ilişkisi; yöntem çifti ve eşleşik MCSE saklama kuralı.
+  - D-05 (minör): P1 yalnız minimal prototip; üretim tipi sınıflandırma fonksiyonu P2 teslimatı.
+  - D-06 (majör): P1 için ara değer toleransı, nihai karar birebirliği, hata yakalama, iptal ve cihaz performansı eşikleri önceden sabitlensin.
+- **Doğrulama (Claude):** D-01'deki iki örnek yeniden hesaplandı: σ_R 0,12, ρ 1,8, δ 0 → η = +0,002173 (H0 içi); σ_R 0,06 → η = −0,012827 (H1). Genel koşul ρ² ≥ 1 + θ_p·max(σ²_R, 0,01)/σ²_R; σ_R 0,06'da eşik ρ ≥ 2,608. v0.2'nin ifadesi ve H-5 eksikti; proje sahibi haklı.
+- **Bulgu (Claude, P1 ölçütlerini yazarken):** Motor negatif σ_R ile hata vermeden koşuyor; ℓ = 1 ya da n = 1'de anlamsız bir R iletisiyle duruyor ("NAs are not allowed in subscripted assignments"). Sabitlenmiş motor dosyaları değiştirilmeden, platformun R giriş kontrolü (ayrı fonksiyon) bu girdileri reddedecek; motorda düzeltme ilk revizyona (FSR-VAL-SIM-1 açık maddesi).
+- **Teknik not FSR-TN-PLT-01 v0.3** (`belgeler/teknik_notlar/FSR-TN-PLT-01_v0.3.docx`, 10 sayfa): D-01 (Tablo 5.1 notu ve H-5'in dört vakası); D-02 (yeni Bölüm 5.3: toleransın niteliği, geçerlilik alanı, sınır noktasının adlandırılmış seçenekle seçilmesi, sınır yakınlığı uyarısı FDA |η| ≤ 10⁻⁶, EMA |δ − ln L| ≤ 10⁻⁴); D-05 (P1 minimal prototip, oranlar "BE kabul olasılığı"; üretim fonksiyonu P2); D-06 (yeni Bölüm 11, Tablo 11.1: 36 koşuluk test kümesi; karar sayıları birebir; ara değerler K(10⁻¹², 10⁻¹²); hata yakalama; hash; iptal ≤ 2 sn; açılış ≤ 15 sn; 3 × 10 ve 10.000 ≤ 10 sn; 6 × 30 ve 20.000 ≤ 60 sn; bellek ≤ 1 GB; mobil yalnız gözlem); D-03 ve D-04 için öneriler (Bölüm 6.3; P2 öncesi kapanacak).
+- **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** FSR-TN-PLT-01 v0.3, bu günlük.
+- **Onay bekleyen:** D-01, D-02, D-05'in kapandığı ve Tablo 11.1'deki P1 kabul ölçütleri (süre, bellek, iptal eşikleri Claude önerisi). Onaylanırsa P0 kapanır, P1 başlar.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -721,17 +737,17 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-14 | Tip I uyum ölçütü kararı; teknik not v0.8 (rapor 02) ve Aşama 2 sonuçları; yeniden üretim paketi (G-40) | Tamam: ölçüt (KK-38), v0.8, paket (G-41), Aşama 2 sonuçları v0.9 (G-42); v0.9 onaylandı, hedefli deney ve v0.10 (G-43); 12.10 onay bekliyor; v0.10 onaylandı, v0.11 (G-48) |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
 | A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
-| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | v0.1 (G-50), inceleme ve v0.2 + P0 (G-51); onay bekliyor |
+| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | v0.1 (G-50), v0.2 + P0 (G-51), v0.3 (G-52); P0 kapanışı onay bekliyor; D-03, D-04 P2 öncesi |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
 
 # 4. Belge ve sürüm dizini
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.48 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.49 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.0 | Onaylandı; beş dosya sabitlendi (G-47) |
-| FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.2 | Taslak; v0.1 incelendi (KK-43); P0 onay bekliyor (G-51) |
+| FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.3 | Taslak; v0.2 incelendi (KK-44); D-01, D-02, D-05 ve P1 ölçütleri onay bekliyor (G-52) |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
 | CNKfarmastatr (R paketi) | 1.0.0.9000 | 13 dosya SHA-256 ile sabit (8 devralınan çekirdek + simülasyon çatısı ve in vitro motoru; FSR-VAL-SIM-1 1.0, G-47); testler 26 blok, 968 beklenti GEÇTİ (G-46) |
 
@@ -782,3 +798,4 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | KK-41 | Validasyon kabul ölçütleri: birleşik mutlak + göreli tolerans; SAS nicel (deterministik 10⁻¹⁰/10⁻⁹; sınırda ölçüt, GA, karar); REML'de ölçüt, kısıt, GA, karar; MC ortak |z| < 4, 3–4 uyarı; yeniden üretim koşulları | G-45 |
 | KK-42 | Teknik not Bölüm 12.10 kalır; hedefli deney mekanizmayı destekler, "tamamen kanıtladı" anlamında kullanılmaz | G-48 |
 | KK-43 | FSR-TN-PLT-01 v0.1 incelemesi: Ö1, Ö6 onay; Ö2, Ö3 koşullu; Ö4, Ö5, Ö7 revizyon; önce P0; yöntem bazında H0/H1 ve metrik etiketi zorunlu; n_sim varsayılan 10.000, geçici üst sınır 20.000 | G-51 |
+| KK-44 | FSR-TN-PLT-01 v0.2 incelemesi: P0'a koşullu olumlu görüş; D-01, D-02, D-05 belge düzeyinde, D-06 P1 ölçütleri sabitlenince P1; D-03, D-04 P2 öncesi | G-52 |
