@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CNK-FarmaStatR · In vitro eşdeğerlik</title>
+<!-- FSR-TN-PLT-04 (P4, KK-54): full screen. Research and education only; not a system
+     validated for GxP environments. The page does no statistics: every number, class and
+     label comes from the R engine in webR (tier 1) or from the database that R built (tier 2). -->
+<link rel="stylesheet" href="stil.css">
+</head>
+<body>
+<header>
+  <div>
+    <h1 data-i18n="title"></h1>
+    <p class="sub" data-i18n="subtitle"></p>
+  </div>
+  <button id="lang" type="button" class="ghost" data-i18n="lang"></button>
+</header>
+<p class="disclaimer" data-i18n="disclaimer"></p>
+<div id="version_box" class="warnbox" hidden></div>
+
+<main>
+<form id="form" autocomplete="off" novalidate>
+  <fieldset>
+    <legend data-i18n="grp_design"></legend>
+    <label><span data-i18n="l"></span><input name="l" value="3" inputmode="numeric"></label>
+    <label><span data-i18n="n"></span><input name="n" value="10" inputmode="numeric"></label>
+    <label><span data-i18n="m"></span><input name="m" value="3" inputmode="numeric"></label>
+    <label><span data-i18n="m_preset"></span>
+      <select name="m_preset">
+        <option value="" data-i18n="m_preset_none"></option>
+        <option value="1" data-i18n="m_preset_1"></option>
+        <option value="2" data-i18n="m_preset_2"></option>
+        <option value="3" data-i18n="m_preset_3"></option>
+      </select>
+    </label>
+    <p class="hint" id="design_info"></p>
+  </fieldset>
+  <fieldset>
+    <legend data-i18n="grp_pop"></legend>
+    <label><span data-i18n="sigma_R"></span><input name="sigma_R" value="0.12" inputmode="decimal"></label>
+    <label><span data-i18n="rho"></span><input name="rho" value="1" inputmode="decimal"></label>
+    <label><span data-i18n="pB_T"></span><input name="pB_T" value="0" inputmode="decimal"></label>
+    <label><span data-i18n="pB_R"></span><input name="pB_R" value="0" inputmode="decimal"></label>
+    <label><span data-i18n="pL"></span><input name="pL" value="0.15" inputmode="decimal"></label>
+    <label><span data-i18n="q"></span><input name="q" value="0" inputmode="decimal"></label>
+    <label class="wide"><span data-i18n="delta_choice"></span>
+      <select name="delta_choice">
+        <option value="fda_delta0" data-i18n="opt_fda_delta0"></option>
+        <option value="fda_minus_delta0" data-i18n="opt_fda_minus_delta0"></option>
+        <option value="ema_1.18" data-i18n="opt_ema_1.18"></option>
+        <option value="ema_0.85" data-i18n="opt_ema_0.85"></option>
+        <option value="gmr_1.00" data-i18n="opt_gmr_1.00"></option>
+        <option value="gmr_1.05" data-i18n="opt_gmr_1.05"></option>
+        <option value="gmr" data-i18n="opt_gmr"></option>
+        <option value="delta" data-i18n="opt_delta"></option>
+      </select>
+    </label>
+    <label id="custom_wrap" hidden><span id="custom_label"></span><input name="custom" value="1.10" inputmode="decimal"></label>
+    <div class="hint wide" id="hyp_pre"></div>
+  </fieldset>
+  <fieldset>
+    <legend data-i18n="grp_mc"></legend>
+    <label><span data-i18n="n_sim"></span><input name="n_sim" value="10000" inputmode="numeric"></label>
+    <label><span data-i18n="seed"></span><input name="seed" value="20261015" inputmode="numeric"></label>
+    <p class="hint" id="mc_info"></p>
+    <p class="hint" id="layer_info"></p>
+  </fieldset>
+  <div class="actions">
+    <button id="run" type="submit" disabled data-i18n="run"></button>
+    <button id="cancel" type="button" class="ghost" disabled data-i18n="cancel"></button>
+  </div>
+</form>
+
+<section class="panel" id="panel">
+  <p id="status" role="status" aria-live="polite"></p>
+  <div id="errors" class="errors" hidden></div>
+  <div id="result" hidden>
+    <h2 data-i18n="res_title"></h2>
+    <p class="source" id="source"></p>
+    <div class="tablewrap">
+    <table id="res_table">
+      <thead><tr><th data-i18n="col_method"></th><th data-i18n="col_metric"></th><th data-i18n="col_class"></th>
+        <th class="num" data-i18n="col_rate"></th><th class="num" data-i18n="col_mcse"></th><th data-i18n="col_kk38"></th></tr></thead>
+      <tbody></tbody>
+    </table>
+    </div>
+    <div id="warnings" class="warnings"></div>
+    <div id="g1" class="chartbox"></div>
+    <details id="more">
+      <summary data-i18n="more_title"></summary>
+      <div class="tablewrap"><table id="more_table"><tbody></tbody></table></div>
+    </details>
+    <h2 data-i18n="g2_title" id="g2_head"></h2>
+    <div id="g2" class="chartbox"></div>
+    <p class="hint" id="truth"></p>
+  </div>
+  <div class="actions bottom">
+    <button id="link" type="button" class="ghost" data-i18n="btn_link"></button>
+    <button id="json" type="button" class="ghost" disabled data-i18n="btn_json"></button>
+    <button id="script" type="button" class="ghost" disabled data-i18n="btn_script"></button>
+    <button id="report" type="button" class="ghost" disabled data-i18n="btn_report"></button>
+  </div>
+  <p class="hint" id="link_msg"></p>
+  <details id="engine_box">
+    <summary data-i18n="engine"></summary>
+    <table id="engine_table"><tbody></tbody></table>
+  </details>
+</section>
+</main>
+<footer><span data-i18n="disclaimer_en_tr"></span> · FSR-TN-PLT-04 · P4</footer>
+<script type="module" src="app.js"></script>
+</body>
+</html>

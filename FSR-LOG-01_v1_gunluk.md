@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.75 · Son güncelleme: 18.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.76 · Son güncelleme: 18.10.2026"
 ---
 
 # Bu belge hakkında
@@ -1391,6 +1391,39 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Sıradaki iş:** T-2…T-5, ekran (`web/app/`).
 - **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `araclar/vt_insa.R`, `veri/farmastatr_v1.sqlite`, `veri/VT_SHA256.txt`, `belgeler/teknik_notlar/FSR-TN-PLT-04_ek/p4_kabul_vt.R`, `vt_oku_p4.mjs`, `p4_kabul_vt.csv`, bu günlük.
 
+## G-79 · P4 T-2…T-5: ekranın geliştirme sürümü (`web/app/`) — 18.10.2026
+
+- **Depo:** G-78 commit edildi; Actions yeşil ("action ok başarılı").
+- **Yeni dosyalar (`web/app/`, P1'in `motor.js`'ini paylaşır):**
+  - **`bicim.js`:**
+    - Gösterim kuralı (P4-K3): ikili değere en yakın, tam eşitlikte çift. BigInt ile tam eşitlik denetimi yapar.
+    - Kanonik anahtar: R'deki `.num_exact` ile aynı `%.15g/16g/17g` metni; eşitlikte çifte yuvarlar.
+  - **`hazir.js`:** sql.js 1.12.0. Veri tabanını `VT_SHA256.txt` ile doğrular. Senaryo, sonuç, hipotez, koşu ve G2 komşularını okur. P4-K1: birleşik koşu varsa o.
+  - **`grafik.js`:** G1 ve G2, satır içi SVG. Her işaretin değeri `data-value` özniteliğinde.
+  - **`app.js`:**
+    - Katman seçimi. webR yalnız gerektiğinde başlar; ızgaradaki senaryoda hiç başlamaz.
+    - Koşudan önce hipotez durumu R'den alınır (`platform_hipotez`). Canlı koşu `platform_run_invitro` ve `platform_kk38` ile.
+    - Uyarılar, bağlantı ve sürüm kontrolü, JSON kaydı, R betiği, iptal.
+  - **Diğer:** `index.html`, `stil.css`, `ceviri.json` (151 anahtar, TR = EN), `README.md`.
+- **Denemeler (Claude, kapsayıcı, Node ve Playwright; resmi kabul değil):**
+  - **JavaScript–R uyumu:**
+    - JavaScript anahtarı, ızgaradaki 1.085 senaryonun hepsinde R anahtarıyla aynı.
+    - Biçimlendirme, 6.525 yüzde değerinde Linux R ile aynı.
+    - `numExact`, 6.012 sayının 6.011'inde R ile aynı.
+  - **Ekran (Playwright):**
+    - Hazır senaryo 0,7 sn'de göründü; webR başlatılmadı.
+    - Birleşik koşulu senaryoda gösterilen koşu PBE01-A2-BIR (n = 50.000).
+    - Izgara dışı senaryo canlı koşuldu; hipotez durumu koşudan önce göründü.
+    - Bağlantı yeni sekmede aynı anahtarı verdi.
+    - Farklı sürüm etiketli bağlantı onaya kadar bir şey göstermedi.
+    - Bir baytı değiştirilmiş veri tabanında hazır katman kapandı ve uyarı göründü.
+    - 6 × 30 ve 50.000'de koşu reddedildi, betik önerildi; betik ekrandan indirildi.
+    - İptal 36 ms'de durdu.
+    - 375 piksel genişlikte yatay kaydırma yok (ilk denemedeki taşma CSS'de düzeltildi).
+- **Bulgu (Claude):** R'nin sayı ayrıştırıcısı (`as.numeric`) her zaman doğru yuvarlamıyor. Örnek: "140573413.3919404" komşu double'a okunuyor; bu yüzden `.num_exact` bu sayı için 17 basamak yazıyor, JavaScript 16 basamak yazıyor. Etkisi yalnız böyle bir değer girildiğinde hazır katmanın kaçmasıdır; sonuç yanlış olmaz. Izgarada fark 0.
+- **Sıradaki iş:** T-6 (kabul sayfası `web/app/kabul.html`, `p4_kabul.R`, testthat), ardından resmi kabul (U-1…U-12) ve FSR-TN-PLT-04 v0.2.
+- **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `web/app/` altındaki 8 dosya, bu günlük.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -1408,14 +1441,14 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-14 | Tip I uyum ölçütü kararı; teknik not v0.8 (rapor 02) ve Aşama 2 sonuçları; yeniden üretim paketi (G-40) | Tamam: ölçüt (KK-38), v0.8, paket (G-41), Aşama 2 sonuçları v0.9 (G-42); v0.9 onaylandı, hedefli deney ve v0.10 (G-43); 12.10 onay bekliyor; v0.10 onaylandı, v0.11 (G-48) |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
 | A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
-| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0, P1, P2 ve P3 kapandı (KK-53, G-76); P4 (tam ekran; KK-54): T-1 veri tabanı sürüm 2 tamam (G-78), sırada ekran T-2…T-5. Açık: gösterim yuvarlaması (P5, KK-52); testthat kümesinin webR'de koşulması. Izgara kontrolleri CI'da (G-72, G-74) |
+| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0, P1, P2 ve P3 kapandı (KK-53, G-76); P4 (tam ekran; KK-54): T-1 veri tabanı sürüm 2 (G-78) ve ekranın geliştirme sürümü `web/app/` (G-79) tamam; sırada T-6 kabul araçları ve resmi kabul. Açık: gösterim yuvarlaması (P5, KK-52); testthat kümesinin webR'de koşulması. Izgara kontrolleri CI'da (G-72, G-74) |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
 
 # 4. Belge ve sürüm dizini
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.75 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.76 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.1 | 1.0 onaylı; beş dosya sabitlendi (G-47). 1.1: TC-S11 (dışa aktarılan betik), onaylandı (KK-53, G-76) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.6 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68) |
