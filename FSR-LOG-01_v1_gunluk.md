@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.61 · Son güncelleme: 17.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.62 · Son güncelleme: 17.10.2026"
 ---
 
 # Bu belge hakkında
@@ -1010,6 +1010,42 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Onay bekleyen:** FSR-TN-PLT-02 v0.1 (P2-K1…K3 ve Tablo 8.1).
 - **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** FSR-TN-PLT-02 v0.1, bu günlük.
 
+## G-65 · FSR-TN-PLT-02 v0.1 onaylandı; P2 T-1 ve T-2 — 18.10.2026
+
+- **Depo:** G-62, G-63 ve G-64 commit + push edildi; Actions GEÇTİ. Proje sahibi deponun özel ("Private") olduğunu doğruladı. Ona hesap ve e-posta gizliliği hakkında bilgi verildi: Settings → Emails → "Keep my email addresses private" ve GitHub Desktop'ta noreply adresi.
+- **Proje sahibinin kararı (K):** "onaylıyorum" → **KK-49**: FSR-TN-PLT-02 v0.1 Claude'un önerileriyle onaylandı.
+  - P2-K1 (b): ortak δ ölçeğinde sınır yakınlığı uyarısı, |δ − δ_sınır| ≤ 10⁻⁴.
+  - P2-K2: tekrar düzeyinde karar yoksa birleşik eşleşik MCSE saklanmaz.
+  - P2-K3: veri tabanı R ve RSQLite ile inşa edilir.
+  - Tablo 8.1'deki S-1…S-11 kabul ölçütleri donduruldu.
+- **Yeni dosya `CNKfarmastatr/R/platform_hipotez.R` (0.1.0, sabitlenmiş değil):**
+  - `platform_hipotez()`: vektörleştirilmiş; δ ya da sınır adıyla çalışır. Yöntem başına gerçek büyüklük (η ya da ln GMR), sınıf, metrik adı (`tip1_sinir`, `noktasal_tip1`, `guc`), yakınlık uyarısı ve δ'nın tam metnini verir.
+  - `platform_kk38()`: KK-38 etiketi, yalnız H0 sınıflarında.
+  - `platform_anahtar()`: kanonik anahtar.
+  - `platform_sinir_delta()`: sınır adından δ.
+  - `DESCRIPTION` Collate listesine eklendi.
+- **İki tutarsızlık bulundu ve çözüldü (Claude):**
+  - **(1) Anahtar tanımı:** FSR-TN-PLT-02 v0.1 Bölüm 4 n_sim ve seed'i tek anahtara koymuştu. FSR-TN-PLT-01 Tablo 6.1 ise senaryoyu "koşudan bağımsız" tanımlıyor. İki anahtara ayrıldı: senaryo anahtarı yalnız veri üretme koşulunu, koşu anahtarı (`kosu = TRUE`) ek olarak n_sim ve seed'i taşır. v0.2'de metin düzeltilecek.
+  - **(2) KK-38'deki z değeri:** Karar metni z = 1,645 diyor; `asama2_ozet.R` ise `qnorm(0.95)` = 1,6449 kullanıyor. Fonksiyon tabloların birebir yeniden üretilmesi için `qnorm(0.95)` kullanır; 1,645 bu değerin yuvarlanmışıdır.
+- **Testler:**
+  - **testthat (`test-platform-hipotez.R`, 848 beklenti):**
+    - H-5: dört analitik vaka ve genel FDA koşulu;
+    - H-6: KK-38 sınıfları ve sınır değerleri;
+    - H-7: 77 çift (σ_R 11 × ρ 7); δ₀ tanımlı ve tanımsız çiftler, yakınlık uyarısı, EMA sınırları;
+    - K-1 (i) ve (iii): GMR ve δ ile aynı anahtar; 10.000 rastgele δ'da `.num_exact` kayıpsız.
+  - **Izgaraya dayalı kabul betiği (`belgeler/teknik_notlar/FSR-TN-PLT-02_ek/p2_kabul.R`, bölüm 1):** sonuç `p2_kabul_t1.csv`. Izgara CSV'leri paketin içinde değil; bu yüzden bu kontroller CI testinde değil, kabul betiğinde.
+    - **H-1:** 249 δ₀ senaryosu FDA'da H0 sınırı.
+    - **H-2:** 340 senaryo, EMA'nın üç yolunda H0 sınırı.
+    - **H-3:** 496 senaryo, iki yöntemde H1.
+    - **H-4:** en büyük |Δη| 2,2 × 10⁻¹⁶. CSV'nin 15 basamağından gelen en büyük |Δδ| 4,4 × 10⁻¹⁶. Yalnız işarete bakılsaydı 72 δ₀ senaryosu yanlış sınıflanırdı; tolerans bunu gideriyor.
+    - **S-3:** 22 grubun sınıf sayıları P0 prototipiyle birebir aynı.
+    - **S-4:** `asama2_ozet.R`'nin etiket kuralı `platform_kk38()` ile değiştirilip yeniden koşuldu; 7 özet CSV'nin 7'si birebir aynı.
+    - **K-1 (ii):** 248 δ₀ senaryosunda ad anahtarı, sayının anahtarından farklı.
+    - **K-1 (iv):** anahtarlar aşama içinde tekil; iki aşamada ortak senaryo 0.
+  - **Tam test kümesi** (yüklü paket, NOT_CRAN): 35 blok, 1.979 beklenti, 0 hata, 0 atlanan. Çekirdek SHA-256: 13/13 AYNI.
+- **Sıradaki iş:** T-3 ve T-4 (SQLite şeması, inşa betiği, birleşik sonuçlar, sql.js ile okuma), ardından T-5.
+- **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `platform_hipotez.R`, `test-platform-hipotez.R`, `DESCRIPTION`, `p2_kabul.R`, `p2_kabul_t1.csv`, bu günlük.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -1027,18 +1063,18 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-14 | Tip I uyum ölçütü kararı; teknik not v0.8 (rapor 02) ve Aşama 2 sonuçları; yeniden üretim paketi (G-40) | Tamam: ölçüt (KK-38), v0.8, paket (G-41), Aşama 2 sonuçları v0.9 (G-42); v0.9 onaylandı, hedefli deney ve v0.10 (G-43); 12.10 onay bekliyor; v0.10 onaylandı, v0.11 (G-48) |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
 | A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
-| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0 ve P1 kapandı (KK-45, KK-48); sırada P2: sınıflandırma fonksiyonu, D-03, D-04, SQLite; açık: kabul aracının 20.000 tekrarlık adımları, dogrulama.yml sayıları, README düzeni |
+| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0 ve P1 kapandı; P2 başladı (KK-49): T-1 ve T-2 tamam (G-65); sırada T-3/T-4 (SQLite), T-5 |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
 
 # 4. Belge ve sürüm dizini
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.61 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.62 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.0 | Onaylandı; beş dosya sabitlendi (G-47) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.5 | Onaylandı (KK-48); P0 ve P1 kapandı |
-| FSR-TN-PLT-02 · P2 tasarımı ve kabul ölçütleri | 0.1 | Taslak; onay bekliyor (G-64) |
+| FSR-TN-PLT-02 · P2 tasarımı ve kabul ölçütleri | 0.1 | Onaylandı (KK-49); ölçütler donduruldu; v0.2'de anahtar tanımı düzeltilecek (G-65) |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
 | CNKfarmastatr (R paketi) | 1.0.0.9000 | 13 dosya SHA-256 ile sabit (8 devralınan çekirdek + simülasyon çatısı ve in vitro motoru; FSR-VAL-SIM-1 1.0, G-47); testler 26 blok, 968 beklenti GEÇTİ (G-46) |
 
@@ -1094,3 +1130,4 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | KK-46 | P1 koşullu başarılı: bellek eşiği aşıldı (1.068 > 1.024 MB) ve açıkça kaydedilir; donmuş kurala göre geçici n_sim üst sınırı düşürülür, yeni sınır ölçümle belirlenir; P1 kapanışı bu ölçüm ve belgelemeye bağlı | G-58 |
 | KK-47 | Geçici üst sınır: n_sim ≤ 20.000 ve ℓ·n·m·n_sim ≤ 8,1 × 10⁶ (dayanak: prototip tek başına 15.000 tekrarda 688 MB; FarmaStatR türetimi; tek cihaz) | G-60 |
 | KK-48 | FSR-TN-PLT-01 v0.5 onaylandı; KK-46 koşulu sağlandı; P1 kapandı, P2'ye geçilir | G-61 |
+| KK-49 | FSR-TN-PLT-02 v0.1 onaylandı: P2-K1 (b) ortak δ ölçeğinde yakınlık uyarısı ≤ 10⁻⁴; P2-K2 Dᵢ yoksa birleşik eşleşik MCSE saklanmaz; P2-K3 inşa R + RSQLite; S-1…S-11 donduruldu | G-65 |
