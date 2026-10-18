@@ -1,6 +1,8 @@
 // CNK-FarmaStatR - P1 acceptance harness (FSR-TN-PLT-01 v0.4, Tables 11.1 and 11.2).
 // Collects the browser side of every criterion into one long CSV (bolum, anahtar, ad, deger);
 // web/p1/kabul/p1_kabul.R compares it with local R and writes PASS / FAIL per criterion.
+// v0.2 (G-68; FSR-TN-PLT-01 v0.6, Table 11.1 revision): the cancel and performance runs use
+// 6 x 30 and n_sim 15,000; 20,000 is rejected by the run-size limit (KK-47). Thresholds unchanged.
 // Research and education only; not a system validated for GxP environments.
 import { WEBR_VERSION, WEBR_BASE, verifyFiles, startWebR, plain, fetchBytes, sha256 } from './motor.js';
 
@@ -145,8 +147,8 @@ async function hashTests() {
 // ------------------------------------------------------------- 3c: cancel
 async function cancelTest(w) {
   drop('olcum', 'iptal');
-  status('İptal testi: 6 × 30, nsim 20.000; 3 sn sonra iptal');
-  setVals(w, { sigma_R: 0.12, rho: 1, pB: 0, pL: 0.15, q: 0, l: 6, n: 30, m: 3, delta_choice: 'fda_delta0', n_sim: 20000, seed: 20261015 });
+  status('İptal testi: 6 × 30, nsim 15.000; 3 sn sonra iptal');
+  setVals(w, { sigma_R: 0.12, rho: 1, pB: 0, pL: 0.15, q: 0, l: 6, n: 30, m: 3, delta_choice: 'fda_delta0', n_sim: 15000, seed: 20261015 });
   w.__p1_last = null; w.__p1_cancel_ms = undefined;
   w.document.querySelector('#run').click();
   await sleep(3000);
@@ -174,7 +176,7 @@ async function cancelTest(w) {
 // ------------------------------------------------------------- 3d: performance
 async function perfTests(w) {
   drop('olcum', 'perf');
-  for (const [l, n, ns] of [[3, 10, 10000], [6, 30, 20000]]) {
+  for (const [l, n, ns] of [[3, 10, 10000], [6, 30, 15000]]) {
     const k = `perf|${l}x${n}|${ns}`;
     for (let i = 1; i <= 5; i++) {
       status(`Performans ${l} × ${n}, nsim ${ns}: ${i}/5 (görev yöneticisinde belleği izleyin)`);

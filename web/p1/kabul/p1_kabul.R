@@ -15,6 +15,9 @@
 #   or memory threshold is reported as ASILDI_SINIR_DUSER (threshold exceeded; the
 #   temporary n_sim upper limit is lowered), not as KALDI. Version 0.1 wrote KALDI
 #   (G-57), which did not follow the frozen text. The thresholds are unchanged.
+# Version 0.3 (G-68; FSR-TN-PLT-01 v0.6): the 6 x 30 performance run is read with
+#   n_sim 15,000 (revised Table 11.1); a browser file of the official P1 run (G-57,
+#   n_sim 20,000) is still evaluated with its own n_sim. Thresholds unchanged.
 # Base R only. Research and education only; not validated for GxP environments.
 # =============================================================================
 args <- commandArgs(trailingOnly = TRUE)
@@ -114,14 +117,16 @@ put("Başlatma: soğuk açılış ≤ 15 sn (en kötü / 5)",
             stats::median(cs), max(cs), get("soguk_acilis", "onbellek_kapali_beyan"), stats::median(ws), max(ws)))
 
 # 8 Performans ve bellek - worst of 5
-p1 <- rep5("perf|3x10|10000"); p2 <- rep5("perf|6x30|20000")
+k6 <- if (!is.na(get("perf|6x30|15000", "tekrar1"))) "perf|6x30|15000" else "perf|6x30|20000"   # v0.6: 15,000
+ns6 <- sub(".*\\|", "", k6); ns6_lab <- format(as.numeric(ns6), big.mark = ".")
+p1 <- rep5("perf|3x10|10000"); p2 <- rep5(k6)
 mem <- suppressWarnings(as.numeric(get("bellek", "tepe_mb")))
 pdet <- function(k) { v <- sapply(1:5, function(i) get(k, paste0("fda_pass_tekrar", i))); length(unique(v[!is.na(v)])) == 1 }
 ASILDI <- "ASILDI_SINIR_DUSER"   # Table 11.1: exceeded -> test does not fail; temporary limit lowered
 put("Performans: 3 × 10, nsim 10.000 ≤ 10 sn", if (any(is.na(p1))) "EKSIK" else if (max(p1) <= 10000) "GECTI" else ASILDI,
     sprintf("medyan %s ms, en kötü %s ms; 5 tekrarda aynı sonuç: %s", stats::median(p1), max(p1), pdet("perf|3x10|10000")))
-put("Performans: 6 × 30, nsim 20.000 ≤ 60 sn", if (any(is.na(p2))) "EKSIK" else if (max(p2) <= 60000) "GECTI" else ASILDI,
-    sprintf("medyan %s ms, en kötü %s ms; 5 tekrarda aynı sonuç: %s", stats::median(p2), max(p2), pdet("perf|6x30|20000")))
+put(paste0("Performans: 6 × 30, nsim ", ns6_lab, " ≤ 60 sn"), if (any(is.na(p2))) "EKSIK" else if (max(p2) <= 60000) "GECTI" else ASILDI,
+    sprintf("medyan %s ms, en kötü %s ms; 5 tekrarda aynı sonuç: %s", stats::median(p2), max(p2), pdet(k6)))
 put("Tepe bellek ≤ 1 GB", if (is.na(mem)) "EKSIK" else if (mem <= 1024) "GECTI" else ASILDI,
     sprintf("%s MB (Chrome görev yöneticisi, elle girildi)%s", get("bellek", "tepe_mb"),
             if (!is.na(mem) && mem > 1024) "; eşik aşıldı: Tablo 11.1'e göre test kalmaz, geçici nsim üst sınırı düşürülür" else ""))

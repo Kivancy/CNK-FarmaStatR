@@ -5,8 +5,10 @@
 #           (8 inherited validated cores; 5 simulation files, FSR-VAL-SIM-1 1.0)
 #   Step 2: install the package and run the whole test folder: inherited
 #           validation (491 checks: MSD 60, Weibull 98, f2 120, PBE 213),
-#           simulation framework TC-S1...S10 and in vitro engine TC-F1...F11
-#           (testthat: 26 blocks, 968 expectations on 16.10.2026)
+#           simulation framework TC-S1...S10, in vitro engine TC-F1...F11,
+#           platform input check PLT-IN-1...5 and hypothesis classification
+#           (H-5, H-6, H-7, K-1; FSR-TN-PLT-02)
+#           (testthat: 35 blocks, 1979 expectations on 18.10.2026)
 # Runs on Linux and on Windows (the user's platform).
 
 name: dogrulama

@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.64 · Son güncelleme: 17.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.65 · Son güncelleme: 17.10.2026"
 ---
 
 # Bu belge hakkında
@@ -1098,6 +1098,24 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
   - Döküm SHA-256: `f2e49a95…`. G-66'daki değerden farkı, motor SHA alanının dolmasından geliyor.
 - **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `araclar/vt_insa.R`, `veri/farmastatr_v1.sqlite`, `FSR-TN-PLT-02_ek/p2_kabul_vt.csv`, `FSR-TN-PLT-02_ek/vt_dokum_sha256.txt`, bu günlük. G-66'nın commit edilmemiş dosyaları (`p2_kabul_vt.R`, `vt_oku.mjs`) değişmedi.
 
+## G-68 · P2 T-5: P1'den kalan açık maddeler; FSR-TN-PLT-01 v0.6 — 18.10.2026
+
+- **Depo:** G-66 ve G-67 commit edildi (proje sahibi: "commit de tamam").
+- **(1) Kabul aracı, Tablo 11.1 revizyonu (KK-47 gereği):**
+  - **`web/p1/kabul.js` 0.2:** İptal ve performans adımlarındaki koşu 6 × 30 ve 20.000 tekrardan 6 × 30 ve 15.000 tekrara çevrildi; 20.000 tekrar artık giriş kontrolünce reddediliyor. Eşikler (≤ 2 sn, ≤ 60 sn, ≤ 1 GB) değişmedi.
+  - **`web/p1/kabul/p1_kabul.R` 0.3:** 6 × 30 performans satırı 15.000 tekrarla okunuyor. Resmi P1 koşusunun CSV'si (G-57, 20.000 tekrar) kendi n_sim değeriyle değerlendirilmeye devam ediyor; yeniden koşuldu, sonuç değişmedi (GECTI; bellek ASILDI_SINIR_DUSER).
+  - **Kuru deneme (Claude, kapsayıcı; resmi koşu değil):** Ölçütlerin hepsi GECTI. İptal: durma 1 ms, yeniden hazır 1,1 sn. 6 × 30 ve 15.000 tekrar: en kötü 12,8 sn.
+- **(2) CI başlığı (`.github/workflows/dogrulama.yml`):** Yorum satırı güncellendi: platform testleri eklendi; 35 blok, 1.979 beklenti, 18.10.2026. Dosya korumalı olduğu için yazılamadı ("protected file"); güncel dosya proje sahibine gönderildi, o yerleştirecek. Değişen yalnız yorum satırları; CI'nin işleyişi değişmiyor.
+- **(3) `web/p1/README.md`:** Yeniden düzenlendi. Ortak bir sunucu bölümü, iki sayfanın adresleriyle bir tablo, prototip ve kabul aracı ayrı başlıklarda. Koşu büyüklüğü sınırı ve sunucuyu durdurma yolu eklendi.
+- **(4) Teknik not FSR-TN-PLT-01 v0.6** (12 sayfa):
+  - Künye: v0.5 onaylandı, P1 kapandı (KK-48).
+  - Sürüm geçmişine 0.6 satırı eklendi.
+  - Tablo 11.1'in "İptal" ve "Performans ve bellek" satırları revize edildi; resmi P1 koşusunun 20.000 tekrarla yapıldığı not edildi.
+  - Bölüm 11.4'teki açık madde kapandı.
+  - Bölüm 13'teki karar isteği, KK-48'in kaydıyla değiştirildi.
+- **P2 durumu:** T-1…T-5 tamam. Sırada FSR-TN-PLT-02 v0.2 var: anahtar tanımı düzeltmesi, sonuçlar ve S-1…S-11 özeti; ardından P2 kapanışı için proje sahibinin kararı.
+- **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `web/p1/kabul.js`, `web/p1/kabul/p1_kabul.R`, `web/p1/README.md`, `FSR-TN-PLT-01_v0.6.docx`, bu günlük. `dogrulama.yml`'yi proje sahibi yerleştirecek.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -1115,17 +1133,17 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-14 | Tip I uyum ölçütü kararı; teknik not v0.8 (rapor 02) ve Aşama 2 sonuçları; yeniden üretim paketi (G-40) | Tamam: ölçüt (KK-38), v0.8, paket (G-41), Aşama 2 sonuçları v0.9 (G-42); v0.9 onaylandı, hedefli deney ve v0.10 (G-43); 12.10 onay bekliyor; v0.10 onaylandı, v0.11 (G-48) |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
 | A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
-| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0 ve P1 kapandı; P2 (KK-49): T-1/T-2 (G-65) ve T-3/T-4 SQLite (G-66) tamam; sırada T-5, FSR-TN-PLT-02 v0.2 ve P2 kapanışı |
+| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0 ve P1 kapandı; P2: T-1…T-5 tamam (G-65…G-68); sırada FSR-TN-PLT-02 v0.2 ve P2 kapanışı |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
 
 # 4. Belge ve sürüm dizini
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.64 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.65 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.0 | Onaylandı; beş dosya sabitlendi (G-47) |
-| FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.5 | Onaylandı (KK-48); P0 ve P1 kapandı |
+| FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.6 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68) |
 | FSR-TN-PLT-02 · P2 tasarımı ve kabul ölçütleri | 0.1 | Onaylandı (KK-49); ölçütler donduruldu; v0.2'de anahtar tanımı düzeltilecek (G-65) |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
 | CNKfarmastatr (R paketi) | 1.0.0.9000 | 13 dosya SHA-256 ile sabit (8 devralınan çekirdek + simülasyon çatısı ve in vitro motoru; FSR-VAL-SIM-1 1.0, G-47); testler 26 blok, 968 beklenti GEÇTİ (G-46) |
