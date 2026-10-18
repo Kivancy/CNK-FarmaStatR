@@ -1,0 +1,7 @@
+"olcut","sonuc","ayrinti"
+"E-1 Aynı ortamda birebir (36 koşu)","GECTI","identical: 36 / 36"
+"E-3 Bütünlük","GECTI","bozulan dosyada durdu: 3 / 3; sabitlenmiş = CEKIRDEK: TRUE; bağımsız araç (tools::sha256sum) aynı: 5 / 5"
+"E-4 Bayt eşitliği","GECTI","5 / 5 dosya bayt bayt aynı"
+"E-10 Bağımsızlık (R --vanilla)","GECTI","R version 4.6.1 (2026-06-24 ucrt); paket yüklenmedi: TRUE; kütüphane yolunda kurulu: hayır; sonuç (17 basamak) = E-1: TRUE"
+"E-2 Tarayıcı → betik → yerel R","GECTI","3 çift; en büyük sayım farkı 0; K(1e-12, 1e-12) içinde 150 / 150 değer"
+"E-9 webR metni = yerel R metni","GECTI","3 / 3 betik zaman satırı dışında aynı"

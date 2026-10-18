@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.71 · Son güncelleme: 18.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.72 · Son güncelleme: 18.10.2026"
 ---
 
 # Bu belge hakkında
@@ -1285,6 +1285,39 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Açık madde (P5):** Rapor ve ekran yüzdelerinin her platformda aynı yazılması için yuvarlama kuralı (FarmaStatR türetimi) P5 tasarımında belirlenecek. `formatC` ve `round()` ikisi de yarım noktalarda platformdan ya da ondalık gösterimden etkileniyor (G-73).
 - **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `belgeler/teknik_notlar/FSR-TN-PLT-02_ek/p2_kabul.R`, bu günlük.
 
+## G-75 · P3 resmi kabulü (Windows): 12/12 GEÇTİ; FSR-TN-PLT-03 v0.2 ve FSR-VAL-SIM-1 v1.1 — 18.10.2026
+
+- **Depo:** G-74 commit edildi. Actions Linux ve Windows'ta yeşil; proje sahibi: "action yeşil ok". Bu, E-12'nin CI kısmıdır.
+- **Resmi koşu (proje sahibi; Windows 11, R 4.6.1; tarayıcı webR 0.5.4, R 4.5.1):**
+  - Prototipte üç koşu yapıldı: 2 × 5, 3 × 10, 6 × 30; m = 3; δ = FDA δ₀; n_sim = 2.000. Her biri için JSON kaydı ve R betiği `FSR-TN-PLT-03_ek/p3/` klasörüne kondu. Claude betik başlıklarında ayarları doğruladı.
+  - `p3_kabul.R` sonuçları:
+    - E-1: 36/36 `identical()`.
+    - E-2: 3 çift; sayım farkı 0; 150/150 değer K içinde.
+    - E-3: 3/3; bağımsız araç `tools::sha256sum` 5/5.
+    - E-4: 5/5.
+    - E-9: 3/3.
+    - E-10: `R --vanilla`, paket yüklenmedi ve kurulu değil; sonuç 17 basamakta aynı.
+    - Genel: GECTI.
+  - Çıktılar: `p3_kabul.csv`, `p3_yerel_sessionInfo.txt`.
+- **Teknik not FSR-TN-PLT-03 v0.2** (7 sayfa):
+  - KK-51 kararları ilgili bölümlere işlendi.
+  - Uygulanan biçim yazıldı.
+  - Tablo 9.1: E-1…E-12, 12/12 GEÇTİ.
+  - Tablo 10.1:
+    - B-1: Yardım sayfası eksikliği; `man/platform.Rd` ile kapandı.
+    - B-2: Yüzde yuvarlaması; KK-52 ile kapandı.
+    - A-1: Gösterim yuvarlaması, P5'te.
+    - A-2: FSR-VAL-SIM-1 v1.1.
+    - A-3: Bağımsız tekrar ve mekanizma verileri; P4'ten önce.
+    - A-4: Tarayıcıda betik üretim süresi.
+  - P3 kapanışı onaya sunuldu.
+- **FSR-VAL-SIM-1 v1.1** (9 sayfa; revizyon, onay bekliyor):
+  - TC-S11 eklendi: dışa aktarılan in vitro betiği, 89 beklenti.
+  - Tablo 7.1'e 1.1 satırları eklendi; yeni Bölüm 7.6 (P3 kabul sonuçları).
+  - Bölüm 9'da webR maddesi güncellendi. Motor koşusu P1 ve P3'te tarayıcıda yapıldı; testthat kümesinin webR'de koşulması açık kalır.
+  - Sabitlenmiş 13 dosya değişmedi.
+- **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `belgeler/teknik_notlar/FSR-TN-PLT-03_v0.2.docx`, `belgeler/validasyon/FSR-VAL-SIM-1_v1.1.docx`, bu günlük. Kabul çıktıları ve `p3/` dosyaları proje sahibinin klasöründe; commit edilecek.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -1302,19 +1335,19 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-14 | Tip I uyum ölçütü kararı; teknik not v0.8 (rapor 02) ve Aşama 2 sonuçları; yeniden üretim paketi (G-40) | Tamam: ölçüt (KK-38), v0.8, paket (G-41), Aşama 2 sonuçları v0.9 (G-42); v0.9 onaylandı, hedefli deney ve v0.10 (G-43); 12.10 onay bekliyor; v0.10 onaylandı, v0.11 (G-48) |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
 | A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
-| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0, P1 ve P2 kapandı (KK-50, G-70); P3 (R betiği dışa aktarma; KK-51): T-1…T-5 uygulandı, kuru kabul GECTI (G-72); resmi koşu (E-2, E-10 Windows, E-12 CI) proje sahibinde; ardından FSR-TN-PLT-03 v0.2 ve FSR-VAL-SIM-1 v1.1. Açık: ızgara kontrollerinin CI'a eklenmesi, bağımsız tekrar ve mekanizma verilerinin veri tabanına alınması |
+| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0, P1 ve P2 kapandı (KK-50, G-70); P3 (R betiği dışa aktarma; KK-51): 12/12 GEÇTİ (Windows resmi koşu, G-75); FSR-TN-PLT-03 v0.2 ve FSR-VAL-SIM-1 v1.1 kapanış onayı bekliyor. Açık: gösterim yuvarlaması (P5, KK-52); ızgara kontrollerinin CI'a eklenmesi, bağımsız tekrar ve mekanizma verilerinin veri tabanına alınması |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
 
 # 4. Belge ve sürüm dizini
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.71 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.72 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
-| FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.0 | Onaylandı; beş dosya sabitlendi (G-47) |
+| FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.1 | 1.0 onaylı; beş dosya sabitlendi (G-47). 1.1: TC-S11 (dışa aktarılan betik), onay bekliyor (G-75) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.6 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68) |
 | FSR-TN-PLT-02 · P2 tasarımı, kabul ölçütleri ve sonuçları | 0.2 | v0.1 onaylı (KK-49); v0.2: anahtar düzeltmesi, sonuçlar (11/11 GEÇTİ), sapmalar (G-69); onaylandı, P2 kapandı (KK-50, G-70) |
-| FSR-TN-PLT-03 · P3 tasarımı ve kabul ölçütleri | 0.1 | Onaylandı (KK-51); E-1…E-12 donduruldu; uygulama G-72 |
+| FSR-TN-PLT-03 · P3 tasarımı, kabul ölçütleri ve sonuçları | 0.2 | v0.1 onaylı (KK-51); v0.2: sonuçlar 12/12 GEÇTİ, bulgular; P3 kapanış onayı bekliyor (G-75) |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
 | CNKfarmastatr (R paketi) | 1.0.0.9000 | 13 dosya SHA-256 ile sabit (8 devralınan çekirdek + simülasyon çatısı ve in vitro motoru; FSR-VAL-SIM-1 1.0, G-47); testler 26 blok, 968 beklenti GEÇTİ (G-46) |
 
