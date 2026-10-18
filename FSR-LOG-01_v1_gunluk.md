@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.66 · Son güncelleme: 18.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.67 · Son güncelleme: 18.10.2026"
 ---
 
 # Bu belge hakkında
@@ -1137,6 +1137,19 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Proje sahibinden istenen:** v0.2'nin onayı ve P2'nin kapanışı. Onaylanırsa sırada P3 var (senaryonun R betiği olarak dışa aktarılması).
 - **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `belgeler/teknik_notlar/FSR-TN-PLT-02_v0.2.docx`, bu günlük.
 
+## G-70 · FSR-TN-PLT-02 v0.2 onaylandı; P2 kapandı — 18.10.2026
+
+- **Depo:** G-69 commit + push edildi; Actions geçti ("action tamam").
+- **Proje sahibinin kararı (K):** "v0.2'yi önerilerimle onaylıyorum" → **KK-50**. Claude'un Bölüm 10 ve 12'deki önerileriyle onay olarak işlendi:
+  - FSR-TN-PLT-02 v0.2 onaylandı; S-1…S-11 GEÇTİ; **P2 kapandı**.
+  - A-1 sapması kabul edildi: H-1…H-4 `p2_kabul.R`'de koşuyor. Izgara kontrollerinin CI'a ayrı adım olarak eklenmesi açık madde olarak sonraki aşamaya taşındı.
+  - A-2'deki şema farkları kabul edildi.
+  - A-3 açık madde: bağımsız tekrar ve mekanizma verileri veri tabanına alınacak.
+  - A-4 isteğe bağlı: veri tabanının Windows'ta inşası.
+- **Belge:** FSR-TN-PLT-02'nin künyesi v0.2 içinde "onay bekliyor" olarak kaldı. Onay bu girdi ve KK-50 ile kayıtlıdır; künye bir sonraki revizyonda düzeltilir. Belge yalnız bunun için yeniden yayımlanmadı.
+- **Sıradaki iş:** P3, senaryonun R betiği olarak dışa aktarılması (FSR-TN-PLT-01 Bölüm 10). İlk adım, kod yazılmadan önce tasarım ve kabul ölçütlerini onaya sunan FSR-TN-PLT-03 v0.1 (KK-45 ilkesi).
+- **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** bu günlük.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -1154,18 +1167,18 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-14 | Tip I uyum ölçütü kararı; teknik not v0.8 (rapor 02) ve Aşama 2 sonuçları; yeniden üretim paketi (G-40) | Tamam: ölçüt (KK-38), v0.8, paket (G-41), Aşama 2 sonuçları v0.9 (G-42); v0.9 onaylandı, hedefli deney ve v0.10 (G-43); 12.10 onay bekliyor; v0.10 onaylandı, v0.11 (G-48) |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
 | A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
-| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0 ve P1 kapandı; P2: T-1…T-5 tamam, S-1…S-11 GEÇTİ (G-65…G-69); FSR-TN-PLT-02 v0.2 ile kapanış onayı bekleniyor. Açık: ızgara kontrollerinin CI'a eklenmesi, bağımsız tekrar ve mekanizma verilerinin veri tabanına alınması |
+| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0, P1 ve P2 kapandı (KK-50, G-70); sırada P3 (R betiği dışa aktarma; önce FSR-TN-PLT-03 v0.1). Açık: ızgara kontrollerinin CI'a eklenmesi, bağımsız tekrar ve mekanizma verilerinin veri tabanına alınması |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
 
 # 4. Belge ve sürüm dizini
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.66 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.67 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.0 | Onaylandı; beş dosya sabitlendi (G-47) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.6 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68) |
-| FSR-TN-PLT-02 · P2 tasarımı, kabul ölçütleri ve sonuçları | 0.2 | v0.1 onaylı (KK-49); v0.2: anahtar düzeltmesi, sonuçlar (11/11 GEÇTİ), sapmalar; P2 kapanış onayı bekliyor (G-69) |
+| FSR-TN-PLT-02 · P2 tasarımı, kabul ölçütleri ve sonuçları | 0.2 | v0.1 onaylı (KK-49); v0.2: anahtar düzeltmesi, sonuçlar (11/11 GEÇTİ), sapmalar (G-69); onaylandı, P2 kapandı (KK-50, G-70) |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
 | CNKfarmastatr (R paketi) | 1.0.0.9000 | 13 dosya SHA-256 ile sabit (8 devralınan çekirdek + simülasyon çatısı ve in vitro motoru; FSR-VAL-SIM-1 1.0, G-47); testler 26 blok, 968 beklenti GEÇTİ (G-46) |
 
@@ -1222,3 +1235,4 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | KK-47 | Geçici üst sınır: n_sim ≤ 20.000 ve ℓ·n·m·n_sim ≤ 8,1 × 10⁶ (dayanak: prototip tek başına 15.000 tekrarda 688 MB; FarmaStatR türetimi; tek cihaz) | G-60 |
 | KK-48 | FSR-TN-PLT-01 v0.5 onaylandı; KK-46 koşulu sağlandı; P1 kapandı, P2'ye geçilir | G-61 |
 | KK-49 | FSR-TN-PLT-02 v0.1 onaylandı: P2-K1 (b) ortak δ ölçeğinde yakınlık uyarısı ≤ 10⁻⁴; P2-K2 Dᵢ yoksa birleşik eşleşik MCSE saklanmaz; P2-K3 inşa R + RSQLite; S-1…S-11 donduruldu | G-65 |
+| KK-50 | FSR-TN-PLT-02 v0.2 onaylandı; P2 kapandı. A-1 (H-1…H-4 kabul betiğinde) ve A-2 (şema farkları) kabul; ızgara kontrollerinin CI'a eklenmesi ve A-3 sonraki aşamaya; A-4 isteğe bağlı | G-70 |
