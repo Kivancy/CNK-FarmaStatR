@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.60 · Son güncelleme: 17.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.61 · Son güncelleme: 17.10.2026"
 ---
 
 # Bu belge hakkında
@@ -984,6 +984,32 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
   - **CSV ve Excel biçimli CSV:** G-62'deki sonuçlar değişmedi.
 - **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `araclar/pbe_hesapla.R`, bu günlük.
 
+## G-64 · Veri dönüşümü; P2 tasarım notu FSR-TN-PLT-02 v0.1 — 18.10.2026
+
+- **Veri dönüşümü (proje sahibinin isteği):** `Deneysel_Veri_Tablosu_ref_test.xlsx` dosyası `pbe_ornek_psg020929m1.xlsx` yapısına çevrildi ve `Deneysel_Veri_Tablosu_ref_test_m1.xlsx` olarak aynı klasöre kaydedildi (depo dışı: `C:\cloud\CNK-pharmastat-depo\data01\sample`). Yazılan dosya bayt bayt doğrulandı; orijinale dokunulmadı.
+  - **Eşleme:** seri → parti (ref1–3 → 1–3, test1–3 → 4–6); uzun formattaki ID → kap (1–120); aşama "B" (veride yok, örnek dosyaya uymak için konan etiket); Referans/Test → REF/TEST; değer → olcum.
+  - **Kontrol:** uzun format = geniş tablo (120/120).
+  - **Gözlem:** değerler ln ölçeğinde görünüyor; exp(değer) tam sayı (ör. 331). `log_d = FALSE` önerildi.
+  - **Deneme hesabı:** Constant-scaled, σ_T = σ_R = 0,0050, Hη −0,020875, PASS.
+- **Yerel ayna:** Claude'un çalışma kopyasında `asama1.R`, `asama1_kayit.csv` ve `asama1_sekil.R` eksikti; proje sahibinin deposundan alındı. Depodaki dosyalar eksiksiz.
+- **Proje sahibi:** "Tamamdır. şimdi ilerleyebilirsin." G-62 ve G-63 commit'lerinin durumu bu girdide teyit edilmedi.
+- **Teknik not FSR-TN-PLT-02 v0.1** (`belgeler/teknik_notlar/FSR-TN-PLT-02_v0.1.docx`, 5 sayfa): P2'nin tasarımı ve kabul ölçütleri, kod yazılmadan önce onaya.
+  - **Teslimatlar:**
+    - T-1: sınıflandırma fonksiyonu `platform_hipotez()` ve `platform_kk38()`;
+    - T-2: kanonik anahtar (D-03);
+    - T-3: birleşik sonuçlar (D-04);
+    - T-4: SQLite şeması, inşa ve sql.js ile okuma;
+    - T-5: P1'den kalan açık maddeler.
+  - **Bulgu 1:** Izgara CSV'leri 15 anlamlı basamakla yazılmış; örneğin δ₀(0,12) R'de 0,17344468406326474, CSV'de 0,173444684063265. Bu yüzden anahtar sayıdan değil sınır adından üretilmeli; yeni çıktılar `.num_exact` ile yazılmalı.
+  - **Bulgu 2:** Koşu kayıtlarında motor SHA-256'sı yok. Aşama 1 `invitro_grid.R` 0.1.0 ile koşulmuş; değer git geçmişinden aranacak, bulunamazsa "kayıtta yok" yazılacak.
+  - **Kararlar (Claude önerisi):**
+    - P2-K1 sınır yakınlığı: ortak δ ölçeği, |δ − δ_sınır| ≤ 10⁻⁴;
+    - P2-K2 birleşik eşleşik MCSE: Dᵢ yoksa saklanmaz;
+    - P2-K3 inşa aracı: R + RSQLite.
+  - **Kabul ölçütleri:** S-1…S-11. H-7'nin test noktaları: σ_R 11 değer × ρ 7 değer = 77 çift.
+- **Onay bekleyen:** FSR-TN-PLT-02 v0.1 (P2-K1…K3 ve Tablo 8.1).
+- **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** FSR-TN-PLT-02 v0.1, bu günlük.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -1008,10 +1034,11 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.60 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.61 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.0 | Onaylandı; beş dosya sabitlendi (G-47) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.5 | Onaylandı (KK-48); P0 ve P1 kapandı |
+| FSR-TN-PLT-02 · P2 tasarımı ve kabul ölçütleri | 0.1 | Taslak; onay bekliyor (G-64) |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
 | CNKfarmastatr (R paketi) | 1.0.0.9000 | 13 dosya SHA-256 ile sabit (8 devralınan çekirdek + simülasyon çatısı ve in vitro motoru; FSR-VAL-SIM-1 1.0, G-47); testler 26 blok, 968 beklenti GEÇTİ (G-46) |
 
