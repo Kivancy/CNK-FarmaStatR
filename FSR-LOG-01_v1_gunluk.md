@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.62 · Son güncelleme: 17.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.64 · Son güncelleme: 17.10.2026"
 ---
 
 # Bu belge hakkında
@@ -1046,6 +1046,58 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Sıradaki iş:** T-3 ve T-4 (SQLite şeması, inşa betiği, birleşik sonuçlar, sql.js ile okuma), ardından T-5.
 - **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `platform_hipotez.R`, `test-platform-hipotez.R`, `DESCRIPTION`, `p2_kabul.R`, `p2_kabul_t1.csv`, bu günlük.
 
+## G-66 · P2 T-3 ve T-4: SQLite veri tabanı — 18.10.2026
+
+- **Depo:** G-65 commit + push edildi; Actions GEÇTİ.
+- **İnşa betiği `araclar/vt_insa.R`** (P2-K3: R + RSQLite; paketin bağımlılığı değil):
+  - **Kaynaklar:** Aşama 1 ve 2 ızgaraları, iki ek tekrar dosyası ve üç koşu kaydı. Bütün sayılar CSV metninden `as.numeric` ile okunuyor; hiçbir sayı yuvarlanmıyor.
+  - **Çıktı:** `veri/farmastatr_v1.sqlite` (2,2 MB).
+  - **Satır sayıları:** 1.085 senaryo, 6 koşu, 13.555 sonuç, 3.679 fark, 4.340 hipotez.
+  - **Şema** (FSR-TN-PLT-02 Tablo 6.1): `insa`, `dosya`, `modul`, `senaryo`, `kosu`, `kosu_kaynak`, `yontem`, `olcut`, `sonuc`, `fark`, `hipotez`; boş açılanlar: `yayin`, `veri_seti`, `test_vakasi`. Senaryo, metin anahtarın (`senaryo_anahtar`, tekil) yanında bir de tam sayı numarası (`senaryo_no`) taşıyor; böylece dosya boyutu 5,4 MB'tan 2,2 MB'a indi.
+  - **Koşular:** A1 ve A2 ana koşu (tür "tek"); A1-EK ve A2-EK (40.000 tekrar, seed 20261016); A1-BIR ve A2-BIR ("birleşik", 50.000 tekrar; kaynakları `kosu_kaynak` tablosunda; bağımsız akış varsayımı yazılı).
+  - **Birleşik eşleşik MCSE** (P2-K2): saklanmadı; gerekçe yazılı ("tekrar düzeyinde karar yok"). Aşama 1 birleşik farkı tahmin olarak saklandı.
+  - **Türetilmiş değerler:** hipotez sınıfı, KK-38 etiketi ve CSV'de MCSE'si olmayan 18 havuzlama oranının binom MCSE'si. Kaynak sütununda "türetilmiş" diye işaretli.
+  - **Motor SHA-256:** sürüm numarası sabitlenmiş dosyanın sürümüyle aynıysa SHA-256 sabitleme listesinden alınıyor [FarmaStatR türetimi: dosyanın sürümü değişmediyse içeriği de değişmemiştir varsayımı]. A1 koşusundaki `invitro_grid.R` 0.1.0 sabitlenmiş sürüm değil; satırına gerekçeli "kayıtta yok" yazıldı.
+  - **Git geçmişi:** Claude, GitHub deposunu bu oturuma ekleyemedi (GitHub hesabı bağlı değil). Sizin bilgisayarınızdaki `.git` nesneleri yüzlerce dosya olduğu için taranmadı. Değer bulunursa sonradan eklenebilir.
+- **Kabul betikleri:**
+  - **`p2_kabul_vt.R`:** S-6, S-7, S-8 ve S-9 ölçütlerini sınar. Sınıf ve KK-38 kurallarını platform fonksiyonunu çağırmadan, bağımsız olarak yeniden yazar.
+  - **`vt_oku.mjs`:** Node ve sql.js 1.12.0 ile S-8 için veri tabanını okur.
+  - **Çıktılar:** `p2_kabul_vt.csv` ve `vt_dokum_sha256.txt`.
+- **Sonuçlar (Claude, kapsayıcı): hepsi GECTI.**
+  - **S-6a:** 1.085 senaryo; 12 parametre sütunu CSV ile birebir; anahtar yeniden üretildi.
+  - **S-6b:** 13.555 sonuç satırının tahmin, MCSE ve tekrar sayısı birebir.
+  - **S-6c:** 11.385 oranın MCSE'si √(p(1−p)/n) ile tolerans içinde (en büyük göreli fark 4,9 × 10⁻¹⁵).
+  - **S-6d:** Ek tekrar dosyalarındaki 10.000 tekrarlık değer, 76 hücrede ana koşuyla aynı.
+  - **S-6e:** Birleşik oran = (10.000 p + 40.000 p) / 50.000 (76 hücre).
+  - **S-6f:** Aşama 2 eşleşik farkları CSV ile aynı; birleşik koşuda MCSE yok, gerekçesi yazılı.
+  - **S-6g:** 4.340 hipotez sınıfı ve 4.492 KK-38 etiketi bağımsız yeniden hesapla birebir.
+  - **S-7:** İki inşanın içerik dökümü aynı (SHA-256 bdcdfc1d…).
+  - **S-8:** sql.js ile okunan `sonuc` ve `hipotez` tabloları her sütunda birebir.
+  - **S-9:** 6 koşu; 3'ünde motor SHA-256 dolu, 1'inde gerekçeli "kayıtta yok", 2'si birleşik.
+- **Hata ve düzeltme:** S-8 ilk koşuda KALDI çıktı. Neden: `read.csv`, sql.js çıktısındaki sayıya benzeyen metin sütununu (`delta_hesap_metin`) sayıya çevirdi. Karşılaştırma bütün sütunları metin olarak okuyup R'deki türüne çevirecek şekilde düzeltildi. Veri tabanında hata yoktu.
+- **Sınırlılıklar:**
+  - S-8 yalnız Claude'un ortamında (Node) sınandı; proje sahibinin makinesinde Node olmayabilir.
+  - Döküm SHA-256'sı R ve RSQLite sürümünü içerir; başka bir makinedeki inşa farklı bir değer verir. S-7 aynı makinedeki iki inşayı karşılaştırır.
+  - Bağımsız tekrar (48) ve mekanizma (12) dosyaları P2 kapsamında değil; veri tabanına sonra eklenecek.
+- **Sıradaki iş:** T-5 (P1'den kalan açık maddeler), FSR-TN-PLT-02 v0.2 (anahtar tanımı, sonuçlar) ve P2 kapanışı.
+- **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `araclar/vt_insa.R`, `veri/farmastatr_v1.sqlite`, `FSR-TN-PLT-02_ek/` altında `p2_kabul_vt.R`, `vt_oku.mjs`, `p2_kabul_vt.csv`, `vt_dokum_sha256.txt`; bu günlük.
+
+## G-67 · Veri tabanı: Aşama 1 motor SHA-256'sı git geçmişinden; yerel ayardan bağımsız sıralama — 18.10.2026
+
+- **Durum:** G-66'nın dosyaları (`vt_insa.R`, veri tabanı, kabul betikleri, günlük) 11:25'te depoya yazılmıştı ama henüz commit edilmemişti. Proje sahibinin "actions tamam. ilerleyebilirsin" mesajı (11:41) G-65'in Actions sonucuydu.
+- **Claude'un hatası:** Bu turda Claude G-66'yı bağlamında görmeden T-3/T-4'e yeniden başladı ve ikinci bir inşa betiği yazdı. Depodaki klasörü listeleyince durumu fark etti. İkinci uygulama atıldı ve depoya yazılmadı; G-66 sürümü korundu. Yerel ayna depodan yenilendi.
+- **G-66 sürümüne iki iyileştirme (`araclar/vt_insa.R`):**
+  - **(1) Aşama 1 motor SHA-256'sı:** G-66'da "kayıtta yok" yazıyordu; değer git geçmişinde bulundu. Claude, sizin depodaki `.git` nesnelerini tek tek okuyarak Aşama 1 commit'ine (`a81bebc35c`, "Aşama 1 simülasyonu", 15.10.2026 21:19) ulaştı.
+    - O commit'teki `invitro_grid.R` 0.1.0 dosyasının SHA-256'sı `aa5c1ab6…af198`. Commit, koşudan 5 dakika sonra yapılmış.
+    - Aynı commit'teki `invitro_fast.R` sabitlenmiş değerle aynı (`98350729…`).
+    - Aşama 2 commit'indeki (`44b5ef65e1`) `invitro_grid.R`, bugünkü sabitlenmiş dosyayla aynı git nesnesi (blob `3baf48d5`). G-66'daki "sürüm aynıysa içerik de aynıdır" varsayımı artık doğrulanmış oldu.
+    - Bugünkü durum: 4 tek koşunun 4'ünde motor SHA-256 dolu; "kayıtta yok" kalmadı.
+  - **(2) Yerel ayardan bağımsız sıralama:** Satır sıralamaları `order(..., method = "radix")` ile bayt sırasına alındı. R'nin varsayılan sıralaması yerel ayara bağlıdır; Windows ile Linux senaryo numaralarını farklı verebilirdi.
+- **Yeniden inşa ve kabul (Claude, kapsayıcı):** 2,22 MB; 1.085 senaryo, 6 koşu, 13.555 sonuç, 3.679 fark, 4.340 hipotez. Bütün S-6a…g, S-7, S-8 ve S-9 GECTI.
+  - S-9: motor SHA-256 4/4 dolu.
+  - Döküm SHA-256: `f2e49a95…`. G-66'daki değerden farkı, motor SHA alanının dolmasından geliyor.
+- **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `araclar/vt_insa.R`, `veri/farmastatr_v1.sqlite`, `FSR-TN-PLT-02_ek/p2_kabul_vt.csv`, `FSR-TN-PLT-02_ek/vt_dokum_sha256.txt`, bu günlük. G-66'nın commit edilmemiş dosyaları (`p2_kabul_vt.R`, `vt_oku.mjs`) değişmedi.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -1063,14 +1115,14 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-14 | Tip I uyum ölçütü kararı; teknik not v0.8 (rapor 02) ve Aşama 2 sonuçları; yeniden üretim paketi (G-40) | Tamam: ölçüt (KK-38), v0.8, paket (G-41), Aşama 2 sonuçları v0.9 (G-42); v0.9 onaylandı, hedefli deney ve v0.10 (G-43); 12.10 onay bekliyor; v0.10 onaylandı, v0.11 (G-48) |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
 | A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
-| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0 ve P1 kapandı; P2 başladı (KK-49): T-1 ve T-2 tamam (G-65); sırada T-3/T-4 (SQLite), T-5 |
+| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0 ve P1 kapandı; P2 (KK-49): T-1/T-2 (G-65) ve T-3/T-4 SQLite (G-66) tamam; sırada T-5, FSR-TN-PLT-02 v0.2 ve P2 kapanışı |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
 
 # 4. Belge ve sürüm dizini
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.62 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.64 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.0 | Onaylandı; beş dosya sabitlendi (G-47) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.5 | Onaylandı (KK-48); P0 ve P1 kapandı |
