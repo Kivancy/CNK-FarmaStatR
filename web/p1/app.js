@@ -1,19 +1,22 @@
 // CNK-FarmaStatR - P1 minimal browser prototype (FSR-TN-PLT-01 v0.4, D-05, Table 11.1).
 // The page does no statistics: it verifies the engine files, loads them into webR and
 // calls platform_run_invitro() (platform input check + invitro_scenario, unchanged).
+// P3 (FSR-TN-PLT-03, KK-51, P3-K2): "R script" button. The script is written by
+// platform_export_invitro() in webR from the same verified bytes; no run is needed, so
+// n_sim above the browser limit can be exported (tier 3).
 // Research and education only; not a system validated for GxP environments.
 
-import { WEBR_VERSION, WEBR_BASE, TAMPER, verifyFiles as verify, startWebR, plain } from './motor.js';
+import { WEBR_VERSION, WEBR_BASE, TAMPER, verifyFiles as verify, startWebR, plain, fetchBytes } from './motor.js';
 
 const Q = new URLSearchParams(location.search);
-const ENGINE = ['invitro_fast.R', 'invitro_grid.R'];      // pinned: must match the SHA list
-const PLATFORM = ['platform_input.R'];                    // not pinned in P1: hash recorded
+const ENGINE = ['sim_run.R', 'invitro_fast.R', 'invitro_grid.R'];   // pinned: must match the SHA list
+const PLATFORM = ['platform_input.R', 'platform_hipotez.R', 'platform_export.R'];   // not pinned: hash recorded
 const N_SIM_MAX = 20000;
 const CELLS_MAX = 8.1e6;      // display only; the limit is enforced by platform_input.R (G-60, KK-47)
 
 const $ = (s) => document.querySelector(s);
 let T = {}, lang = Q.get('lang') === 'en' ? 'en' : 'tr';
-let webR = null, files = [], tInitMs = null, rInfo = {}, record = null, runToken = 0;
+let webR = null, files = [], tInitMs = null, rInfo = {}, record = null, runToken = 0, pkgVersion = 'source';
 
 // ---------------------------------------------------------------- i18n
 function t(k, f) { const s = (T[lang] && T[lang][k]) || k; return f ? s.replaceAll('{f}', f) : s; }
@@ -67,6 +70,21 @@ const R_WRAPPER = `
     return(list(ok = FALSE, kind = "input", field = r$problems$field, code = r$problems$code, message = r$problems$message))
   if (inherits(r, "p1_engine_error")) return(list(ok = FALSE, kind = "engine", message = r$message))
   c(list(ok = TRUE, rng = paste(RNGkind()[1:2], collapse = "/")), as.list(r))
+}
+.p3_export <- function(p, choice, gmr, kaynak, pinned, ver) {
+  sinir <- switch(choice, fda_delta0 = "fda_delta0", "gmr_1.00" = "gmr_1.00", "gmr_1.05" = "gmr_1.05",
+                  ema_upper = "ema_1.18", ema_lower = "ema_0.85", custom = NULL)
+  if (is.null(sinir)) p$delta <- suppressWarnings(log(gmr))
+  if (!length(kaynak)) kaynak <- NULL
+  r <- tryCatch(platform_export_invitro(p, sinir = sinir, dosyalar = platform_motor_dosyalari("/home/web_user"),
+                                        cekirdek_sha = pinned, kaynak = kaynak, paket_surumu = ver),
+    farmastat_input_error = function(e) e,
+    error = function(e) structure(list(message = conditionMessage(e)), class = "p3_error"))
+  if (inherits(r, "farmastat_input_error"))
+    return(list(ok = FALSE, kind = "input", field = r$problems$field, code = r$problems$code, message = r$problems$message))
+  if (inherits(r, "p3_error"))
+    return(list(ok = FALSE, kind = if (grepl("delta0 is not defined", r$message)) "delta0" else "engine", message = r$message))
+  list(ok = TRUE, text = r)
 }`;
 
 async function startEngine(afterCancel = false) {
@@ -77,12 +95,16 @@ async function startEngine(afterCancel = false) {
   tInitMs = performance.now() - t0;
   if (afterCancel) setStatus('st_cancelled_ready', 'ok'); else setStatus('st_ready', 'ok');
   renderTimes();
-  $('#run').disabled = false;
+  $('#run').disabled = false; $('#export').disabled = false;
   window.__p1_ready = true;
 }
 
 async function boot() {
   T = await (await fetch('ceviri.json', { cache: 'no-store' })).json();
+  try {                                                     // package version for the script header
+    const d = new TextDecoder().decode(await fetchBytes('CNKfarmastatr/DESCRIPTION'));
+    const m = d.match(/^Version:\s*(\S+)/m); if (m) pkgVersion = m[1];
+  } catch (e) { /* stays 'source' */ }
   applyLang();
   setStatus('st_verifying');
   const tv = performance.now();
@@ -119,6 +141,7 @@ async function run(ev) {
   const { p, choice, gmr } = readForm();
   const token = ++runToken;
   $('#run').disabled = true; $('#cancel').disabled = false; $('#download').disabled = true;
+  $('#export').disabled = true;
   $('#result').hidden = true; showErrors(null); record = null;
   setStatus('st_running');
   const started = new Date();
@@ -134,7 +157,7 @@ async function run(ev) {
   }
   if (token !== runToken) return;
   const elapsed = performance.now() - t0;
-  $('#cancel').disabled = true; $('#run').disabled = false;
+  $('#cancel').disabled = true; $('#run').disabled = false; $('#export').disabled = false;
   if (!out.ok) {
     setStatus('st_error', 'bad');
     if (out.kind === 'input') {
@@ -148,6 +171,7 @@ async function run(ev) {
   }
   record = {
     platform: 'CNK-FarmaStatR', stage: 'P1 prototype', document: 'FSR-TN-PLT-01 v0.4',
+    form: JSON.stringify({ p, choice, gmr: choice === 'custom' ? gmr : null }),
     disclaimer: T.en.disclaimer,
     started: started.toISOString(), elapsed_ms: Math.round(elapsed),
     inputs: { ...p, delta_choice: choice, custom_gmr: choice === 'custom' ? gmr : null },
@@ -221,6 +245,46 @@ function updateMcse() {
   const mx = nsimMax(readForm().p);
   $('#nsim_max').textContent = mx === null ? '—' : fmtInt(mx);
 }
+// ---------------------------------------------------------------- P3: R script (tier 3)
+async function exportScript() {
+  if (!webR) return;
+  const { p, choice, gmr } = readForm();
+  const form = JSON.stringify({ p, choice, gmr: choice === 'custom' ? gmr : null });
+  // header of the script names the browser run only if it used exactly these inputs
+  const src = record && record.form === form ? {
+    run_source: 'browser', started: record.started, elapsed_ms: record.elapsed_ms,
+    webr_version: record.webr_version, r_version: record.r_version, rng: record.rng } : {};
+  const rStr = (s) => JSON.stringify(String(s));
+  const kaynak = 'list(' + Object.entries(src).map(([k, v]) => `${k} = ${typeof v === 'number' ? rNum(v) : rStr(v)}`).join(', ') + ')';
+  const pinned = 'c(' + files.filter((e) => e.pinned).map((e) => `${rStr(e.file)} = ${rStr(e.expected)}`).join(', ') + ')';
+  $('#export').disabled = true; $('#run').disabled = true; showErrors(null);
+  setStatus('st_exporting');
+  let out;
+  try {
+    const code = `.p3_export(${rList(p)}, ${JSON.stringify(choice)}, ${rNum(gmr)}, ${kaynak}, ${pinned}, ${rStr(pkgVersion)})`;
+    const shelter = await new webR.Shelter();
+    try { out = plain(await (await shelter.evalR(code)).toJs()); } finally { await shelter.purge(); }
+  } catch (err) { out = { ok: false, kind: 'engine', message: String(err && err.message || err) }; }
+  $('#export').disabled = false; $('#run').disabled = false;
+  if (!out.ok) {
+    setStatus('st_export_error', 'bad');
+    if (out.kind === 'input') {
+      const fields = [].concat(out.field), codes = [].concat(out.code);
+      showErrors(() => [t('err_input'), ...codes.map((c, i) => t('code_' + c, T[lang] && T[lang][fields[i]] ? t(fields[i]) : fields[i]))]);
+    } else if (out.kind === 'delta0') showErrors(() => [t('err_delta0')]);
+    else showErrors(() => [t('err_engine'), out.message]);
+    return;
+  }
+  window.__p3_last_script = out.text;                       // read by the acceptance tool
+  const stamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+  const blob = new Blob([out.text], { type: 'text/plain;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `farmastatr_senaryo_${stamp}.R`;
+  a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  setStatus(Object.keys(src).length ? 'st_exported_run' : 'st_exported', 'ok');
+}
+
 function download() {
   if (!record) return;
   const blob = new Blob([JSON.stringify(record, null, 1)], { type: 'application/json' });
@@ -233,6 +297,7 @@ function download() {
 $('#form').addEventListener('submit', run);
 $('#cancel').addEventListener('click', cancel);
 $('#download').addEventListener('click', download);
+$('#export').addEventListener('click', () => { exportScript(); });
 $('#lang').addEventListener('click', () => { lang = lang === 'tr' ? 'en' : 'tr'; applyLang(); });
 $('#form').addEventListener('input', updateMcse);
 $('select[name=delta_choice]').addEventListener('change', (e) => { $('#custom_wrap').hidden = e.target.value !== 'custom'; });

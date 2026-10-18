@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.68 · Son güncelleme: 18.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.69 · Son güncelleme: 18.10.2026"
 ---
 
 # Bu belge hakkında
@@ -1185,6 +1185,64 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
     - E-12: CI ızgara adımı.
 - **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `belgeler/teknik_notlar/FSR-TN-PLT-03_v0.1.docx`, bu günlük.
 
+## G-72 · FSR-TN-PLT-03 v0.1 onaylandı; P3 uygulaması (T-1…T-5) ve kuru kabul — 18.10.2026
+
+- **Depo:** G-71 commit edildi; Actions geçti.
+- **Proje sahibinin kararı (K):** "onaylıyorum" → **KK-51**. FSR-TN-PLT-03 v0.1, Claude'un önerileriyle onaylandı:
+  - P3-K1 (b): tek dosya; beş kaynak dosya okunur ham dize olarak gömülü; SHA-256 doğrulaması.
+  - P3-K2: Prototipe "R betiği" düğmesi P3'te eklenir.
+  - P3-K3: Izgara betiği P3'ün dışında.
+  - Tablo 8.1'deki E-1…E-12 donduruldu.
+- **T-1 · `CNKfarmastatr/R/platform_export.R` 0.1.0 (yeni; platform katmanı, sabitlenmiş değil; yalnız temel R):**
+  - `platform_export_invitro()`:
+    - Girdi denetimi `platform_check_invitro(…, Inf, Inf)`; tarayıcı sınırı uygulanmaz.
+    - Sabitlenmiş üç dosyanın SHA-256'sı `CEKIRDEK_SHA256.txt` ile aynı değilse betik yazılmaz.
+    - Betik baytları UTF-8 ve LF olarak birleştirilir. Paket kaynakları ASCII'dir; Türkçe beyan `\u` kaçışlarıyla yazılır.
+  - `platform_motor_dosyalari()` ve `platform_cekirdek_sha()` yardımcıları.
+  - SHA-256, `araclar/sha256.R` ile aynı algoritmadır. Kod metin olarak tutulur; pakette ve betikte aynı satırlar çalışır.
+- **T-2 · Betik:**
+  - Bölümler: başlık, düzenlenebilir `params`, `sinir`/`delta`, `output_dir`, büyüklük bilgisi, program, gömülü dosyalar.
+  - Dışa aktarma zamanı tek satırda (`.fsr_created`).
+  - Çıktılar: ekran özeti (oran, MCSE, sınıf, metrik, KK-38 etiketi, yakınlık uyarısı), `…_sonuc.csv` (`.num_exact`), `…_kayit.json`.
+  - Boyut yaklaşık 58 KB, 1.047 satır.
+  - **Denendi:**
+    - C ve UTF-8 yerel ayarlarında koşar.
+    - CRLF'ye çevrilmiş dosya doğrulamayı geçer.
+    - Bir bayt değişince "SHA-256 mismatch in: invitro_fast.R" iletisiyle durur.
+    - Latin-1'e çevrilmiş dosyada R ayrıştırıcısı durur; hesap başlamaz.
+- **T-3 · Prototip (`web/p1/app.js`, `index.html`, `ceviri.json` 87 anahtar):**
+  - "R betiği indir" düğmesi eklendi.
+  - webR'e yüklenen dosyalar: `sim_run.R` (sabitlenmiş) ve `platform_hipotez.R`, `platform_export.R` eklendi.
+  - Son koşu aynı girdilerle yapıldıysa betiğin başlığına o koşunun kaydı yazılır.
+  - Tarayıcıda dışa aktarma 9–12 sn sürüyor, çünkü SHA-256 webR'de temel R ile hesaplanıyor. Gözlem; ölçüt değil.
+- **T-4 · Testler ve belgeler:**
+  - `tests/testthat/test-platform-export.R` (E-1, E-3…E-9; 89 beklenti).
+  - `belgeler/teknik_notlar/FSR-TN-PLT-03_ek/p3_kabul.R` (E-1 tam küme, E-2, E-3, E-4, E-9 webR kısmı, E-10).
+  - `web/p1/README.md`: R betiği bölümü (TR/EN).
+  - FSR-VAL-SIM-1 v1.1 kapanışta, sonuçlarla birlikte yazılacak.
+- **Bulgu (Claude):** FSR-TN-PLT-01 Bölüm 10 P2 satırı "test ve yardım sayfasıyla" diyordu; P1 ve P2'nin platform fonksiyonlarının yardım sayfası yoktu. `man/platform.Rd` dokuz platform fonksiyonunu belgeler. `R CMD check --no-tests` içinde yardım sayfası uyarısı yok; tek uyarı devralınan dosyalardaki ASCII dışı karakterler (önceden vardı).
+- **T-5 · CI (`dogrulama.yml`):**
+  - Yeni "Step 3: P2 grid checks" adımı: `p2_kabul.R`'yi kendi ortamında koşar, sonuç dosyasını önce siler. 8 satırın hepsi GECTI değilse hata koduyla biter.
+  - Başlık güncellendi: 43 blok, 2.068 beklenti.
+  - Dosya korumalı; proje sahibi yerleştirecek.
+  - **E-12'nin bozma kısmı (Claude, kapsayıcıda kopya üzerinde; depoya girmedi):** normal koşu çıkış 0. Bir δ₀ senaryosunun η'sına 10⁻⁹ eklenince H-4 KALDI ve çıkış 1.
+- **Kuru kabul (Claude, kapsayıcı, Linux, R 4.3.3; resmi değil):**
+  - testthat: 43 blok, 2.068 beklenti, 0 hata, 0 atlanan. Çekirdek SHA-256 13/13 AYNI.
+  - `p3_kabul.R`, tarayıcıda (Playwright, webR 0.5.4) indirilen 3 çiftle:
+    - E-1: 36/36.
+    - E-2: sayım farkı 0; 150/150 değer K içinde.
+    - E-3: 3/3; bağımsız araç digest 5/5.
+    - E-4: 5/5.
+    - E-9: 3/3.
+    - E-10: `R --vanilla`, paket yüklenmedi, sonuç birebir.
+    - Hepsi GECTI.
+  - E-11: P1 kabul aracı kuru denemede bütün ölçütlerde GECTI. Soğuk açılış en kötü 3,9 sn; 6 × 30 ve 15.000 en kötü 14,6 sn. Bellek elle girilen deneme değeri.
+- **Proje sahibinden istenen (resmi koşu):**
+  - `dogrulama.yml`'yi yerleştirip commit + push; Actions sonucu E-12 içindir.
+  - Prototipte üç koşu (2 × 5, 3 × 10, 6 × 30; n_sim 2.000); her biri için JSON kaydı ve R betiği `FSR-TN-PLT-03_ek/p3/` klasörüne.
+  - `p3_kabul.R`'nin sizin R'nizde (Windows) koşulması. Bu E-1, E-2, E-3, E-4, E-9 ve E-10'u Windows'ta sağlar.
+- **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `CNKfarmastatr/R/platform_export.R`, `CNKfarmastatr/DESCRIPTION`, `CNKfarmastatr/man/platform.Rd`, `CNKfarmastatr/tests/testthat/test-platform-export.R`, `web/p1/app.js`, `web/p1/index.html`, `web/p1/ceviri.json`, `web/p1/README.md`, `belgeler/teknik_notlar/FSR-TN-PLT-03_ek/p3_kabul.R`, bu günlük. `dogrulama.yml` proje sahibine gönderildi.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -1202,19 +1260,19 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-14 | Tip I uyum ölçütü kararı; teknik not v0.8 (rapor 02) ve Aşama 2 sonuçları; yeniden üretim paketi (G-40) | Tamam: ölçüt (KK-38), v0.8, paket (G-41), Aşama 2 sonuçları v0.9 (G-42); v0.9 onaylandı, hedefli deney ve v0.10 (G-43); 12.10 onay bekliyor; v0.10 onaylandı, v0.11 (G-48) |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
 | A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
-| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0, P1 ve P2 kapandı (KK-50, G-70); P3 (R betiği dışa aktarma): FSR-TN-PLT-03 v0.1 onay bekliyor (G-71). Açık: ızgara kontrollerinin CI'a eklenmesi, bağımsız tekrar ve mekanizma verilerinin veri tabanına alınması |
+| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0, P1 ve P2 kapandı (KK-50, G-70); P3 (R betiği dışa aktarma; KK-51): T-1…T-5 uygulandı, kuru kabul GECTI (G-72); resmi koşu (E-2, E-10 Windows, E-12 CI) proje sahibinde; ardından FSR-TN-PLT-03 v0.2 ve FSR-VAL-SIM-1 v1.1. Açık: ızgara kontrollerinin CI'a eklenmesi, bağımsız tekrar ve mekanizma verilerinin veri tabanına alınması |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
 
 # 4. Belge ve sürüm dizini
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.68 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.69 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.0 | Onaylandı; beş dosya sabitlendi (G-47) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.6 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68) |
 | FSR-TN-PLT-02 · P2 tasarımı, kabul ölçütleri ve sonuçları | 0.2 | v0.1 onaylı (KK-49); v0.2: anahtar düzeltmesi, sonuçlar (11/11 GEÇTİ), sapmalar (G-69); onaylandı, P2 kapandı (KK-50, G-70) |
-| FSR-TN-PLT-03 · P3 tasarımı ve kabul ölçütleri | 0.1 | Taslak; P3-K1…K3 ve E-1…E-12 onay bekliyor (G-71) |
+| FSR-TN-PLT-03 · P3 tasarımı ve kabul ölçütleri | 0.1 | Onaylandı (KK-51); E-1…E-12 donduruldu; uygulama G-72 |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
 | CNKfarmastatr (R paketi) | 1.0.0.9000 | 13 dosya SHA-256 ile sabit (8 devralınan çekirdek + simülasyon çatısı ve in vitro motoru; FSR-VAL-SIM-1 1.0, G-47); testler 26 blok, 968 beklenti GEÇTİ (G-46) |
 
@@ -1272,3 +1330,4 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | KK-48 | FSR-TN-PLT-01 v0.5 onaylandı; KK-46 koşulu sağlandı; P1 kapandı, P2'ye geçilir | G-61 |
 | KK-49 | FSR-TN-PLT-02 v0.1 onaylandı: P2-K1 (b) ortak δ ölçeğinde yakınlık uyarısı ≤ 10⁻⁴; P2-K2 Dᵢ yoksa birleşik eşleşik MCSE saklanmaz; P2-K3 inşa R + RSQLite; S-1…S-11 donduruldu | G-65 |
 | KK-50 | FSR-TN-PLT-02 v0.2 onaylandı; P2 kapandı. A-1 (H-1…H-4 kabul betiğinde) ve A-2 (şema farkları) kabul; ızgara kontrollerinin CI'a eklenmesi ve A-3 sonraki aşamaya; A-4 isteğe bağlı | G-70 |
+| KK-51 | FSR-TN-PLT-03 v0.1 onaylandı: P3-K1 (b) tek dosya, okunur gömülü kaynak, SHA-256 doğrulaması; P3-K2 prototipe R betiği düğmesi P3'te; P3-K3 ızgara betiği P3 dışında; E-1…E-12 donduruldu | G-72 |

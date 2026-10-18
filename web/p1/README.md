@@ -3,7 +3,8 @@
 Araştırma ve eğitim amaçlıdır; GxP ortamında valide edilmiş sistem değildir.
 For research and education; not a system validated for GxP environments.
 
-Kaynak / source: FSR-TN-PLT-01 v0.6 (D-05; Tablo 11.1–11.2, KK-47).
+Kaynak / source: FSR-TN-PLT-01 v0.6 (D-05; Tablo 11.1–11.2, KK-47); R betiği / R script:
+FSR-TN-PLT-03 (P3, KK-51).
 
 ## TR
 
@@ -45,6 +46,23 @@ fonksiyonunu çağırır (`platform_input.R`: giriş kontrolü, ardından deği�
   hesabını kesemez. Bu yüzden İptal düğmesi webR'yi kapatır ve doğrulanmış dosyalardan yeniden
   başlatır. Kısmi sonuç tutulmaz.
 
+### R betiği (P3, katman 3)
+
+"R betiği indir" düğmesi formdaki parametrelerle tek dosyalık bir R betiği indirir. Koşu
+gerekmez; tarayıcı sınırının üstündeki n_sim için de çalışır. Betik, tarayıcının doğruladığı beş
+R dosyasını (`sim_run.R`, `invitro_fast.R`, `invitro_grid.R`, `platform_input.R`,
+`platform_hipotez.R`) okunur biçimde taşır ve açılışta SHA-256 değerlerini denetler. Bir bayt
+bile değişmişse hesaba başlamaz.
+
+- Koşmak için: `Rscript farmastatr_senaryo_….R` ya da R içinde `source("farmastatr_senaryo_….R")`.
+  R ≥ 4.0 ve yalnız temel R yeterlidir; CNKfarmastatr paketinin kurulu olması gerekmez.
+- Parametreler betiğin başındaki `params` listesindedir ve değiştirilebilir (ör. `n_sim`, `seed`).
+- Çıktılar `output_dir` klasörüne yazılır: `…_sonuc.csv` (tam duyarlık) ve `…_kayit.json`
+  (koşu kaydı).
+- Aynı parametrelerle bir koşu yapıldıktan sonra indirilen betiğin başlığında o koşunun kaydı yer
+  alır; betik aynı karar sayılarını verir.
+- Betik metnini düzenleyicide başka bir kodlamayla kaydetmeyin; SHA-256 denetimi başarısız olur.
+
 ### Kabul aracı (Tablo 11.1–11.2)
 
 1. `kabul.html` adresini açın ve sayfadaki 0–5. adımları sırayla izleyin. İptal ve performans
@@ -70,6 +88,12 @@ from `webr.r-wasm.org`.
 `platform_run_invitro()` (input check, then the unchanged `invitro_scenario()`). Rates are shown
 as "probability of BE acceptance"; the run-size limit is n_sim ≤ 20,000 and
 ℓ · n · m · n_sim ≤ 8.1 million. Cancel closes webR and restarts it from the verified files.
+
+**R script (P3, tier 3):** "Download R script" writes one R file for the parameters in the
+form; no run is needed, so n_sim above the browser limit works too. The script carries the five
+verified R files as readable text, checks their SHA-256 first and stops if one byte differs. Run
+it with `Rscript <file>` or `source("<file>")` (R ≥ 4.0, base R only; the package need not be
+installed). Edit `params` at the top; results go to `output_dir` (`…_sonuc.csv`, `…_kayit.json`).
 
 **Acceptance tool:** follow steps 0–5 of `kabul.html` (cancel and performance runs use 6 × 30
 and 15,000 replicates), put `p1_tarayici.csv` into `belgeler/teknik_notlar/FSR-TN-PLT-01_ek/p1/`

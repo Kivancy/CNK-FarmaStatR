@@ -80,7 +80,13 @@
     "code_missing_param": "{f} gerekli.",
     "code_duplicate_param": "Bir parametre birden çok kez verilmiş.",
     "code_not_flag": "{f} DOĞRU ya da YANLIŞ olmalı.",
-    "code_params_not_named_list": "Parametreler adlandırılmış bir liste olmalı."
+    "code_params_not_named_list": "Parametreler adlandırılmış bir liste olmalı.",
+    "export": "R betiği indir",
+    "export_hint": "R betiği koşu gerektirmez: tarayıcı sınırının üstündeki n_sim için de indirilebilir ve kendi R’nizde koşulur (R ≥ 4.0, yalnız temel R; paket kurulumu gerekmez).",
+    "st_exporting": "R betiği hazırlanıyor (SHA-256)…",
+    "st_exported": "R betiği indirildi.",
+    "st_exported_run": "R betiği indirildi; başlığına son koşunun kaydı yazıldı.",
+    "st_export_error": "R betiği üretilemedi."
   },
   "en": {
     "title": "CNK-FarmaStatR · P1 prototype",
@@ -163,6 +169,12 @@
     "code_missing_param": "{f} is required.",
     "code_duplicate_param": "A parameter is given more than once.",
     "code_not_flag": "{f} must be TRUE or FALSE.",
-    "code_params_not_named_list": "Parameters must be a named list."
+    "code_params_not_named_list": "Parameters must be a named list.",
+    "export": "Download R script",
+    "export_hint": "The R script needs no run: it can also be downloaded for n_sim above the browser limit and run in your own R (R ≥ 4.0, base R only; no package installation).",
+    "st_exporting": "Preparing the R script (SHA-256)…",
+    "st_exported": "R script downloaded.",
+    "st_exported_run": "R script downloaded; the record of the last run is in its header.",
+    "st_export_error": "The R script could not be produced."
   }
 }

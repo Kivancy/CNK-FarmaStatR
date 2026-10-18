@@ -6,9 +6,12 @@
 #   Step 2: install the package and run the whole test folder: inherited
 #           validation (491 checks: MSD 60, Weibull 98, f2 120, PBE 213),
 #           simulation framework TC-S1...S10, in vitro engine TC-F1...F11,
-#           platform input check PLT-IN-1...5 and hypothesis classification
-#           (H-5, H-6, H-7, K-1; FSR-TN-PLT-02)
-#           (testthat: 35 blocks, 1979 expectations on 18.10.2026)
+#           platform input check PLT-IN-1...5, hypothesis classification
+#           (H-5, H-6, H-7, K-1; FSR-TN-PLT-02) and R script export
+#           (E-1, E-3 ... E-9; FSR-TN-PLT-03)
+#           (testthat: 43 blocks, 2068 expectations on 18.10.2026)
+#   Step 3: grid checks of P2 on the simulation results in the repository
+#           (H-1...H-4, S-3, S-4, K-1 ii/iv; FSR-TN-PLT-02, KK-50 A-1)
 # Runs on Linux and on Windows (the user's platform).
 
 name: dogrulama
@@ -73,3 +76,12 @@ jobs:
               " Skipped:", sum(df$skipped), "\n")
           if (sum(df$skipped) > 0) quit(status = 1)   # every test must run
           sessionInfo()
+
+      - name: "Step 3: P2 grid checks (H-1...H-4, S-3, S-4, K-1 ii/iv)"
+        shell: Rscript {0}
+        run: |
+          out <- "belgeler/teknik_notlar/FSR-TN-PLT-02_ek/p2_kabul_t1.csv"
+          unlink(out)                                 # never read a committed result
+          source("belgeler/teknik_notlar/FSR-TN-PLT-02_ek/p2_kabul.R", encoding = "UTF-8", local = new.env())
+          r <- utils::read.csv(out, encoding = "UTF-8")
+          if (nrow(r) != 8 || !all(r$sonuc == "GECTI")) quit(status = 1)

@@ -4,7 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CNK-FarmaStatR · P1</title>
-<!-- FSR-TN-PLT-01 v0.4 - P1 minimal browser prototype (D-05). Research and education only;
+<!-- FSR-TN-PLT-01 v0.4 - P1 minimal browser prototype (D-05); P3 adds the R script button
+     (FSR-TN-PLT-03, KK-51). Research and education only;
      not a system validated for GxP environments. The page does no statistics itself: every
      number comes from the R engine (CNKfarmastatr/R) running in webR. -->
 <link rel="stylesheet" href="stil.css">
@@ -61,7 +62,9 @@
     <button id="run" type="submit" disabled data-i18n="run"></button>
     <button id="cancel" type="button" class="ghost" disabled data-i18n="cancel"></button>
     <button id="download" type="button" class="ghost" disabled data-i18n="download"></button>
+    <button id="export" type="button" class="ghost" disabled data-i18n="export"></button>
   </div>
+  <p class="hint" data-i18n="export_hint"></p>
 </form>
 
 <section class="panel">
