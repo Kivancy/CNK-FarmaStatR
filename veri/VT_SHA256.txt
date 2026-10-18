@@ -1,0 +1,1 @@
+c8832cd3784a6caef6bb8b6f9fae3ea5ea6955476ad4caffb016d788c2f236c4  farmastatr_v1.sqlite

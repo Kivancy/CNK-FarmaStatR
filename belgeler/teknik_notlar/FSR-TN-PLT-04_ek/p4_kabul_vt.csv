@@ -1,0 +1,5 @@
+"kontrol","sonuc","ayrinti"
+"U-10 (a) Yeni tablolar = CSV; koşu satırları","GECTI","bagimsiz_tekrar 48/48 satır birebir: TRUE; mekanizma 12/12 satır, 28 sütun birebir: TRUE; koşu satırı 2, sürüm alanları dolu: TRUE; vt_surumu 2"
+"U-10 (b) İki inşanın döküm SHA-256'sı aynı (bütün tablolar)","GECTI","döküm 47c35551f03e3a26; tablo sayısı 16"
+"U-10 (c) sql.js ile okuma = R","GECTI","bagimsiz_tekrar 48, mekanizma 12 satır; bütün sütunlar birebir"
+"U-10 (d) VT_SHA256.txt = veri tabanı dosyası","GECTI","c8832cd3784a6cae"

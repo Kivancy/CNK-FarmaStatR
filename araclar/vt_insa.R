@@ -16,6 +16,16 @@
 #     stored because the runs kept no replicate-level decisions (P2-K2).
 #   - Rows are inserted in a fixed order; the content dump (vt_dokum) is
 #     deterministic. Only the build time differs between builds.
+# Version 2 of the database (FSR-TN-PLT-04 T-1, KK-54; open item A-3 of KK-50):
+#   adds the independent re-run of Stage 1 (bagimsiz_tekrar.csv, 48 rows) and the
+#   targeted mechanism experiment (mekanizma.csv, 12 rows) as their own tables,
+#   each with its run in `kosu`; writes veri/VT_SHA256.txt (SHA-256 of the
+#   database file) for the browser check.
+#   The re-run has no run-record file: seed, n_sim and RNG are taken from its
+#   script (bagimsiz_tekrar.R); R, package and engine versions are those of the
+#   environment in which it ran on 16.10.2026 together with Stage 2 (log G-41;
+#   engine 0.2.0 was in the repository from the Stage 2 run, commit 44b5ef65e1).
+#   This derivation is written into the run row.
 # Run from the repository root:  Rscript araclar/vt_insa.R [output.sqlite]
 # Default output: veri/farmastatr_v1.sqlite
 # Research and education only; not a system validated for GxP environments.
@@ -25,7 +35,11 @@ args <- commandArgs(trailingOnly = TRUE)
 vt_yol <- if (length(args) >= 1) args[1] else file.path("veri", "farmastatr_v1.sqlite")
 S <- file.path("simulasyon", "FSR-TN-PBE-01")
 source(file.path("araclar", "sha256.R"), encoding = "UTF-8")
-sha_file <- function(p) sha256_raw(readBin(p, "raw", file.info(p)$size))
+sha_file <- function(p) {          # same value from every route; the base R one is slow on MB files
+  if (exists("sha256sum", envir = asNamespace("tools"), inherits = FALSE)) return(unname(tools::sha256sum(p)))
+  if (requireNamespace("digest", quietly = TRUE)) return(digest::digest(file = p, algo = "sha256"))
+  sha256_raw(readBin(p, "raw", file.info(p)$size))
+}
 rd <- function(f) utils::read.csv(file.path(S, f), colClasses = "character", stringsAsFactors = FALSE)
 num <- function(x) { v <- as.numeric(x); v[x %in% c("NA", "")] <- NA_real_; v }
 lg <- function(x) ifelse(x %in% c("TRUE", "FALSE"), as.integer(x == "TRUE"), NA_integer_)
@@ -53,7 +67,8 @@ motor_sha <- function(engine) {
 
 # ---- sources -------------------------------------------------------------------
 src_files <- c("asama1_sonuc.csv", "asama2_sonuc.csv", "asama1_ektekrar.csv", "asama2_ektekrar.csv",
-               "asama1_kayit.csv", "asama2_kayit.csv", "asama1_ektekrar_kayit.csv")
+               "asama1_kayit.csv", "asama2_kayit.csv", "asama1_ektekrar_kayit.csv",
+               "bagimsiz_tekrar.csv", "bagimsiz_tekrar.R", "mekanizma.csv", "mekanizma_kayit.csv")
 a1 <- rd("asama1_sonuc.csv"); a2 <- rd("asama2_sonuc.csv")
 e1 <- rd("asama1_ektekrar.csv"); e2 <- rd("asama2_ektekrar.csv")
 k1 <- rd("asama1_kayit.csv"); k2 <- rd("asama2_kayit.csv"); k1e <- rd("asama1_ektekrar_kayit.csv")
@@ -97,6 +112,27 @@ kosu <- rbind(
   kosu_row("PBE01-A2", "tek", 2L, "Asama 2 ana kosu (KK-37)", k2$n_sim, k2$seed, k2, "asama2_sonuc.csv", "asama2_kayit.csv"),
   kosu_row("PBE01-A2-EK", "ek", 2L, "Asama 2 ek tekrar, esige yakin guc hucreleri (KK-37)", k2e$n_sim, k2e$seed, k2e, "asama2_ektekrar.csv", "asama2_kayit.csv"),
   kosu_row("PBE01-A2-BIR", "birlesik", 2L, "Asama 2 birlesik 10.000 + 40.000 (bagimsiz akis varsayimi; KK-39)", 50000, NA, NULL, "asama2_ektekrar.csv", NA))
+bt <- rd("bagimsiz_tekrar.csv"); mk <- rd("mekanizma.csv"); kmk <- rd("mekanizma_kayit.csv")
+bt_src <- readLines(file.path(S, "bagimsiz_tekrar.R"), warn = FALSE, encoding = "UTF-8")
+stopifnot(any(grepl("seed = 20261019", bt_src, fixed = TRUE)), any(grepl("n_sim = 40000", bt_src, fixed = TRUE)))
+kbt <- data.frame(seed = "20261019", n_sim = "40000", rng = "Mersenne-Twister/Inversion",
+                  r_version = k2$r_version, package_version = k2$package_version, engine = k2$engine,
+                  run_time = NA_character_, stringsAsFactors = FALSE)
+kosu <- rbind(kosu,
+  kosu_row("PBE01-A1-BT", "tekrar", 1L, paste("Asama 1 ana hucrelerinin bagimsiz seed ile yeniden uretimi (M-12, G-41).",
+           "Kosu kaydi dosyasi yok: seed, n_sim ve RNG betikten (bagimsiz_tekrar.R; invitro_scenario RNG turunu sabitler);",
+           "R, paket ve motor surumu, kosunun Asama 2 ile ayni gun ve ayni ortamda yapilmasindan turetildi (asama2_kayit.csv; G-41)"),
+           kbt$n_sim, kbt$seed, kbt, "bagimsiz_tekrar.csv", NA),
+  kosu_row("PBE01-MEK", "deney", NA_integer_, "Hedefli deney: kriter secimi ve mekanizma (teknik not 12.2-12.3; G-43)",
+           kmk$n_sim, kmk$seed, kmk, "mekanizma.csv", "mekanizma_kayit.csv"))
+bagimsiz_tekrar <- data.frame(senaryo_no = unname(sid[bt$scenario]), izgara_kodu = bt$scenario, kosu_id = "PBE01-A1-BT",
+                              yontem_id = bt$method, pB = num(bt$pB), delta_ad = bt$delta_id,
+                              asama1 = num(bt$stage1), asama1_mcse = num(bt$stage1_mcse),
+                              tekrar = num(bt$rerun), tekrar_mcse = num(bt$rerun_mcse), z = num(bt$z), stringsAsFactors = FALSE)
+stopifnot(!anyNA(bagimsiz_tekrar$senaryo_no))
+mekanizma <- data.frame(deney_no = seq_len(nrow(mk)), kosu_id = "PBE01-MEK",
+                        as.data.frame(lapply(mk, num), stringsAsFactors = FALSE), stringsAsFactors = FALSE)
+
 kosu_kaynak <- data.frame(kosu_id = rep(c("PBE01-A1-BIR", "PBE01-A2-BIR"), each = 2),
                           kaynak_kosu_id = c("PBE01-A1", "PBE01-A1-EK", "PBE01-A2", "PBE01-A2-EK"),
                           varsayim = "bagimsiz rastgele sayi akislari (farkli seed); birlesik oran = toplam gecme / toplam tekrar",
@@ -176,13 +212,14 @@ sonuc <- sonuc[order(sonuc$senaryo_no, sonuc$kosu_id, sonuc$yontem_id, sonuc$olc
 fark <- fark[order(fark$senaryo_no, fark$kosu_id, fark$yontem_1, fark$yontem_2, method = "radix"), ]
 hipotez <- hipotez[order(hipotez$senaryo_no, hipotez$yontem_id, method = "radix"), ]
 senaryo <- senaryo[order(senaryo$senaryo_no, method = "radix"), ]
+bagimsiz_tekrar <- bagimsiz_tekrar[order(bagimsiz_tekrar$senaryo_no, bagimsiz_tekrar$yontem_id, method = "radix"), ]
 
 dosya <- data.frame(dosya_yolu = c(file.path(S, src_files), file.path("araclar", "vt_insa.R"),
                                    file.path("CNKfarmastatr", "R", "platform_hipotez.R")),
                     rol = c(rep("kaynak", length(src_files)), "insa_betigi", "turetme"), stringsAsFactors = FALSE)
 dosya$sha256 <- vapply(dosya$dosya_yolu, sha_file, "")
 insa <- data.frame(anahtar = c("platform", "paket_surumu", "vt_surumu", "beyan", "r_surumu", "rsqlite_surumu", "insa_zamani"),
-                   deger = c("CNK-FarmaStatR", as.character(utils::packageVersion("CNKfarmastatr")), "1",
+                   deger = c("CNK-FarmaStatR", as.character(utils::packageVersion("CNKfarmastatr")), "2",
                              "Arastirma ve egitim amaclidir; GxP ortaminda valide edilmis sistem degildir.",
                              R.version.string, as.character(utils::packageVersion("RSQLite")),
                              format(Sys.time(), "%Y-%m-%dT%H:%M:%S%z")), stringsAsFactors = FALSE)
@@ -211,12 +248,18 @@ ddl <- c(
      tahmin REAL, mcse REAL, mcse_not TEXT, PRIMARY KEY (senaryo_no, kosu_id, yontem_1, yontem_2))",
   "CREATE TABLE hipotez (senaryo_no INTEGER REFERENCES senaryo, yontem_id TEXT REFERENCES yontem, buyukluk REAL, buyukluk_tur TEXT,
      sinif TEXT, metrik TEXT, yakinlik_uyarisi INTEGER, delta_hesap_metin TEXT, PRIMARY KEY (senaryo_no, yontem_id))",
+  "CREATE TABLE bagimsiz_tekrar (senaryo_no INTEGER REFERENCES senaryo, izgara_kodu TEXT, kosu_id TEXT REFERENCES kosu,
+     yontem_id TEXT REFERENCES yontem, pB REAL, delta_ad TEXT, asama1 REAL, asama1_mcse REAL, tekrar REAL, tekrar_mcse REAL, z REAL,
+     PRIMARY KEY (senaryo_no, yontem_id))",
+  paste0("CREATE TABLE mekanizma (deney_no INTEGER PRIMARY KEY, kosu_id TEXT REFERENCES kosu, ",
+         paste(sprintf("%s REAL", names(mk)), collapse = ", "), ")"),
   "CREATE TABLE yayin (yayin_id TEXT PRIMARY KEY, kunye TEXT, doi TEXT)",
   "CREATE TABLE veri_seti (veri_seti_id TEXT PRIMARY KEY, yayin_id TEXT REFERENCES yayin, aciklama TEXT, sha256 TEXT)",
   "CREATE TABLE test_vakasi (test_id TEXT PRIMARY KEY, modul_id TEXT REFERENCES modul, aciklama TEXT, beklenen TEXT)")
 dbBegin(con)
 for (d in ddl) dbExecute(con, d)
-for (nm in c("insa", "dosya", "modul", "senaryo", "kosu", "kosu_kaynak", "yontem", "olcut", "sonuc", "fark", "hipotez")) {
+for (nm in c("insa", "dosya", "modul", "senaryo", "kosu", "kosu_kaynak", "yontem", "olcut", "sonuc", "fark", "hipotez",
+             "bagimsiz_tekrar", "mekanizma")) {
   x <- get(nm); rownames(x) <- NULL
   dbWriteTable(con, nm, x, append = TRUE)
 }
@@ -227,7 +270,9 @@ tek <- k$tur != "birlesik"
 bad <- tek & (is.na(k$seed) | is.na(k$rng) | is.na(k$r_surumu) | is.na(k$paket_surumu) | is.na(k$motor_surumu) |
                (is.na(k$motor_sha256) & is.na(k$motor_sha256_not)))
 if (any(bad)) { dbDisconnect(con); file.remove(vt_yol); stop("Run record incomplete: ", paste(k$kosu_id[bad], collapse = ", ")) }
-n <- vapply(c("senaryo", "kosu", "sonuc", "fark", "hipotez"), function(t) dbGetQuery(con, paste("SELECT COUNT(*) AS n FROM", t))$n, 0)
+n <- vapply(c("senaryo", "kosu", "sonuc", "fark", "hipotez", "bagimsiz_tekrar", "mekanizma"), function(t) dbGetQuery(con, paste("SELECT COUNT(*) AS n FROM", t))$n, 0)
 dbDisconnect(con)
 cat(sprintf("Veri tabani: %s (%.2f MB)\n", vt_yol, file.info(vt_yol)$size / 2^20))
+# SHA-256 of the database file for the browser check (FSR-TN-PLT-04 Section 5)
+writeLines(paste0(sha_file(vt_yol), "  ", basename(vt_yol)), file.path(dirname(vt_yol), "VT_SHA256.txt"))
 print(n)

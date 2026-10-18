@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.74 · Son güncelleme: 18.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.75 · Son güncelleme: 18.10.2026"
 ---
 
 # Bu belge hakkında
@@ -1361,6 +1361,36 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
     - Veri tabanı; gerileme; dar ekran.
 - **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `belgeler/teknik_notlar/FSR-TN-PLT-04_v0.1.docx`, bu günlük.
 
+## G-78 · FSR-TN-PLT-04 v0.1 onaylandı (KK-54); P4 T-1: veri tabanı sürüm 2 — 18.10.2026
+
+- **Depo:** G-77 commit edildi.
+- **Proje sahibinin kararı (K):** "onaylıyorum" → **KK-54**. FSR-TN-PLT-04 v0.1, Claude'un önerileriyle onaylandı:
+  - P4-K1: Hazır sonuçta birleşik koşu varsa o, yoksa ana koşu.
+  - P4-K2: G1 ve G2 grafikleri P4'te.
+  - P4-K3: Tek JavaScript biçimlendirme fonksiyonu. Kural: ikili değere en yakın, tam eşitlikte çift. Oran 1, MCSE 2 ondalık.
+  - Tablo 9.1'deki U-1…U-12 donduruldu.
+- **T-1 · `araclar/vt_insa.R` (veri tabanı sürüm 2):**
+  - **Yeni tablolar:**
+    - `bagimsiz_tekrar`: 48 satır. Senaryo, yöntem, Aşama 1 ve tekrar oranları, MCSE'leri, z.
+    - `mekanizma`: 12 satır, 28 sütun.
+  - **Yeni koşu satırları:** `PBE01-A1-BT` (tür "tekrar") ve `PBE01-MEK` (tür "deney").
+  - **Bağımsız tekrarın koşu kaydı dosyası yok:**
+    - Seed 20261019, n_sim 40.000 ve RNG betikten alındı (`bagimsiz_tekrar.R`). `invitro_scenario` RNG türünü sabitler.
+    - R, paket ve motor sürümü türetildi: koşu Aşama 2 ile aynı gün ve aynı ortamda yapıldı (`asama2_kayit.csv`, G-41).
+    - Türetme açıklama alanına yazıldı; `vt_insa.R` başlığında da var.
+  - `veri/VT_SHA256.txt` artık veri tabanı dosyasının SHA-256'sını taşıyor; tarayıcı bununla denetleyecek.
+  - Dosya SHA-256'sı için hızlı yol eklendi: önce `tools::sha256sum` (R ≥ 4.5), yoksa `digest`, o da yoksa temel R. Değerler aynı. Temel R 2,2 MB'lık dosyada yaklaşık 2 dk sürüyordu.
+- **Sonuç:** 2,25 MB. 1.085 senaryo, 8 koşu, 13.555 sonuç, 3.679 fark, 4.340 hipotez, 48 bağımsız tekrar, 12 mekanizma. Dosya SHA-256 `c8832cd3…`.
+- **U-10 (kuru koşu, Claude; `FSR-TN-PLT-04_ek/p4_kabul_vt.R` → `p4_kabul_vt.csv`):**
+  - (a) Yeni tablolar CSV ile birebir; koşu satırlarında sürüm alanları dolu.
+  - (b) İki inşanın döküm SHA-256'sı aynı (16 tablo).
+  - (c) sql.js 1.12.0 (Node) ile okunan değerler R ile birebir.
+  - (d) `VT_SHA256.txt` dosyayla aynı.
+  - Hepsi GECTI. U-10'un tarayıcıdaki sql.js okuması kabul sayfasında yapılacak.
+- **Gerileme (kopya üzerinde):** P2'nin veri tabanı kontrolleri (`p2_kabul_vt.R`; S-6a…g, S-7, S-8, S-9) yeni veri tabanında GECTI. S-9: 8 koşu, 6 tek/ek, motor SHA-256 6/6 dolu. P2'nin depodaki kanıt dosyaları değiştirilmedi.
+- **Sıradaki iş:** T-2…T-5, ekran (`web/app/`).
+- **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `araclar/vt_insa.R`, `veri/farmastatr_v1.sqlite`, `veri/VT_SHA256.txt`, `belgeler/teknik_notlar/FSR-TN-PLT-04_ek/p4_kabul_vt.R`, `vt_oku_p4.mjs`, `p4_kabul_vt.csv`, bu günlük.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -1378,20 +1408,20 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-14 | Tip I uyum ölçütü kararı; teknik not v0.8 (rapor 02) ve Aşama 2 sonuçları; yeniden üretim paketi (G-40) | Tamam: ölçüt (KK-38), v0.8, paket (G-41), Aşama 2 sonuçları v0.9 (G-42); v0.9 onaylandı, hedefli deney ve v0.10 (G-43); 12.10 onay bekliyor; v0.10 onaylandı, v0.11 (G-48) |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
 | A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
-| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0, P1, P2 ve P3 kapandı (KK-53, G-76); P4 (tam ekran): FSR-TN-PLT-04 v0.1 onay bekliyor (G-77). Açık: gösterim yuvarlaması (P5, KK-52); bağımsız tekrar ve mekanizma verilerinin veri tabanına alınması (P4'ten önce); testthat kümesinin webR'de koşulması. Izgara kontrolleri CI'da (G-72, G-74) |
+| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0, P1, P2 ve P3 kapandı (KK-53, G-76); P4 (tam ekran; KK-54): T-1 veri tabanı sürüm 2 tamam (G-78), sırada ekran T-2…T-5. Açık: gösterim yuvarlaması (P5, KK-52); testthat kümesinin webR'de koşulması. Izgara kontrolleri CI'da (G-72, G-74) |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
 
 # 4. Belge ve sürüm dizini
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.74 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.75 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.1 | 1.0 onaylı; beş dosya sabitlendi (G-47). 1.1: TC-S11 (dışa aktarılan betik), onaylandı (KK-53, G-76) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.6 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68) |
 | FSR-TN-PLT-02 · P2 tasarımı, kabul ölçütleri ve sonuçları | 0.2 | v0.1 onaylı (KK-49); v0.2: anahtar düzeltmesi, sonuçlar (11/11 GEÇTİ), sapmalar (G-69); onaylandı, P2 kapandı (KK-50, G-70) |
 | FSR-TN-PLT-03 · P3 tasarımı, kabul ölçütleri ve sonuçları | 0.2 | v0.1 onaylı (KK-51); v0.2: sonuçlar 12/12 GEÇTİ, bulgular (G-75); onaylandı, P3 kapandı (KK-53, G-76) |
-| FSR-TN-PLT-04 · P4 tasarımı ve kabul ölçütleri | 0.1 | Taslak; P4-K1…K3 ve U-1…U-12 onay bekliyor (G-77) |
+| FSR-TN-PLT-04 · P4 tasarımı ve kabul ölçütleri | 0.1 | Onaylandı (KK-54); U-1…U-12 donduruldu |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
 | CNKfarmastatr (R paketi) | 1.0.0.9000 | 13 dosya SHA-256 ile sabit (8 devralınan çekirdek + simülasyon çatısı ve in vitro motoru; FSR-VAL-SIM-1 1.0, G-47); testler 26 blok, 968 beklenti GEÇTİ (G-46) |
 
@@ -1452,3 +1482,4 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | KK-51 | FSR-TN-PLT-03 v0.1 onaylandı: P3-K1 (b) tek dosya, okunur gömülü kaynak, SHA-256 doğrulaması; P3-K2 prototipe R betiği düğmesi P3'te; P3-K3 ızgara betiği P3 dışında; E-1…E-12 donduruldu | G-72 |
 | KK-52 | p2_kabul.R 0.2: S-4 ölçütteki gibi KK-38 etiketlerini karşılaştırır, yüzde metnindeki son basamak farkı bilgi olarak raporlanır; platformdan bağımsız gösterim yuvarlaması P5'te açık madde | G-74 |
 | KK-53 | FSR-TN-PLT-03 v0.2 ve FSR-VAL-SIM-1 v1.1 onaylandı; P3 kapandı | G-76 |
+| KK-54 | FSR-TN-PLT-04 v0.1 onaylandı: P4-K1 hazır sonuçta birleşik koşu varsa o; P4-K2 G1 ve G2 grafikleri P4'te; P4-K3 tek JS biçimlendirme fonksiyonu (ikili değere en yakın, eşitlikte çift); U-1…U-12 donduruldu | G-78 |
