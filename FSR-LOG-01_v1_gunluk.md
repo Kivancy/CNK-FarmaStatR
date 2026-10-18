@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.73 · Son güncelleme: 18.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.74 · Son güncelleme: 18.10.2026"
 ---
 
 # Bu belge hakkında
@@ -1333,6 +1333,34 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Sıradaki iş:** P4, sınıflandırmanın ekranda gösterilmesi. İlk adım FSR-TN-PLT-04 v0.1: tasarım ve kabul ölçütleri, kod yazılmadan önce (KK-45 ilkesi).
 - **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** bu günlük.
 
+## G-77 · P4 tasarımı: FSR-TN-PLT-04 v0.1 (taslak) — 18.10.2026
+
+- **Depo:** G-76 commit edildi; Actions yeşil. Proje sahibi: "başla".
+- **Ön deneme (Claude, kapsayıcı) — gösterim yuvarlaması:**
+  - Linux R (glibc `formatC`) ikili değere en yakını seçer; tam eşitlikte çift rakama yuvarlar (C99).
+  - JavaScript `toFixed()` da ikili değere en yakını seçer, ama tam eşitlikte büyüğü alır (ECMA-262). Izgaradaki 6.525 yüzde değerinin 43'ünde Linux R'den farklı yazıyor (ör. 0,125 → 0,13).
+  - BigInt ile tam eşitlik denetimi yapan JavaScript taslağı 6.525 değerin hepsinde Linux R ile aynı yazdı (fark 0). Uç değerler de aynı: 0,125 → 0,12; 2,25 → 2,2; 100 · 0,0485 → 4,9.
+  - İlk taslakta `x · 10^f` çarpımıyla yapılan eşitlik denetimi yanlış eşitlik buluyordu (184 fark), çünkü çarpım yuvarlanıyor. Bu yüzden BigInt'e geçildi.
+- **Teknik not FSR-TN-PLT-04 v0.1** (5 sayfa; onay bekliyor):
+  - **Teslimatlar:**
+    - T-1: Veri tabanına bağımsız tekrar ve mekanizma tabloları; tarayıcı doğrulaması için `VT_SHA256.txt` (KK-50, A-3).
+    - T-2: Ekran `web/app/`. Girdi grupları A/B/C, sınıflandırılmış sonuç, uyarılar, alt düğmeler. P1 sayfası değişmez.
+    - T-3: Katman seçimi ve sql.js ile hazır sonuç. Anahtar JavaScript'te kurulur; veri tabanı SHA-256 ile denetlenir.
+    - T-4: Grafikler.
+    - T-5: Bağlantı ve sayı gösterimi.
+    - T-6: Testler ve kabul aracı.
+  - **Karar bekleyen (Claude'un önerileri):**
+    - **P4-K1:** Hazır sonuçta birleşik koşu varsa o, yoksa ana koşu.
+    - **P4-K2:** G1 (sonuç ± z·MCSE) ve G2 (ızgara bağlamı) P4'te.
+    - **P4-K3:** Tek JavaScript biçimlendirme fonksiyonu. Kural: ikili değere en yakın, tam eşitlikte çift. Oran 1, MCSE 2 ondalık.
+  - **Kabul ölçütleri U-1…U-12 (Tablo 9.1):**
+    - Sınıf, metrik ve etiket; sayılar.
+    - Hazır katman: 1.085 anahtar ve 8 senaryo; webR başlatılmadan.
+    - Katman seçimi; bağlantı; TR/EN; grafikler; uyarılar.
+    - Önceden bilgi ve iptal.
+    - Veri tabanı; gerileme; dar ekran.
+- **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `belgeler/teknik_notlar/FSR-TN-PLT-04_v0.1.docx`, bu günlük.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -1350,19 +1378,20 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-14 | Tip I uyum ölçütü kararı; teknik not v0.8 (rapor 02) ve Aşama 2 sonuçları; yeniden üretim paketi (G-40) | Tamam: ölçüt (KK-38), v0.8, paket (G-41), Aşama 2 sonuçları v0.9 (G-42); v0.9 onaylandı, hedefli deney ve v0.10 (G-43); 12.10 onay bekliyor; v0.10 onaylandı, v0.11 (G-48) |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
 | A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
-| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0, P1, P2 ve P3 kapandı (KK-53, G-76); sırada P4 (sınıflandırmanın ekranda gösterimi; önce FSR-TN-PLT-04 v0.1). Açık: gösterim yuvarlaması (P5, KK-52); bağımsız tekrar ve mekanizma verilerinin veri tabanına alınması (P4'ten önce); testthat kümesinin webR'de koşulması. Izgara kontrolleri CI'da (G-72, G-74) |
+| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0, P1, P2 ve P3 kapandı (KK-53, G-76); P4 (tam ekran): FSR-TN-PLT-04 v0.1 onay bekliyor (G-77). Açık: gösterim yuvarlaması (P5, KK-52); bağımsız tekrar ve mekanizma verilerinin veri tabanına alınması (P4'ten önce); testthat kümesinin webR'de koşulması. Izgara kontrolleri CI'da (G-72, G-74) |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
 
 # 4. Belge ve sürüm dizini
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.73 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.74 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.1 | 1.0 onaylı; beş dosya sabitlendi (G-47). 1.1: TC-S11 (dışa aktarılan betik), onaylandı (KK-53, G-76) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.6 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68) |
 | FSR-TN-PLT-02 · P2 tasarımı, kabul ölçütleri ve sonuçları | 0.2 | v0.1 onaylı (KK-49); v0.2: anahtar düzeltmesi, sonuçlar (11/11 GEÇTİ), sapmalar (G-69); onaylandı, P2 kapandı (KK-50, G-70) |
 | FSR-TN-PLT-03 · P3 tasarımı, kabul ölçütleri ve sonuçları | 0.2 | v0.1 onaylı (KK-51); v0.2: sonuçlar 12/12 GEÇTİ, bulgular (G-75); onaylandı, P3 kapandı (KK-53, G-76) |
+| FSR-TN-PLT-04 · P4 tasarımı ve kabul ölçütleri | 0.1 | Taslak; P4-K1…K3 ve U-1…U-12 onay bekliyor (G-77) |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
 | CNKfarmastatr (R paketi) | 1.0.0.9000 | 13 dosya SHA-256 ile sabit (8 devralınan çekirdek + simülasyon çatısı ve in vitro motoru; FSR-VAL-SIM-1 1.0, G-47); testler 26 blok, 968 beklenti GEÇTİ (G-46) |
 
