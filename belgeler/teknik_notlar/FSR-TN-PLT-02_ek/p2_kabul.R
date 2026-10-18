@@ -8,6 +8,13 @@
 # Run from the repository root with the package installed:
 #   Rscript belgeler/teknik_notlar/FSR-TN-PLT-02_ek/p2_kabul.R
 # Output: p2_kabul_t1.csv (check, result, detail) in this folder.
+# Version 0.2 (G-74, KK-52): S-4 compares what the frozen criterion names, the
+#   KK-38 labels (*, +, none) of every percent cell, instead of whole lines. The
+#   percent text itself may differ in the last digit between platforms: values
+#   exactly half-way in decimal (e.g. 100 * 0.0485 = 4.8500000000000005) are
+#   printed 4,9 by Linux and 4,8 by Windows (G-73). Such cells are counted and
+#   reported as information; a difference larger than 0,1 or in any other cell
+#   is a failure. Version 0.1 compared whole lines (stricter than the criterion).
 # Research and education only; not a system validated for GxP environments.
 # =============================================================================
 suppressPackageStartupMessages(library(CNKfarmastatr))
@@ -60,10 +67,24 @@ src[i] <- 'lab <- function(p, se) paste0(pct(p), c(nominali_asiyor = "*", ayirt_
 owd <- setwd(tmp); ok_run <- tryCatch({ eval(parse(text = src, encoding = "UTF-8"), envir = new.env()); TRUE },
                                       error = function(e) { message(conditionMessage(e)); FALSE }); setwd(owd)
 oz <- list.files(S, pattern = "^asama2_ozet_.*\\.csv$")
-same <- vapply(oz, function(f) identical(readLines(file.path(S, f), encoding = "UTF-8"),
-                                         readLines(file.path(tmp, S, f), encoding = "UTF-8")), TRUE)
-put("S-4 KK-38 etiketleri = asama2_ozet.R tabloları", ok_run && all(same) && length(oz) == 7,
-    sprintf("%d özet CSV, platform_kk38() ile yeniden üretildi; birebir aynı: %d", length(oz), sum(same)))
+cmp_tab <- function(f) {     # labels equal; percent text may differ by one last-digit step
+  a <- utils::read.csv(file.path(S, f), colClasses = "character", check.names = FALSE, encoding = "UTF-8")
+  b <- utils::read.csv(file.path(tmp, S, f), colClasses = "character", check.names = FALSE, encoding = "UTF-8")
+  if (!identical(dim(a), dim(b)) || !identical(names(a), names(b))) return(c(lab = FALSE, other = FALSE, lines = FALSE, d = NA))
+  x <- unlist(a, use.names = FALSE); y <- unlist(b, use.names = FALSE)
+  pat <- "^-?[0-9]+,[0-9]+[*+]?$"
+  isn <- grepl(pat, x) & grepl(pat, y)
+  num <- function(v) as.numeric(sub(",", ".", sub("[*+]$", "", v)))
+  lab <- function(v) sub("^[^*+]*", "", v)
+  dd <- abs(num(x[isn]) - num(y[isn]))
+  c(lab = identical(lab(x[isn]), lab(y[isn])), other = identical(x[!isn], y[!isn]) && all(dd <= 0.1 + 1e-9),
+    lines = identical(readLines(file.path(S, f), encoding = "UTF-8"), readLines(file.path(tmp, S, f), encoding = "UTF-8")),
+    d = sum(dd > 0))
+}
+cm <- vapply(oz, cmp_tab, c(lab = TRUE, other = TRUE, lines = TRUE, d = 0))
+put("S-4 KK-38 etiketleri = asama2_ozet.R tabloları", ok_run && length(oz) == 7 && all(cm["lab", ] == 1) && all(cm["other", ] == 1),
+    sprintf("%d özet CSV, platform_kk38() ile yeniden üretildi; etiketler birebir: %d; satırları da birebir: %d; bilgi: son basamağı farklı yüzde hücresi %d (yarım nokta yuvarlaması, G-73)",
+            length(oz), sum(cm["lab", ] == 1 & cm["other", ] == 1), sum(cm["lines", ] == 1), sum(cm["d", ])))
 
 # K-1 (ii), (iv): keys on the grid
 key_name <- with(g, platform_anahtar(sigma_R, rho, pB_T, pB_R, pL, q, l, n, m, sinir = delta_id))

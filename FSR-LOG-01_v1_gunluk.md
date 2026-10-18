@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.69 · Son güncelleme: 18.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.71 · Son güncelleme: 18.10.2026"
 ---
 
 # Bu belge hakkında
@@ -1243,6 +1243,48 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
   - `p3_kabul.R`'nin sizin R'nizde (Windows) koşulması. Bu E-1, E-2, E-3, E-4, E-9 ve E-10'u Windows'ta sağlar.
 - **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `CNKfarmastatr/R/platform_export.R`, `CNKfarmastatr/DESCRIPTION`, `CNKfarmastatr/man/platform.Rd`, `CNKfarmastatr/tests/testthat/test-platform-export.R`, `web/p1/app.js`, `web/p1/index.html`, `web/p1/ceviri.json`, `web/p1/README.md`, `belgeler/teknik_notlar/FSR-TN-PLT-03_ek/p3_kabul.R`, bu günlük. `dogrulama.yml` proje sahibine gönderildi.
 
+## G-73 · CI (G-72 commit'i): Windows'ta S-4 KALDI; neden: yüzde gösteriminde platforma bağlı yuvarlama — 18.10.2026
+
+- **Durum:** G-72 commit edildi (bf2e767); Actions #54 kırmızı. Proje sahibi kayıtları `C:\cloud\CNK-pharmastat-depo\fromGithubToClaude\1` klasörüne koydu; Claude okudu.
+- **Sonuçlar:**
+  - **Step 1 ve Step 2:** Linux ve Windows'ta geçti (R 4.6.1). 2.068 beklenti, 0 hata, 0 atlanan. P3 testleri (E-1, E-3…E-9) de bunların içinde.
+  - **Step 3 (yeni, P2 ızgara kontrolleri):** Linux'ta 8/8 GECTI. Windows'ta 7 GECTI, 1 KALDI: S-4'te "birebir aynı: 3 / 7".
+- **Neden (Claude):**
+  - `asama2_ozet.R` yüzdeleri `formatC(100 * x, format = "f", digits = 1)` ile yazıyor.
+  - Ondalık gösterimi tam yarıda olan değerlerde iki platform farklı yuvarlıyor. Örnek: 0,0485 → 100·x ikili sistemde 4,8500000000000005. Linux 4,9 yazıyor (ikili değere göre doğru); Windows 4,8 yazıyor. Kayıtta görülen satır: "0/0 … 4,9+" (Linux) ve "4,8+" (Windows).
+  - Etiket işaretleri (*, +) aynı; fark yalnız sayının son basamağında.
+  - Aşama 2 verisinde 6.725 oranın 555'i böyle bir yarım noktada.
+- **Kapsam:**
+  - S-4'ün dondurulmuş ölçütü etiketler içindir ("H0 hücrelerindeki etiketler … birebir aynı"). `p2_kabul.R` ise satırın tamamını karşılaştırıyor, yani ölçütten katı.
+  - Depodaki yayın tabloları Linux'ta üretildi ve ikili değere göre doğru yuvarlanmış.
+  - Aynı betik Windows'ta, yarım noktalarda son basamağı farklı bir tablo üretir. Bu, "yayındaki her tablo yeniden üretilebilir" ilkesi için bir bulgudur.
+- **Denendi:** Yuvarlamayı önce `round()` ile yapmak çözüm değil. R'nin `round()` kuralı da ikili değere göre yuvarlamıyor (ör. 4,45000000000000018 → 4,4). Linux'ta 7 tablonun 3'ü değişti.
+- **Karar bekleyen (Claude'un önerisi):**
+  - (1) `p2_kabul.R` 0.2: S-4 ölçütteki gibi yalnız etiketleri karşılaştırır. Sayı metnindeki farklar ayrıca sayılır ve "bilgi" olarak yazılır. Ölçüt değişmez.
+  - (2) Gösterim yuvarlamasının platformdan bağımsız kuralı açık madde olarak P5'e (Word raporu) alınır.
+- **Dosyalar:** bu günlük.
+
+## G-74 · `p2_kabul.R` 0.2: S-4 ölçütteki gibi etiketleri karşılaştırır (KK-52) — 18.10.2026
+
+- **Proje sahibinin kararı (K):** "onaylıyorum" → **KK-52**. G-73'teki iki öneri kabul edildi:
+  - (1) `p2_kabul.R` 0.2: S-4 yalnız KK-38 etiketlerini karşılaştırır. Yüzde metnindeki son basamak farkları sayılır ve bilgi olarak yazılır. Ölçüt değişmedi.
+  - (2) Platformdan bağımsız gösterim yuvarlaması P5'te (Word raporu) açık madde.
+- **Değişiklik (`belgeler/teknik_notlar/FSR-TN-PLT-02_ek/p2_kabul.R` 0.2):**
+  - Her özet tablonun hücreleri tek tek karşılaştırılır.
+  - Yüzde hücrelerinde etiket (*, +, yok) birebir aynı olmalı.
+  - Sayı farkı en çok 0,1 olabilir (tek son basamak adımı).
+  - Yüzde olmayan hücreler birebir aynı olmalı.
+  - Aksi durumda KALDI.
+  - Satırları da birebir aynı olan tablo sayısı ayrıca raporlanır.
+  - Depodaki G-65 sonuç dosyası (`p2_kabul_t1.csv`) kanıt olarak değiştirilmedi; CI kendi kopyasını üretir.
+- **Deneme (Claude, kapsayıcıda kopya üzerinde; depoya girmedi):**
+  - Normal: GECTI. Etiketler 7/7; satırlar 7/7; bilgi 0.
+  - Windows benzetimi, bir hücrede "4,9+" → "4,8+": GECTI. Satırlar 6/7; bilgi 1.
+  - Etiket değişimi, "4,9+" → "4,9*": KALDI, çıkış 1.
+  - Sayı farkı 0,2, "4,9+" → "5,1+": KALDI, çıkış 1.
+- **Açık madde (P5):** Rapor ve ekran yüzdelerinin her platformda aynı yazılması için yuvarlama kuralı (FarmaStatR türetimi) P5 tasarımında belirlenecek. `formatC` ve `round()` ikisi de yarım noktalarda platformdan ya da ondalık gösterimden etkileniyor (G-73).
+- **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `belgeler/teknik_notlar/FSR-TN-PLT-02_ek/p2_kabul.R`, bu günlük.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -1267,7 +1309,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.69 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.71 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.0 | Onaylandı; beş dosya sabitlendi (G-47) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.6 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68) |
@@ -1331,3 +1373,4 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | KK-49 | FSR-TN-PLT-02 v0.1 onaylandı: P2-K1 (b) ortak δ ölçeğinde yakınlık uyarısı ≤ 10⁻⁴; P2-K2 Dᵢ yoksa birleşik eşleşik MCSE saklanmaz; P2-K3 inşa R + RSQLite; S-1…S-11 donduruldu | G-65 |
 | KK-50 | FSR-TN-PLT-02 v0.2 onaylandı; P2 kapandı. A-1 (H-1…H-4 kabul betiğinde) ve A-2 (şema farkları) kabul; ızgara kontrollerinin CI'a eklenmesi ve A-3 sonraki aşamaya; A-4 isteğe bağlı | G-70 |
 | KK-51 | FSR-TN-PLT-03 v0.1 onaylandı: P3-K1 (b) tek dosya, okunur gömülü kaynak, SHA-256 doğrulaması; P3-K2 prototipe R betiği düğmesi P3'te; P3-K3 ızgara betiği P3 dışında; E-1…E-12 donduruldu | G-72 |
+| KK-52 | p2_kabul.R 0.2: S-4 ölçütteki gibi KK-38 etiketlerini karşılaştırır, yüzde metnindeki son basamak farkı bilgi olarak raporlanır; platformdan bağımsız gösterim yuvarlaması P5'te açık madde | G-74 |
