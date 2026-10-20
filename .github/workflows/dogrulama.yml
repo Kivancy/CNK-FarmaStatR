@@ -9,8 +9,9 @@
 #           platform input check PLT-IN-1...5, hypothesis classification
 #           (H-5, H-6, H-7, K-1; FSR-TN-PLT-02) and R script export
 #           (E-1, E-3 ... E-9; FSR-TN-PLT-03) and the display-rule reference
-#           (P4-K3, Linux only; FSR-TN-PLT-04)
-#           (testthat: 44 blocks, 2074 expectations on 20.10.2026; Windows 2069)
+#           (P4-K3, Linux only; FSR-TN-PLT-04) and design selection
+#           (D-1: Tables 11.3a/b of FSR-TN-PBE-01 reproduced; FSR-TN-PLT-05)
+#           (testthat: 49 blocks, 2228 expectations on 20.10.2026; Windows 2223)
 #   Step 3: grid checks of P2 on the simulation results in the repository
 #           (H-1...H-4, S-3, S-4, K-1 ii/iv; FSR-TN-PLT-02, KK-50 A-1)
 # Runs on Linux and on Windows (the user's platform).

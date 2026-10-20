@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.82 · Son güncelleme: 20.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.83 · Son güncelleme: 20.10.2026"
 ---
 
 # Bu belge hakkında
@@ -1567,6 +1567,27 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Sıradaki iş:** P5 uygulaması. İlk adım T-1: `platform_tasarim()` (R) ve testleri.
 - **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** bu günlük.
 
+## G-86 · P5 T-1: `platform_tasarim()`; D-1 (Tablo 11.3a ve 11.3b) yeniden üretildi — 20.10.2026
+
+- **Depo:** G-84 ve G-85 commit edildi; Actions başarılı ("action tamam").
+- **T-1 · yeni dosyalar (R paketi):**
+  - **`R/platform_tasarim.R` 0.1.0:** FSR-TN-PLT-05 v0.2 Bölüm 3'ün uygulaması. Temel R; motoru yalnız `platform_run_invitro()` ile çağırır, istatistik hesaplamaz.
+    - `platform_tasarim_plan()`: aday tasarımlar (ℓ × n × m) ve üç gerçek fark (güç farkı, FDA δ₀, EMA 1,18) için koşu planı. Aynı tasarım ve δ'daki roller tek koşuyu paylaşır (ortak seed). Her koşuya kanonik anahtar; her koşu `platform_check_invitro()` denetiminden geçer (KK-47). FDA δ₀ tanımsızsa FDA tip I koşuları planlanmaz, not düşülür. Toplam iş sınırı 6 × 10⁷ hücre (P5-K6), aşılınca `design_size` kodu.
+    - `platform_tasarim_secim()`: Kural A ve B (`asama1_tablo113.R` ile aynı sıralama: toplam, sonra küçük ℓ, sonra küçük m). Sınıf H1 değilse seçim yok (`sinif_h1_degil`). Eşiğe yakınlık |güç − hedef| < 2 MCSE (KK-39). Kural B'de "yok" nedeni: `guc_yetersiz`, `tip1_kalibrasyon` ya da `tip1_hesaplanamadi`.
+    - `platform_tasarim_params()`, `platform_tasarim()` (planla, koş, seç; yerel R ve betik için).
+  - **`man/platform_tasarim.Rd`**, **`DESCRIPTION`** (Collate'e `platform_tasarim.R`).
+  - **`tests/testthat/test-platform-tasarim.R`** (5 blok, 154 beklenti):
+    - Plan: 30 tasarımda 90 koşu; anahtarlar; toplam iş; Aşama 1'in tam kümesi canlı sınırının üstünde; paylaşılan koşu.
+    - Girdi hataları kodlarıyla; FDA δ₀ tanımsız.
+    - **D-1:** Aşama 1 sonuçlarından (`asama1_sonuc.csv`) Kural A ve B, `asama1_tablo113.csv`'nin 24 hücresini birebir üretti: tasarım, güç ve MCSE'si, tip I hata ve MCSE'si, KK-38 etiketi, "yok" hücreleri dahil.
+    - Kurallar: eşitlikte küçük ℓ, eşiğe yakınlık, tip I hata aşımının yalnız Kural B'yi etkilemesi, H1 olmayan sınıf.
+    - **D-3 (R tarafı):** 2 × 5 tasarımında canlı koşu, ortak seed ile Aşama 1 sayımlarını birebir verdi.
+- **Sonuçlar (Claude, kapsayıcı; R 4.3.3, NOT_CRAN = true):** test kümesi 49 blok, 2.228 beklenti, 0 hata, 0 atlanan (Windows'ta beklenen 2.223; biçim testi Windows'ta 1 beklenti). Çekirdek SHA-256 13/13 AYNI. Sabit dosyalar değişmedi.
+- **`dogrulama.yml`:** yalnız başlık yorumu (49 blok, 2.228 beklenti; Windows 2.223). Korumalı dosya; proje sahibi isterse yerleştirir, işleyişi değişmedi.
+- **Uygulama notu (v0.3'e):** hazır katmanda seçim kurallarını da R uygular; bu yüzden tasarım seçiminde hazır sonuç için webR açılır (sayılar veri tabanından). Arayüz hesap yapmaz ilkesi korunur; "anında" ifadesi webR başlangıç süresi kadar gecikir.
+- **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** yukarıdakiler (`dogrulama.yml` hariç; proje sahibine gönderildi) ve bu günlük.
+- **Sıradaki iş:** T-2, tasarım seçimi sekmesi (`web/app/tasarim.js`).
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -1584,14 +1605,14 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-14 | Tip I uyum ölçütü kararı; teknik not v0.8 (rapor 02) ve Aşama 2 sonuçları; yeniden üretim paketi (G-40) | Tamam: ölçüt (KK-38), v0.8, paket (G-41), Aşama 2 sonuçları v0.9 (G-42); v0.9 onaylandı, hedefli deney ve v0.10 (G-43); 12.10 onay bekliyor; v0.10 onaylandı, v0.11 (G-48) |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
 | A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
-| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0, P1, P2, P3 ve P4 kapandı (KK-55, G-82; P4 resmi kabul 12/12 GECTI, G-81). P5 (tasarım seçimi ve Word raporu; KK-56): FSR-TN-PLT-05 v0.2 onaylandı (KK-57, G-85); uygulama başlıyor. Açık: testthat kümesinin webR'de koşulması. Izgara kontrolleri CI'da (G-72, G-74) |
+| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0, P1, P2, P3 ve P4 kapandı (KK-55, G-82; P4 resmi kabul 12/12 GECTI, G-81). P5 (tasarım seçimi ve Word raporu; KK-56): FSR-TN-PLT-05 v0.2 onaylandı (KK-57, G-85); T-1 `platform_tasarim()` tamam, D-1 yeniden üretildi (G-86). Açık: testthat kümesinin webR'de koşulması. Izgara kontrolleri CI'da (G-72, G-74) |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
 
 # 4. Belge ve sürüm dizini
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.82 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.83 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.1 | 1.0 onaylı; beş dosya sabitlendi (G-47). 1.1: TC-S11 (dışa aktarılan betik), onaylandı (KK-53, G-76) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.6 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68) |
