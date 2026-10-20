@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.78 · Son güncelleme: 20.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.79 · Son güncelleme: 20.10.2026"
 ---
 
 # Bu belge hakkında
@@ -1482,6 +1482,20 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `belgeler/teknik_notlar/FSR-TN-PLT-04_v0.2.docx`, bu günlük.
 - **Sıradaki iş:** proje sahibinin v0.2 onayı ile P4'ün kapanışı; ardından P5 (Word raporu).
 
+## G-82 · P4 kapandı (KK-55) — 20.10.2026
+
+- **Depo:** G-81 commit edildi. Actions başarılı; proje sahibi: "actions başarılı. ok." Böylece FSR-TN-PLT-04 v0.2 Tablo 10.1'deki U-11'in CI kısmı da sağlandı. Resmi kabul çıktıları (`p4/`, `p4_kabul.csv`, `p4_yerel_sessionInfo.txt`) depoda.
+- **Proje sahibinin kararı (K):** "Onaylıyorum kapatıyorum" → **KK-55**. Claude bunu G-81'deki soruya ("FSR-TN-PLT-04 v0.2'yi onaylayıp P4'ü kapatıyor musunuz?") verilen onay olarak işledi:
+  - FSR-TN-PLT-04 v0.2 onaylandı; U-1…U-12 GECTI (12/12).
+  - **P4 kapandı.**
+- **Künye:** Belgenin künyesinde "taslak" ve "onay bekliyor" yazıyor. Onay bu girdi ve KK-55 ile kayıtlıdır; künye bir sonraki revizyonda düzeltilir (G-76'daki uygulama).
+- **Sonraki aşamalara taşınan açık maddeler (FSR-TN-PLT-04 v0.2 Bölüm 11):**
+  - A-1: Word raporunda ekrandaki gösterim kuralı (P4-K3) Windows dahil aynı olmalı. R tarafında aynı kuralı uygulayan biçimlendirici gerekir (P5; KK-52 açık maddesi).
+  - A-2: Tarayıcıda betik üretim süresi 9–12 sn (P3 A-4); değişmedi.
+  - A-3: testthat kümesinin webR'de koşulması (P6; FSR-VAL-SIM-1 Bölüm 9).
+- **Sıradaki iş:** P5, Word (.docx) raporu. İlk adım FSR-TN-PLT-05 v0.1: tasarım ve kabul ölçütleri, kod yazılmadan önce (KK-45 ilkesi).
+- **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** bu günlük.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -1499,7 +1513,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-14 | Tip I uyum ölçütü kararı; teknik not v0.8 (rapor 02) ve Aşama 2 sonuçları; yeniden üretim paketi (G-40) | Tamam: ölçüt (KK-38), v0.8, paket (G-41), Aşama 2 sonuçları v0.9 (G-42); v0.9 onaylandı, hedefli deney ve v0.10 (G-43); 12.10 onay bekliyor; v0.10 onaylandı, v0.11 (G-48) |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
 | A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
-| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0, P1, P2 ve P3 kapandı (KK-53, G-76); P4 (tam ekran; KK-54): T-1 veri tabanı sürüm 2 (G-78) ekran `web/app/` (G-79) ve kabul araçları (G-80) tamam; resmi kabul U-1…U-12 GECTI (G-81); FSR-TN-PLT-04 v0.2 onay bekliyor. Açık: gösterim yuvarlaması (P5, KK-52); testthat kümesinin webR'de koşulması. Izgara kontrolleri CI'da (G-72, G-74) |
+| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0, P1, P2, P3 ve P4 kapandı (KK-55, G-82; P4 resmi kabul 12/12 GECTI, G-81). Sırada P5 (Word raporu). Açık: gösterim yuvarlaması Word raporunda (P5, KK-52); testthat kümesinin webR'de koşulması. Izgara kontrolleri CI'da (G-72, G-74) |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
 
 # 4. Belge ve sürüm dizini
@@ -1512,7 +1526,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.6 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68) |
 | FSR-TN-PLT-02 · P2 tasarımı, kabul ölçütleri ve sonuçları | 0.2 | v0.1 onaylı (KK-49); v0.2: anahtar düzeltmesi, sonuçlar (11/11 GEÇTİ), sapmalar (G-69); onaylandı, P2 kapandı (KK-50, G-70) |
 | FSR-TN-PLT-03 · P3 tasarımı, kabul ölçütleri ve sonuçları | 0.2 | v0.1 onaylı (KK-51); v0.2: sonuçlar 12/12 GEÇTİ, bulgular (G-75); onaylandı, P3 kapandı (KK-53, G-76) |
-| FSR-TN-PLT-04 · P4 tasarımı ve kabul ölçütleri | 0.2 | Taslak; resmi kabul 12/12 GECTI (G-81). v0.1 onaylandı (KK-54) |
+| FSR-TN-PLT-04 · P4 tasarımı ve kabul ölçütleri | 0.2 | v0.1 onaylı (KK-54); v0.2: resmi kabul 12/12 GECTI (G-81); onaylandı, P4 kapandı (KK-55, G-82) |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
 | CNKfarmastatr (R paketi) | 1.0.0.9000 | 13 dosya SHA-256 ile sabit (8 devralınan çekirdek + simülasyon çatısı ve in vitro motoru; FSR-VAL-SIM-1 1.0, G-47); testler 26 blok, 968 beklenti GEÇTİ (G-46) |
 
@@ -1574,3 +1588,4 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | KK-52 | p2_kabul.R 0.2: S-4 ölçütteki gibi KK-38 etiketlerini karşılaştırır, yüzde metnindeki son basamak farkı bilgi olarak raporlanır; platformdan bağımsız gösterim yuvarlaması P5'te açık madde | G-74 |
 | KK-53 | FSR-TN-PLT-03 v0.2 ve FSR-VAL-SIM-1 v1.1 onaylandı; P3 kapandı | G-76 |
 | KK-54 | FSR-TN-PLT-04 v0.1 onaylandı: P4-K1 hazır sonuçta birleşik koşu varsa o; P4-K2 G1 ve G2 grafikleri P4'te; P4-K3 tek JS biçimlendirme fonksiyonu (ikili değere en yakın, eşitlikte çift); U-1…U-12 donduruldu | G-78 |
+| KK-55 | FSR-TN-PLT-04 v0.2 onaylandı; P4 kapandı | G-82 |
