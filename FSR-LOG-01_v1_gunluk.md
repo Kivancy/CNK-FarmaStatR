@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.76 · Son güncelleme: 18.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.77 · Son güncelleme: 20.10.2026"
 ---
 
 # Bu belge hakkında
@@ -1424,6 +1424,46 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Sıradaki iş:** T-6 (kabul sayfası `web/app/kabul.html`, `p4_kabul.R`, testthat), ardından resmi kabul (U-1…U-12) ve FSR-TN-PLT-04 v0.2.
 - **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `web/app/` altındaki 8 dosya, bu günlük.
 
+## G-80 · P4 T-6: kabul araçları; kuru kabul U-1…U-12 GECTI — 18–20.10.2026
+
+- **Depo:** G-79 commit edildi ("commit tamam"). Oturum 18.10 akşamı yarıda kaldı, 20.10'da devam edildi.
+- **T-6 · yeni dosyalar:**
+  - **`web/app/kabul.html`, `kabul.js`:** Ekranı aynı kökenli bir çerçevede sürer; DOM'u ve `window.__p4`'ü okur. İndirilenler: `p4_tarayici.csv` ve `p4_betik.R`.
+    - Senaryo kümesi Tablo 9.1'deki gibi: 16 + 1 canlı (TR ve EN) ve 8 hazır. Hazır senaryolar: `senaryo_no` 1, 2, 67, 257, 258, 259, 260, 480. Her sınıftan, iki aşamadan, biri birleşik koşulu.
+    - Ek denetimler: δ₀ tanımsız, bağlantı ve sürüm farkı, bozuk veri tabanı, katmanlar, R betiği, iptal, dar ekran.
+  - **`belgeler/teknik_notlar/FSR-TN-PLT-04_ek/p4_kabul.R`:** Tarayıcı çıktısını yerel R ve veri tabanıyla karşılaştırır. Canlı değerler sayım düzeyinde ve K(10⁻¹², 10⁻¹²) içinde karşılaştırılır. Sonuç `p4_kabul.csv` ve `p4_yerel_sessionInfo.txt`.
+  - **`p4_bicim_referans.R` ve `p4_bicim_referans.csv`:** Veri tabanındaki 11.385 oran ve MCSE için Linux R `formatC` metinleri ve 17 basamaklı değerleri. Yalnız Linux'ta üretilir (G-73).
+  - **`CNKfarmastatr/tests/testthat/test-platform-bicim.R`:**
+    - Linux'ta başvuru dosyasını yeniden üretir; tam eşitlik vakaları da var.
+    - Windows'ta yalnız dosyanın varlığını denetler. Atlama değil, çünkü CI atlanan testte başarısız sayar.
+  - `web/app/app.js`: kabul aracı için `state.key`. `web/app/README.md`: kabul adımları.
+  - `dogrulama.yml`: başlık 44 blok, 2.074 beklenti (Windows 2.069). Korumalı dosya; proje sahibi yerleştirecek.
+- **Kuru kabul (Claude, kapsayıcı; Playwright, webR 0.5.4; yerel R 4.3.3):**
+  - **Genel GECTI.**
+  - U-1: canlı 64/64 ve hazır 32/32 yöntem satırı R ile aynı; metinler TR ve EN çeviriyle aynı.
+  - U-2: başvuruyla fark 0 (11.385); canlı değerler 64/64.
+  - U-3: anahtar fark 0 (1.085). Hazırda 48/48 aynı; webR başlamadı; bozuk veri tabanında katman kapandı.
+  - U-4: katmanlar doğru.
+  - U-5: 16 bağlantı aynı sonucu verdi; farklı sürümde onaysız sonuç yok.
+  - U-6: çeviri anahtarları 151 = 151; çevirisiz metin 0.
+  - U-7: G2 156/156 veri tabanıyla aynı.
+  - U-8: uyarılar 40/40; δ₀ tanımsız 2 senaryoda koşu yok ve uyarı var.
+  - U-9: iptal 1 ms.
+  - U-10: 4/4.
+  - U-11: betik E-9 kuralıyla aynı; SHA-256 13/13.
+  - U-12: yatay taşma yok.
+  - Tam test kümesi: 44 blok, 2.074 beklenti, 0 hata, 0 atlanan.
+- **Kuru koşuda düzeltilen kabul aracı hataları (Claude):**
+  - Senaryo kümesindeki σR 0,12, ρ 1,8, FDA δ₀ için δ₀ tanımsız (η, δ = 0'da pozitif). Araç bu durumda koşu beklerken zaman aşımına düşüyordu. Tablo 9.1 bunu öngörür ("δ₀ tanımsız olanlar uyarıyla"); araç bu senaryoyu artık U-8 olarak işliyor.
+  - "seed" gibi çevirisi anahtarıyla aynı olan metinler yanlışlıkla eksik çeviri sayılıyordu.
+  - R'nin `read.csv` fonksiyonu "NA" metnini eksik değere çeviriyordu (`na.strings = character(0)`).
+  - Adlandırılmış vektör karşılaştırmasında `identical()` yerine değer karşılaştırması kullanıldı.
+- **Proje sahibinden istenen (resmi koşu):**
+  - `dogrulama.yml`'yi yerleştirip commit + push.
+  - Kabul sayfasını kendi Chrome'unda koşmak; iki dosyayı `FSR-TN-PLT-04_ek/p4/` klasörüne koymak.
+  - `p4_kabul.R`'yi koşmak.
+- **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** yukarıdakiler ve bu günlük.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -1441,14 +1481,14 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-14 | Tip I uyum ölçütü kararı; teknik not v0.8 (rapor 02) ve Aşama 2 sonuçları; yeniden üretim paketi (G-40) | Tamam: ölçüt (KK-38), v0.8, paket (G-41), Aşama 2 sonuçları v0.9 (G-42); v0.9 onaylandı, hedefli deney ve v0.10 (G-43); 12.10 onay bekliyor; v0.10 onaylandı, v0.11 (G-48) |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
 | A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
-| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0, P1, P2 ve P3 kapandı (KK-53, G-76); P4 (tam ekran; KK-54): T-1 veri tabanı sürüm 2 (G-78) ve ekranın geliştirme sürümü `web/app/` (G-79) tamam; sırada T-6 kabul araçları ve resmi kabul. Açık: gösterim yuvarlaması (P5, KK-52); testthat kümesinin webR'de koşulması. Izgara kontrolleri CI'da (G-72, G-74) |
+| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0, P1, P2 ve P3 kapandı (KK-53, G-76); P4 (tam ekran; KK-54): T-1 veri tabanı sürüm 2 (G-78) ekran `web/app/` (G-79) ve kabul araçları (G-80) tamam; kuru kabul GECTI; resmi koşu proje sahibinde. Açık: gösterim yuvarlaması (P5, KK-52); testthat kümesinin webR'de koşulması. Izgara kontrolleri CI'da (G-72, G-74) |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
 
 # 4. Belge ve sürüm dizini
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.76 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.77 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.1 | 1.0 onaylı; beş dosya sabitlendi (G-47). 1.1: TC-S11 (dışa aktarılan betik), onaylandı (KK-53, G-76) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.6 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68) |

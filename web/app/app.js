@@ -176,7 +176,7 @@ async function update() {
   if (versionHold) return;
   const c = readForm(); const d = deltaOf(c);
   c.key = anahtar(c.p, d.sinir || d.key);              // NaN inputs give a key that matches nothing
-  cur = c; showErrors(null);
+  cur = c; state.key = c.key; showErrors(null);
   const no = hz && hz.ok && c.key ? hz.index.get(c.key) : undefined;
   if (no !== undefined) {                                    // tier 2
     state.layer = 'hazir'; state.pre = null; $('#hyp_pre').textContent = '';

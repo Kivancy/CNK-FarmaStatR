@@ -3,8 +3,8 @@
 Araştırma ve eğitim amaçlıdır; GxP ortamında valide edilmiş sistem değildir.
 For research and education; not a system validated for GxP environments.
 
-Kaynak / source: FSR-TN-PLT-04 v0.1 (KK-54). Geliştirme sürümü; kabul testleri henüz koşulmadı.
-Development version; acceptance tests not yet run.
+Kaynak / source: FSR-TN-PLT-04 v0.1 (KK-54). Geliştirme sürümü; kabul testleri `kabul.html` ile (aşağıda).
+Development version; acceptance tests in kabul.html (see below).
 
 ## TR
 
@@ -28,6 +28,15 @@ Adres: `http://127.0.0.1:8000/web/app/` (ilk açılışta Ctrl + F5).
 - "Bağlantıyı kopyala" parametreleri ve paket sürümünü taşır; farklı sürümün bağlantısı sessizce
   çevrilmez.
 - P1 prototipi (`web/p1/`) P1'in kanıtı olarak değişmeden kalır.
+
+### Kabul testleri (FSR-TN-PLT-04 Tablo 9.1, U-1 … U-12)
+
+1. `http://127.0.0.1:8000/web/app/kabul.html` adresini açın, "Testleri başlat"a basın (5–10 dk;
+   sekme önde kalsın). Bitince "p4_tarayici.csv indir": `p4_tarayici.csv` ve `p4_betik.R` iner.
+2. İki dosyayı `belgeler/teknik_notlar/FSR-TN-PLT-04_ek/p4/` klasörüne koyun.
+3. Sunucuyu kapatın (Esc) ve depo kökünde:
+   `source("belgeler/teknik_notlar/FSR-TN-PLT-04_ek/p4_kabul.R", encoding = "UTF-8")`
+   (RSQLite gerekir: bir kez `install.packages("RSQLite")`).
 
 ## EN
 
