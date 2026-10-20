@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.80 · Son güncelleme: 20.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.82 · Son güncelleme: 20.10.2026"
 ---
 
 # Bu belge hakkında
@@ -1521,6 +1521,52 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `belgeler/teknik_notlar/FSR-TN-PLT-05_v0.1.docx`, bu günlük.
 - **Sıradaki iş:** proje sahibinin P5-K1…P5-K4 kararları ve R-1…R-11'in dondurulması; ardından uygulama.
 
+## G-84 · P5 kapsamı genişledi: tasarım seçimi (KK-56); FSR-TN-PLT-05 v0.2 (taslak) — 20.10.2026
+
+- **Proje sahibinin hatırlatması (K):** "Benim simülasyondaki asıl amacım istatistiksel gücün hedeflenen düzeyde olması için ℓ, n ve gerektiğinde m değerlerinin seçimini optimum düzeyde yapabilmek; parametrelerin değişik değerlerine göre kurgulanan denemelerde gücü öngörebilmek." FSR-TN-PLT-05 v0.1 buna değinmiyordu.
+- **Claude'un tespiti:**
+  - Amaç FSR-TN-PBE-01 Bölüm 1'de yazılı (KK-23, KK-28); yanıtı Bölüm 11.5'te (Tablo 11.3a ve 11.3b).
+  - Platform P4'e kadar yalnız tek tasarımın sonucunu gösteriyordu; "hedef güç için hangi ℓ × n" sorusunu doğrudan yanıtlamıyordu.
+  - Bu eksik P0'daki platform tasarımında (FSR-TN-PLT-01) da vardı; v0.1'de Claude'un atladığı bir noktadır.
+- **Proje sahibinin kararı (K):** "P5'te ikisini de yapalım" → **KK-56**. P5 = tasarım seçimi + Word raporu; aşama numaraları değişmez. G-83 olduğu gibi commit edilecek (v0.1 taslak olarak kayıtta kalır).
+- **Teknik not FSR-TN-PLT-05 v0.2** (6 sayfa; onay bekliyor):
+  - Yeni Bölüm 3 (tasarım seçimi):
+    - Girdiler: popülasyon, güç için gerçek fark (GMR 1,05 varsayılan), hedef güç (%80 varsayılan), aday küme (ℓ 2–6 × n 5–30, m tek ya da liste), n_sim 10.000, seed 20261015.
+    - Tip I hata her yöntemin kendi sınırında: FDA δ₀, EMA 1,18 (`asama1_tablo113.R` ile aynı).
+    - Sınıf önce gelir: H1 olmayan hücrede güç seçimi yapılmaz.
+    - Kural A = Tablo 11.3a (yalnız güç; en küçük ℓ·n, eşitlikte küçük ℓ). Kural B = Tablo 11.3b (ℓ ≥ 3, n ≥ 10, tip I hata "nominali aşıyor" değil; yoksa "yok"). m sırası FarmaStatR türetimi.
+    - Eşiğe yakınlık işareti: KK-39.
+    - Katmanlar: hazır (bütün adaylar veri tabanında ise), canlı (sınır içinde), betik (aday küme betiği; P3-K3'ün dışarıda bıraktığı ızgara betiği).
+    - Ortak seed sayesinde canlı = hazır sayım düzeyinde.
+  - Yeni teslimatlar: `platform_tasarim()` (R), tasarım sekmesi (`tasarim.js`), tasarım betiği.
+  - Yeni kararlar (öneri hepsinde (a)):
+    - P5-K5: Kural A ve B birlikte; önerilen tasarım B'ninki.
+    - P5-K6: canlı sınırı toplam ≤ 6 × 10⁷ hücre, ölçümle kesinleşir.
+    - P5-K7: tablo ya tümüyle hazır ya tümüyle canlı.
+  - Rapor (Tablo 4.1) tasarım seçimi raporunu da kapsar.
+  - Kabul ölçütleri: D-1…D-7 (D-1: Aşama 1'in üç p_B değerinde Tablo 11.3a ve 11.3b'nin `asama1_tablo113.csv` ile hücre hücre yeniden üretimi) ve R-1…R-11.
+  - Hız tahmini: Aşama 1'in tam aday kümesi canlıda yaklaşık 1,6 × 10⁸ hücre, 4–5 dk (P1 ölçümünden; FarmaStatR türetimi).
+- **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `belgeler/teknik_notlar/FSR-TN-PLT-05_v0.2.docx`, bu günlük.
+- **Sıradaki iş:** proje sahibinin P5-K1…P5-K7 kararları ve D-1…D-7, R-1…R-11'in dondurulması. Onaydan sonra FSR-TN-PLT-01 Tablo 8.1 (P5-K1) ve Tablo 10.1 (P5 satırı) revize edilir.
+
+## G-85 · FSR-TN-PLT-05 v0.2 onaylandı (KK-57); P5 uygulaması başlıyor — 20.10.2026
+
+- **Depo:** G-83 commit edildi (proje sahibi). G-84 ve bu girdi tek commit'le gönderilecek.
+- **Proje sahibinin kararı (K):** "onaylıyorum" → **KK-57**. Claude bunu G-84'teki soruya ("P5-K1…P5-K7 için önerdiğim (a) seçeneklerini ve 18 kabul ölçütünü onaylıyor musunuz?") verilen onay olarak işledi:
+  - P5-K1 (a): sayılar ekranda ve Word'de aynı JavaScript fonksiyonuyla (`bicim.js`, P4-K3 kuralı). FSR-TN-PLT-01 Tablo 8.1'in biçim satırı revize edilecek; FSR-TN-PLT-04 A-1 bu kararla kapanır.
+  - P5-K2 (a): kendi küçük DOCX yazıcı, kütüphane yok.
+  - P5-K3 (a): rapor ekranın dilinde; beyan iki dilde.
+  - P5-K4 (a): P5'te raporda grafik yok.
+  - P5-K5 (a): Kural A ve B birlikte; önerilen tasarım Kural B'ninki.
+  - P5-K6 (a): canlı sınırı toplam ≤ 6 × 10⁷ hücre; P5'te ölçümle kesinleşir.
+  - P5-K7 (a): tablo ya tümüyle hazır ya tümüyle canlı.
+  - Tablo 3.2'deki yöntem kaynakları metni onaylandı.
+  - Kabul ölçütleri D-1…D-7 ve R-1…R-11 donduruldu (FSR-TN-PLT-05 v0.2 Tablo 8.1).
+- **Künye:** Belgenin künyesinde "onay bekliyor" yazıyor; onay bu girdi ve KK-57 ile kayıtlıdır, künye v0.3'te düzeltilir.
+- **Bekleyen belge işi:** FSR-TN-PLT-01 v0.7: Tablo 8.1 (P5-K1) ve Tablo 10.1 P5 satırı (KK-56). Uygulamayla birlikte yapılacak.
+- **Sıradaki iş:** P5 uygulaması. İlk adım T-1: `platform_tasarim()` (R) ve testleri.
+- **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** bu günlük.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -1538,21 +1584,21 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-14 | Tip I uyum ölçütü kararı; teknik not v0.8 (rapor 02) ve Aşama 2 sonuçları; yeniden üretim paketi (G-40) | Tamam: ölçüt (KK-38), v0.8, paket (G-41), Aşama 2 sonuçları v0.9 (G-42); v0.9 onaylandı, hedefli deney ve v0.10 (G-43); 12.10 onay bekliyor; v0.10 onaylandı, v0.11 (G-48) |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
 | A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
-| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0, P1, P2, P3 ve P4 kapandı (KK-55, G-82; P4 resmi kabul 12/12 GECTI, G-81). P5 (Word raporu): FSR-TN-PLT-05 v0.1 taslak, onay bekliyor (G-83). Açık: gösterim yuvarlaması Word raporunda (P5, KK-52); testthat kümesinin webR'de koşulması. Izgara kontrolleri CI'da (G-72, G-74) |
+| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0, P1, P2, P3 ve P4 kapandı (KK-55, G-82; P4 resmi kabul 12/12 GECTI, G-81). P5 (tasarım seçimi ve Word raporu; KK-56): FSR-TN-PLT-05 v0.2 onaylandı (KK-57, G-85); uygulama başlıyor. Açık: testthat kümesinin webR'de koşulması. Izgara kontrolleri CI'da (G-72, G-74) |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
 
 # 4. Belge ve sürüm dizini
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.80 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.82 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.1 | 1.0 onaylı; beş dosya sabitlendi (G-47). 1.1: TC-S11 (dışa aktarılan betik), onaylandı (KK-53, G-76) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.6 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68) |
 | FSR-TN-PLT-02 · P2 tasarımı, kabul ölçütleri ve sonuçları | 0.2 | v0.1 onaylı (KK-49); v0.2: anahtar düzeltmesi, sonuçlar (11/11 GEÇTİ), sapmalar (G-69); onaylandı, P2 kapandı (KK-50, G-70) |
 | FSR-TN-PLT-03 · P3 tasarımı, kabul ölçütleri ve sonuçları | 0.2 | v0.1 onaylı (KK-51); v0.2: sonuçlar 12/12 GEÇTİ, bulgular (G-75); onaylandı, P3 kapandı (KK-53, G-76) |
 | FSR-TN-PLT-04 · P4 tasarımı ve kabul ölçütleri | 0.2 | v0.1 onaylı (KK-54); v0.2: resmi kabul 12/12 GECTI (G-81); onaylandı, P4 kapandı (KK-55, G-82) |
-| FSR-TN-PLT-05 · P5 tasarımı ve kabul ölçütleri (Word raporu) | 0.1 | Taslak; onay bekliyor (G-83) |
+| FSR-TN-PLT-05 · P5 tasarımı ve kabul ölçütleri (tasarım seçimi ve Word raporu) | 0.2 | v0.1 taslak (G-83); v0.2: tasarım seçimi eklendi (KK-56, G-84); onaylandı, D-1…D-7 ve R-1…R-11 donduruldu (KK-57, G-85) |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
 | CNKfarmastatr (R paketi) | 1.0.0.9000 | 13 dosya SHA-256 ile sabit (8 devralınan çekirdek + simülasyon çatısı ve in vitro motoru; FSR-VAL-SIM-1 1.0, G-47); testler 26 blok, 968 beklenti GEÇTİ (G-46) |
 
@@ -1615,3 +1661,5 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | KK-53 | FSR-TN-PLT-03 v0.2 ve FSR-VAL-SIM-1 v1.1 onaylandı; P3 kapandı | G-76 |
 | KK-54 | FSR-TN-PLT-04 v0.1 onaylandı: P4-K1 hazır sonuçta birleşik koşu varsa o; P4-K2 G1 ve G2 grafikleri P4'te; P4-K3 tek JS biçimlendirme fonksiyonu (ikili değere en yakın, eşitlikte çift); U-1…U-12 donduruldu | G-78 |
 | KK-55 | FSR-TN-PLT-04 v0.2 onaylandı; P4 kapandı | G-82 |
+| KK-56 | P5 kapsamı: hedef güç için ℓ, n, m tasarım seçimi ve Word raporu birlikte P5'te | G-84 |
+| KK-57 | FSR-TN-PLT-05 v0.2 onaylandı: P5-K1…P5-K7 hepsi (a); D-1…D-7 ve R-1…R-11 donduruldu | G-85 |
