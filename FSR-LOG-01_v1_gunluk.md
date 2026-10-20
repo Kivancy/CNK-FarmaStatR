@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.79 · Son güncelleme: 20.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.80 · Son güncelleme: 20.10.2026"
 ---
 
 # Bu belge hakkında
@@ -1496,6 +1496,31 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Sıradaki iş:** P5, Word (.docx) raporu. İlk adım FSR-TN-PLT-05 v0.1: tasarım ve kabul ölçütleri, kod yazılmadan önce (KK-45 ilkesi).
 - **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** bu günlük.
 
+## G-83 · Tanıtım belgesi; P5 tasarımı: FSR-TN-PLT-05 v0.1 (taslak) — 20.10.2026
+
+- **Depo:** G-82 commit edildi; Actions başarılı ("action ok").
+- **Tanıtım belgesi (proje sahibinin isteği):** "P5'e kadar ne yaptık", projeyi bilmeyen eczacılık 2. sınıf öğrencisine anlatır gibi. Önce yanıt olarak yazıldı, sonra istek üzerine claude.ai'de bir Docs belgesine dönüştürüldü ("CNK-FarmaStatR: P5'e kadar ne yaptık?"; 11 bölüm, hesap katmanları akış şeması, küçük sözlük). Depoya girmedi. Belgede açık soru: İngilizce sürüm eklenecek mi.
+- **Ön deneme (Claude, kapsayıcı) — Word yazıcı:**
+  - Kütüphanesiz, yaklaşık 90 satırlık JavaScript yazıcı: sıkıştırmasız ZIP, CRC-32 ve altı OOXML parçası.
+  - Türkçe karakterli, başlık satırı yinelenen tablolu ve üst bilgili 5,8 KB'lık .docx üretti. `unzip -t` hatasız; python-docx ve LibreOffice metni, tablo hücrelerini ve üst bilgiyi birebir okudu.
+  - Microsoft Word'de açılış denenmedi; kabulde proje sahibi sınayacak.
+  - Karşılaştırma: docx 9.13.0 kütüphanesi (npm) açılmış hâliyle 20 MB.
+- **Teknik not FSR-TN-PLT-05 v0.1** (4 sayfa; onay bekliyor):
+  - Dayanak: FSR-TN-PLT-01 v0.6 Bölüm 8 ve Tablo 8.1 (rapor içeriği ve sorumluluklar), Tablo 10.1 P5 satırı; FSR-TN-PLT-04 v0.2 A-1.
+  - Teslimatlar T-1…T-5: rapor içeriği (Tablo 3.1, 10 bölüm), `web/app/rapor.js`, rapor düğmesi, çeviri ve belgeler, kabul aracı. R çekirdeği ve sabit 13 dosya değişmez.
+  - Yöntem kaynakları önerisi (Tablo 3.2): FDA PSG 020929 Ek Adım 1–4; EMA CPMP/EWP/4151/00 Rev. 2 Bölüm 5.1; EMA (c) serbestlik derecesi FarmaStatR türetimi; ADEMP (Morris ve ark. 2019).
+  - Kararlar (Tablo 4.1; öneri hepsinde (a)):
+    - P5-K1 sayı biçimi: ekrandaki `bicim.js` Word'de de kullanılır; FSR-TN-PLT-01 Tablo 8.1'in biçim satırı "R (tercih)"den JavaScript'e revize edilir; A-1 kapanır.
+    - P5-K2 DOCX üretimi: kendi küçük yazıcı, kütüphane yok.
+    - P5-K3 rapor dili: ekranın dili; beyan iki dilde.
+    - P5-K4 grafik: P5'te yok.
+  - Belirlenimcilik (FarmaStatR türetimi): ZIP tarihleri sabit; aynı sonuçtan iki rapor, oluşturma zamanı satırı dışında bayt bayt aynı.
+  - Kabul yöntemi: P4 kümesi (8 hazır + 17 canlı; TR ve EN); raporlar tek ZIP'te; `p5_kabul.R` raporları R `unzip` ile bağımsız okur; R = ekran = Word üçlü karşılaştırması.
+  - Kabul ölçütleri R-1…R-11 (Tablo 7.1): içerik, sayılar, etiketler, beyan, geçerli belge (Word'de açılış dahil), yeniden üretim, belirlenimcilik, gizlilik, düğme durumu, süre ≤ 2 sn, gerileme.
+  - Katman 3 (R betiği) için rapor kapsam dışı.
+- **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `belgeler/teknik_notlar/FSR-TN-PLT-05_v0.1.docx`, bu günlük.
+- **Sıradaki iş:** proje sahibinin P5-K1…P5-K4 kararları ve R-1…R-11'in dondurulması; ardından uygulama.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -1513,20 +1538,21 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-14 | Tip I uyum ölçütü kararı; teknik not v0.8 (rapor 02) ve Aşama 2 sonuçları; yeniden üretim paketi (G-40) | Tamam: ölçüt (KK-38), v0.8, paket (G-41), Aşama 2 sonuçları v0.9 (G-42); v0.9 onaylandı, hedefli deney ve v0.10 (G-43); 12.10 onay bekliyor; v0.10 onaylandı, v0.11 (G-48) |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
 | A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
-| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0, P1, P2, P3 ve P4 kapandı (KK-55, G-82; P4 resmi kabul 12/12 GECTI, G-81). Sırada P5 (Word raporu). Açık: gösterim yuvarlaması Word raporunda (P5, KK-52); testthat kümesinin webR'de koşulması. Izgara kontrolleri CI'da (G-72, G-74) |
+| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0, P1, P2, P3 ve P4 kapandı (KK-55, G-82; P4 resmi kabul 12/12 GECTI, G-81). P5 (Word raporu): FSR-TN-PLT-05 v0.1 taslak, onay bekliyor (G-83). Açık: gösterim yuvarlaması Word raporunda (P5, KK-52); testthat kümesinin webR'de koşulması. Izgara kontrolleri CI'da (G-72, G-74) |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
 
 # 4. Belge ve sürüm dizini
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.79 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.80 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.1 | 1.0 onaylı; beş dosya sabitlendi (G-47). 1.1: TC-S11 (dışa aktarılan betik), onaylandı (KK-53, G-76) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.6 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68) |
 | FSR-TN-PLT-02 · P2 tasarımı, kabul ölçütleri ve sonuçları | 0.2 | v0.1 onaylı (KK-49); v0.2: anahtar düzeltmesi, sonuçlar (11/11 GEÇTİ), sapmalar (G-69); onaylandı, P2 kapandı (KK-50, G-70) |
 | FSR-TN-PLT-03 · P3 tasarımı, kabul ölçütleri ve sonuçları | 0.2 | v0.1 onaylı (KK-51); v0.2: sonuçlar 12/12 GEÇTİ, bulgular (G-75); onaylandı, P3 kapandı (KK-53, G-76) |
 | FSR-TN-PLT-04 · P4 tasarımı ve kabul ölçütleri | 0.2 | v0.1 onaylı (KK-54); v0.2: resmi kabul 12/12 GECTI (G-81); onaylandı, P4 kapandı (KK-55, G-82) |
+| FSR-TN-PLT-05 · P5 tasarımı ve kabul ölçütleri (Word raporu) | 0.1 | Taslak; onay bekliyor (G-83) |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
 | CNKfarmastatr (R paketi) | 1.0.0.9000 | 13 dosya SHA-256 ile sabit (8 devralınan çekirdek + simülasyon çatısı ve in vitro motoru; FSR-VAL-SIM-1 1.0, G-47); testler 26 blok, 968 beklenti GEÇTİ (G-46) |
 
