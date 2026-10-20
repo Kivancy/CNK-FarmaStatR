@@ -34,6 +34,16 @@ export const R_P5 = `
   me <- c("fda", "ema_a", "ema_b", "ema_c")
   list(ok = TRUE, pass = unname(unlist(r[paste0(me, "_pass")])), mcse = unname(unlist(r[paste0(me, "_pass_mcse")])))
 }
+.p5_export <- function(pop, l, n, m, guc, hedef, n_sim, seed, pinned, ver) {
+  r <- tryCatch(platform_export_tasarim(pop, l, n, m, guc, hedef, n_sim, seed,
+                                        dosyalar = platform_tasarim_dosyalari("/home/web_user"),
+                                        cekirdek_sha = pinned, paket_surumu = ver),
+    farmastat_input_error = function(e) e, error = function(e) structure(list(message = conditionMessage(e)), class = "p5_err"))
+  if (inherits(r, "farmastat_input_error"))
+    return(list(ok = FALSE, kind = "input", field = r$problems$field, code = r$problems$code, message = r$problems$message))
+  if (inherits(r, "p5_err")) return(list(ok = FALSE, kind = "engine", message = r$message))
+  list(ok = TRUE, text = r)
+}
 .p5_secim <- function(sonuc, hedef) {
   if (is.null(sonuc)) sonuc <- do.call(rbind, .p5$rows) else sonuc <- as.data.frame(sonuc)
   s <- platform_tasarim_secim(.p5$pl, sonuc, hedef)
@@ -198,6 +208,31 @@ async function iptal() {
   if (partial && partial.done > 0) renderPartial();
 }
 
+// ---------------------------------------------------------------- tier 3: design script (T-3)
+async function betik() {
+  const c = readTas();
+  $('#ts_script').disabled = true; setStatus('st_exporting'); showErrors(null);
+  let out;
+  try {
+    const pinned = 'c(' + A.files().filter((e) => e.pinned).map((e) => `${JSON.stringify(e.file)} = ${JSON.stringify(e.sha256)}`).join(', ') + ')';
+    out = await A.callR(`.p5_export(list(sigma_R = ${rNum(c.pop.sigma_R)}, rho = ${rNum(c.pop.rho)}, pB_T = ${rNum(c.pop.pB_T)}, pB_R = ${rNum(c.pop.pB_R)}, pL = ${rNum(c.pop.pL)}, q = ${rNum(c.pop.q)}), ` +
+      `${rVec(c.l)}, ${rVec(c.n)}, ${rVec(c.m)}, ${rGuc(c)}, ${rNum(c.hedef / 100)}, ${rNum(c.n_sim)}, ${rNum(c.seed)}, ${pinned}, ${JSON.stringify(A.pkgVersion())})`);
+  } catch (e) { out = { ok: false, kind: 'engine', message: String(e.message || e) }; }
+  $('#ts_script').disabled = false;
+  if (!out.ok) {
+    setStatus('st_export_error', 'bad');
+    if (out.kind === 'input') { const f = [].concat(out.field); showErrors(() => [t('err_input'), ...[].concat(out.code).map((k, i) => A.codeMsg(k, f[i]))]); }
+    else showErrors(() => [t('err_engine'), out.message]);
+    return;
+  }
+  state.script = out.text;
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([out.text], { type: 'text/plain;charset=utf-8' }));
+  a.download = `farmastatr_tasarim_${new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19)}.R`;
+  a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  setStatus('st_exported', 'ok');
+}
+
 // ---------------------------------------------------------------- display
 const td = (txt, cls) => { const e = document.createElement('td'); e.textContent = txt; if (cls) e.className = cls; return e; };
 const th = (txt) => { const e = document.createElement('th'); e.textContent = txt; return e; };
@@ -316,7 +351,7 @@ export function onLang() {
   if (errFn) showErrors(errFn);
   if (last) render(); else if (partial && partial.done) renderPartial();
 }
-export function setReady(ok) { $('#ts_run').disabled = !ok; $('#ts_live').disabled = !ok; }
+export function setReady(ok) { $('#ts_run').disabled = !ok; $('#ts_live').disabled = !ok; $('#ts_script').disabled = !ok; }
 export function initTasarim(api, Q) {
   A = api;
   $('#ts_form').addEventListener('submit', hesapla);
@@ -324,6 +359,7 @@ export function initTasarim(api, Q) {
   $('#ts_form [name=guc_choice]').addEventListener('change', (e) => { $('#ts_form [name=guc_custom]').value = e.target.value === 'delta' ? '0.04879' : '1.05'; customVis(); });
   $('#ts_cancel').addEventListener('click', iptal);
   $('#ts_live').addEventListener('click', () => hesapla(null, true));
+  $('#ts_script').addEventListener('click', betik);
   $('#tab_tek').addEventListener('click', () => showMode('tek'));
   $('#tab_tas').addEventListener('click', () => showMode('tasarim'));
   const linked = parseTasLink(Q);

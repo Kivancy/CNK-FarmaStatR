@@ -3,6 +3,8 @@
 \alias{platform_tasarim_plan}
 \alias{platform_tasarim_params}
 \alias{platform_tasarim_secim}
+\alias{platform_tasarim_dosyalari}
+\alias{platform_export_tasarim}
 \title{Design selection for a target power (number of batches, units per batch, life stages)}
 \description{
 Plans the runs of a design search, runs them with the unchanged engine
@@ -21,6 +23,9 @@ v0.2 Section 3; decisions KK-56, KK-57).
 }
 Every run uses the same seed (common random numbers), so live runs with the
 grid's seed and \code{n_sim} reproduce the stored grid counts.
+\code{platform_export_tasarim} writes the design search as a stand-alone R script
+(tier 3): it carries the six source files, verifies their SHA-256, runs every
+planned scenario without the browser limit and writes the tables and a run record.
 Research and education only; not a system validated for GxP environments.
 }
 \usage{
@@ -32,6 +37,11 @@ platform_tasarim_secim(plan, sonuc, hedef = 0.80, esik_k = 2, l_min = 3, n_min =
 platform_tasarim(pop, l = 2:6, n = c(5, 8, 10, 15, 20, 30), m = 3,
                  guc = list(gmr = 1.05), hedef = 0.80, n_sim = 10000,
                  seed = 20261015, toplam_max = 6e7, ilerleme = NULL)
+platform_tasarim_dosyalari(dizin)
+platform_export_tasarim(pop, l = 2:6, n = c(5, 8, 10, 15, 20, 30), m = 3,
+                        guc = list(gmr = 1.05), hedef = 0.80, n_sim = 10000,
+                        seed = 20261015, dosyalar, cekirdek_sha, file = NULL,
+                        zaman = Sys.time(), paket_surumu = NULL)
 }
 \arguments{
   \item{pop}{Named list: \code{sigma_R} (required), \code{rho}, \code{pB_T},
@@ -50,6 +60,11 @@ platform_tasarim(pop, l = 2:6, n = c(5, 8, 10, 15, 20, 30), m = 3,
   \item{esik_k}{Number of MCSEs for the near-target flag.}
   \item{l_min, n_min}{Regulatory lower limits used by rule B.}
   \item{ilerleme}{Optional function \code{(i, total)} called after each run.}
+  \item{dizin}{Folder with the R source files (repository: \code{CNKfarmastatr/R}).}
+  \item{dosyalar}{Named list of raw vectors, the six source files.}
+  \item{cekirdek_sha}{Pinned SHA-256 values (\code{\link{platform_cekirdek_sha}}).}
+  \item{file, zaman, paket_surumu}{Output file (UTF-8, LF), time of export and package
+    version written into the script.}
 }
 \value{
 \code{platform_tasarim_plan}: list with \code{ok}, \code{problems} (field, code,
@@ -58,6 +73,7 @@ message), \code{plan} (one row per distinct run with its canonical key),
 \code{platform_tasarim_secim}: list with \code{tablo} (one row per design and
 method) and \code{secim} (one row per method and rule, with the reason when no
 design qualifies). \code{platform_tasarim}: both, plus the engine results.
+\code{platform_export_tasarim}: the script text (invisibly when written to a file).
 }
 \examples{
 pl <- platform_tasarim_plan(list(sigma_R = 0.12, pB_T = 0.1), l = 3:4, n = c(10, 15))

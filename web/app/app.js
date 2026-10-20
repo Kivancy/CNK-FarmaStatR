@@ -433,7 +433,7 @@ async function boot() {
     t, lang: () => lang, callR, hz: () => hz, webrReady: () => !!webR, rVersion: () => rInfo.r_version,
     files: () => files.map(({ file, pinned, sha256, status }) => ({ file, pinned, sha256, status })),
     kcell: () => K_CELL, updateKcell: (k) => { if (Number.isFinite(k) && k > 0) { K_CELL = k; updateInfo(); } },
-    codeMsg, cancelWebR: async () => killWebR()
+    codeMsg, cancelWebR: async () => killWebR(), pkgVersion: () => pkgVersion
   }, Q);
   if (Q.get('mode') === 'tasarim' && Q.has('v') && Q.get('v') !== pkgVersion) { versionHold = true; showVersionBox(); }
   applyLang();

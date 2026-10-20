@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.84 · Son güncelleme: 20.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.85 · Son güncelleme: 20.10.2026"
 ---
 
 # Bu belge hakkında
@@ -1607,6 +1607,27 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `web/app/tasarim.js`, `app.js`, `index.html`, `ceviri.json`, `stil.css`, `README.md`; `CNKfarmastatr/R/platform_tasarim.R`, `tests/testthat/test-platform-tasarim.R`; bu günlük.
 - **Sıradaki iş:** T-3, tasarım betiği (aday kümenin R betiği olarak dışa aktarılması).
 
+## G-88 · P5 T-3: tasarım betiği — 20.10.2026
+
+- **Depo:** G-87 commit edildi; Actions başarılı.
+- **Proje sahibinin uyarısı ve kararı (K):** "Kullanıcı dilediği ℓ × n × m değerlerini de kendisi set edebiliyor olmalı. Bu çok önemli."
+  - Claude'un yanıtı: bu G-87'de zaten var. "Aday tasarımlar" alanındaki ℓ, n, m listelerine kullanıcı istediği tam sayıları yazar (ℓ, n ≥ 2; m ≥ 1); ızgarada olmayan değerler canlı ya da betikle hesaplanır; tek tasarım da girilebilir. Listelerin bütün birleşimleri aday olur.
+  - Bağımsız tasarım listesi (ör. yalnız 3 × 10, 4 × 8, 6 × 5) önerildi; proje sahibi: "gerek yok; istenen ℓ, n, m değerleri yeterli." Aday küme tanımı değişmedi.
+- **T-3 · tasarım betiği (`R/platform_tasarim.R` 0.2.0):**
+  - `platform_export_tasarim()`: aday kümeyi tek dosyalık R betiği olarak yazar. P3 betiğinin yapısı: altı kaynak dosya gömülü (P3'ün beşi + `platform_tasarim.R`), önce SHA-256 doğrulaması, tek zaman satırı, temel R. Tarayıcı sınırları uygulanmaz.
+  - Betik: planlar, her koşuyu sırayla yapar (ilerleme satırıyla), Kural A ve B'yi uygular; özet yazdırır; `_secim.csv`, `_tablo.csv`, `_sonuc.csv` (kesin sayılarla) ve `_kayit.json` yazar.
+  - `platform_tasarim_dosyalari()`; `.platform_tasarim_dosyalar` liste olarak yazıldı (dosya betikte tek başına da yüklendiği için).
+  - `man/platform_tasarim.Rd` iki fonksiyonla genişledi.
+  - **Ekran:** tasarım sekmesinde "R betiği" düğmesi etkin; sınır üstü uyarısı betiği gösteriyor (`tasarim.js`, `app.js`, `ceviri.json`).
+- **Testler (`test-platform-tasarim.R`, yeni D-5 bloğu):** betik = `platform_tasarim()` (seçim, tablo, motor sonuçları birebir); iki dışa aktarım yalnız zaman satırında farklı; gömülü dosyada bir bayt değişince SHA-256 durdurur, hesap yok; geçersiz girdi, hedef ve sabit dosya farkı dışa aktarımda reddedilir; Aşama 1'in tam kümesi betikte 30 tasarım, 90 koşu, 158.400.000 hücre.
+- **Sonuçlar (Claude, kapsayıcı):**
+  - Test kümesi 50 blok, 2.244 beklenti, 0 hata, 0 atlanan (Windows'ta beklenen 2.239). Çekirdek SHA-256 13/13 AYNI.
+  - Tarayıcıdan indirilen betik (σ_R 0,15; 3 × {5, 10}; nsim 300) yerel R'de (`--vanilla`) tarayıcıdaki canlı sonuçla aynı güç, tip I hata, tasarım ve nedenleri verdi (D-5'in kuru denemesi).
+  - Not: betikler UTF-8 yereliyle çalıştırılmalı; C yerelinde gömülü metin bozulur ve SHA-256 durdurur (P3'teki gibi, güvenli yönde).
+- **`dogrulama.yml`:** başlık yorumu 50 blok, 2.244 beklenti (Windows 2.239). Korumalı; proje sahibine gönderildi.
+- **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `CNKfarmastatr/R/platform_tasarim.R`, `man/platform_tasarim.Rd`, `tests/testthat/test-platform-tasarim.R`, `web/app/tasarim.js`, `app.js`, `ceviri.json`; bu günlük.
+- **Sıradaki iş:** T-4 ve T-5, Word raporu (tek senaryo ve tasarım seçimi).
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -1624,14 +1645,14 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-14 | Tip I uyum ölçütü kararı; teknik not v0.8 (rapor 02) ve Aşama 2 sonuçları; yeniden üretim paketi (G-40) | Tamam: ölçüt (KK-38), v0.8, paket (G-41), Aşama 2 sonuçları v0.9 (G-42); v0.9 onaylandı, hedefli deney ve v0.10 (G-43); 12.10 onay bekliyor; v0.10 onaylandı, v0.11 (G-48) |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
 | A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
-| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0, P1, P2, P3 ve P4 kapandı (KK-55, G-82; P4 resmi kabul 12/12 GECTI, G-81). P5 (tasarım seçimi ve Word raporu; KK-56): FSR-TN-PLT-05 v0.2 onaylandı (KK-57, G-85); T-1 `platform_tasarim()` tamam, D-1 yeniden üretildi (G-86); T-2 tasarım sekmesi (G-87). Açık: testthat kümesinin webR'de koşulması. Izgara kontrolleri CI'da (G-72, G-74) |
+| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0, P1, P2, P3 ve P4 kapandı (KK-55, G-82; P4 resmi kabul 12/12 GECTI, G-81). P5 (tasarım seçimi ve Word raporu; KK-56): FSR-TN-PLT-05 v0.2 onaylandı (KK-57, G-85); T-1 `platform_tasarim()` tamam, D-1 yeniden üretildi (G-86); T-2 tasarım sekmesi (G-87); T-3 tasarım betiği (G-88). Açık: testthat kümesinin webR'de koşulması. Izgara kontrolleri CI'da (G-72, G-74) |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
 
 # 4. Belge ve sürüm dizini
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.84 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.85 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.1 | 1.0 onaylı; beş dosya sabitlendi (G-47). 1.1: TC-S11 (dışa aktarılan betik), onaylandı (KK-53, G-76) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.6 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68) |

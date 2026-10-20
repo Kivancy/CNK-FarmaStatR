@@ -23,7 +23,9 @@
 #   <= 6e7 cells (temporary; FarmaStatR derivation, to be measured in P5).
 # This file only plans runs, calls the pinned engine through
 #   platform_run_invitro() and applies the rules; it computes no statistic.
-# Base R only. Version 0.1.0
+# Version 0.2.0 (T-3): platform_export_tasarim(), the candidate set as a stand-alone
+#   R script (tier 3; same structure as platform_export_invitro, FSR-TN-PLT-03).
+# Base R only. Version 0.2.0
 # Research and education only; not a system validated for GxP environments.
 # =============================================================================
 
@@ -220,3 +222,201 @@ platform_tasarim <- function(pop, l = 2:6, n = c(5, 8, 10, 15, 20, 30), m = 3,
   sonuc <- do.call(rbind, rows)
   c(list(plan = pl, sonuc = sonuc), platform_tasarim_secim(pl, sonuc, hedef))
 }
+
+# =============================================================================
+# Tier 3 for the design search (FSR-TN-PLT-05 v0.2 Section 3.4; T-3)
+#   The script carries the five files of the scenario script and this file,
+#   verifies their SHA-256, plans the runs, runs every planned scenario with
+#   the unchanged engine (no browser limit) and applies rules A and B.
+#   With the same seed and n_sim it gives the browser's counts and selection.
+# =============================================================================
+# (written out: this file is also loaded alone into the exported script)
+.platform_tasarim_dosyalar <- c(sim_run.R = TRUE, invitro_fast.R = TRUE, invitro_grid.R = TRUE,
+                                platform_input.R = FALSE, platform_hipotez.R = FALSE,
+                                platform_tasarim.R = FALSE)
+
+# bytes of the six source files from a folder (repository: <repo>/CNKfarmastatr/R)
+platform_tasarim_dosyalari <- function(dizin) {
+  f <- file.path(dizin, names(.platform_tasarim_dosyalar))
+  miss <- f[!file.exists(f)]
+  if (length(miss)) stop("Source file not found: ", paste(miss, collapse = ", "))
+  stats::setNames(lapply(f, function(p) readBin(p, "raw", file.size(p))), names(.platform_tasarim_dosyalar))
+}
+
+# -----------------------------------------------------------------------------
+# platform_export_tasarim(): stand-alone R script for a design search
+#   pop, l, n, m, guc, hedef, n_sim, seed : as platform_tasarim()
+#   dosyalar     : named list of raw vectors (platform_tasarim_dosyalari())
+#   cekirdek_sha : pinned values (platform_cekirdek_sha())
+#   file, zaman, paket_surumu : as platform_export_invitro()
+# Returns the script text (one string), invisibly when written to a file.
+# -----------------------------------------------------------------------------
+platform_export_tasarim <- function(pop, l = 2:6, n = c(5, 8, 10, 15, 20, 30), m = 3,
+                                    guc = list(gmr = 1.05), hedef = 0.80, n_sim = 10000,
+                                    seed = 20261015, dosyalar, cekirdek_sha, file = NULL,
+                                    zaman = Sys.time(), paket_surumu = NULL) {
+  pl <- platform_tasarim_plan(pop, l, n, m, guc, n_sim, seed, toplam_max = NULL,
+                              n_sim_max = Inf, cells_max = Inf)
+  if (!pl$ok) {
+    msg <- paste0("Invalid input:\n", paste0("- ", pl$problems$message, collapse = "\n"))
+    stop(structure(class = c("farmastat_input_error", "error", "condition"),
+                   list(message = msg, call = NULL, problems = pl$problems)))
+  }
+  if (!is.numeric(hedef) || length(hedef) != 1 || !(hedef > 0 && hedef < 1))
+    stop("hedef must be one number in (0, 1).")
+  need <- names(.platform_tasarim_dosyalar)
+  if (!is.list(dosyalar) || !all(need %in% names(dosyalar)))
+    stop("dosyalar must hold: ", paste(need, collapse = ", "), ".")
+  sha <- vapply(need, function(f) { b <- dosyalar[[f]]; if (!is.raw(b)) stop(f, " must be raw.")
+                                    .fsr_sha256(b) }, "")
+  for (f in need[.platform_tasarim_dosyalar]) {
+    if (is.na(cekirdek_sha[f])) stop(f, " is not in the pinned list.")
+    if (!identical(sha[[f]], unname(cekirdek_sha[f])))
+      stop("SHA-256 of ", f, " differs from CEKIRDEK_SHA256.txt; no script was written.")
+  }
+  if (any(vapply(need, function(f) any(dosyalar[[f]] == as.raw(13)), TRUE)))
+    stop("Source files must have LF line ends.")
+  pv <- if (!is.null(paket_surumu)) as.character(paket_surumu) else
+    tryCatch(as.character(utils::packageVersion("CNKfarmastatr")), error = function(e) "source")
+  d <- pl$pop
+  popl <- vapply(names(d), function(k) sprintf("  %s = %s", k, .r_value(d[[k]])), "")
+  popl[-length(popl)] <- paste0(popl[-length(popl)], ",")
+  gtxt <- sprintf("list(%s = %s)", names(guc), .r_value(guc[[1]]))
+  delim <- "---"
+  has_end <- function(dl) any(vapply(need, function(f)
+    grepl(paste0(")", dl, "\""), rawToChar(dosyalar[[f]]), fixed = TRUE, useBytes = TRUE), TRUE))
+  while (has_end(delim)) delim <- paste0(delim, "-")
+  out <- c(
+    "# =============================================================================",
+    "# CNK-FarmaStatR - hedef guc icin tasarim secimi / design selection for a target power",
+    paste("#", .platform_beyan_tr),
+    paste("#", .platform_beyan_en),
+    "# -----------------------------------------------------------------------------",
+    sprintf("# Exported by: platform_export_tasarim 0.2.0, CNKfarmastatr %s (time: .fsr_created below)", pv),
+    "# Document   : FSR-TN-PLT-05 (P5, design selection; tier 3: stand-alone R script)",
+    "# Requires   : R >= 4.0 and base R only; CNKfarmastatr need not be installed",
+    "# Use        : Rscript <this file>      or      source(\"<this file>\")",
+    "# Rules      : FSR-TN-PBE-01 v0.11 Section 11.5 (Tables 11.3a and 11.3b): power at the",
+    "#              chosen difference, type I error at FDA delta0 and EMA GMR 1.18;",
+    "#              rule A = smallest l*n*m with power >= target; rule B = also l >= 3,",
+    "#              n >= 10 and KK-38 label not 'nominali_asiyor'; near target: < 2 MCSE",
+    "# Engine     : FDA PBE (PSG 020929) and EMA OIP Rev. 2 Section 5.1 criterion 8,",
+    "#              methods (a), (b), (c); invitro_scenario() unchanged (FSR-VAL-SIM-1)",
+    "# =============================================================================",
+    sprintf(".fsr_created <- %s   # time of export", .json_str(format(zaman, "%Y-%m-%d %H:%M:%S %z"))),
+    "",
+    "# ---- 1. Parameters: you may change these --------------------------------------",
+    "pop <- list(",
+    popl,
+    ")",
+    sprintf("l <- %s   # candidate batches per product", .r_value(as.numeric(l))),
+    sprintf("n <- %s   # candidate units per batch", .r_value(as.numeric(n))),
+    sprintf("m <- %s   # candidate life stages", .r_value(as.numeric(m))),
+    sprintf("guc <- %s   # true difference for power: list(gmr = ), list(delta = ) or list(sinir = )", gtxt),
+    sprintf("hedef <- %s   # target power", .r_value(hedef)),
+    sprintf("n_sim <- %s; seed <- %s   # the same for every run (common seed)", .r_value(n_sim), .r_value(seed)),
+    "output_dir <- \".\"   # tables (.csv) and run record (.json) are written here; NULL = no files",
+    "",
+    "# ---- 2. Size: information only ------------------------------------------------",
+    sprintf("# %d candidate designs, %d runs, %s cells in total as exported. The browser",
+            nrow(unique(pl$rol[, c("l", "n", "m")])), nrow(pl$plan),
+            format(pl$toplam_hucre, big.mark = ",", scientific = FALSE)),
+    "# limit (6e7 cells, P5-K6) is not applied here. Runs are done one after the other;",
+    "# each starts from the same seed, so the order does not change any result.",
+    "",
+    "# ---- 3. Program: do not change ------------------------------------------------",
+    sprintf(".fsr_export <- list(created = .fsr_created, package_version = %s,", .json_str(pv)),
+    sprintf("                    disclaimer_tr = \"%s\",", .platform_esc_u(.platform_beyan_tr)),
+    sprintf("                    disclaimer_en = \"%s\")", .platform_beyan_en),
+    .platform_sha256_kod,
+    .platform_script_tasarim_main,
+    "",
+    "# ---- 4. Embedded source files: do not change (verified by SHA-256) -------------",
+    ".fsr_files <- list(")
+  tail_txt <- c(")", "", "run <- .fsr_main(pop, l, n, m, guc, hedef, n_sim, seed, output_dir, .fsr_files, .fsr_export)")
+  u <- function(x) charToRaw(enc2utf8(paste0(paste(x, collapse = "\n"), "\n")))
+  emb <- lapply(need, function(f) c(
+    charToRaw(sprintf("  %s = list(pinned = %s, sha256 = \"%s\", text = r\"%s(",
+                      .json_str(f), if (.platform_tasarim_dosyalar[[f]]) "TRUE" else "FALSE", sha[[f]], delim)),
+    dosyalar[[f]], charToRaw(paste0(")", delim, "\")", if (f == need[length(need)]) "" else ",", "\n"))))
+  bytes <- c(u(out), unlist(emb), u(tail_txt))
+  if (!is.null(file)) {
+    con <- file(file, "wb"); on.exit(close(con))
+    writeBin(bytes, con)
+  }
+  res <- rawToChar(bytes); Encoding(res) <- "UTF-8"
+  if (!is.null(file)) invisible(res) else res
+}
+
+# Main program of the exported design script (written as text into the script)
+.platform_script_tasarim_main <- c(
+  ".fsr_main <- function(pop, l, n, m, guc, hedef, n_sim, seed, output_dir, files, info) {",
+  "  t0 <- proc.time()[[\"elapsed\"]]",
+  "  started <- format(Sys.time(), \"%Y-%m-%d %H:%M:%S %z\")",
+  "  # 3a. verify every embedded file before anything is computed",
+  "  got <- vapply(files, function(f) .fsr_sha256(charToRaw(gsub(\"\\r\\n\", \"\\n\", f$text, fixed = TRUE))), \"\")",
+  "  bad <- names(files)[got != vapply(files, function(f) f$sha256, \"\")]",
+  "  if (length(bad)) stop(\"SHA-256 mismatch in: \", paste(bad, collapse = \", \"),",
+  "                        \". The file was changed (or re-encoded by an editor); nothing was computed.\", call. = FALSE)",
+  "  cat(\"SHA-256 verified:\", paste(names(files), collapse = \", \"), \"\\n\")",
+  "  # 3b. load into a new environment (the workspace is not changed)",
+  "  env <- new.env(parent = globalenv())",
+  "  for (f in files) eval(parse(text = gsub(\"\\r\\n\", \"\\n\", f$text, fixed = TRUE), keep.source = FALSE), envir = env)",
+  "  # 3c. plan (browser limit not applied), run every planned scenario, select",
+  "  pl <- env$platform_tasarim_plan(pop, l, n, m, guc, n_sim, seed, toplam_max = NULL, n_sim_max = Inf, cells_max = Inf)",
+  "  if (!pl$ok) stop(\"Invalid input:\\n\", paste0(\"- \", pl$problems$message, collapse = \"\\n\"), call. = FALSE)",
+  "  N <- nrow(pl$plan)",
+  "  cat(sprintf(\"Plan: %d designs, %d runs, %s cells\\n\", nrow(unique(pl$rol[, c(\"l\", \"n\", \"m\")])), N,",
+  "              format(pl$toplam_hucre, big.mark = \",\", scientific = FALSE)))",
+  "  rows <- vector(\"list\", N)",
+  "  for (i in seq_len(N)) {",
+  "    rows[[i]] <- env$platform_run_invitro(env$platform_tasarim_params(pl$pop, pl$plan[i, ], n_sim, seed),",
+  "                                          n_sim_max = Inf, cells_max = Inf)",
+  "    cat(sprintf(\"  run %d/%d  l = %g, n = %g, m = %g  (%.0f s)\\n\", i, N, pl$plan$l[i], pl$plan$n[i], pl$plan$m[i],",
+  "                proc.time()[[\"elapsed\"]] - t0))",
+  "  }",
+  "  sonuc <- do.call(rbind, rows)",
+  "  s <- env$platform_tasarim_secim(pl, sonuc, hedef)",
+  "  rng <- RNGkind()[1:2]",
+  "  secs <- proc.time()[[\"elapsed\"]] - t0",
+  "  # 3d. summary: chosen design per method and rule",
+  "  sel <- s$secim",
+  "  show <- data.frame(method = sel$yontem, rule = sel$kural,",
+  "                     design = ifelse(sel$var, sprintf(\"%g x %g x %g\", sel$l, sel$n, sel$m), \"none\"),",
+  "                     power = ifelse(sel$var, formatC(sel$guc, digits = 4, format = \"f\"), \"\"),",
+  "                     mcse = ifelse(sel$var, formatC(sel$guc_mcse, digits = 4, format = \"f\"), \"\"),",
+  "                     type1 = ifelse(sel$var & !is.na(sel$t1), formatC(sel$t1, digits = 4, format = \"f\"), \"\"),",
+  "                     kk38 = ifelse(is.na(sel$t1_etiket), \"\", sel$t1_etiket),",
+  "                     note = ifelse(sel$var, ifelse(sel$esik_yakin, \"near target (KK-39)\", \"\"), sel$neden),",
+  "                     stringsAsFactors = FALSE)",
+  "  cat(sprintf(\"\\nTarget power %s; n_sim = %s, seed = %s, RNG %s; %.1f s\\n\\n\", formatC(hedef, digits = 2, format = \"f\"),",
+  "              format(n_sim, big.mark = \",\"), seed, paste(rng, collapse = \"/\"), secs))",
+  "  print(show, row.names = FALSE)",
+  "  cat(\"\\nThe search is limited to the candidate set.\\n\", info$disclaimer_tr, \"\\n\", info$disclaimer_en, \"\\n\", sep = \"\")",
+  "  # 3e. files: tables with exact numbers, engine results, run record (JSON)",
+  "  stamp <- format(Sys.time(), \"%Y%m%d-%H%M%S\")",
+  "  rec <- list(run_id = paste0(\"script-\", stamp), platform = \"CNK-FarmaStatR\",",
+  "              document = \"FSR-TN-PLT-05\", result_source = \"script\", kind = \"design_selection\",",
+  "              disclaimer_tr = info$disclaimer_tr, disclaimer_en = info$disclaimer_en,",
+  "              exported = info$created, package_version = info$package_version, started = started,",
+  "              seconds = secs, r_version = R.version.string, r_platform = R.version$platform,",
+  "              rng = rng, seed = seed, n_sim = n_sim, pop = pl$pop, l = l, n = n, m = m, guc = guc,",
+  "              hedef = hedef, run_keys = pl$plan$anahtar,",
+  "              files = lapply(names(files), function(k) list(file = k, pinned = files[[k]]$pinned,",
+  "                                                            sha256 = files[[k]]$sha256, verified = TRUE)),",
+  "              secim = s$secim, tablo = s$tablo)",
+  "  if (!is.null(output_dir)) {",
+  "    wcsv <- function(df, f) {",
+  "      txt <- vapply(df, function(v) if (is.numeric(v)) ifelse(is.na(v), \"NA\", env$.num_exact(v)) else",
+  "                    ifelse(is.na(v), \"NA\", as.character(v)), character(nrow(df)))",
+  "      if (!is.matrix(txt)) txt <- matrix(txt, nrow = nrow(df))",
+  "      writeLines(c(paste(names(df), collapse = \",\"), apply(txt, 1, paste, collapse = \",\")), f, useBytes = TRUE)",
+  "    }",
+  "    fb <- file.path(output_dir, paste0(\"farmastatr_tasarim_\", stamp))",
+  "    wcsv(s$secim, paste0(fb, \"_secim.csv\")); wcsv(s$tablo, paste0(fb, \"_tablo.csv\"))",
+  "    wcsv(cbind(kosu_no = pl$plan$kosu_no, anahtar = pl$plan$anahtar, sonuc), paste0(fb, \"_sonuc.csv\"))",
+  "    writeLines(env$.to_json(rec), paste0(fb, \"_kayit.json\"), useBytes = TRUE)",
+  "    cat(\"Written:\", paste0(fb, c(\"_secim.csv\", \"_tablo.csv\", \"_sonuc.csv\", \"_kayit.json\")), sep = \"\\n  \")",
+  "  }",
+  "  invisible(list(plan = pl, sonuc = sonuc, tablo = s$tablo, secim = s$secim, record = rec))",
+  "}")

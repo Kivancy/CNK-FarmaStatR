@@ -133,3 +133,51 @@ test_that("D-3 (R side): live runs reproduce the Stage 1 counts with the common 
     expect_identical(round(r$sonuc[[paste0(me, "_pass")]] * 10000), round(so[[paste0(me, "_pass")]] * 10000))
   expect_identical(nrow(r$tablo), 4L); expect_identical(nrow(r$secim), 8L)
 })
+
+# ---- T-3: design search as a stand-alone R script (D-5) ----------------------------------
+tas_src <- function() {
+  for (d in c("../../R", "CNKfarmastatr/R", "../../../CNKfarmastatr/R"))
+    if (file.exists(file.path(d, "platform_tasarim.R"))) return(d)
+  NA_character_
+}
+run_txt <- function(txt) {
+  txt <- sub("output_dir <- \".\"", "output_dir <- NULL", txt, fixed = TRUE)
+  env <- new.env(parent = globalenv())
+  env$.error <- tryCatch({ invisible(capture.output(eval(parse(text = txt, keep.source = FALSE), envir = env))); NULL },
+                         error = function(e) conditionMessage(e))
+  env
+}
+
+test_that("D-5: the design script gives the same counts and the same selection", {
+  d <- tas_src(); expect_false(is.na(d))
+  f <- platform_tasarim_dosyalari(d); sha <- platform_cekirdek_sha()
+  pop <- list(sigma_R = 0.12, pB_T = 0.1)
+  txt <- platform_export_tasarim(pop, l = 3, n = c(5, 10), n_sim = 300, dosyalar = f, cekirdek_sha = sha,
+                                 zaman = as.POSIXct("2026-10-20 12:00:00", tz = "UTC"))
+  env <- run_txt(txt)
+  expect_null(env$.error)
+  r <- platform_tasarim(pop, l = 3, n = c(5, 10), n_sim = 300)
+  expect_identical(env$run$secim, r$secim)
+  expect_identical(env$run$tablo, r$tablo)
+  expect_identical(env$run$sonuc, r$sonuc)
+  # only the time line differs between two exports
+  txt2 <- platform_export_tasarim(pop, l = 3, n = c(5, 10), n_sim = 300, dosyalar = f, cekirdek_sha = sha,
+                                  zaman = as.POSIXct("2026-10-21 08:30:00", tz = "UTC"))
+  a <- strsplit(txt, "\n")[[1]]; b <- strsplit(txt2, "\n")[[1]]
+  expect_identical(length(a), length(b)); expect_identical(sum(a != b), 1L)
+  expect_true(grepl("^\\.fsr_created <- ", a[a != b]))
+  # a changed byte in an embedded file stops the script before any computation
+  bad <- sub("rows[[i]] <- env$platform_run_invitro", "rows[[i]] <- env$platform_run_invitro", txt, fixed = TRUE)
+  k <- regexpr("theta_p <- ((log(1.11))^2 + 0.01) / sigma_T0^2", bad, fixed = TRUE)
+  substr(bad, k + 30, k + 30) <- "2"
+  e2 <- run_txt(bad)
+  expect_match(e2$.error, "SHA-256 mismatch")
+  expect_null(e2$run)
+  # the browser limit is not applied in the script; invalid input is refused at export
+  expect_error(platform_export_tasarim(list(sigma_R = 0.12), l = 1, dosyalar = f, cekirdek_sha = sha), "Invalid input")
+  expect_error(platform_export_tasarim(pop, hedef = 2, dosyalar = f, cekirdek_sha = sha), "hedef")
+  f2 <- f; f2$invitro_fast.R[10] <- as.raw(32)
+  expect_error(platform_export_tasarim(pop, dosyalar = f2, cekirdek_sha = sha), "differs from CEKIRDEK")
+  big <- platform_export_tasarim(pop, dosyalar = f, cekirdek_sha = sha)            # full Stage 1 set
+  expect_match(big, "30 candidate designs, 90 runs, 158,400,000 cells", fixed = TRUE)
+})
