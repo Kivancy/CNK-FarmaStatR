@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.83 · Son güncelleme: 20.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.84 · Son güncelleme: 20.10.2026"
 ---
 
 # Bu belge hakkında
@@ -1588,6 +1588,25 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** yukarıdakiler (`dogrulama.yml` hariç; proje sahibine gönderildi) ve bu günlük.
 - **Sıradaki iş:** T-2, tasarım seçimi sekmesi (`web/app/tasarim.js`).
 
+## G-87 · P5 T-2: tasarım seçimi sekmesi — 20.10.2026
+
+- **Depo:** G-86 commit edildi; `dogrulama.yml` yerleştirildi; Actions başarılı.
+- **T-2 · ekran (`web/app/`):**
+  - **Yeni sekme "Tasarım seçimi (hedef güç)"** (`tasarim.js`, yeni; `index.html`, `stil.css`, `ceviri.json` +57 anahtar, TR = EN = 208; `README.md`).
+  - Girdiler: popülasyon; güç için gerçek fark (GMR 1,05 varsayılan, GMR 1,00, özel GMR ya da δ); hedef güç (%80); aday ℓ, n, m listeleri; nsim ve seed. Bilgi satırı: aday tasarım sayısı, toplam iş, tahmini süre.
+  - **R yapar, sayfa göstermekle yetinir:** plan `platform_tasarim_plan()`, koşular `platform_run_invitro()` (koşu koşu, ilerleme ve iptalle), seçim `platform_tasarim_secim()`. Sayılar webR'e `evalR` ortamıyla ikili (binary) olarak geçer; metin dönüşümü yok (B-1 riski yok).
+  - **Katman:** bütün planlı koşular veri tabanında aynı nsim ve seed'li ana koşu (`tek`) olarak varsa hazır (P5-K7; birleşik koşu kullanılmaz, ortak seed korunur); değilse toplam iş ≤ 6 × 10⁷ ise canlı; üstündeyse betik önerisi (T-3 gelince düğme etkinleşir).
+  - **Gösterim:** özet tablo (yöntem × Kural A/B: tasarım, toplam ölçüm, güç, MCSE, tip I hata, KK-38 etiketi, eşiğe yakınlık ya da "yok" nedeni), yöntem başına ℓ × n tabloları (güç, MCSE, tip I hata ve işareti; hedefe ulaşan, eşiğe yakın ve seçilen hücreler işaretli), uyarılar (aday küme, güç–tip I hata, FDA δ₀ tanımsız, H1 olmayan yöntem, eşiğe yakınlık). "Canlı da koş" hazır tabloyu yeniden üretir. Bağlantı tasarım girdilerini taşır (`mode=tasarim`).
+  - `app.js`: sekme bağlantısı, `callR(code, env)`, `killWebR()`, `platform_tasarim.R` yüklenen platform dosyalarına eklendi (SHA-256 kaydı).
+- **R tarafı düzeltme (`platform_tasarim.R`):** toplam iş sınırını aşan plan, sonuçları veri tabanından geldiğinde seçime kabul edilir (Aşama 1'in tam kümesi hazırdır ama canlı sınırının üstündedir). Test +2 beklenti (156; toplam 2.230, Windows 2.225; `dogrulama.yml` başlığı T-3'te güncellenecek).
+- **Kuru denemeler (Claude, kapsayıcı; Playwright, Chromium, webR 0.5.4):**
+  - Aşama 1, p_B 0,10, tam aday küme: hazır, yaklaşık 4 sn; özet Tablo 11.3a/b ile aynı (ör. FDA Kural A 3 × 10, %80,0, tip I %7,5 nominali aşıyor, eşiğe yakın; FDA Kural B yok; EMA (b) ve (c) Kural B 4 × 10).
+  - Daraltılmış kümede canlı = hazır: oranlar birebir; MCSE'ler 10⁻¹⁷ düzeyinde farklı (veri tabanı MCSE'yi 15 anlamlı basamakla saklıyor). D-3 ölçütü sayım düzeyinde olduğundan uygun; kabulde K(10⁻¹², 10⁻¹²) ile karşılaştırılacak.
+  - Yeni popülasyon (σ_R 0,15; 3 × {10, 15}) canlı 19 sn; tam küme sınır üstünde (1,58 × 10⁸ > 6 × 10⁷) betik uyarısı; iptal 58 ms, "tamamlanmadı 2/18", seçim yok; girdi hatası kodla; EN metinler; 375 px'te taşma yok (bağlantı iletisi satır kırma düzeltildi).
+  - Tek senaryo sekmesi değişmedi: hazır ve canlı koşu çalışıyor.
+- **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `web/app/tasarim.js`, `app.js`, `index.html`, `ceviri.json`, `stil.css`, `README.md`; `CNKfarmastatr/R/platform_tasarim.R`, `tests/testthat/test-platform-tasarim.R`; bu günlük.
+- **Sıradaki iş:** T-3, tasarım betiği (aday kümenin R betiği olarak dışa aktarılması).
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -1605,14 +1624,14 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-14 | Tip I uyum ölçütü kararı; teknik not v0.8 (rapor 02) ve Aşama 2 sonuçları; yeniden üretim paketi (G-40) | Tamam: ölçüt (KK-38), v0.8, paket (G-41), Aşama 2 sonuçları v0.9 (G-42); v0.9 onaylandı, hedefli deney ve v0.10 (G-43); 12.10 onay bekliyor; v0.10 onaylandı, v0.11 (G-48) |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
 | A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
-| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0, P1, P2, P3 ve P4 kapandı (KK-55, G-82; P4 resmi kabul 12/12 GECTI, G-81). P5 (tasarım seçimi ve Word raporu; KK-56): FSR-TN-PLT-05 v0.2 onaylandı (KK-57, G-85); T-1 `platform_tasarim()` tamam, D-1 yeniden üretildi (G-86). Açık: testthat kümesinin webR'de koşulması. Izgara kontrolleri CI'da (G-72, G-74) |
+| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0, P1, P2, P3 ve P4 kapandı (KK-55, G-82; P4 resmi kabul 12/12 GECTI, G-81). P5 (tasarım seçimi ve Word raporu; KK-56): FSR-TN-PLT-05 v0.2 onaylandı (KK-57, G-85); T-1 `platform_tasarim()` tamam, D-1 yeniden üretildi (G-86); T-2 tasarım sekmesi (G-87). Açık: testthat kümesinin webR'de koşulması. Izgara kontrolleri CI'da (G-72, G-74) |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
 
 # 4. Belge ve sürüm dizini
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.83 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.84 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.1 | 1.0 onaylı; beş dosya sabitlendi (G-47). 1.1: TC-S11 (dışa aktarılan betik), onaylandı (KK-53, G-76) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.6 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68) |

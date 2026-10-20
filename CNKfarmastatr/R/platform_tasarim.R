@@ -126,7 +126,8 @@ platform_tasarim_params <- function(pop, run, n_sim, seed) {
 
 # -----------------------------------------------------------------------------
 # platform_tasarim_secim(): apply the rules to run results
-#   plan   : result of platform_tasarim_plan()
+#   plan   : result of platform_tasarim_plan(); a plan above the total-work
+#            limit is accepted (its results come from the database)
 #   sonuc  : data frame, one row per run in plan order (kosu_no), with the
 #            engine columns <method>_pass and <method>_pass_mcse
 #   hedef  : target power (default 0.80)
@@ -137,7 +138,9 @@ platform_tasarim_params <- function(pop, run, n_sim, seed) {
 # -----------------------------------------------------------------------------
 platform_tasarim_secim <- function(plan, sonuc, hedef = 0.80, esik_k = 2,
                                    l_min = 3, n_min = 10) {
-  if (!isTRUE(plan$ok)) stop("The plan has problems; nothing to select.")
+  # only the total-work limit may be exceeded: such a plan is selected from stored results
+  if (is.null(plan$plan) || any(plan$problems$code != "design_size"))
+    stop("The plan has problems; nothing to select.")
   if (!is.numeric(hedef) || length(hedef) != 1 || !(hedef > 0 && hedef < 1))
     stop("hedef must be one number in (0, 1).")
   if (nrow(sonuc) != nrow(plan$plan)) stop("sonuc must have one row per planned run.")

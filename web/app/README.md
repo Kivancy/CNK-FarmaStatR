@@ -28,6 +28,13 @@ Adres: `http://127.0.0.1:8000/web/app/` (ilk açılışta Ctrl + F5).
 - "Bağlantıyı kopyala" parametreleri ve paket sürümünü taşır; farklı sürümün bağlantısı sessizce
   çevrilmez.
 - P1 prototipi (`web/p1/`) P1'in kanıtı olarak değişmeden kalır.
+- **Tasarım seçimi (P5, FSR-TN-PLT-05; KK-56, KK-57):** "Tasarım seçimi (hedef güç)" sekmesi.
+  Popülasyon, güç için gerçek fark (varsayılan GMR 1,05), hedef güç (varsayılan %80) ve aday
+  ℓ, n, m listeleri girilir. Koşu planını, motor koşularını ve Kural A/B seçimini R yapar
+  (`platform_tasarim_plan`, `platform_run_invitro`, `platform_tasarim_secim`). Bütün adaylar
+  veri tabanında varsa (aynı nsim ve seed) sayılar oradan gelir, kuralları yine R uygular (webR
+  açılır); değilse canlı koşulur; toplam iş 6 × 10⁷ hücreyi aşarsa tasarım betiği önerilir
+  (T-3). "Canlı da koş" hazır tabloyu ortak seed ile yeniden üretir.
 
 ### Kabul testleri (FSR-TN-PLT-04 Tablo 9.1, U-1 … U-12)
 
@@ -44,5 +51,8 @@ Serve the repository root as for P1 and open `http://127.0.0.1:8000/web/app/`. S
 results grid come from the SHA-256-checked database without webR (tier 2; the combined run when
 there is one); other scenarios within the browser limit run in webR (tier 1); above the limit the R
 script is offered (tier 3). Every rate is shown with R's metric name, hypothesis state and KK-38
-label; numbers use one rule (nearest to the binary value, exact ties to even). Links carry the
+label; numbers use one rule (nearest to the binary value, exact ties to even). The "Design
+selection (target power)" tab (P5) shows, for a population, a target power and candidate ℓ, n, m,
+the power and type I error of every candidate and the smallest design by rules A and B of
+FSR-TN-PBE-01 Table 11.3a/b; R plans, runs and selects. Links carry the
 parameters and the package version; a link of another version is not converted silently.

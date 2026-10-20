@@ -34,6 +34,8 @@ test_that("plan: runs, roles, keys and total work", {
   # P5-K6 (a): the full Stage 1 candidate set is above the live limit
   big <- platform_tasarim_plan(pop0(0.1))
   expect_false(big$ok); expect_identical(big$problems$code, "design_size")
+  expect_identical(nrow(big$plan), 90L)                     # the plan is kept for stored results
+  expect_error(platform_tasarim_secim(platform_tasarim_plan(list(rho = 1)), data.frame()), "problems")
   small <- platform_tasarim_plan(pop0(0.1), l = 3:4, n = c(10, 15))
   expect_true(small$ok); expect_identical(nrow(small$plan), 12L)
   # a power difference equal to a boundary shares the run (same delta, same seed)

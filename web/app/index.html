@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CNK-FarmaStatR · In vitro eşdeğerlik</title>
-<!-- FSR-TN-PLT-04 (P4, KK-54): full screen. Research and education only; not a system
+<!-- FSR-TN-PLT-04 (P4, KK-54): full screen; FSR-TN-PLT-05 (P5, KK-56, KK-57): design selection tab. Research and education only; not a system
      validated for GxP environments. The page does no statistics: every number, class and
      label comes from the R engine in webR (tier 1) or from the database that R built (tier 2). -->
 <link rel="stylesheet" href="stil.css">
@@ -19,8 +19,12 @@
 </header>
 <p class="disclaimer" data-i18n="disclaimer"></p>
 <div id="version_box" class="warnbox" hidden></div>
+<nav class="tabs" role="tablist">
+  <button id="tab_tek" type="button" role="tab" class="tab on" aria-selected="true" data-i18n="tab_tek"></button>
+  <button id="tab_tas" type="button" role="tab" class="tab" aria-selected="false" data-i18n="tab_tas"></button>
+</nav>
 
-<main>
+<main id="main_tek">
 <form id="form" autocomplete="off" novalidate>
   <fieldset>
     <legend data-i18n="grp_design"></legend>
@@ -109,7 +113,83 @@
   </details>
 </section>
 </main>
-<footer><span data-i18n="disclaimer_en_tr"></span> · FSR-TN-PLT-04 · P4</footer>
+
+<main id="main_tas" class="tas" hidden>
+<form id="ts_form" autocomplete="off" novalidate>
+  <p class="hint wide" data-i18n="ts_intro"></p>
+  <fieldset>
+    <legend data-i18n="grp_pop"></legend>
+    <label><span data-i18n="sigma_R"></span><input name="sigma_R" value="0.12" inputmode="decimal"></label>
+    <label><span data-i18n="rho"></span><input name="rho" value="1" inputmode="decimal"></label>
+    <label><span data-i18n="pB_T"></span><input name="pB_T" value="0.1" inputmode="decimal"></label>
+    <label><span data-i18n="pB_R"></span><input name="pB_R" value="0.1" inputmode="decimal"></label>
+    <label><span data-i18n="pL"></span><input name="pL" value="0.15" inputmode="decimal"></label>
+    <label><span data-i18n="q"></span><input name="q" value="0" inputmode="decimal"></label>
+  </fieldset>
+  <fieldset>
+    <legend data-i18n="ts_grp_goal"></legend>
+    <label><span data-i18n="ts_guc_choice"></span>
+      <select name="guc_choice">
+        <option value="gmr_1.05" data-i18n="opt_gmr_1.05"></option>
+        <option value="gmr_1.00" data-i18n="opt_gmr_1.00"></option>
+        <option value="gmr" data-i18n="opt_gmr"></option>
+        <option value="delta" data-i18n="opt_delta"></option>
+      </select>
+    </label>
+    <label id="ts_custom_wrap" hidden><span id="ts_custom_label"></span><input name="guc_custom" value="1.05" inputmode="decimal"></label>
+    <label><span data-i18n="ts_hedef_in"></span><input name="hedef" value="80" inputmode="decimal"></label>
+    <p class="hint" data-i18n="ts_t1_note"></p>
+  </fieldset>
+  <fieldset>
+    <legend data-i18n="ts_grp_cand"></legend>
+    <label><span data-i18n="ts_ls"></span><input name="ls" value="2 3 4 5 6"></label>
+    <label><span data-i18n="ts_ns"></span><input name="ns" value="5 8 10 15 20 30"></label>
+    <label><span data-i18n="ts_ms"></span><input name="ms" value="3"></label>
+    <p class="hint" data-i18n="ts_cand_note"></p>
+  </fieldset>
+  <fieldset>
+    <legend data-i18n="grp_mc"></legend>
+    <label><span data-i18n="n_sim"></span><input name="n_sim" value="10000" inputmode="numeric"></label>
+    <label><span data-i18n="seed"></span><input name="seed" value="20261015" inputmode="numeric"></label>
+    <p class="hint" id="ts_info"></p>
+  </fieldset>
+  <div class="actions">
+    <button id="ts_run" type="submit" disabled data-i18n="ts_run"></button>
+    <button id="ts_cancel" type="button" class="ghost" disabled data-i18n="cancel"></button>
+    <button id="ts_live" type="button" class="ghost" hidden data-i18n="run_live_too"></button>
+  </div>
+</form>
+
+<section class="panel" id="ts_panel">
+  <p id="ts_status" role="status" aria-live="polite"></p>
+  <div id="ts_errors" class="errors" hidden></div>
+  <p id="ts_partial" class="warn" hidden></p>
+  <div id="ts_result" hidden>
+    <h2 data-i18n="ts_res_title"></h2>
+    <p class="source" id="ts_source"></p>
+    <p class="hint" id="ts_target"></p>
+    <div class="tablewrap">
+    <table id="ts_sum">
+      <thead><tr><th data-i18n="col_method"></th><th data-i18n="ts_col_rule"></th><th data-i18n="ts_col_design"></th>
+        <th class="num" data-i18n="ts_col_total"></th><th class="num" data-i18n="ts_col_power"></th><th class="num" data-i18n="col_mcse"></th>
+        <th class="num" data-i18n="ts_col_t1"></th><th data-i18n="col_kk38"></th><th data-i18n="ts_col_note"></th></tr></thead>
+      <tbody></tbody>
+    </table>
+    </div>
+    <div id="ts_warnings" class="warnings"></div>
+    <h2 data-i18n="ts_grid_title"></h2>
+    <p class="hint" id="ts_legend"></p>
+    <div id="ts_grids"></div>
+  </div>
+  <div class="actions bottom">
+    <button id="ts_link" type="button" class="ghost" data-i18n="btn_link"></button>
+    <button id="ts_script" type="button" class="ghost" disabled data-i18n="btn_script"></button>
+    <button id="ts_report" type="button" class="ghost" disabled data-i18n="btn_report"></button>
+  </div>
+  <p class="hint" id="ts_link_msg"></p>
+</section>
+</main>
+<footer><span data-i18n="disclaimer_en_tr"></span> · FSR-TN-PLT-04 · FSR-TN-PLT-05 · P5</footer>
 <script type="module" src="app.js"></script>
 </body>
 </html>

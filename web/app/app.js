@@ -10,10 +10,11 @@ import { WEBR_VERSION, TAMPER, verifyFiles, startWebR, plain, fetchBytes } from 
 import { openDb, scenario, neighbours, SQLJS_VERSION } from './hazir.js';
 import { pct, pp, num, anahtar, numExact, SINIRLAR } from './bicim.js';
 import { g1, g2 } from './grafik.js';
+import { R_P5, initTasarim, onLang as tasLang, setReady as tasReady, tasLink } from './tasarim.js';
 
 const Q = new URLSearchParams(location.search);
 const ENGINE = ['sim_run.R', 'invitro_fast.R', 'invitro_grid.R'];                     // pinned
-const PLATFORM = ['platform_input.R', 'platform_hipotez.R', 'platform_export.R'];        // hash recorded
+const PLATFORM = ['platform_input.R', 'platform_hipotez.R', 'platform_export.R', 'platform_tasarim.R'];   // hash recorded
 const N_SIM_MAX = 20000, CELLS_MAX = 8.1e6;            // display only; R enforces (KK-47)
 const Z = 1.6448536269514722;                           // qnorm(0.95) in R (KK-38)
 const ALPHA = 0.05;
@@ -36,6 +37,7 @@ function applyLang() {
   $('#custom_label').textContent = t($('select[name=delta_choice]').value === 'delta' ? 'custom_delta' : 'custom_gmr');
   renderEngine(); updateInfo(); setLayer(layerKey); if (display) render(display); if (state.pre) renderPre(state.pre);
   if (statusKey) setStatus(statusKey, statusCls, statusArg); if (errFn) showErrors(errFn); if (versionHold) showVersionBox();
+  tasLang();
 }
 let statusKey = null, statusCls = '', statusArg = '';
 function setStatus(k, cls = '', arg = '') {
@@ -150,17 +152,21 @@ function ensureWebR() {
   state.webrStarted = true; renderEngine();
   const t0 = performance.now();
   webRStart = (async () => {
-    const w = await startWebR(files, R_WRAPPER);
+    const w = await startWebR(files, R_WRAPPER + R_P5);
     rInfo.r_version = await w.evalRString('R.version.string');
     rInfo.start_ms = Math.round(performance.now() - t0);
     webR = w; webRStart = null; renderEngine(); return w;
   })();
   return webRStart;
 }
-async function callR(code) {
+async function callR(code, env) {
   const w = await ensureWebR();
   const sh = await new w.Shelter();
-  try { return plain(await (await sh.evalR(code)).toJs()); } finally { await sh.purge(); }
+  try { return plain(await (await sh.evalR(code, env ? { env } : undefined)).toJs()); } finally { await sh.purge(); }
+}
+function killWebR() {
+  try { if (webR) webR.close(); } catch (e) { /* gone */ }
+  webR = null; webRStart = null; state.webrStarted = false; renderEngine();
 }
 // R strings for the arguments (GMR -> delta in R, as in P1)
 function rArgs(c) {
@@ -338,8 +344,7 @@ async function run(ev) {
 async function cancel() {
   runToken++;
   $('#cancel').disabled = true;
-  try { if (webR) webR.close(); } catch (e) { /* gone */ }
-  webR = null; webRStart = null; state.webrStarted = false; renderEngine();
+  killWebR();
   setStatus('st_cancelled', 'bad');
   $('#run').disabled = false; $('#script').disabled = false;
 }
@@ -355,9 +360,16 @@ function linkUrl() {
   return u.toString();
 }
 async function copyLink() {
-  const u = linkUrl(); state.link = u;
-  try { await navigator.clipboard.writeText(u); $('#link_msg').textContent = t('link_copied'); }
-  catch (e) { $('#link_msg').textContent = u; }
+  const u = window.__p5.mode === 'tasarim' ? tasLinkUrl() : linkUrl(); state.link = u;
+  const msg = window.__p5.mode === 'tasarim' ? '#ts_link_msg' : '#link_msg';
+  try { await navigator.clipboard.writeText(u); $(msg).textContent = t('link_copied'); }
+  catch (e) { $(msg).textContent = u; }
+}
+function tasLinkUrl() {
+  const u = tasLink(new URL(location.href.split('?')[0]));
+  u.searchParams.set('lang', lang); u.searchParams.set('v', pkgVersion);
+  for (const k of ['webr', 'sqljs']) if (Q.get(k)) u.searchParams.set(k, Q.get(k));
+  return u.toString();
 }
 function parseLink() {
   if (!Q.has('sR')) return;
@@ -417,6 +429,13 @@ async function boot() {
   T = await (await fetch('ceviri.json', { cache: 'no-store' })).json();
   try { const d = new TextDecoder().decode(await fetchBytes('CNKfarmastatr/DESCRIPTION')); const m = d.match(/^Version:\s*(\S+)/m); if (m) pkgVersion = m[1]; } catch (e) { /* source */ }
   parseLink();
+  initTasarim({
+    t, lang: () => lang, callR, hz: () => hz, webrReady: () => !!webR, rVersion: () => rInfo.r_version,
+    files: () => files.map(({ file, pinned, sha256, status }) => ({ file, pinned, sha256, status })),
+    kcell: () => K_CELL, updateKcell: (k) => { if (Number.isFinite(k) && k > 0) { K_CELL = k; updateInfo(); } },
+    codeMsg, cancelWebR: async () => killWebR()
+  }, Q);
+  if (Q.get('mode') === 'tasarim' && Q.has('v') && Q.get('v') !== pkgVersion) { versionHold = true; showVersionBox(); }
   applyLang();
   setStatus('st_verifying');
   [files, hz] = await Promise.all([verifyFiles(ENGINE, PLATFORM), openDb()]);
@@ -429,7 +448,7 @@ async function boot() {
   }
   if (!hz.ok) { const p = document.createElement('p'); p.className = 'warn'; p.dataset.warn = 'db'; p.textContent = t('warn_db_' + hz.reason); $('#layer_info').after(p); }
   setStatus(blocked ? 'st_blocked' : 'st_ready', blocked ? 'bad' : 'ok');
-  $('#run').disabled = blocked; $('#script').disabled = blocked;
+  $('#run').disabled = blocked; $('#script').disabled = blocked; tasReady(!blocked);
   state.ready = true;
   await update();
 }
@@ -439,6 +458,7 @@ $('#form').addEventListener('input', scheduleUpdate);
 $('#cancel').addEventListener('click', cancel);
 $('#lang').addEventListener('click', () => { lang = lang === 'tr' ? 'en' : 'tr'; applyLang(); });
 $('#link').addEventListener('click', copyLink);
+$('#ts_link').addEventListener('click', copyLink);
 $('#json').addEventListener('click', downloadJson);
 $('#script').addEventListener('click', exportScript);
 $('select[name=delta_choice]').addEventListener('change', (e) => {
