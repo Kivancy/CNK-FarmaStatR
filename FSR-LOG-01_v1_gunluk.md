@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.89 · Son güncelleme: 21.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.90 · Son güncelleme: 21.10.2026"
 ---
 
 # Bu belge hakkında
@@ -1695,6 +1695,18 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Sıradaki iş:** P6, platform validasyonu ve yayın (FSR-TN-PLT-01 Tablo 10.1: FSR-VAL-PLT-1, uçtan uca testler, lisans A-6, erişim ve yayın ortamı). İlk adım FSR-TN-PLT-06 v0.1: tasarım ve kabul ölçütleri, kod yazılmadan önce (KK-45 ilkesi).
 - **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** bu günlük.
 
+## G-93 · Platformun bugünkü kullanımı; P6 kapsamına devralınan modellerin arayüzü (KK-59) — 21.10.2026
+
+- **Depo:** G-92 commit edildi; Actions uygun. Proje sahibi: "Daha sonra devam edelim."
+- **Proje sahibinin sorusu:** uygulama bu hâliyle, sunucu R'da açılarak kullanılabilir mi? Claude'un yanıtı: evet (`httpuv::runStaticServer`, `http://127.0.0.1:8000/web/app/`). Sınırlar: webR ve sql.js için internet gerekir, hesaplar tarayıcıda; platform validasyonu (FSR-VAL-PLT-1) P6'da, şimdilik araştırma ve deneme amaçlı; bağlantılar yalnız bu bilgisayarda çalışır (`127.0.0.1`); depo özel, paylaşım P6 ve lisans (A-6) sonrası.
+- **İkinci soru:** ekran yalnız in vitro eşdeğerlik simülasyonu için; kendi veriyle PBE analizi ya da Weibull ile benzerlik nasıl yapılır? Claude'un yanıtı: şimdilik R'da, değiştirilmemiş validasyonlu çekirdeklerle:
+  - PBE: `araclar/pbe_hesapla.R` (`pbe_hesapla()`; CSV sütunları parti, kap, asama, urun, olcum).
+  - Weibull MSD: `calc_msd_weibull()` (`msd_prepare()` ile uzun biçimden; sütunlar Product, Unit, Time, Diss).
+  - Model bağımsız MSD: `calc_msd()`; f2 ve bootstrap f2: `calc_f2_boot()`.
+- **Proje sahibinin kararı (K):** "Arayüzün P6'da olmasını isterim." → **KK-59**. P6'nın kapsamı genişler: devralınan validasyonlu modeller (PBE analizi, model bağımsız MSD, Weibull MSD, f2 ve bootstrap f2) için web arayüzü, platform validasyonu ve yayınla birlikte P6'da. Ayrıntı (ekranlar, rapor, kabul ölçütleri) FSR-TN-PLT-06 v0.1'de, kod yazılmadan önce onaya sunulacak (KK-45 ilkesi).
+- **Sıradaki iş:** proje sahibi devam dediğinde FSR-TN-PLT-06 v0.1 (P6: devralınan modellerin arayüzü, platform validasyonu ve yayın).
+- **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** bu günlük.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -1712,14 +1724,14 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-14 | Tip I uyum ölçütü kararı; teknik not v0.8 (rapor 02) ve Aşama 2 sonuçları; yeniden üretim paketi (G-40) | Tamam: ölçüt (KK-38), v0.8, paket (G-41), Aşama 2 sonuçları v0.9 (G-42); v0.9 onaylandı, hedefli deney ve v0.10 (G-43); 12.10 onay bekliyor; v0.10 onaylandı, v0.11 (G-48) |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
 | A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
-| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0 … P5 kapandı (P4: KK-55, G-82; P5: KK-58, G-92, resmi kabul 18/18 GECTI). P5 (tasarım seçimi ve Word raporu; KK-56): FSR-TN-PLT-05 v0.2 onaylandı (KK-57, G-85); T-1 `platform_tasarim()` tamam, D-1 yeniden üretildi (G-86); T-2 tasarım sekmesi (G-87); T-3 tasarım betiği (G-88); T-4, T-5 Word raporu (G-89); T-6 kabul araçları (G-90); resmi kabul D-1…D-7, R-1…R-11 GECTI (G-91); FSR-TN-PLT-05 v0.3 onay bekliyor. Açık: testthat kümesinin webR'de koşulması. Izgara kontrolleri CI'da (G-72, G-74) |
+| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0 … P5 kapandı (P4: KK-55, G-82; P5: KK-58, G-92, resmi kabul 18/18 GECTI). P6 kapsamı: devralınan modellerin arayüzü + platform validasyonu ve yayın (KK-59, G-93). P5 (tasarım seçimi ve Word raporu; KK-56): FSR-TN-PLT-05 v0.2 onaylandı (KK-57, G-85); T-1 `platform_tasarim()` tamam, D-1 yeniden üretildi (G-86); T-2 tasarım sekmesi (G-87); T-3 tasarım betiği (G-88); T-4, T-5 Word raporu (G-89); T-6 kabul araçları (G-90); resmi kabul D-1…D-7, R-1…R-11 GECTI (G-91); FSR-TN-PLT-05 v0.3 onay bekliyor. Açık: testthat kümesinin webR'de koşulması. Izgara kontrolleri CI'da (G-72, G-74) |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
 
 # 4. Belge ve sürüm dizini
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.89 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.90 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.1 | 1.0 onaylı; beş dosya sabitlendi (G-47). 1.1: TC-S11 (dışa aktarılan betik), onaylandı (KK-53, G-76) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.6 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68) |
@@ -1792,3 +1804,4 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | KK-56 | P5 kapsamı: hedef güç için ℓ, n, m tasarım seçimi ve Word raporu birlikte P5'te | G-84 |
 | KK-57 | FSR-TN-PLT-05 v0.2 onaylandı: P5-K1…P5-K7 hepsi (a); D-1…D-7 ve R-1…R-11 donduruldu | G-85 |
 | KK-58 | FSR-TN-PLT-05 v0.3 onaylandı; P5 kapandı | G-92 |
+| KK-59 | P6 kapsamı: devralınan modeller (PBE analizi, MSD, Weibull MSD, f2 ve bootstrap f2) için web arayüzü P6'da | G-93 |
