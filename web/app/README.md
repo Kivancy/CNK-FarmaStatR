@@ -49,6 +49,17 @@ Adres: `http://127.0.0.1:8000/web/app/` (ilk açılışta Ctrl + F5).
    `source("belgeler/teknik_notlar/FSR-TN-PLT-04_ek/p4_kabul.R", encoding = "UTF-8")`
    (RSQLite gerekir: bir kez `install.packages("RSQLite")`).
 
+### P5 kabul testleri (FSR-TN-PLT-05 Tablo 8.1, D-1 … D-7, R-1 … R-11)
+
+1. `http://127.0.0.1:8000/web/app/kabul5.html` adresini açın, "Testleri başlat"a basın (10–15 dk;
+   sekme önde kalsın). Bitince "p5_kabul.zip indir": raporlar, tasarım betiği ve kayıt tek dosyada.
+2. `p5_kabul.zip` dosyasını açmadan `belgeler/teknik_notlar/FSR-TN-PLT-05_ek/p5/` klasörüne koyun.
+3. Sunucuyu kapatın (Esc) ve depo kökünde:
+   `source("belgeler/teknik_notlar/FSR-TN-PLT-05_ek/p5_kabul.R", encoding = "UTF-8")`
+4. Word'de açılış (R-5): ZIP'in içindeki `raporlar/tek-hazir-1_tr.docx`,
+   `raporlar/tek-canli-C-0.12-1-gmr_1.05_tr.docx` ve `raporlar/T-A1-pB0.1_tr.docx` dosyalarını Word'de
+   açın; onarım uyarısı çıkmamalı.
+
 ## EN
 
 Serve the repository root as for P1 and open `http://127.0.0.1:8000/web/app/`. Scenarios of the
