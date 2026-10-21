@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.92 · Son güncelleme: 21.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.93 · Son güncelleme: 21.10.2026"
 ---
 
 # Bu belge hakkında
@@ -1804,6 +1804,15 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Sıradaki iş:** proje sahibinin FSR-TN-PLT-06 v0.2 ve FSR-VAL-PLT-1 1.1 onayı → P6 kapanışı ve A-15. Ardından yayın kontrol listesi (lisans A-6 ile başlar; proje sahibinde).
 - **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `FSR-TN-PLT-06_v0.2.docx`, `FSR-VAL-PLT-1_v1.1.docx`, bu günlük.
 
+## G-96 · Lisans kararı (A-6) bir süre bekletiliyor — 21.10.2026
+
+- **Depo:** G-95 commit edildi; `dogrulama.yml` (Windows 2.287) yerleştirildi. Actions başarılı.
+- **Proje sahibinin kararı (K):** "lisans kararını bir süreliğine bekletmek istiyorum." → **KK-61**.
+  - Yayın kontrol listesi (`belgeler/yayin/YAYIN_KONTROL_LISTESI.md`) adım 3'te (lisans) durur. Sonraki adımlar lisanstan sonradır: sürüm 1.0.0, depoyu açma, Pages, Zenodo, etiket.
+  - Depo özel kalır; hiçbir şey yayımlanmaz.
+- **Bekleyen:** FSR-TN-PLT-06 v0.2 ve FSR-VAL-PLT-1 1.1 onayı (P6 kapanışı).
+- **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** bu günlük.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -1813,7 +1822,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-4 | Paket testlerinin proje sahibinin bilgisayarında çalıştırılması (`testthat::test_local()`) | Tamam: 12/12, R 4.6.1 (G-06) |
 | A-5 | GitHub deposu (CNK-FarmaStatR) ve bağlantı | Tamam: dosyalar GitHub'da, commit `80556e5` (G-10, G-11) |
 | A-8 | Otomatik doğrulama (GitHub Actions): her push'ta SHA-256 + 491 kontrol | Tamam: ilk koşu Linux + Windows GEÇTİ (G-12) |
-| A-6 | Lisans kararı (MIT / GPL-3 / diğer) | Üniversite görüşü bekleniyor (G-15); platform makalesinden önce |
+| A-6 | Lisans kararı (MIT / GPL-3 / diğer) | Üniversite görüşü bekleniyor (G-15); proje sahibinin isteğiyle bir süre bekletiliyor (KK-61, G-96); yayın kontrol listesi adım 3 |
 | A-7 | Fonksiyon belgeleri (İngilizce) ve PBE köprüsünün pakete alınması | Tamam: PBE köprüsü (G-13), belgeler (G-14) |
 | A-10 | Simülasyon altyapısı: validasyon belgesi FSR-VAL-SIM-1 ve SHA-256 sabitleme; ilk yayın senaryosu | Altyapı v0.1.0 tamam (G-15); ilk senaryo PBE güç / seri başına kap sayısı; teknik not v0.4 (G-31); hızlı motor `invitro_fast.R` (G-32); Aşama 1 koşuldu (G-33) ve nota işlendi (G-34); SAS kontrolü (G-36); sırada Aşama 2; Aşama 2 listesi sabitlendi, 725 senaryo (G-38); motor 0.2.0, Aşama 2 koşuldu (G-40); FSR-VAL-SIM-1 v0.1 taslak (G-44); FSR-VAL-SIM-1 1.0 ve sabitleme tamam (G-47) |
 | A-12 | `invitro_fast.R` ve `invitro_grid.R` için validasyon belgesi (FSR-VAL-SIM-1 kapsamında) ve SHA-256 sabitleme; EMS testi (teknik not 8.5) pakete | Tamam: FSR-VAL-SIM-1 1.0 onaylandı, beş dosya SHA-256 ile sabitlendi (G-47) |
@@ -1828,7 +1837,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.92 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.93 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.1 | 1.0 onaylı; beş dosya sabitlendi (G-47). 1.1: TC-S11 (dışa aktarılan betik), onaylandı (KK-53, G-76) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.7 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68); v0.7: Tablo 8.1 ve 10.1 (KK-56, KK-57, KK-59; G-94), onay P6 kapanışında |
@@ -1905,3 +1914,4 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | KK-58 | FSR-TN-PLT-05 v0.3 onaylandı; P5 kapandı | G-92 |
 | KK-59 | P6 kapsamı: devralınan modeller (PBE analizi, MSD, Weibull MSD, f2 ve bootstrap f2) için web arayüzü P6'da | G-93 |
 | KK-60 | P6 süresince kararlar Claude'a bırakıldı (sormadan ilerleme); geri döndürülemez ya da proje sahibine ait kararlar (lisans, depo açma, DOI, etiket, Pages) yalnız hazırlanır | G-94 |
+| KK-61 | Lisans kararı (A-6) bir süre bekletilir; yayın adımları lisanstan sonra | G-96 |
