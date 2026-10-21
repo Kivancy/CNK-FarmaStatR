@@ -11,6 +11,7 @@ import { openDb, scenario, neighbours, SQLJS_VERSION } from './hazir.js';
 import { pct, pp, num, anahtar, numExact, SINIRLAR } from './bicim.js';
 import { g1, g2 } from './grafik.js';
 import { R_P5, initTasarim, onLang as tasLang, setReady as tasReady, tasLink } from './tasarim.js';
+import { buildReport, TABLE, H2, P, download, stamp } from './rapor.js';
 
 const Q = new URLSearchParams(location.search);
 const ENGINE = ['sim_run.R', 'invitro_fast.R', 'invitro_grid.R'];                     // pinned
@@ -213,7 +214,7 @@ function renderPre(o) {
   const ys = [].concat(o.yontem), cs = [].concat(o.sinif), ms = [].concat(o.metrik);
   $('#hyp_pre').textContent = t('hyp_pre') + ': ' + ys.map((y, i) => `${t('m_' + y)} — ${t('sinif_' + cs[i])} (${t('metrik_' + ms[i])})`).join(' · ');
 }
-function clearResult() { display = null; state.display = null; $('#result').hidden = true; $('#json').disabled = true; }
+function clearResult() { display = null; state.display = null; $('#result').hidden = true; $('#json').disabled = true; reportState(); }
 
 // ---------------------------------------------------------------- tier 2 display
 function showHazir(no) {
@@ -234,51 +235,62 @@ function showHazir(no) {
     source: 'hazir', no, key: s.senaryo_anahtar, rows: rowsM, extra,
     truth: { delta: s.delta, gmr: s.gmr, eta: s.eta, delta_ad: s.delta_ad },
     kosu: { shown: d.shown, main: d.main, sources: d.sources },
-    nb: neighbours(hz.db, s), db: hz.info
+    nb: neighbours(hz.db, s), db: hz.info, form_p: cur && cur.p ? { ...cur.p } : null,
+    form: cur ? formString(cur) : null, link: linkUrl()
   };
   render(display);
   setStatus('st_hazir', 'ok');
 }
 
-// ---------------------------------------------------------------- render (shared by tiers 1 and 2)
-function render(D) {
-  state.display = D;
-  const tb = $('#res_table tbody'); tb.innerHTML = '';
-  for (const r of D.rows) {
-    const tr = document.createElement('tr'); tr.dataset.yontem = r.yontem;
-    const cells = [t('m_' + r.yontem), t('metrik_' + r.metrik), t('sinif_' + r.sinif), pct(r.rate, lang), pp(r.mcse, lang),
-      r.kk38 ? t('kk38_' + r.kk38) : '—'];
-    cells.forEach((v, i) => { const td = document.createElement('td'); td.textContent = v; if (i === 3 || i === 4) td.className = 'num';
-      td.dataset.col = ['yontem', 'metrik', 'sinif', 'oran', 'mcse', 'kk38'][i]; tr.append(td); });
-    tb.append(tr);
-  }
-  // warnings
+// ---------------------------------------------------------------- view (shared by the screen and the report, R-2, R-3)
+// Every text the screen shows for a result is made here once; render() puts it into the page and
+// the Word report (rapor.js) writes the same strings.
+function view(D) {
+  const rows = D.rows.map((r) => ({ yontem: r.yontem, cells: [t('m_' + r.yontem), t('metrik_' + r.metrik), t('sinif_' + r.sinif),
+    pct(r.rate, lang), pp(r.mcse, lang), r.kk38 ? t('kk38_' + r.kk38) : '—'] }));
   const w = [];
   if (D.rows.some((r) => r.sinif === 'H1')) w.push(['warn_power', t('warn_power')]);
   if (D.rows.some((r) => r.yakinlik)) w.push(['warn_near', t('warn_near')]);
   if (D.source === 'hazir') {
-    const k = D.kosu.main, c = cur && cur.p;
+    const k = D.kosu.main, c = D.form_p;
     if (c && (c.n_sim !== D.kosu.shown.n_sim || c.seed !== k.seed)) w.push(['warn_hazir_nsim', t('warn_hazir_nsim')]);
   }
-  const wb = $('#warnings'); wb.innerHTML = '';
-  for (const [k, v] of w) { const p = document.createElement('p'); p.className = 'warn'; p.dataset.warn = k; p.textContent = v; wb.append(p); }
-  // source
+  let source;
   if (D.source === 'hazir') {
     const sh = D.kosu.shown, mn = D.kosu.main;
-    $('#source').textContent = `${t('src_hazir')} · ${t('src_shown')}: ${sh.kosu_id} (n = ${fmtInt(sh.n_sim)}${sh.tur === 'birlesik' ? ' = ' + D.kosu.sources.join(' + ') : ''})` +
+    source = `${t('src_hazir')} · ${t('src_shown')}: ${sh.kosu_id} (n = ${fmtInt(sh.n_sim)}${sh.tur === 'birlesik' ? ' = ' + D.kosu.sources.join(' + ') : ''})` +
       ` · ${t('src_main')}: ${mn.kosu_id} (n = ${fmtInt(mn.n_sim)}, seed ${mn.seed}, ${mn.rng}) · ${t('src_engine')}: ${mn.motor_surumu} · ${t('src_db')} v${D.db.vt_surumu}, SHA-256 ${D.db.sha256.slice(0, 12)}…`;
   } else {
-    $('#source').textContent = `${t('src_canli')} · webR ${WEBR_VERSION} · ${rInfo.r_version} · n = ${fmtInt(D.n_sim)}, seed ${D.seed}, ${D.rng} · ${num(D.elapsed_ms / 1000, 1, lang)} s`;
+    source = `${t('src_canli')} · webR ${WEBR_VERSION} · ${D.r_version} · n = ${fmtInt(D.n_sim)}, seed ${D.seed}, ${D.rng} · ${num(D.elapsed_ms / 1000, 1, lang)} s`;
   }
-  // more
-  const mt = $('#more_table tbody'); mt.innerHTML = '';
-  for (const e of D.extra) {
-    const tr = document.createElement('tr'); tr.dataset.key = e.key;
+  const extra = D.extra.map((e) => {
     let lab = e.diff ? t('diff') + ': ' + e.key.slice(5).split('_ema').join(' − ema').replace(/^fda/, 'FDA').replaceAll('ema_', 'EMA ') : t('x_' + e.key);
     if (D.source === 'hazir' && e.kosu && e.kosu !== D.kosu.shown.kosu_id) lab += ` (${e.kosu}, n = ${fmtInt(D.kosu.main.n_sim)})`;
     const se = e.mcse === null || e.mcse === undefined ? '— (' + t('no_paired_mcse') + ')' : pp(e.mcse, lang) + ' ' + t('pp');
-    [lab, e.diff ? num(100 * e.rate, 2, lang) + ' ' + t('pp') : pct(e.rate, lang) + ' %', se].forEach((v, i) => {
-      const td = document.createElement('td'); td.textContent = v; if (i > 0) td.className = 'num'; tr.append(td); });
+    return { key: e.key, cells: [lab, e.diff ? num(100 * e.rate, 2, lang) + ' ' + t('pp') : pct(e.rate, lang) + ' %', se] };
+  });
+  const truth = `${t('truth')}: δ = ${num(D.truth.delta, 6, lang)} · GMR = ${num(D.truth.gmr, 6, lang)} · η = ${num(D.truth.eta, 6, lang)}`;
+  return { rows, warnings: w, source, extra, truth };
+}
+
+// ---------------------------------------------------------------- render (shared by tiers 1 and 2)
+function render(D) {
+  state.display = D;
+  const V = view(D);
+  const tb = $('#res_table tbody'); tb.innerHTML = '';
+  for (const r of V.rows) {
+    const tr = document.createElement('tr'); tr.dataset.yontem = r.yontem;
+    r.cells.forEach((v, i) => { const td = document.createElement('td'); td.textContent = v; if (i === 3 || i === 4) td.className = 'num';
+      td.dataset.col = ['yontem', 'metrik', 'sinif', 'oran', 'mcse', 'kk38'][i]; tr.append(td); });
+    tb.append(tr);
+  }
+  const wb = $('#warnings'); wb.innerHTML = '';
+  for (const [k, v] of V.warnings) { const p = document.createElement('p'); p.className = 'warn'; p.dataset.warn = k; p.textContent = v; wb.append(p); }
+  $('#source').textContent = V.source;
+  const mt = $('#more_table tbody'); mt.innerHTML = '';
+  for (const e of V.extra) {
+    const tr = document.createElement('tr'); tr.dataset.key = e.key;
+    e.cells.forEach((v, i) => { const td = document.createElement('td'); td.textContent = v; if (i > 0) td.className = 'num'; tr.append(td); });
     mt.append(tr);
   }
   // charts
@@ -286,8 +298,9 @@ function render(D) {
     Z, ALPHA, (p) => pct(p, lang), t);
   $('#g2_head').hidden = D.source !== 'hazir'; $('#g2').hidden = D.source !== 'hazir';
   if (D.source === 'hazir') g2($('#g2'), D.nb, D.no, (p) => pct(p, lang), (x) => num(x, 3, lang).replace(/[,.]?0+$/, ''), t, (m) => t('m_' + m));
-  $('#truth').textContent = `${t('truth')}: δ = ${num(D.truth.delta, 6, lang)} · GMR = ${num(D.truth.gmr, 6, lang)} · η = ${num(D.truth.eta, 6, lang)}`;
+  $('#truth').textContent = V.truth;
   $('#result').hidden = false; $('#json').disabled = false;
+  reportState();
 }
 
 // ---------------------------------------------------------------- tier 1 run, cancel
@@ -296,7 +309,7 @@ async function run(ev) {
   if (versionHold) return;
   const c = readForm(); cur = c;
   const token = ++runToken;
-  $('#run').disabled = true; $('#cancel').disabled = false; $('#script').disabled = true; showErrors(null);
+  $('#run').disabled = true; $('#cancel').disabled = false; $('#script').disabled = true; showErrors(null); reportState();
   setStatus(webR ? 'st_running' : 'st_loading');
   const t0 = performance.now(); const started = new Date();
   let out;
@@ -312,7 +325,7 @@ async function run(ev) {
     out = { ok: false, kind: 'engine', message: String(err && err.message || err) };
   }
   if (token !== runToken) return;
-  $('#cancel').disabled = true; $('#run').disabled = false; $('#script').disabled = false;
+  $('#cancel').disabled = true; $('#run').disabled = false; $('#script').disabled = false; reportState();
   if (!out.ok) {
     setStatus('st_error', 'bad');
     if (out.kind === 'input') {
@@ -327,7 +340,7 @@ async function run(ev) {
   const cells = c.p.l * c.p.n * c.p.m * c.p.n_sim; K_CELL = out.elapsed_ms / 1000 / cells; updateInfo();
   display = {
     source: 'canli', key: out.key, n_sim: r.n_sim, seed: r.seed, rng: out.rng, elapsed_ms: Math.round(out.elapsed_ms),
-    started: started.toISOString(), form: formString(c), inputs: { ...c.p, delta_choice: c.choice, custom: ['gmr', 'delta'].includes(c.choice) ? c.custom : null },
+    started: started.toISOString(), form: formString(c), r_version: rInfo.r_version, link: linkUrl(), inputs: { ...c.p, delta_choice: c.choice, custom: ['gmr', 'delta'].includes(c.choice) ? c.custom : null },
     rows: ys.map((me, i) => ({ yontem: me, metrik: [].concat(out.metrik)[i], sinif: [].concat(out.sinif)[i], rate: r[me + '_pass'],
       mcse: r[me + '_pass_mcse'], kk38: [].concat(out.kk38)[i] === null || [].concat(out.kk38)[i] === 'NA' ? null : [].concat(out.kk38)[i], yakinlik: !![].concat(out.yakinlik)[i] })),
     extra: [
@@ -346,7 +359,7 @@ async function cancel() {
   $('#cancel').disabled = true;
   killWebR();
   setStatus('st_cancelled', 'bad');
-  $('#run').disabled = false; $('#script').disabled = false;
+  $('#run').disabled = false; $('#script').disabled = false; reportState();
 }
 
 // ---------------------------------------------------------------- bottom buttons
@@ -386,6 +399,61 @@ function showVersionBox() {
   const btn = b.querySelector('button'); btn.textContent = t('ver_continue');
   btn.addEventListener('click', () => { versionHold = false; b.hidden = true; scheduleUpdate(); });
 }
+// ---------------------------------------------------------------- Word report (P5, T-4/T-5)
+// Same strings as the screen (view(D)); key values echo the canonical key written by R.
+export function keyParams(key) {
+  return Object.fromEntries(key.split('|').map((kv) => { const i = kv.indexOf('='); return [kv.slice(0, i), kv.slice(i + 1)]; }));
+}
+const decTxt = (s) => (lang === 'tr' ? String(s).replace('.', ',') : String(s));
+function paramRows(kp, extra = []) {
+  const lab = { sigma_R: 'sigma_R', rho: 'rho', pB_T: 'pB_T', pB_R: 'pB_R', pL: 'pL', q: 'q', l: 'l', n: 'n', m: 'm' };
+  const rows = Object.entries(lab).filter(([k]) => k in kp).map(([k, l]) => [t(l), decTxt(kp[k])]);
+  if ('delta' in kp) rows.push([t('delta_choice'), /^[a-z]/.test(kp.delta) ? t('opt_' + kp.delta) : 'δ = ' + decTxt(kp.delta)]);
+  return rows.concat(extra);
+}
+export function reportCommon(kind) {
+  return { kind, t, lang, created: new Date().toISOString().replace('T', ' ').slice(0, 19) + ' UTC',
+           header: `CNK-FarmaStatR · ${t('rp_title_' + kind)} · CNKfarmastatr ${pkgVersion}`,
+           disclaimer_tr: T.tr.disclaimer, disclaimer_en: T.en.disclaimer };
+}
+function fileRows(fs) { return fs.map((e) => [e.file, e.pinned ? t('rp_yes') : t('recorded'), e.sha256 || '', e.status === 'ok' ? '✓' : '✗ ' + t(e.status)]); }
+function reportTek(D) {
+  const V = view(D), kp = keyParams(D.key), R = reportCommon('tek');
+  if (D.source === 'hazir') {
+    const sh = D.kosu.shown, mn = D.kosu.main;
+    R.identity = [[t('rp_scen_key'), D.key], [t('rp_scen_no'), String(D.no)],
+      [t('src_shown'), sh.kosu_id + (sh.tur === 'birlesik' ? ' = ' + D.kosu.sources.join(' + ') : '')], [t('src_main'), mn.kosu_id]];
+    R.versions = [[t('rp_pkg'), pkgVersion], [t('src_engine'), mn.motor_surumu], [t('rp_engine_r'), mn.r_surumu || '—'],
+      [t('src_db'), `v${D.db.vt_surumu} · SHA-256 ${D.db.sha256}`], ['sql.js', D.db.sqljs]];
+    R.files = null;
+    R.params = paramRows(kp, [[t('n_sim'), fmtInt(sh.n_sim)], [t('seed'), String(mn.seed)], ['RNG', mn.rng]]);
+  } else {
+    R.identity = [[t('rp_run_key'), D.key], [t('rp_started'), D.started], [t('rp_elapsed'), num(D.elapsed_ms / 1000, 1, lang) + ' s']];
+    R.versions = [[t('rp_pkg'), pkgVersion], ['webR', WEBR_VERSION], ['R', D.r_version]];
+    R.files = fileRows(D.files);
+    R.params = paramRows(kp, [[t('n_sim'), fmtInt(D.n_sim)], [t('seed'), String(D.seed)], ['RNG', D.rng]]);
+  }
+  R.source = V.source;
+  R.result = [TABLE([[t('col_method'), t('col_metric'), t('col_class'), t('col_rate'), t('col_mcse'), t('col_kk38')], ...V.rows.map((r) => r.cells)], [3, 4]),
+    H2(t('more_title')), TABLE([[t('rp_measure'), t('rp_value'), 'MCSE'], ...V.extra.map((e) => e.cells)], [1, 2]), P(V.truth)];
+  R.warnings = V.warnings.map((w) => w[1]);
+  R.link = D.link;
+  return R;
+}
+state.makeReport = () => makeReport();
+function makeReport() {
+  if (!display) return null;
+  const t0 = performance.now();
+  const bytes = buildReport(reportTek(display));
+  const out = { bytes, name: `farmastatr_rapor_${display.source}_${stamp()}.docx`, ms: performance.now() - t0 };
+  state.report = out; return out;
+}
+function reportState() {
+  const ok = !!display && display.form === formString(readForm()) && $('#cancel').disabled && !versionHold;
+  $('#report').disabled = !ok;
+}
+function downloadReport() { if ($('#report').disabled) return; const r = makeReport(); if (r) download(r.bytes, r.name); }
+
 function downloadJson() {
   if (!display) return;
   const rec = { platform: 'CNK-FarmaStatR', document: 'FSR-TN-PLT-04', disclaimer: T.en.disclaimer, disclaimer_tr: T.tr.disclaimer,
@@ -433,7 +501,8 @@ async function boot() {
     t, lang: () => lang, callR, hz: () => hz, webrReady: () => !!webR, rVersion: () => rInfo.r_version,
     files: () => files.map(({ file, pinned, sha256, status }) => ({ file, pinned, sha256, status })),
     kcell: () => K_CELL, updateKcell: (k) => { if (Number.isFinite(k) && k > 0) { K_CELL = k; updateInfo(); } },
-    codeMsg, cancelWebR: async () => killWebR(), pkgVersion: () => pkgVersion
+    codeMsg, cancelWebR: async () => killWebR(), pkgVersion: () => pkgVersion, reportCommon, fileRows, decTxt,
+    webrVersion: () => WEBR_VERSION, tasLinkUrl: () => tasLinkUrl(), buildReport, TABLE, H2, P, download, stamp
   }, Q);
   if (Q.get('mode') === 'tasarim' && Q.has('v') && Q.get('v') !== pkgVersion) { versionHold = true; showVersionBox(); }
   applyLang();
@@ -460,6 +529,8 @@ $('#lang').addEventListener('click', () => { lang = lang === 'tr' ? 'en' : 'tr';
 $('#link').addEventListener('click', copyLink);
 $('#ts_link').addEventListener('click', copyLink);
 $('#json').addEventListener('click', downloadJson);
+$('#report').addEventListener('click', downloadReport);
+$('#form').addEventListener('input', () => setTimeout(reportState, 0));
 $('#script').addEventListener('click', exportScript);
 $('select[name=delta_choice]').addEventListener('change', (e) => {
   $('#custom_wrap').hidden = !['gmr', 'delta'].includes(e.target.value);

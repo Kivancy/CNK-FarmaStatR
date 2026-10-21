@@ -35,6 +35,10 @@ Adres: `http://127.0.0.1:8000/web/app/` (ilk açılışta Ctrl + F5).
   veri tabanında varsa (aynı nsim ve seed) sayılar oradan gelir, kuralları yine R uygular (webR
   açılır); değilse canlı koşulur; toplam iş 6 × 10⁷ hücreyi aşarsa tasarım betiği önerilir
   (T-3). "Canlı da koş" hazır tabloyu ortak seed ile yeniden üretir.
+- **Word raporu (P5-K1 … P5-K4):** iki sekmede de "Rapor (.docx)" düğmesi, gösterilen sonucun
+  raporunu tarayıcıda üretir (`rapor.js`; kütüphane yok, ağ isteği yok). Rapor ekrandaki metinlerin
+  aynısını içerir (aynı biçimlendirme fonksiyonu), ekranın dilindedir; beyan her sayfada iki dilde.
+  Sonuç yokken, girdi değişince ya da koşu sürerken düğme pasiftir.
 
 ### Kabul testleri (FSR-TN-PLT-04 Tablo 9.1, U-1 … U-12)
 

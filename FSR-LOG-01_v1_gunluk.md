@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.85 · Son güncelleme: 20.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.86 · Son güncelleme: 20.10.2026"
 ---
 
 # Bu belge hakkında
@@ -1628,6 +1628,23 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `CNKfarmastatr/R/platform_tasarim.R`, `man/platform_tasarim.Rd`, `tests/testthat/test-platform-tasarim.R`, `web/app/tasarim.js`, `app.js`, `ceviri.json`; bu günlük.
 - **Sıradaki iş:** T-4 ve T-5, Word raporu (tek senaryo ve tasarım seçimi).
 
+## G-89 · P5 T-4, T-5: Word raporu — 20.10.2026
+
+- **Depo:** G-88 commit edildi; `dogrulama.yml` yerleştirildi (proje sahibi: "commit tamam"). Actions sonucu bildirilmedi; bir sonraki commit'le birlikte istenecek.
+- **T-5 · DOCX üretici (`web/app/rapor.js`, yeni; P5-K2):** kütüphanesiz; sıkıştırmasız ZIP (CRC-32) ve sabit OOXML parçaları: içerik türleri, ilişkiler, `document.xml`, `styles.xml`, `settings.xml` (Word uyumluluk kipi 15), üst bilgi, alt bilgi (beyan TR + EN ve sayfa numarası). ZIP tarihleri sabit (1980-01-01); belge özelliklerinde tarih yok. İndirme, tarayıcıda üretilen baytların nesne URL'siyle; ağ isteği yok.
+- **T-4 · rapor içeriği (FSR-TN-PLT-05 Tablo 4.1):** başlık ve beyan (iki dil), oluşturulma zamanı (tek satır), 1 kimlik, 2 sürümler ve bütünlük (canlıda 13 dosyanın SHA-256 tablosu; hazırda veri tabanı sürümü ve SHA-256), 3 parametreler (R'nin kanonik anahtarından), 4 sonucun kaynağı, 5 sonuç, 6 uyarılar, 7 yöntem kaynakları (Tablo 4.2 metni, çeviri dosyasında), 8 doğrulama atfı, 9 bağlantı. Tasarım raporunda sonuç: hedef satırı, Kural A/B özeti, yöntem başına ℓ × n tabloları, ek: koşu anahtarları.
+- **R = ekran = Word (P5-K1):** `app.js`'te `view(D)`, `tasarim.js`'te `tview(D)`: sonucun bütün metinleri bir kez üretilir; ekran ve rapor aynı dizeleri kullanır (sayılar `bicim.js` ile). Ekranın görünümü değişmedi.
+- **Düğme durumu (R-9):** "Rapor (.docx)" sonuç gösterilirken ve form gösterilen sonuçla aynıyken etkin; koşu sürerken, iptal ve hatadan sonra, girdi değişince pasif.
+- **Çeviri:** 42 yeni anahtar (TR = EN = 250); "Rapor (.docx; P5)" etiketi "Rapor (.docx)" oldu. `README.md` güncellendi.
+- **Kuru denemeler (Claude, kapsayıcı; Playwright, Chromium):**
+  - Raporlar: tek senaryo hazır (2 sayfa) ve canlı (3 sayfa), tasarım hazır TR ve EN (4 sayfa). Her biri 30–57 KB; üretim 1,4–29 ms; rapor üretilirken ağ isteği 0.
+  - ZIP bütünlüğü (Python `zipfile`), python-docx ve LibreOffice ile açıldı; beyan ilk sayfada ve her sayfanın alt bilgisinde iki dilde.
+  - Aynı sonuçtan iki rapor yalnız oluşturma zamanı paragrafında farklı (R-7).
+  - Tasarım raporu: girdi değişince düğme pasif.
+- **Gerileme (R-11'in kuru denemesi):** P4 kabul sayfası (U-1…U-12) yeni kodla geçici bir kopyada yeniden koşuldu ve `p4_kabul.R` ile karşılaştırıldı: 12/12 GECTI (çeviri anahtarları 250 = 250). Depodaki resmi P4 çıktıları değiştirilmedi.
+- **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** `web/app/rapor.js`, `app.js`, `tasarim.js`, `ceviri.json`, `README.md`; bu günlük.
+- **Sıradaki iş:** T-6, P5 kabul aracı (kabul sayfasının P5 adımları ve `p5_kabul.R`); ardından resmi kabul (D-1…D-7, R-1…R-11) ve FSR-TN-PLT-05 v0.3.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -1645,14 +1662,14 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-14 | Tip I uyum ölçütü kararı; teknik not v0.8 (rapor 02) ve Aşama 2 sonuçları; yeniden üretim paketi (G-40) | Tamam: ölçüt (KK-38), v0.8, paket (G-41), Aşama 2 sonuçları v0.9 (G-42); v0.9 onaylandı, hedefli deney ve v0.10 (G-43); 12.10 onay bekliyor; v0.10 onaylandı, v0.11 (G-48) |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
 | A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
-| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0, P1, P2, P3 ve P4 kapandı (KK-55, G-82; P4 resmi kabul 12/12 GECTI, G-81). P5 (tasarım seçimi ve Word raporu; KK-56): FSR-TN-PLT-05 v0.2 onaylandı (KK-57, G-85); T-1 `platform_tasarim()` tamam, D-1 yeniden üretildi (G-86); T-2 tasarım sekmesi (G-87); T-3 tasarım betiği (G-88). Açık: testthat kümesinin webR'de koşulması. Izgara kontrolleri CI'da (G-72, G-74) |
+| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0, P1, P2, P3 ve P4 kapandı (KK-55, G-82; P4 resmi kabul 12/12 GECTI, G-81). P5 (tasarım seçimi ve Word raporu; KK-56): FSR-TN-PLT-05 v0.2 onaylandı (KK-57, G-85); T-1 `platform_tasarim()` tamam, D-1 yeniden üretildi (G-86); T-2 tasarım sekmesi (G-87); T-3 tasarım betiği (G-88); T-4, T-5 Word raporu (G-89). Açık: testthat kümesinin webR'de koşulması. Izgara kontrolleri CI'da (G-72, G-74) |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
 
 # 4. Belge ve sürüm dizini
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.85 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.86 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.1 | 1.0 onaylı; beş dosya sabitlendi (G-47). 1.1: TC-S11 (dışa aktarılan betik), onaylandı (KK-53, G-76) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.6 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68) |

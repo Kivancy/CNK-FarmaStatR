@@ -121,10 +121,10 @@ function info() {
 async function hesapla(ev, forceLive = false) {
   if (ev) ev.preventDefault();
   const c = readTas(); const my = ++token;
-  showErrors(null); $('#ts_result').hidden = true; $('#ts_live').hidden = true; last = null; partial = null; state.result = null; state.partial = null;
+  showErrors(null); $('#ts_result').hidden = true; $('#ts_live').hidden = true; $('#ts_report').disabled = true; last = null; partial = null; state.result = null; state.partial = null;
   $('#ts_run').disabled = true; $('#ts_cancel').disabled = false; $('#ts_live').disabled = true;
   setStatus(A.webrReady() ? 'ts_st_plan' : 'st_loading');
-  const end = () => { if (my === token) { $('#ts_run').disabled = false; $('#ts_cancel').disabled = true; $('#ts_live').disabled = false; } };
+  const end = () => { if (my === token) { $('#ts_run').disabled = false; $('#ts_cancel').disabled = true; $('#ts_live').disabled = false; reportState(); } };
   try {
     const hedef = c.hedef / 100;
     const plan = await A.callR(`.p5_plan(list(sigma_R = ${rNum(c.pop.sigma_R)}, rho = ${rNum(c.pop.rho)}, pB_T = ${rNum(c.pop.pB_T)}, pB_R = ${rNum(c.pop.pB_R)}, pL = ${rNum(c.pop.pL)}, q = ${rNum(c.pop.q)}), ` +
@@ -186,7 +186,8 @@ async function hesapla(ev, forceLive = false) {
     last = {
       source, c, hedef, plan: P, tablo: arr(tab), secim: arr(sec), runs,
       elapsed_ms: Math.round(performance.now() - t0), started: new Date().toISOString(),
-      r_version: A.rVersion(), files: A.files()
+      r_version: A.rVersion(), files: A.files(), webr_version: A.webrVersion(), db: hz && hz.ok ? hz.info : null,
+      link: A.tasLinkUrl()
     };
     if (source === 'canli' && P.n_kosu) A.updateKcell(last.elapsed_ms / 1000 / (plan.toplam || 1));
     partial = null; state.partial = null; state.result = last;
@@ -203,7 +204,7 @@ async function iptal() {
   token++;
   $('#ts_cancel').disabled = true;
   await A.cancelWebR();
-  $('#ts_run').disabled = false;
+  $('#ts_run').disabled = false; reportState();
   setStatus('ts_st_cancelled', 'bad');
   if (partial && partial.done > 0) renderPartial();
 }
@@ -238,70 +239,88 @@ const td = (txt, cls) => { const e = document.createElement('td'); e.textContent
 const th = (txt) => { const e = document.createElement('th'); e.textContent = txt; return e; };
 function k38sym(lab) { return lab === 'nominali_asiyor' ? '!' : lab === 'ayirt_edilemiyor' ? '†' : ''; }
 
-function render() {
-  const D = last; if (!D) return;
-  $('#ts_result').hidden = false; $('#ts_partial').hidden = true;
+// view: every text of a design result, made once for the screen and the report (R-2, R-3)
+function tview(D) {
   const P = D.plan, T = D.tablo, S = D.secim, lg = L();
-  // source line
+  let source;
   if (D.source === 'hazir') {
     const k = D.runs[0];
-    $('#ts_source').textContent = `${t('src_hazir')} · ${t('src_main')}: ${D.runs.map((r) => r.kosu_id).join(', ')} (n = ${fmtInt(k.n_sim)}, seed ${k.seed}, ${k.rng}) · ${t('src_engine')}: ${k.motor_surumu} · ${t('src_db')} v${A.hz().info.vt_surumu}, SHA-256 ${A.hz().info.sha256.slice(0, 12)}…`;
+    source = `${t('src_hazir')} · ${t('src_main')}: ${D.runs.map((r) => r.kosu_id).join(', ')} (n = ${fmtInt(k.n_sim)}, seed ${k.seed}, ${k.rng}) · ${t('src_engine')}: ${k.motor_surumu} · ${t('src_db')} v${D.db.vt_surumu}, SHA-256 ${D.db.sha256.slice(0, 12)}…`;
   } else {
-    $('#ts_source').textContent = `${t('src_canli')} · ${D.r_version} · n = ${fmtInt(D.c.n_sim)}, seed ${D.c.seed}, ${P.rng} · ${fmtInt(P.n_kosu)} ${t('ts_runs')} · ${num(D.elapsed_ms / 1000, 1, lg)} s`;
+    source = `${t('src_canli')} · ${D.r_version} · n = ${fmtInt(D.c.n_sim)}, seed ${D.c.seed}, ${P.rng} · ${fmtInt(P.n_kosu)} ${t('ts_runs')} · ${num(D.elapsed_ms / 1000, 1, lg)} s`;
   }
   const gtxt = D.c.guc === 'gmr' || D.c.guc === 'delta' ? `GMR = ${num(P.gmr, 4, lg)}` : t('opt_' + D.c.guc);
-  $('#ts_target').textContent = `${t('ts_power_at')}: ${gtxt} · ${t('ts_t1_at')} · ${t('ts_hedef')}: %${num(100 * D.hedef, 1, lg)} · ${t('ts_cand')}: ℓ {${D.c.l.join(', ')}} × n {${D.c.n.join(', ')}} × m {${D.c.m.join(', ')}}`;
-  // summary
-  const sb = $('#ts_sum tbody'); sb.innerHTML = '';
-  for (let i = 0; i < S.yontem.length; i++) {
-    const tr = document.createElement('tr'); tr.dataset.yontem = S.yontem[i]; tr.dataset.kural = S.kural[i];
-    tr.append(td(t('m_' + S.yontem[i])), td(t('ts_rule_' + S.kural[i])));
-    if (S.var[i]) {
-      tr.append(td(`${S.l[i]} × ${S.n[i]} × ${S.m[i]}`), td(fmtInt(S.toplam[i]), 'num'), td(pct(S.guc[i], lg), 'num'), td(pp(S.guc_mcse[i], lg), 'num'),
-        td(S.t1[i] === null || Number.isNaN(S.t1[i]) ? '—' : pct(S.t1[i], lg), 'num'), td(S.t1_etiket[i] ? t('kk38_' + S.t1_etiket[i]) : '—'),
-        td(S.esik_yakin[i] ? t('ts_near') : ''));
-    } else {
-      const c = td(t('ts_none') + ' — ' + t('ts_why_' + S.neden[i])); c.colSpan = 7; tr.append(c);
-    }
-    sb.append(tr);
-  }
-  // warnings
+  const target = `${t('ts_power_at')}: ${gtxt} · ${t('ts_t1_at')} · ${t('ts_hedef')}: %${num(100 * D.hedef, 1, lg)} · ${t('ts_cand')}: ℓ {${D.c.l.join(', ')}} × n {${D.c.n.join(', ')}} × m {${D.c.m.join(', ')}}`;
+  const sum = S.yontem.map((me, i) => ({
+    yontem: me, kural: S.kural[i], var: S.var[i],
+    cells: S.var[i]
+      ? [t('m_' + me), t('ts_rule_' + S.kural[i]), `${S.l[i]} × ${S.n[i]} × ${S.m[i]}`, fmtInt(S.toplam[i]), pct(S.guc[i], lg), pp(S.guc_mcse[i], lg),
+        S.t1[i] === null || Number.isNaN(S.t1[i]) ? '—' : pct(S.t1[i], lg), S.t1_etiket[i] ? t('kk38_' + S.t1_etiket[i]) : '—', S.esik_yakin[i] ? t('ts_near') : '']
+      : [t('m_' + me), t('ts_rule_' + S.kural[i]), t('ts_none') + ' — ' + t('ts_why_' + S.neden[i])]
+  }));
   const w = [['ts_w_cand', t('ts_w_cand')], ['warn_power', t('warn_power')]];
   if (P.notlar.includes('fda_delta0_undefined')) w.push(['ts_w_delta0', t('ts_w_delta0')]);
   const nonH1 = P.yontem.filter((me, i) => P.sinif[i] !== 'H1');
   if (nonH1.length) w.push(['ts_w_h1', t('ts_w_h1') + ' ' + nonH1.map((me) => t('m_' + me)).join(', ')]);
   if (S.esik_yakin.some((x) => x)) w.push(['ts_w_near', t('ts_w_near')]);
-  const wb = $('#ts_warnings'); wb.innerHTML = '';
-  for (const [k, v] of w) { const p = document.createElement('p'); p.className = 'warn'; p.dataset.warn = k; p.textContent = v; wb.append(p); }
-  // per method grids
-  const host = $('#ts_grids'); host.innerHTML = '';
+  const grids = [];
   for (const me of METHODS) {
     const idx = T.yontem.map((y, i) => (y === me ? i : -1)).filter((i) => i >= 0);
-    const h = document.createElement('h3'); h.textContent = `${t('m_' + me)} · ${t('metrik_' + T.guc_metrik[idx[0]])} (${t('sinif_' + T.guc_sinif[idx[0]])})`; host.append(h);
-    const ms = [...new Set(idx.map((i) => T.m[i]))];
-    for (const mv of ms) {
-      const wrap = document.createElement('div'); wrap.className = 'tablewrap';
-      const tb = document.createElement('table'); tb.className = 'grid'; tb.dataset.yontem = me; tb.dataset.m = mv;
+    const head = `${t('m_' + me)} · ${t('metrik_' + T.guc_metrik[idx[0]])} (${t('sinif_' + T.guc_sinif[idx[0]])})`;
+    const tables = [];
+    for (const mv of [...new Set(idx.map((i) => T.m[i]))]) {
       const ns = [...new Set(idx.filter((i) => T.m[i] === mv).map((i) => T.n[i]))].sort((a, b) => a - b);
       const ls = [...new Set(idx.filter((i) => T.m[i] === mv).map((i) => T.l[i]))].sort((a, b) => a - b);
-      const hr = document.createElement('tr'); hr.append(th(`m = ${mv} · ℓ \\ n`)); ns.forEach((n) => hr.append(th(String(n))));
+      const rows = ls.map((l) => ({ l, cells: ns.map((n) => {
+        const i = idx.find((j) => T.l[j] === l && T.n[j] === n && T.m[j] === mv);
+        if (i === undefined) return { text: ['—'] };
+        const a = S.yontem.some((y, j) => y === me && S.kural[j] === 'A' && S.var[j] && S.l[j] === l && S.n[j] === n && S.m[j] === mv);
+        const b = S.yontem.some((y, j) => y === me && S.kural[j] === 'B' && S.var[j] && S.l[j] === l && S.n[j] === n && S.m[j] === mv);
+        const g = pct(T.guc[i], lg) + (a ? ' A' : '') + (b ? ' B' : '') + (T.esik_yakin[i] ? ' ≈' : '');
+        const s2 = `± ${pp(T.guc_mcse[i], lg)}` + (T.t1[i] === null || Number.isNaN(T.t1[i]) ? '' : ` · I ${pct(T.t1[i], lg)}${k38sym(T.t1_etiket[i])}`);
+        return { i, l, n, m: mv, a, b, text: [g, s2] };
+      }) }));
+      tables.push({ m: mv, head: [`m = ${mv} · ℓ \\ n`, ...ns.map(String)], rows });
+    }
+    grids.push({ yontem: me, head, tables });
+  }
+  return { source, target, sum, warnings: w, grids, legend: t('ts_legend') };
+}
+
+function render() {
+  const D = last; if (!D) return;
+  $('#ts_result').hidden = false; $('#ts_partial').hidden = true;
+  const T = D.tablo, V = tview(D);
+  $('#ts_source').textContent = V.source;
+  $('#ts_target').textContent = V.target;
+  const sb = $('#ts_sum tbody'); sb.innerHTML = '';
+  for (const r of V.sum) {
+    const tr = document.createElement('tr'); tr.dataset.yontem = r.yontem; tr.dataset.kural = r.kural;
+    r.cells.forEach((v, k) => { const c = td(v, r.var && k >= 3 && k <= 6 ? 'num' : ''); if (!r.var && k === 2) c.colSpan = 7; tr.append(c); });
+    sb.append(tr);
+  }
+  const wb = $('#ts_warnings'); wb.innerHTML = '';
+  for (const [k, v] of V.warnings) { const p = document.createElement('p'); p.className = 'warn'; p.dataset.warn = k; p.textContent = v; wb.append(p); }
+  const host = $('#ts_grids'); host.innerHTML = '';
+  for (const G of V.grids) {
+    const h = document.createElement('h3'); h.textContent = G.head; host.append(h);
+    for (const tbx of G.tables) {
+      const wrap = document.createElement('div'); wrap.className = 'tablewrap';
+      const tb = document.createElement('table'); tb.className = 'grid'; tb.dataset.yontem = G.yontem; tb.dataset.m = tbx.m;
+      const hr = document.createElement('tr'); tbx.head.forEach((x) => hr.append(th(x)));
       const thead = document.createElement('thead'); thead.append(hr); tb.append(thead);
       const tbody = document.createElement('tbody');
-      for (const l of ls) {
-        const tr = document.createElement('tr'); tr.append(th(String(l)));
-        for (const n of ns) {
-          const i = idx.find((j) => T.l[j] === l && T.n[j] === n && T.m[j] === mv);
+      for (const row of tbx.rows) {
+        const tr = document.createElement('tr'); tr.append(th(String(row.l)));
+        for (const cl of row.cells) {
           const c = document.createElement('td'); c.className = 'num cell';
-          if (i === undefined) { c.textContent = '—'; tr.append(c); continue; }
-          const a = S.yontem.findIndex((y, j) => y === me && S.kural[j] === 'A' && S.var[j] && S.l[j] === l && S.n[j] === n && S.m[j] === mv);
-          const b = S.yontem.findIndex((y, j) => y === me && S.kural[j] === 'B' && S.var[j] && S.l[j] === l && S.n[j] === n && S.m[j] === mv);
+          if (cl.i === undefined) { c.textContent = cl.text[0]; tr.append(c); continue; }
+          const i = cl.i;
           if (T.hedef_ok[i]) c.classList.add('ok'); if (T.esik_yakin[i]) c.classList.add('near');
-          if (a >= 0) c.classList.add('selA'); if (b >= 0) c.classList.add('selB');
-          c.dataset.l = l; c.dataset.n = n; c.dataset.m = mv; c.dataset.guc = String(T.guc[i]); c.dataset.t1 = String(T.t1[i]);
-          const g = document.createElement('div'); g.className = 'g';
-          g.textContent = pct(T.guc[i], lg) + (a >= 0 ? ' A' : '') + (b >= 0 ? ' B' : '') + (T.esik_yakin[i] ? ' ≈' : '');
-          const s2 = document.createElement('div'); s2.className = 's';
-          s2.textContent = `± ${pp(T.guc_mcse[i], lg)}` + (T.t1[i] === null || Number.isNaN(T.t1[i]) ? '' : ` · I ${pct(T.t1[i], lg)}${k38sym(T.t1_etiket[i])}`);
+          if (cl.a) c.classList.add('selA'); if (cl.b) c.classList.add('selB');
+          c.dataset.l = cl.l; c.dataset.n = cl.n; c.dataset.m = cl.m; c.dataset.guc = String(T.guc[i]); c.dataset.t1 = String(T.t1[i]);
+          const g = document.createElement('div'); g.className = 'g'; g.textContent = cl.text[0];
+          const s2 = document.createElement('div'); s2.className = 's'; s2.textContent = cl.text[1];
           c.append(g, s2); tr.append(c);
         }
         tbody.append(tr);
@@ -309,8 +328,54 @@ function render() {
       tb.append(tbody); wrap.append(tb); host.append(wrap);
     }
   }
-  $('#ts_legend').textContent = t('ts_legend');
+  $('#ts_legend').textContent = V.legend;
+  reportState();
 }
+
+// ---------------------------------------------------------------- Word report (T-4, T-5)
+function reportTas(D) {
+  const V = tview(D), R = A.reportCommon('tasarim'), lg = L(), P = D.plan;
+  if (D.source === 'hazir') {
+    const k = D.runs[0];
+    R.identity = [[t('rp_runs_used'), D.runs.map((r) => r.kosu_id).join(', ')], [t('rp_n_runs'), fmtInt(P.n_kosu)]];
+    R.versions = [[t('rp_pkg'), A.pkgVersion()], [t('src_engine'), k.motor_surumu], [t('rp_engine_r'), k.r_surumu || '—'],
+      [t('src_db'), `v${D.db.vt_surumu} · SHA-256 ${D.db.sha256}`], ['webR', D.webr_version], ['R', D.r_version]];
+    R.files = A.fileRows(D.files);
+  } else {
+    R.identity = [[t('rp_n_runs'), fmtInt(P.n_kosu)], [t('rp_started'), D.started], [t('rp_elapsed'), num(D.elapsed_ms / 1000, 1, lg) + ' s']];
+    R.versions = [[t('rp_pkg'), A.pkgVersion()], ['webR', D.webr_version], ['R', D.r_version]];
+    R.files = A.fileRows(D.files);
+  }
+  const gtxt = D.c.guc === 'gmr' || D.c.guc === 'delta' ? `GMR = ${num(P.gmr, 4, lg)}` : t('opt_' + D.c.guc);
+  R.params = [...['sigma_R', 'rho', 'pB_T', 'pB_R', 'pL', 'q'].map((k) => [t(k), A.decTxt(numExact(D.c.pop[k]))]),
+    [t('ts_guc_choice'), gtxt], [t('ts_hedef_in'), A.decTxt(numExact(D.c.hedef))],
+    [t('ts_ls'), D.c.l.join(' ')], [t('ts_ns'), D.c.n.join(' ')], [t('ts_ms'), D.c.m.join(' ')],
+    [t('n_sim'), fmtInt(D.c.n_sim)], [t('seed'), String(D.c.seed)], ['RNG', P.rng]];
+  R.source = V.source;
+  const hd = [t('col_method'), t('ts_col_rule'), t('ts_col_design'), t('ts_col_total'), t('ts_col_power'), t('col_mcse'), t('ts_col_t1'), t('col_kk38'), t('ts_col_note')];
+  R.result = [A.P(V.target), A.TABLE([hd, ...V.sum.map((r) => (r.var ? r.cells : [r.cells[0], r.cells[1], r.cells[2], '', '', '', '', '', '']))], [3, 4, 5, 6], true),
+    A.H2(t('ts_grid_title')), A.P(V.legend, { sz: 17 })];
+  for (const G of V.grids) {
+    R.result.push(A.H2(G.head));
+    for (const tbx of G.tables) R.result.push(A.TABLE([tbx.head, ...tbx.rows.map((r) => [String(r.l), ...r.cells.map((c) => c.text)])], tbx.head.map((_, k) => k), true));
+  }
+  R.result.push(A.H2(t('rp_keys')), A.TABLE([['#', t('rp_run_key')], ...P.anahtar.map((k, i) => [String(P.kosu_no[i]), k])], [], true));
+  R.warnings = V.warnings.map((w) => w[1]);
+  R.link = D.link;
+  return R;
+}
+export function makeTasReport() {
+  if (!last) return null;
+  const t0 = performance.now();
+  const bytes = A.buildReport(reportTas(last));
+  const out = { bytes, name: `farmastatr_rapor_tasarim_${last.source}_${A.stamp()}.docx`, ms: performance.now() - t0 };
+  state.report = out; return out;
+}
+function reportState() {
+  const ok = !!last && formKey(readTas()) === formKey(last.c) && $('#ts_cancel').disabled;
+  $('#ts_report').disabled = !ok;
+}
+
 function renderPartial() {
   const p = partial; const box = $('#ts_partial'); box.hidden = false; $('#ts_result').hidden = true;
   box.textContent = `${t('ts_partial')} ${p.done}/${p.total}`;
@@ -360,6 +425,9 @@ export function initTasarim(api, Q) {
   $('#ts_cancel').addEventListener('click', iptal);
   $('#ts_live').addEventListener('click', () => hesapla(null, true));
   $('#ts_script').addEventListener('click', betik);
+  $('#ts_report').addEventListener('click', () => { if ($('#ts_report').disabled) return; const r = makeTasReport(); if (r) A.download(r.bytes, r.name); });
+  $('#ts_form').addEventListener('input', () => setTimeout(reportState, 0));
+  state.makeReport = makeTasReport;
   $('#tab_tek').addEventListener('click', () => showMode('tek'));
   $('#tab_tas').addEventListener('click', () => showMode('tasarim'));
   const linked = parseTasLink(Q);
