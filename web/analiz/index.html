@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CNK-FarmaStatR · Veri analizi</title>
+<!-- FSR-TN-PLT-06 (P6, KK-59): analysis of one's own data with the inherited, validated models
+     (PBE, model-independent MSD, Weibull MSD, f2 and bootstrap f2). Research and education only;
+     not a system validated for GxP environments. The page does no statistics: every number comes
+     from the validated R cores in webR. The data never leave the browser. -->
+<link rel="stylesheet" href="../app/stil.css">
+<link rel="stylesheet" href="analiz.css">
+</head>
+<body>
+<header>
+  <div>
+    <h1 data-i18n="an_title"></h1>
+    <p class="sub" data-i18n="an_subtitle"></p>
+  </div>
+  <button id="lang" type="button" class="ghost" data-i18n="lang"></button>
+</header>
+<p class="disclaimer" data-i18n="disclaimer"></p>
+<p class="note"><span data-i18n="an_privacy"></span> · <a href="../app/" data-i18n="an_to_sim"></a> · <a href="dogrula.html" data-i18n="an_link_dg"></a></p>
+<nav class="tabs" role="tablist">
+  <button id="tab_pbe" type="button" role="tab" class="tab on" aria-selected="true" data-i18n="an_tab_pbe"></button>
+  <button id="tab_dis" type="button" role="tab" class="tab" aria-selected="false" data-i18n="an_tab_dis"></button>
+</nav>
+
+<!-- ============================ PBE ============================ -->
+<main id="main_pbe" class="an">
+<form id="pbe_form" autocomplete="off" novalidate>
+  <fieldset>
+    <legend data-i18n="an_grp_data"></legend>
+    <label class="wide"><span data-i18n="an_source"></span>
+      <select name="kaynak">
+        <option value="psg020929" data-i18n="an_ex_psg"></option>
+        <option value="dosya" data-i18n="an_file"></option>
+      </select>
+    </label>
+    <label class="wide" id="pbe_file_wrap" hidden><span data-i18n="an_file_pick"></span><input type="file" name="dosya" accept=".csv,.txt,text/csv"></label>
+    <p class="hint wide" data-i18n="an_pbe_cols"></p>
+    <p class="hint wide" id="pbe_data_info"></p>
+  </fieldset>
+  <fieldset>
+    <legend data-i18n="an_grp_settings"></legend>
+    <label><span data-i18n="an_test"></span><select name="test"></select></label>
+    <label><span data-i18n="an_ref"></span><select name="ref"></select></label>
+    <label class="check"><input type="checkbox" name="log_d"><span data-i18n="an_log"></span></label>
+    <label class="check"><input type="checkbox" name="tek"><span data-i18n="an_onesided"></span></label>
+  </fieldset>
+  <div class="actions"><button id="pbe_run" type="submit" disabled data-i18n="an_run"></button></div>
+</form>
+<section class="panel">
+  <p id="pbe_status" class="status" role="status" aria-live="polite"></p>
+  <div id="pbe_errors" class="errors" hidden></div>
+  <div id="pbe_result" hidden>
+    <h2 data-i18n="an_res"></h2>
+    <p class="verdict" id="pbe_verdict"></p>
+    <div class="tablewrap"><table id="pbe_main"><tbody></tbody></table></div>
+    <div id="pbe_warn" class="warnings"></div>
+    <h2 data-i18n="an_design"></h2>
+    <div class="tablewrap"><table id="pbe_design"><tbody></tbody></table></div>
+    <h2 data-i18n="an_pbe_summary"></h2>
+    <div class="tablewrap"><table id="pbe_sum"><thead></thead><tbody></tbody></table></div>
+    <details><summary data-i18n="an_pbe_comp"></summary>
+      <div class="tablewrap"><table id="pbe_comp"><thead></thead><tbody></tbody></table></div></details>
+  </div>
+  <div class="actions bottom">
+    <button id="pbe_json" type="button" class="ghost" disabled data-i18n="btn_json"></button>
+    <button id="pbe_report" type="button" class="ghost" disabled data-i18n="btn_report"></button>
+  </div>
+</section>
+</main>
+
+<!-- ============================ Dissolution ============================ -->
+<main id="main_dis" class="an" hidden>
+<form id="dis_form" autocomplete="off" novalidate>
+  <fieldset>
+    <legend data-i18n="an_grp_data"></legend>
+    <label class="wide"><span data-i18n="an_source"></span>
+      <select name="kaynak">
+        <option value="tsong1996" data-i18n="an_ex_tsong"></option>
+        <option value="noce2020" data-i18n="an_ex_noce"></option>
+        <option value="dosya" data-i18n="an_file"></option>
+      </select>
+    </label>
+    <label class="wide" id="dis_file_wrap" hidden><span data-i18n="an_file_pick"></span><input type="file" name="dosya" accept=".csv,.txt,text/csv"></label>
+    <p class="hint wide" data-i18n="an_dis_cols"></p>
+    <p class="hint wide" id="dis_data_info"></p>
+  </fieldset>
+  <fieldset>
+    <legend data-i18n="an_grp_products"></legend>
+    <label><span data-i18n="an_test"></span><select name="test"></select></label>
+    <label><span data-i18n="an_ref"></span><select name="ref"></select></label>
+    <label><span data-i18n="an_unit"></span><select name="birim"><option value="dakika" data-i18n="an_min"></option><option value="saat" data-i18n="an_hour"></option></select></label>
+    <div class="wide" id="dis_lots"><span class="lbl" data-i18n="an_lots"></span><div class="checks"></div></div>
+  </fieldset>
+  <fieldset>
+    <legend data-i18n="an_grp_method"></legend>
+    <label class="wide"><span data-i18n="an_method"></span>
+      <select name="yontem">
+        <option value="f2" data-i18n="an_m_f2"></option>
+        <option value="msd" data-i18n="an_m_msd"></option>
+        <option value="weibull" data-i18n="an_m_wb"></option>
+      </select>
+    </label>
+    <div class="wide sub-f2 grid2">
+      <label><span data-i18n="an_persp"></span><select name="perspektif"><option value="EMA">EMA</option><option value="FDA">FDA</option></select></label>
+      <label><span data-i18n="an_ci"></span><select name="gatipi"><option value="persentil" data-i18n="an_ci_p"></option><option value="BCa">BCa</option></select></label>
+      <label><span>B</span><input name="B" value="" inputmode="numeric" placeholder="5000 / 10000"></label>
+      <label><span data-i18n="seed"></span><input name="seed" value="20260927" inputmode="numeric"></label>
+    </div>
+    <div class="wide sub-msd grid2" hidden>
+      <label><span data-i18n="an_limit"></span><select name="sinir"><option value="L1">L1</option><option value="L2a">L2a</option><option value="L2b">L2b</option></select></label>
+      <label><span>D<sub>g</sub></span><input name="Dg" value="10" inputmode="decimal"></label>
+      <label><span data-i18n="an_trunc"></span><select name="kesme"><option value="none" data-i18n="an_none"></option><option value="FDA">FDA</option><option value="EMA">EMA</option></select></label>
+    </div>
+    <div class="wide sub-wb grid2" hidden>
+      <label><span data-i18n="an_param"></span><select name="param"><option value="lnTd_lnB">ln T<sub>d</sub>, ln β</option><option value="lnA_lnB">ln α, ln β</option><option value="lnA_B">ln α, β</option></select></label>
+      <label><span data-i18n="an_region"></span><select name="bolge"><option value="B-L3">B-L3</option><option value="B-L2a">B-L2a</option><option value="B-L2b">B-L2b</option></select></label>
+      <label><span>k</span><input name="k" value="3" inputmode="decimal"></label>
+      <label><span>D<sub>g</sub></span><input name="wDg" value="10" inputmode="decimal"></label>
+    </div>
+    <p class="hint wide" id="dis_method_note"></p>
+  </fieldset>
+  <div class="actions"><button id="dis_run" type="submit" disabled data-i18n="an_run"></button></div>
+</form>
+<section class="panel">
+  <p id="dis_status" class="status" role="status" aria-live="polite"></p>
+  <div id="dis_errors" class="errors" hidden></div>
+  <div id="dis_result" hidden>
+    <h2 data-i18n="an_res"></h2>
+    <p class="verdict" id="dis_verdict"></p>
+    <div class="tablewrap"><table id="dis_main"><tbody></tbody></table></div>
+    <div id="dis_warn" class="warnings"></div>
+    <div id="dis_chart" class="chartbox"></div>
+    <div id="dis_tables"></div>
+  </div>
+  <div class="actions bottom">
+    <button id="dis_json" type="button" class="ghost" disabled data-i18n="btn_json"></button>
+    <button id="dis_report" type="button" class="ghost" disabled data-i18n="btn_report"></button>
+  </div>
+</section>
+</main>
+<details id="engine_box" class="engine">
+  <summary data-i18n="engine"></summary>
+  <table id="engine_table"><tbody></tbody></table>
+</details>
+<footer><span data-i18n="disclaimer_en_tr"></span> · FSR-TN-PLT-06 · P6</footer>
+<script type="module" src="analiz.js"></script>
+</body>
+</html>

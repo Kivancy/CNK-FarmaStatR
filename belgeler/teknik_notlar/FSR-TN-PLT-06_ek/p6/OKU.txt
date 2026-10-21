@@ -1,0 +1,2 @@
+Resmi P6 kabul kosusunun ciktisi buraya konur: p6_kabul.zip (web/analiz/kabul6.html indirir, acmadan).
+Official P6 acceptance output goes here: p6_kabul.zip.

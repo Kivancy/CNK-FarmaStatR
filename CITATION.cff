@@ -1,0 +1,31 @@
+# CNK-FarmaStatR - citation metadata (Citation File Format 1.2.0).
+# DRAFT prepared in P6 (FSR-TN-PLT-06): license (open item A-6), DOI and release
+# date are filled in when v1.0.0 is released (belgeler/yayin/YAYIN_KONTROL_LISTESI.md).
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+type: software
+title: "CNK-FarmaStatR: a reproducible platform for pharmaceutical statistics in education and research"
+version: "1.0.0.9000"
+authors:
+  - family-names: "Yüksel"
+    given-names: "Kıvanç"
+    email: "kivancyuksel@gmail.com"
+repository-code: "https://github.com/Kivancy/CNK-FarmaStatR"
+abstract: >-
+  Research and education platform for pharmaceutical statistics: in vitro population
+  bioequivalence (FDA PSG 020929) with simulation-based design selection, f2 and bootstrap f2,
+  model-independent and Weibull multivariate statistical distance for dissolution profiles.
+  Validated R cores run in the browser (webR); every result carries its seed, RNG and versions
+  and can be reproduced from a link or an exported R script. Not a system validated for GxP
+  environments.
+keywords:
+  - bioequivalence
+  - population bioequivalence
+  - dissolution
+  - f2
+  - simulation
+  - R
+  - webR
+# license: (A-6, pending)
+# doi: (Zenodo, at release)
+# date-released: (at release)

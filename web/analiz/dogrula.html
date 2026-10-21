@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CNK-FarmaStatR · Tarayıcıda doğrulama</title>
+<!-- FSR-TN-PLT-06 (P6), T-3: runs the inherited validation sets (516 checks) and the package test
+     folder in the browser's R (webR), with the base-R testthat stand-in testthat_kucuk.R.
+     Evidence that the engine behaves the same in webR as in R (open item A-3); not a revalidation.
+     Research and education only; not a system validated for GxP environments. -->
+<link rel="stylesheet" href="../app/stil.css">
+<link rel="stylesheet" href="analiz.css">
+</head>
+<body>
+<header>
+  <div>
+    <h1 data-i18n="dg_title"></h1>
+    <p class="sub" data-i18n="dg_subtitle"></p>
+  </div>
+  <button id="lang" type="button" class="ghost" data-i18n="lang"></button>
+</header>
+<p class="disclaimer" data-i18n="disclaimer"></p>
+<p class="note"><span data-i18n="dg_note"></span> · <a href="./" data-i18n="an_title"></a></p>
+<main class="an one">
+<section class="panel">
+  <p id="dg_status" class="status" role="status" aria-live="polite"></p>
+  <div id="dg_errors" class="errors" hidden></div>
+  <div class="actions">
+    <button id="dg_leg" type="button" disabled data-i18n="dg_run_leg"></button>
+    <button id="dg_tests" type="button" disabled data-i18n="dg_run_tests"></button>
+    <button id="dg_csv" type="button" class="ghost" disabled data-i18n="dg_csv"></button>
+  </div>
+  <p class="hint" data-i18n="dg_time_hint"></p>
+  <h2 data-i18n="dg_leg_h"></h2>
+  <div class="tablewrap"><table id="dg_leg_t"><thead></thead><tbody></tbody></table></div>
+  <h2 data-i18n="dg_tests_h"></h2>
+  <p id="dg_total" class="verdict"></p>
+  <div class="tablewrap"><table id="dg_tests_t"><thead></thead><tbody></tbody></table></div>
+  <h2 data-i18n="dg_env_h"></h2>
+  <div class="tablewrap"><table id="dg_env"><tbody></tbody></table></div>
+</section>
+</main>
+<footer><span data-i18n="disclaimer_en_tr"></span> · FSR-TN-PLT-06 · P6</footer>
+<script type="module" src="dogrula.js"></script>
+</body>
+</html>

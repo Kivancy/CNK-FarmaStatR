@@ -1,0 +1,28 @@
+/* CNK-FarmaStatR P6 analysis screen (FSR-TN-PLT-06); builds on ../app/stil.css */
+main.an { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.3fr); }
+@media (max-width: 820px) { main.an { grid-template-columns: minmax(0, 1fr); } }
+.status { font-weight: 600; margin: 0 0 4px; }
+.status.ok { color: var(--ok); }
+.status.bad { color: var(--err-fg); }
+.verdict { font-size: 1.05rem; font-weight: 700; margin: 4px 0 10px; }
+.verdict.yes { color: var(--ok); }
+.verdict.no { color: var(--err-fg); }
+label.check { flex-direction: row; align-items: center; gap: 6px; }
+label.check input { width: auto; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; }
+.checks { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 2px; }
+.checks label { flex-direction: row; gap: 4px; align-items: center; color: var(--fg); }
+.checks input { width: auto; }
+.lbl { font-size: .88rem; color: var(--muted); }
+.engine { max-width: 1100px; margin: 12px auto 0; }
+.note a { color: var(--accent); }
+#pbe_main td:first-child, #dis_main td:first-child { color: var(--muted); }
+svg.chart .s-t { stroke: var(--c-fda); }
+svg.chart .s-r { stroke: var(--c-a); }
+svg.chart .axis { stroke: var(--muted); }
+svg.chart { width: 100%; height: auto; margin: 6px 0 4px; }
+svg.chart .grid { stroke: var(--line, #d9d8d2); stroke-width: 1; }
+svg.chart .tick, svg.chart .legend { font-size: 11px; fill: var(--muted); }
+svg.chart .legend { fill: var(--fg); }
+svg.chart circle.s-t, svg.chart circle.s-r { fill: var(--card); }
+main.an.one { grid-template-columns: minmax(0, 1fr); }

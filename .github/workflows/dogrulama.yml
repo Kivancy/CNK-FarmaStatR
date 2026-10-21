@@ -11,8 +11,9 @@
 #           (E-1, E-3 ... E-9; FSR-TN-PLT-03) and the display-rule reference
 #           (P4-K3, Linux only; FSR-TN-PLT-04) and design selection
 #           (D-1: Tables 11.3a/b of FSR-TN-PBE-01 reproduced; D-5 design script;
-#           FSR-TN-PLT-05)
-#           (testthat: 50 blocks, 2244 expectations on 20.10.2026; Windows 2239)
+#           FSR-TN-PLT-05) and the analysis screen's reader and bridges
+#           (A-1 ... A-8: dis_kopru.R = G-01, screen path = bridge; FSR-TN-PLT-06)
+#           (testthat: 58 blocks, 2292 expectations on 21.10.2026; Linux)
 #   Step 3: grid checks of P2 on the simulation results in the repository
 #           (H-1...H-4, S-3, S-4, K-1 ii/iv; FSR-TN-PLT-02, KK-50 A-1)
 # Runs on Linux and on Windows (the user's platform).

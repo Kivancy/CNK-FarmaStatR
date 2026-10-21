@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.90 · Son güncelleme: 21.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.91 · Son güncelleme: 21.10.2026"
 ---
 
 # Bu belge hakkında
@@ -1707,6 +1707,75 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Sıradaki iş:** proje sahibi devam dediğinde FSR-TN-PLT-06 v0.1 (P6: devralınan modellerin arayüzü, platform validasyonu ve yayın).
 - **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** bu günlük.
 
+## G-94 · P6 uygulaması: veri analizi ekranı, tarayıcıda doğrulama, FSR-TN-PLT-06 v0.1, FSR-VAL-PLT-1 1.0, yayın hazırlığı — 21.10.2026
+
+- **Proje sahibinin kararı (K):** "p6 ya başla. p6'ya özel olarak bitirinceye kadar bana sormadan ilerleyebilirsin." → **KK-60**. P6 süresince tasarım kararları ve ölçütlerin dondurulması Claude'a bırakıldı. Geri döndürülemez ya da proje sahibine ait kararlar yalnız hazırlanır: lisans (A-6), deponun açılması, Zenodo DOI, v1.0.0 etiketi, GitHub Pages. Resmî kabul koşusu ve Word denetimi proje sahibinde.
+- **FSR-TN-PLT-06 v0.1** (`belgeler/teknik_notlar/FSR-TN-PLT-06_v0.1.docx`, 4 sayfa):
+  - Teslimatlar T-1 … T-6.
+  - Tasarım kararları P6-K1 … P6-K7 (Claude, KK-60 yetkisiyle):
+    - K1: hesap webR'de, değiştirilmemiş köprülerle.
+    - K2: CSV R'de okunur.
+    - K3: çekirdek varsayılanları; Weibull bölgesi B-L3, FarmaStatR türetimi.
+    - K4: Türkçe çekirdek iletileri olduğu gibi.
+    - K5: rapor P5 yapısıyla.
+    - K6: webR'de testthat yerine temel R kodu.
+    - K7: Pages taslağı etkin değil.
+  - Kabul ölçütleri F-1 … F-12 bu sürümle donduruldu.
+  - **Sıra sapması (kayıt):** ekranın ilk taslağı ve `platform_analiz.R` ölçütlerden önce ön deneme olarak yazıldı. Ölçütler kabul araçlarından ve testlerden önce donduruldu.
+- **Yeni dosyalar (T-1 … T-4):**
+  - `CNKfarmastatr/R/platform_analiz.R`: CSV okuma, sütun eşleme, köprü çağrısı; hesap yapmaz. Collate'e eklendi; `man/platform_analiz.Rd` yazıldı.
+  - `CNKfarmastatr/inst/kopru/dis_kopru.R`: v0.5.1 dissolüsyon köprüsü, bayt bayt aynı (SHA-256 `5dea0544…`, G-01). Kendi R ortamına yüklenir, çünkü PBE köprüsüyle aynı adlı `kp_hazirla()` tanımlar.
+  - `tests/testthat/test-platform-analiz.R`: A-1 … A-8.
+  - `web/analiz/`:
+    - Ekran: `index.html`, `analiz.js`, `analiz.css`.
+    - Tarayıcıda doğrulama: `dogrula.html`, `dogrula.js`, `dogrula_dosyalar.txt`.
+    - `testthat_kucuk.R`.
+    - Kabul aracı: `kabul6.html`, `kabul6.js`.
+    - `README.md`.
+  - `web/app/rapor.js`: analiz raporları için kaynak listesi parametresi; varsayılan değişmedi, P5 raporu aynı (F-10).
+  - `web/app/ceviri.json`: 421 anahtar (TR = EN).
+  - `belgeler/teknik_notlar/FSR-TN-PLT-06_ek/`:
+    - `p6_kabul.R`.
+    - `veri/` (Türkçe CSV örnekleri).
+    - `kuru/` (Claude'un kuru koşusu).
+    - `p6/` (resmî koşunun yeri).
+- **Ön deneme ve kuru koşu (Claude; Linux, Chromium 141, R 4.4; resmî kabul değil):**
+  - Ekran = yerel R: 39 analiz (PBE 27, dissolüsyon 12) ile 7 hatalı durum; F-1 … F-6 GEÇTİ.
+    - Kararlar ve metinler birebir.
+    - Sayılar K(10⁻¹², 10⁻¹²) içinde. Ön denemede 2 değer son bitte farklıydı (BCa üst sınırı, Tsong f2; göreli < 10⁻¹⁵).
+  - Raporlar: 8 (TR ve EN). Ekran metinleri tam, beyan var, belirlenimci, en uzun 13,6 ms.
+  - Ağ: analiz ve raporda dış istek 0.
+  - Tarayıcıda doğrulama:
+    - Devralınan 516/516.
+    - Paket testleri webR'de 58 blok, 2.292 beklenti; başarısız 0, hata 0. Yerel testthat sayısıyla aynı.
+    - FSR-TN-PLT-05 açık maddesi A-3 kapanır.
+  - Gerileme: sabitli 13/13; `dis_kopru.R` = G-01; P5 raporu aynı. Dar ekranda yatay kaydırma yok.
+  - Toplam 77/78 GEÇTİ. Kalan satır F-12, bu belgelerin yazılmasıyla sağlandı.
+  - Kuru koşuda Claude'un iki araç hatası düzeltildi:
+    - `p6_kabul.R`'de beklenen sayı 26 değil 24'tü (30 koşunun 6'sı hatalı girdi).
+    - `testthat_kucuk.R` satırları dosyalar arasında birikiyordu; her çağrıda sıfırlanır.
+- **Yerel R:**
+  - `testthat`: 58 blok, 2.292 beklenti, başarısız 0 (önceki 50 blok, 2.244).
+  - `R CMD check --no-tests`: 1 WARNING. Devralınan çekirdeklerdeki ASCII dışı karakterler, değişmedi, önceden vardı.
+- **Belgeler:**
+  - FSR-TN-PLT-01 v0.7: Tablo 8.1 biçim satırı JavaScript'e (KK-57, P5-K1); Tablo 10.1 P5 (KK-56) ve P6 (KK-59) satırları; Bölüm 9 notu. FSR-TN-PLT-05 açık maddesi A-1 kapanır.
+  - FSR-VAL-PLT-1 1.0: platform validasyonu; P1–P6 kanıtları; onay bekliyor.
+- **Yayın hazırlığı (T-6; yürütülmedi):**
+  - `CITATION.cff` ve `.zenodo.json` taslak; lisans alanı boş (A-6).
+  - Kök `README.md` (EN) ve `OKUBENI.md` güncellendi.
+  - `belgeler/yayin/`:
+    - `YAYIN_KONTROL_LISTESI.md`: 13 adım.
+    - `pages.yml.taslak`: yalnız `v*` etiketinde.
+    - `site_index.html`.
+- **CI:** `dogrulama.yml` başlık yorumu güncellendi (58 blok, 2.292 beklenti). Korumalı dosya; proje sahibine gönderildi.
+- **Sıradaki iş (proje sahibi):**
+  1. Commit + Push ve Actions sonucu; Windows beklenti sayısının bildirilmesi.
+  2. `dogrulama.yml`'nin yerleştirilmesi.
+  3. Resmî kabul: `http://127.0.0.1:8000/web/analiz/kabul6.html` → `p6_kabul.zip` → `p6/` → `p6_kabul.R`.
+  4. İki raporun Word'de açılması.
+  5. Ardından FSR-TN-PLT-06 v0.2 (sonuçlar) ve FSR-VAL-PLT-1 1.1; P6 kapanışı.
+- **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** yukarıdakiler ve bu günlük.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -1722,25 +1791,27 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-12 | `invitro_fast.R` ve `invitro_grid.R` için validasyon belgesi (FSR-VAL-SIM-1 kapsamında) ve SHA-256 sabitleme; EMS testi (teknik not 8.5) pakete | Tamam: FSR-VAL-SIM-1 1.0 onaylandı, beş dosya SHA-256 ile sabitlendi (G-47) |
 | A-13 | Teknik not v0.7: D1–D13 (G-38) | Tamam: v0.7 (G-39) |
 | A-14 | Tip I uyum ölçütü kararı; teknik not v0.8 (rapor 02) ve Aşama 2 sonuçları; yeniden üretim paketi (G-40) | Tamam: ölçüt (KK-38), v0.8, paket (G-41), Aşama 2 sonuçları v0.9 (G-42); v0.9 onaylandı, hedefli deney ve v0.10 (G-43); 12.10 onay bekliyor; v0.10 onaylandı, v0.11 (G-48) |
-| A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Arayüz tasarımıyla birlikte |
+| A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Dissolüsyon köprüsü pakette (`inst/kopru/dis_kopru.R`, G-94); dışa açılan fonksiyonlar v1.0.0 öncesi |
 | A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
-| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0 … P5 kapandı (P4: KK-55, G-82; P5: KK-58, G-92, resmi kabul 18/18 GECTI). P6 kapsamı: devralınan modellerin arayüzü + platform validasyonu ve yayın (KK-59, G-93). P5 (tasarım seçimi ve Word raporu; KK-56): FSR-TN-PLT-05 v0.2 onaylandı (KK-57, G-85); T-1 `platform_tasarim()` tamam, D-1 yeniden üretildi (G-86); T-2 tasarım sekmesi (G-87); T-3 tasarım betiği (G-88); T-4, T-5 Word raporu (G-89); T-6 kabul araçları (G-90); resmi kabul D-1…D-7, R-1…R-11 GECTI (G-91); FSR-TN-PLT-05 v0.3 onay bekliyor. Açık: testthat kümesinin webR'de koşulması. Izgara kontrolleri CI'da (G-72, G-74) |
+| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0 … P5 kapandı (P4: KK-55, G-82; P5: KK-58, G-92, resmi kabul 18/18 GECTI). P6 kapsamı: devralınan modellerin arayüzü + platform validasyonu ve yayın (KK-59, G-93). P5 (tasarım seçimi ve Word raporu; KK-56): FSR-TN-PLT-05 v0.2 onaylandı (KK-57, G-85); T-1 `platform_tasarim()` tamam, D-1 yeniden üretildi (G-86); T-2 tasarım sekmesi (G-87); T-3 tasarım betiği (G-88); T-4, T-5 Word raporu (G-89); T-6 kabul araçları (G-90); resmi kabul D-1…D-7, R-1…R-11 GECTI (G-91); FSR-TN-PLT-05 v0.3 onay bekliyor. Izgara kontrolleri CI'da (G-72, G-74). P6 (KK-59, KK-60): uygulama, FSR-TN-PLT-06 v0.1, FSR-VAL-PLT-1 1.0, yayın hazırlığı; testthat kümesi webR'de koşuyor (G-94); resmî kabul bekliyor |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
 
 # 4. Belge ve sürüm dizini
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.90 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.91 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.1 | 1.0 onaylı; beş dosya sabitlendi (G-47). 1.1: TC-S11 (dışa aktarılan betik), onaylandı (KK-53, G-76) |
-| FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.6 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68) |
+| FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.7 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68); v0.7: Tablo 8.1 ve 10.1 (KK-56, KK-57, KK-59; G-94), onay P6 kapanışında |
 | FSR-TN-PLT-02 · P2 tasarımı, kabul ölçütleri ve sonuçları | 0.2 | v0.1 onaylı (KK-49); v0.2: anahtar düzeltmesi, sonuçlar (11/11 GEÇTİ), sapmalar (G-69); onaylandı, P2 kapandı (KK-50, G-70) |
 | FSR-TN-PLT-03 · P3 tasarımı, kabul ölçütleri ve sonuçları | 0.2 | v0.1 onaylı (KK-51); v0.2: sonuçlar 12/12 GEÇTİ, bulgular (G-75); onaylandı, P3 kapandı (KK-53, G-76) |
 | FSR-TN-PLT-04 · P4 tasarımı ve kabul ölçütleri | 0.2 | v0.1 onaylı (KK-54); v0.2: resmi kabul 12/12 GECTI (G-81); onaylandı, P4 kapandı (KK-55, G-82) |
 | FSR-TN-PLT-05 · P5 tasarımı ve kabul ölçütleri (tasarım seçimi ve Word raporu) | 0.3 | v0.1 taslak (G-83); v0.2: tasarım seçimi eklendi (KK-56, G-84); onaylandı, D-1…D-7 ve R-1…R-11 donduruldu (KK-57, G-85); v0.3: resmi kabul 18/18 GECTI (G-91); onaylandı, P5 kapandı (KK-58, G-92) |
+| FSR-TN-PLT-06 · P6 tasarımı ve kabul ölçütleri (devralınan modellerin arayüzü, platform validasyonu, yayın hazırlığı) | 0.1 | Yetki devriyle yazıldı (KK-60); F-1…F-12 donduruldu; kuru koşu 77/78 (G-94); resmî kabul bekliyor |
+| FSR-VAL-PLT-1 · Platform katmanı validasyon belgesi | 1.0 | P1–P6 kanıtları (G-94); onay bekliyor |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
-| CNKfarmastatr (R paketi) | 1.0.0.9000 | 13 dosya SHA-256 ile sabit (8 devralınan çekirdek + simülasyon çatısı ve in vitro motoru; FSR-VAL-SIM-1 1.0, G-47); testler 26 blok, 968 beklenti GEÇTİ (G-46) |
+| CNKfarmastatr (R paketi) | 1.0.0.9000 | 13 dosya SHA-256 ile sabit (8 devralınan çekirdek + simülasyon çatısı ve in vitro motoru; FSR-VAL-SIM-1 1.0, G-47); testler 26 blok, 968 beklenti GEÇTİ (G-46); G-94: 58 blok, 2.292 beklenti (yerel R ve webR) |
 
 # 5. Kullanıcı kararları dizini
 
@@ -1805,3 +1876,4 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | KK-57 | FSR-TN-PLT-05 v0.2 onaylandı: P5-K1…P5-K7 hepsi (a); D-1…D-7 ve R-1…R-11 donduruldu | G-85 |
 | KK-58 | FSR-TN-PLT-05 v0.3 onaylandı; P5 kapandı | G-92 |
 | KK-59 | P6 kapsamı: devralınan modeller (PBE analizi, MSD, Weibull MSD, f2 ve bootstrap f2) için web arayüzü P6'da | G-93 |
+| KK-60 | P6 süresince kararlar Claude'a bırakıldı (sormadan ilerleme); geri döndürülemez ya da proje sahibine ait kararlar (lisans, depo açma, DOI, etiket, Pages) yalnız hazırlanır | G-94 |
