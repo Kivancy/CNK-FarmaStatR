@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.93 · Son güncelleme: 21.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.94 · Son güncelleme: 21.10.2026"
 ---
 
 # Bu belge hakkında
@@ -1813,6 +1813,23 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Bekleyen:** FSR-TN-PLT-06 v0.2 ve FSR-VAL-PLT-1 1.1 onayı (P6 kapanışı).
 - **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** bu günlük.
 
+## G-97 · FSR-TN-PLT-06 v0.2 ve FSR-VAL-PLT-1 1.1 onaylandı; P6 kapandı (KK-62) — 21.10.2026
+
+- **Depo:** G-96 commit edildi; Actions başarılı.
+- **Proje sahibinin kararı (K):** "onaylıyorum kapat." → **KK-62**:
+  - FSR-TN-PLT-06 v0.2 (resmî kabul 78/78 GEÇTİ) onaylandı.
+  - FSR-VAL-PLT-1 1.1 (platform validasyonu, P1–P6) onaylandı.
+  - P6 kapandı. Böylece A-15 (platform P0–P6) tamamlandı.
+- **Durum:**
+  - Platform v1.0.0 içeriği tamam; geliştirme sürümü 1.0.0.9000.
+  - Yayın kontrol listesi adım 3'te (lisans A-6), proje sahibinin isteğiyle bekliyor (KK-61). Depo özel.
+- **Açık kalanlar:**
+  - A-6 lisans.
+  - A-9 dışa açılan fonksiyonların gözden geçirilmesi (v1.0.0 öncesi).
+  - Teknik notların İngilizce sürümleri.
+  - Platform makalesi.
+- **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** bu günlük.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -1830,14 +1847,14 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-14 | Tip I uyum ölçütü kararı; teknik not v0.8 (rapor 02) ve Aşama 2 sonuçları; yeniden üretim paketi (G-40) | Tamam: ölçüt (KK-38), v0.8, paket (G-41), Aşama 2 sonuçları v0.9 (G-42); v0.9 onaylandı, hedefli deney ve v0.10 (G-43); 12.10 onay bekliyor; v0.10 onaylandı, v0.11 (G-48) |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Dissolüsyon köprüsü pakette (`inst/kopru/dis_kopru.R`, G-94); dışa açılan fonksiyonlar v1.0.0 öncesi |
 | A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
-| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | P0 … P5 kapandı (P4: KK-55, G-82; P5: KK-58, G-92, resmi kabul 18/18 GECTI). P6 kapsamı: devralınan modellerin arayüzü + platform validasyonu ve yayın (KK-59, G-93). P5 (tasarım seçimi ve Word raporu; KK-56): FSR-TN-PLT-05 v0.2 onaylandı (KK-57, G-85); T-1 `platform_tasarim()` tamam, D-1 yeniden üretildi (G-86); T-2 tasarım sekmesi (G-87); T-3 tasarım betiği (G-88); T-4, T-5 Word raporu (G-89); T-6 kabul araçları (G-90); resmi kabul D-1…D-7, R-1…R-11 GECTI (G-91); FSR-TN-PLT-05 v0.3 onay bekliyor. Izgara kontrolleri CI'da (G-72, G-74). P6 (KK-59, KK-60): uygulama, FSR-TN-PLT-06 v0.1, FSR-VAL-PLT-1 1.0, yayın hazırlığı; testthat kümesi webR'de koşuyor (G-94); resmî kabul 78/78 GEÇTİ (G-95); FSR-TN-PLT-06 v0.2 ve FSR-VAL-PLT-1 1.1 onay bekliyor |
+| A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | **Tamam:** P0 … P6 kapandı (P5: KK-58, G-92; P6: resmî kabul 78/78, FSR-TN-PLT-06 v0.2 ve FSR-VAL-PLT-1 1.1 onaylandı, KK-62, G-97). Yayın adımları lisanstan sonra (KK-61) |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
 
 # 4. Belge ve sürüm dizini
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.93 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.94 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.1 | 1.0 onaylı; beş dosya sabitlendi (G-47). 1.1: TC-S11 (dışa aktarılan betik), onaylandı (KK-53, G-76) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.7 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68); v0.7: Tablo 8.1 ve 10.1 (KK-56, KK-57, KK-59; G-94), onay P6 kapanışında |
@@ -1845,8 +1862,8 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | FSR-TN-PLT-03 · P3 tasarımı, kabul ölçütleri ve sonuçları | 0.2 | v0.1 onaylı (KK-51); v0.2: sonuçlar 12/12 GEÇTİ, bulgular (G-75); onaylandı, P3 kapandı (KK-53, G-76) |
 | FSR-TN-PLT-04 · P4 tasarımı ve kabul ölçütleri | 0.2 | v0.1 onaylı (KK-54); v0.2: resmi kabul 12/12 GECTI (G-81); onaylandı, P4 kapandı (KK-55, G-82) |
 | FSR-TN-PLT-05 · P5 tasarımı ve kabul ölçütleri (tasarım seçimi ve Word raporu) | 0.3 | v0.1 taslak (G-83); v0.2: tasarım seçimi eklendi (KK-56, G-84); onaylandı, D-1…D-7 ve R-1…R-11 donduruldu (KK-57, G-85); v0.3: resmi kabul 18/18 GECTI (G-91); onaylandı, P5 kapandı (KK-58, G-92) |
-| FSR-TN-PLT-06 · P6 tasarımı, kabul ölçütleri ve sonuçları (devralınan modellerin arayüzü, platform validasyonu, yayın hazırlığı) | 0.2 | v0.1 yetki devriyle (KK-60), F-1…F-12 donduruldu (G-94); v0.2: resmî kabul 78/78 GEÇTİ (G-95); onay bekliyor |
-| FSR-VAL-PLT-1 · Platform katmanı validasyon belgesi | 1.1 | 1.0: P1–P6 kanıtları (G-94); 1.1: P6 resmî kabulü (G-95); onay bekliyor |
+| FSR-TN-PLT-06 · P6 tasarımı, kabul ölçütleri ve sonuçları (devralınan modellerin arayüzü, platform validasyonu, yayın hazırlığı) | 0.2 | v0.1 yetki devriyle (KK-60), F-1…F-12 donduruldu (G-94); v0.2: resmî kabul 78/78 GEÇTİ (G-95); onaylandı, P6 kapandı (KK-62, G-97) |
+| FSR-VAL-PLT-1 · Platform katmanı validasyon belgesi | 1.1 | 1.0: P1–P6 kanıtları (G-94); 1.1: P6 resmî kabulü (G-95); onaylandı (KK-62, G-97) |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
 | CNKfarmastatr (R paketi) | 1.0.0.9000 | 13 dosya SHA-256 ile sabit (8 devralınan çekirdek + simülasyon çatısı ve in vitro motoru; FSR-VAL-SIM-1 1.0, G-47); testler 26 blok, 968 beklenti GEÇTİ (G-46); G-94: 58 blok, 2.292 beklenti (yerel R ve webR) |
 
@@ -1915,3 +1932,4 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | KK-59 | P6 kapsamı: devralınan modeller (PBE analizi, MSD, Weibull MSD, f2 ve bootstrap f2) için web arayüzü P6'da | G-93 |
 | KK-60 | P6 süresince kararlar Claude'a bırakıldı (sormadan ilerleme); geri döndürülemez ya da proje sahibine ait kararlar (lisans, depo açma, DOI, etiket, Pages) yalnız hazırlanır | G-94 |
 | KK-61 | Lisans kararı (A-6) bir süre bekletilir; yayın adımları lisanstan sonra | G-96 |
+| KK-62 | FSR-TN-PLT-06 v0.2 ve FSR-VAL-PLT-1 1.1 onaylandı; P6 kapandı | G-97 |
