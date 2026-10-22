@@ -1,0 +1,137 @@
+@@tr
+# f2 benzerlik faktörü ve bootstrap f2
+
+## 1. Soru ve kapsam
+İki dissolüsyon profili (test T ve referans R) benzer mi? f2, iki ortalama profil arasındaki ortalama kare farkın logaritmik bir dönüşümüdür; 50 ile 100 arasındaki değerler benzerlik gösterir. Değişkenlik yüksekse f2’nin nokta tahmini yanıltıcı olabilir; EMA bu durumda “beklenen f2”nin bootstrap %90 güven aralığını önerir. Platform bu hesabı değiştirilmemiş validasyonlu çekirdekle (`calc_f2_boot`) yapar.
+
+## 2. Model ve gösterim
+- P: analize giren zaman noktası sayısı; n: ürün başına ünite (tablet) sayısı (EMA 12 ister).
+- $\bar R_t, \bar T_t$: t zamanındaki ortalama çözünme yüzdeleri; $S^2_{T,t}, S^2_{R,t}$: ünite varyansları.
+- D: ortalama farkların kareleri toplamı; V: ortalamaların varyanslarının toplamı.
+
+$$ D = \sum_{t=1}^{P} (\bar T_t - \bar R_t)^2, \qquad V = \sum_{t=1}^{P}\left(\frac{S^2_{T,t}}{n_T} + \frac{S^2_{R,t}}{n_R}\right) $$ :: EMA PKWP/BSWP Q&A 3.11 (n_T = n_R için); n_T ≠ n_R genellemesi FarmaStatR türetimi
+
+## 3. Denklemler
+$$ f_2 = 50\,\log_{10}\left\{\left[1 + \frac{1}{P}\sum_{t=1}^{P}(\bar R_t - \bar T_t)^2\right]^{-1/2} \cdot 100\right\} = 100 - 25\log_{10}\left(1 + \frac{D}{P}\right) $$ :: EMA CPMP/EWP/QWP/1401/98 Rev. 1 (2010) Ek I; ikinci biçim cebirsel eşdeğer
+$$ E(f_2) = 100 - 25\log_{10}\left(1 + \frac{D + V}{P}\right) $$ :: EMA PKWP/BSWP Q&A 3.11, Denk. 1; Ma ve ark. (2000) Denk. 9
+$$ \text{bc-}f_2 = 100 - 25\log_{10}\left(1 + \frac{D - V}{P}\right) \quad (D > V) $$ :: Noce ve ark. (2020) Denk. 2
+
+Bootstrap (Ma ve ark. 2000, adım 1–4): her üründen n ünite, bütün profilleriyle iadeli olarak çekilir; seçilen tahminci (EMA: E(f2), FDA ön ayarı: f2) hesaplanır; B kez tekrarlanır. %90 aralık, B değerin %5 ve %95 kantilleridir (Hyndman ve Fan tanımlarından biri; platformda tip 7):
+
+$$ \left[\hat Q_{0,05},\; \hat Q_{0,95}\right] \text{ (bootstrap dağılımı, Hyndman–Fan tip 7)} $$ :: EMA PKWP/BSWP Q&A 3.11; Hyndman ve Fan (1996)
+
+BCa aralık (isteğe bağlı): $z_0$ yanlılık düzeltmesi, $a$ ivme (jackknife ile), $\Phi$ standart normal dağılım fonksiyonu:
+
+$$ z_0 = \Phi^{-1}\left(\frac{\#\{\hat\theta^*_b < \hat\theta\}}{B}\right), \qquad a = \frac{\sum_i(\bar\theta_J - \hat\theta_{(i)})^3}{6\left[\sum_i(\bar\theta_J - \hat\theta_{(i)})^2\right]^{3/2}} $$ :: Xu ve ark. (2021) Denk. 21–24
+$$ \alpha_1 = \Phi\left(z_0 + \frac{z_0 + z_\alpha}{1 - a(z_0 + z_\alpha)}\right), \qquad \alpha_2 = \Phi\left(z_0 + \frac{z_0 + z_{1-\alpha}}{1 - a(z_0 + z_{1-\alpha})}\right) $$ :: Xu ve ark. (2021) Denk. 21–24
+
+Alt sınırın Monte Carlo standart hatası, sıra istatistiği (binom) yöntemiyle:
+
+$$ \text{MCSE} \approx \frac{\hat Q_{(Bp + z\sqrt{Bp(1-p)})} - \hat Q_{(Bp - z\sqrt{Bp(1-p)})}}{2z}, \quad p = 0{,}05 $$ :: FarmaStatR türetimi (f2_boot.R)
+
+## 4. Karar kuralı
+$$ \hat Q_{0,05}\left(E(f_2)^*\right) \ge 50 \;\Rightarrow\; \text{benzer} $$ :: EMA PKWP/BSWP Q&A 3.11
+
+- EMA, sonucun en yakın tam sayıya yuvarlanarak raporlanmasını ister. Platform alt sınırı yuvarlamadan değerlendirir: ≥ 50 benzer; 49,5–50 arası “sınır vaka, değerlendirici yorumu gerekli” (yuvarlanınca 50 olabilecek bölge) [FarmaStatR kuralı]; < 49,5 benzer değil.
+- |alt sınır − 50| < 2·MCSE ise “seed’e duyarlı” uyarısı verilir [FarmaStatR kuralı].
+- CV koşulu sağlanıyorsa EMA klasik f2 ≥ 50 kuralına da izin verir (Ek I); ekrandaki “CV kuralı” satırı hangi yöntemin önerildiğini söyler.
+
+## 5. Platformdaki uygulama
+- Uygulanabilirlik (EMA Ek I sırasıyla): t = 0 çıkarılır; iki ürün 15 dakikada > %85 çözündüyse profil karşılaştırması gerekmez (not); %85 kesmesi ortalamalar üzerinden (EMA: ürünlerden biri > %85 olduğu noktaya kadar, o nokta dahil; FDA: ikisi de > %85 olduktan sonra tek nokta); en az 3 zaman noktası; ünite sayısı 12 kontrolü.
+- CV kuralı: ICH M9 (≤ 10 dk %20, sonrası %10), EMA Ek I (ilk nokta %20, sonrakiler %10) ya da FDA 1997 (erken noktalar %20, diğerleri %10; “erken = ≤ 15 dk” yorumu FarmaStatR’indir).
+- %85 kesmesi her bootstrap örneğinde, o örneğin ortalamalarına yeniden uygulanır (varsayılan “replika” modu) [FarmaStatR seçimi; Noce ve ark. 2020’deki eleştiri].
+- Perspektif ön ayarları: EMA E(f2), EMA kesmesi, M9, B = 5000; FDA f2, FDA kesmesi, FDA97, B = 10.000. FDA ön ayarı bir FDA sunumuna (Gong 2020) dayanır, resmî FDA politikası değildir.
+- Rastgele sayı üreteci (Mersenne-Twister, Inversion, Rejection), seed ve B raporlanır; seed varsayılanı 20260927.
+
+## 6. Çalışılmış örnek
+Noce ve ark. (2020) veri seti (Urun1 test, Urun2 referans; 12 ünite), EMA ön ayarı, persentil aralık, B = 5000, seed 20260927:
+
+- %85 kesmesi sonrası P = [[f2_p|6]] zaman noktası (120–165 dk).
+- f2 = [[f2_f2|37,39]], E(f2) = [[f2_ef2|36,90]], bc-f2 = [[f2_bcf2|37,90]].
+- Bootstrap %90 GA: [[f2_alt|30,90]] – [[f2_ust|43,99]]; alt sınırın MCSE’si [[f2_mcse|0,12]].
+- Alt sınır < 49,5 → benzer değil. EMA raporlaması: [[f2_tamsayi|31]].
+
+## 7. Sınırlar
+- Bootstrap aralığı seed’e bağlıdır; aynı seed ve B ile aynı sonuç elde edilir. Seed’e duyarlı uyarısında B artırılmalıdır.
+- Klasik f2 + BCa için tip I hata artışı bildirilmiştir (Xu ve ark. 2021); EMA persentil yöntemini ister.
+- Araştırma ve eğitim amaçlıdır; GxP ortamında valide edilmiş sistem değildir.
+
+## 8. Kaynakça
+- EMA. Guideline on the Investigation of Bioequivalence, CPMP/EWP/QWP/1401/98 Rev. 1/Corr**, 2010; Ek I.
+- EMA PKWP/BSWP. Soru-cevap 3.9 (Mahalanobis uzaklığı) ve 3.11 (bootstrap beklentileri).
+- ICH M9. Biopharmaceutics Classification System-based Biowaivers, 2019.
+- FDA. Dissolution Testing of Immediate Release Solid Oral Dosage Forms, 1997; Bölüm V.A.
+- Ma M-C, Wang BBC, Liu J-P, Tsong Y. Assessment of similarity between dissolution profiles. J Biopharm Stat 2000;10:229–249.
+- Hyndman RJ, Fan Y. Sample quantiles in statistical packages. Am Stat 1996;50:361–365.
+- Noce L, Gwaza L, Mangas-Sanjuan V, Garcia-Arieta A. Comparison of free software platforms for the calculation of the 90% confidence interval of f2 similarity factor by bootstrap analysis. Eur J Pharm Sci 2020;146:105259.
+- Xu Z ve ark. Comput Methods Programs Biomed 2021;212:106449.
+- Gong X. FDA/OGD sunumu, SBIA 2020 (resmî FDA politikası değil).
+
+@@en
+# The f2 similarity factor and bootstrap f2
+
+## 1. Question and scope
+Are two dissolution profiles (test T and reference R) similar? f2 is a logarithmic transformation of the mean squared difference between the two mean profiles; values between 50 and 100 indicate similarity. When variability is high the point estimate of f2 may mislead; EMA then recommends the bootstrap 90% confidence interval of the “expected f2”. The platform computes it with the unchanged validated core (`calc_f2_boot`).
+
+## 2. Model and notation
+- P: number of time points in the analysis; n: number of units (tablets) per product (EMA asks for 12).
+- $\bar R_t, \bar T_t$: mean percent dissolved at time t; $S^2_{T,t}, S^2_{R,t}$: unit variances.
+- D: sum of squared mean differences; V: sum of the variances of the means.
+
+$$ D = \sum_{t=1}^{P} (\bar T_t - \bar R_t)^2, \qquad V = \sum_{t=1}^{P}\left(\frac{S^2_{T,t}}{n_T} + \frac{S^2_{R,t}}{n_R}\right) $$ :: EMA PKWP/BSWP Q&A 3.11 (for n_T = n_R); the n_T ≠ n_R generalisation is a FarmaStatR derivation
+
+## 3. Equations
+$$ f_2 = 50\,\log_{10}\left\{\left[1 + \frac{1}{P}\sum_{t=1}^{P}(\bar R_t - \bar T_t)^2\right]^{-1/2} \cdot 100\right\} = 100 - 25\log_{10}\left(1 + \frac{D}{P}\right) $$ :: EMA CPMP/EWP/QWP/1401/98 Rev. 1 (2010) Appendix I; the second form is algebraically equal
+$$ E(f_2) = 100 - 25\log_{10}\left(1 + \frac{D + V}{P}\right) $$ :: EMA PKWP/BSWP Q&A 3.11, Eq. 1; Ma et al. (2000) Eq. 9
+$$ \text{bc-}f_2 = 100 - 25\log_{10}\left(1 + \frac{D - V}{P}\right) \quad (D > V) $$ :: Noce et al. (2020) Eq. 2
+
+Bootstrap (Ma et al. 2000, steps 1–4): from each product n units are drawn with replacement, with their whole profiles; the chosen estimator (EMA: E(f2), FDA preset: f2) is computed; this is repeated B times. The 90% interval is given by the 5% and 95% quantiles of the B values (one of the Hyndman and Fan definitions; type 7 in the platform):
+
+$$ \left[\hat Q_{0.05},\; \hat Q_{0.95}\right] \text{ (bootstrap distribution, Hyndman–Fan type 7)} $$ :: EMA PKWP/BSWP Q&A 3.11; Hyndman and Fan (1996)
+
+BCa interval (optional): $z_0$ bias correction, $a$ acceleration (by jackknife), $\Phi$ standard normal distribution function:
+
+$$ z_0 = \Phi^{-1}\left(\frac{\#\{\hat\theta^*_b < \hat\theta\}}{B}\right), \qquad a = \frac{\sum_i(\bar\theta_J - \hat\theta_{(i)})^3}{6\left[\sum_i(\bar\theta_J - \hat\theta_{(i)})^2\right]^{3/2}} $$ :: Xu et al. (2021) Eq. 21–24
+$$ \alpha_1 = \Phi\left(z_0 + \frac{z_0 + z_\alpha}{1 - a(z_0 + z_\alpha)}\right), \qquad \alpha_2 = \Phi\left(z_0 + \frac{z_0 + z_{1-\alpha}}{1 - a(z_0 + z_{1-\alpha})}\right) $$ :: Xu et al. (2021) Eq. 21–24
+
+Monte Carlo standard error of the lower bound, by the order-statistic (binomial) method:
+
+$$ \text{MCSE} \approx \frac{\hat Q_{(Bp + z\sqrt{Bp(1-p)})} - \hat Q_{(Bp - z\sqrt{Bp(1-p)})}}{2z}, \quad p = 0.05 $$ :: FarmaStatR derivation (f2_boot.R)
+
+## 4. Decision rule
+$$ \hat Q_{0.05}\left(E(f_2)^*\right) \ge 50 \;\Rightarrow\; \text{similar} $$ :: EMA PKWP/BSWP Q&A 3.11
+
+- EMA asks for the result to be reported rounded to the nearest integer. The platform judges the unrounded lower bound: ≥ 50 similar; between 49.5 and 50 “borderline, assessor judgement needed” (the zone that may round to 50) [FarmaStatR rule]; < 49.5 not similar.
+- If |lower bound − 50| < 2·MCSE a “seed-sensitive” warning is given [FarmaStatR rule].
+- If the CV condition holds, EMA also allows the classical rule f2 ≥ 50 (Appendix I); the “CV rule” line on the screen says which method is recommended.
+
+## 5. Implementation in the platform
+- Applicability (in the order of EMA Appendix I): t = 0 is excluded; if both products dissolve > 85% within 15 minutes no profile comparison is needed (note); 85% truncation on the means (EMA: up to and including the point where either product exceeds 85%; FDA: one point after both exceed 85%); at least 3 time points; check of 12 units.
+- CV rule: ICH M9 (≤ 10 min 20%, later 10%), EMA Appendix I (first point 20%, later 10%) or FDA 1997 (early points 20%, others 10%; “early = ≤ 15 min” is a FarmaStatR reading).
+- The 85% truncation is re-applied in every bootstrap sample to that sample's means (default “replicate” mode) [FarmaStatR choice; criticism in Noce et al. 2020].
+- Perspective presets: EMA E(f2), EMA truncation, M9, B = 5000; FDA f2, FDA truncation, FDA97, B = 10,000. The FDA preset follows an FDA presentation (Gong 2020) and is not official FDA policy.
+- Random number generator (Mersenne-Twister, Inversion, Rejection), seed and B are reported; default seed 20260927.
+
+## 6. Worked example
+Data set of Noce et al. (2020) (Urun1 test, Urun2 reference; 12 units), EMA preset, percentile interval, B = 5000, seed 20260927:
+
+- After the 85% truncation P = [[f2_p|6]] time points (120–165 min).
+- f2 = [[f2_f2|37.39]], E(f2) = [[f2_ef2|36.90]], bc-f2 = [[f2_bcf2|37.90]].
+- Bootstrap 90% CI: [[f2_alt|30.90]] – [[f2_ust|43.99]]; MCSE of the lower bound [[f2_mcse|0.12]].
+- Lower bound < 49.5 → not similar. EMA reporting: [[f2_tamsayi|31]].
+
+## 7. Limits
+- The bootstrap interval depends on the seed; the same seed and B give the same result. If the result is seed-sensitive, increase B.
+- An increased type I error has been reported for classical f2 with BCa (Xu et al. 2021); EMA asks for the percentile method.
+- For research and education; not a system validated for GxP environments.
+
+## 8. References
+- EMA. Guideline on the Investigation of Bioequivalence, CPMP/EWP/QWP/1401/98 Rev. 1/Corr**, 2010; Appendix I.
+- EMA PKWP/BSWP. Questions and answers 3.9 (Mahalanobis distance) and 3.11 (bootstrap expectations).
+- ICH M9. Biopharmaceutics Classification System-based Biowaivers, 2019.
+- FDA. Dissolution Testing of Immediate Release Solid Oral Dosage Forms, 1997; Section V.A.
+- Ma M-C, Wang BBC, Liu J-P, Tsong Y. Assessment of similarity between dissolution profiles. J Biopharm Stat 2000;10:229–249.
+- Hyndman RJ, Fan Y. Sample quantiles in statistical packages. Am Stat 1996;50:361–365.
+- Noce L, Gwaza L, Mangas-Sanjuan V, Garcia-Arieta A. Comparison of free software platforms for the calculation of the 90% confidence interval of f2 similarity factor by bootstrap analysis. Eur J Pharm Sci 2020;146:105259.
+- Xu Z et al. Comput Methods Programs Biomed 2021;212:106449.
+- Gong X. FDA/OGD presentation, SBIA 2020 (not official FDA policy).

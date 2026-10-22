@@ -20,6 +20,7 @@ httpuv::runStaticServer(".", port = 8000)
 | `http://127.0.0.1:8000/web/app/` | In vitro PBE simulation and design selection (ℓ × n × m; FDA, EMA) |
 | `http://127.0.0.1:8000/web/analiz/` | Analysis of your own data: PBE; f2 and bootstrap f2; model-independent MSD; Weibull MSD |
 | `http://127.0.0.1:8000/web/analiz/dogrula.html` | Validation in the browser (516 inherited checks, package tests) |
+| `http://127.0.0.1:8000/web/yardim/yontem/?lang=en` | Method notes (PBE, f2, MSD, Weibull, simulation) |
 
 All computation runs in R inside the browser (webR); data never leave the browser. Each result is
 recorded with its seed, RNG and versions and can be reproduced from a link or an exported R script.

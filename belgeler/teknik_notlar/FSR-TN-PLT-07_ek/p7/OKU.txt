@@ -1,0 +1,2 @@
+Resmi yardim kabul kosusunun ciktisi buraya konur: p7_kabul.zip (web/yardim/kabul7.html indirir, acmadan).
+Official help acceptance output goes here: p7_kabul.zip.

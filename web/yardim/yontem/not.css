@@ -1,0 +1,15 @@
+/* CNK-FarmaStatR method notes (FSR-TN-PLT-07, level 3); uses the tokens of ../../app/stil.css */
+main.notmain { display: block; max-width: 860px; margin: 0 auto; }
+.not { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 14px 18px 24px; line-height: 1.55; overflow-wrap: anywhere; }
+.not[hidden] { display: none; }
+.not h1 { font-size: 1.35rem; margin: 6px 0 8px; }
+.not h2 { font-size: 1.05rem; margin: 22px 0 6px; color: var(--accent); }
+.not .ust { margin: 0; font-size: .88rem; }
+.not .disclaimer { margin: 8px 0 12px; }
+.not a { color: var(--accent); }
+.not code { font-size: .88em; background: var(--bg); padding: 0 3px; border-radius: 3px; }
+.eq { margin: 10px 0 12px; padding: 8px 10px; border-left: 3px solid var(--line); background: var(--bg); border-radius: 0 6px 6px 0; }
+.eq-m { overflow-x: auto; overflow-y: hidden; }
+.eq-m math { font-size: 1.08em; }
+.eq-k { margin: 4px 0 0; font-size: .82rem; color: var(--muted); }
+.deger { font-variant-numeric: tabular-nums; }

@@ -20,6 +20,7 @@ httpuv::runStaticServer(".", port = 8000)
 | `http://127.0.0.1:8000/web/app/` | In vitro PBE simülasyonu ve tasarım seçimi (ℓ × n × m; FDA, EMA) |
 | `http://127.0.0.1:8000/web/analiz/` | Kendi verinizle analiz: PBE; f2 ve bootstrap f2; model bağımsız MSD; Weibull MSD |
 | `http://127.0.0.1:8000/web/analiz/dogrula.html` | Tarayıcıda doğrulama (devralınan 516 kontrol, paket testleri) |
+| `http://127.0.0.1:8000/web/yardim/yontem/` | Yöntem notları (PBE, f2, MSD, Weibull, simülasyon) |
 
 Hesaplar tarayıcıdaki R'de (webR) yapılır; veriler tarayıcıdan çıkmaz. Her sonuç seed, RNG ve
 sürümlerle kaydedilir; bağlantıyla ya da dışa aktarılan R betiğiyle yeniden üretilir.
@@ -28,7 +29,7 @@ sürümlerle kaydedilir; bağlantıyla ya da dışa aktarılan R betiğiyle yeni
 
 - `FSR-LOG-01_v1_gunluk.md` — proje günlüğü (her oturum burada kaydedilir)
 - `CNKfarmastatr/` — R paketi (istatistik çekirdeği, platform fonksiyonları ve testler)
-- `web/` — tarayıcı arayüzü (`app/`: simülasyon ve tasarım; `analiz/`: veri analizi ve doğrulama; `p1/`: prototip)
+- `web/` — tarayıcı arayüzü (`app/`: simülasyon ve tasarım; `analiz/`: veri analizi ve doğrulama; `yardim/`: yardım ve yöntem notları; `p1/`: prototip)
 - `veri/` — SQLite veri tabanı (önceden hesaplanmış simülasyon sonuçları; SHA-256 `VT_SHA256.txt`)
 - `simulasyon/` — simülasyon çalışmalarının betikleri ve sonuçları
 - `araclar/` — yardımcı betikler (`cekirdek_kontrol.R`: çekirdeklerin parmak izi kontrolü)

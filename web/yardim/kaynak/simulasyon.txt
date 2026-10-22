@@ -1,0 +1,139 @@
+@@tr
+# In vitro eşdeğerlik simülasyonu ve tasarım seçimi
+
+## 1. Soru ve kapsam
+Seri sayısı ℓ, seri başına birim sayısı n ve evre sayısı m, FDA PBE ile EMA OIP ölçüt 8’in tip I hatasını ve gücünü nasıl etkiler; hedeflenen güç için hangi tasarım gerekir? Kılavuzlar en az 3 seri ve seri başına en az 10 birim ister, ama değişkenlik yüksekse daha fazlasını önerir ve örneklem büyüklüğü kuralı vermez. Platform bu soruyu simülasyonla yanıtlar; tasarım çerçevesi ADEMP’tir (Morris ve ark. 2019). Ayrıntı FSR-TN-PBE-01 v0.11’dedir.
+
+## 2. Model ve gösterim
+Log ölçeğinde, her ürün (k = T, R) için bağımsız olarak:
+
+$$ X_{ijks} = \mu_k + b_{jk} + c_{ijk} + \tau_{ks} + e_{ijks} $$ :: FDA 1999 IX.B.2.a (seri, birim); τ ve e FarmaStatR türetimi (FSR-TN-PBE-01 Denk. 8)
+
+- $b_{jk} \sim N(0, \sigma^2_{B,k})$ seri etkisi; $c_{ijk} \sim N(0, \sigma^2_{C,k})$ seri içinde birim etkisi; $e_{ijks} \sim N(0, \sigma^2_{W,k})$ birim içi rastgele evre farkı; $\tau_{ks}$ sabit evre kayması ($\sum_s \tau_{ks} = 0$).
+- Toplam varyans ve paylar (bir koşul değişince toplam σR ve kriter sabit kalsın diye bileşenler paylardan hesaplanır):
+
+$$ \sigma_k^2 = \sigma^2_{B,k} + \sigma^2_{C,k} + \sigma^2_{L,k}, \qquad \sigma^2_{L,k} = \sigma^2_{W,k} + \frac{1}{m}\sum_s \tau^2_{ks} $$ :: FDA 1999 IX.B.2.a; FSR-TN-PBE-01 Denk. 10
+$$ \sigma^2_{B,k} = p_B\sigma_k^2,\quad \sigma^2_{C,k} = p_C\sigma_k^2,\quad \sigma^2_{L,k} = p_L\sigma_k^2,\quad \sigma^2_{W,k} = (1-q)\,\sigma^2_{L,k},\quad \sigma_T = \rho\,\sigma_R $$ :: FarmaStatR türetimi; KK-29 (FSR-TN-PBE-01 Denk. 9)
+
+## 3. Denklemler
+Hipotezler. FDA kriteri gerçek σR ile seçilir; tip I hata senaryosunda fark η = 0 sınırına konur:
+
+$$ \eta = \delta^2 + \sigma_T^2 - \sigma_R^2 - \theta_p \max(\sigma_R^2,\, \sigma_{T0}^2), \qquad H_0:\ \eta \ge 0 $$ :: PSG 020929 Ek A Adım 1; FSR-TN-PLT-01 Bölüm 5
+$$ \delta_0 = \sqrt{\theta_p \max(\sigma_R^2,\, \sigma_{T0}^2) - (\sigma_T^2 - \sigma_R^2)} $$ :: FarmaStatR türetimi (FSR-TN-PBE-01 Denk. 11)
+$$ H_0:\ \mathrm{GMR} \le 0{,}85 \ \text{ya da}\ \mathrm{GMR} \ge 1{,}18, \qquad \text{karar: } \exp(\hat\Delta \pm t\,SE) \subset [0{,}85;\ 1{,}18] $$ :: EMA CPMP/EWP/4151/00 Rev. 2 (2025) §5.1 ölçüt 8
+
+EMA %90 güven aralığının seri ve evre yapısıyla nasıl hesaplanacağı kılavuzda tanımlı değildir; platform üç aday yolu birlikte hesaplar (birim ortalamaları $\bar Y_{ijk}$ üzerinden):
+
+$$ (a):\ SE^2 = \sum_k \frac{s^2_{\text{birim},k}}{n_k\ell_k}, \qquad (b):\ SE^2 = \sum_k \frac{s^2_{\text{seri},k}}{\ell_k} $$ :: FarmaStatR türetimi; KK-27 (Welch–Satterthwaite serbestlik derecesi)
+- (c): seri ve birim rastgele, evre sabit karma model (REML); dengeli tasarımda kapalı biçimle çözülür, SAS PROC MIXED ile karşılaştırılmıştır [FarmaStatR türetimi; FSR-TN-PBE-01 Bölüm 5.3].
+
+Performans (her yöntem için nsim tekrarda pozitif karar oranı) ve Monte Carlo standart hatası:
+
+$$ \hat p = \frac{1}{n_{sim}}\sum_{i=1}^{n_{sim}} I_i, \qquad \mathrm{MCSE}(\hat p) = \sqrt{\frac{\hat p(1-\hat p)}{n_{sim}}} $$ :: Morris, White, Crowther (2019) Tablo 6
+
+Tip I hata etiketi (yalnız H0’da; z = 1,645):
+
+$$ \hat p - z\,\mathrm{MCSE} > 0{,}05:\ \text{nominali aşıyor};\quad \hat p + z\,\mathrm{MCSE} \le 0{,}05:\ \text{kontrol kanıtlı};\quad \text{aksi halde ayırt edilemiyor} $$ :: FarmaStatR kuralı; KK-38
+
+## 4. Karar kuralı (tasarım seçimi)
+$$ \text{Kural A: } \min_{\ell, n}\ \ell\, n \ \ \text{koşul}\ \ \hat p_{\text{güç}} \ge \text{hedef}\quad (m\ \text{sabit; eşitlikte küçük}\ \ell) $$ :: FarmaStatR türetimi; FSR-TN-PBE-01 Tablo 11.3a; KK-56, KK-57
+$$ \text{Kural B: Kural A, ek olarak } \ell \ge 3,\ n \ge 10\ \text{ve tip I hata etiketi “nominali aşıyor” değil} $$ :: FarmaStatR türetimi; FSR-TN-PBE-01 Tablo 11.3b; KK-38, KK-57
+- Güç, seçilen farkta (varsayılan GMR 1,05); tip I hata her yöntemin kendi sınırında (FDA δ₀, EMA GMR 1,18) okunur.
+- Seçim yalnız seçilen farkta H1’de olan yöntemler için yapılır.
+- |güç − hedef| < 2·MCSE ise seçim “eşiğe yakın; kesin değil” diye işaretlenir; daha çok tekrarla yeniden koşmak gerekir (KK-39).
+
+## 5. Platformdaki uygulama
+- Motor: `invitro_fast.R` ve `invitro_grid.R` (FSR-VAL-SIM-1 v1.1; SHA-256 ile sabitli). FDA PBE hesabı validasyonlu `calc_pbe` ile birebir aynıdır (test TC-F1, TC-F2).
+- Rastgele sayılar: seed koşu başında bir kez; RNG türü Mersenne-Twister/Inversion/Rejection; ortak seed 20261015 (bütün senaryolar aynı seed’le, tasarım içinde eşleşik).
+- Üç katman: hazır sonuç (SQLite veri tabanı; Aşama 1 ve 2 ızgarası), canlı koşu (webR; nsim ≤ 20.000 ve ℓ·n·m·nsim ≤ 8,1 × 10⁶), R betiği (sınırın üstü; aynı kayıt).
+- Metrik adı hipotez durumundan gelir: H0 sınırı “tip I hata (sınırda)”, H0 içi “noktasal tip I hata”, H1 “güç”.
+
+## 6. Çalışılmış örnek
+σR = 0,12, ρ = 1 (σT = σR) için FDA’nın tip I hata sınırı:
+
+- $\theta_p$ = [[sim_thetap|2,0891]], $\sqrt{\theta_p}$ = [[sim_sqrt_thetap|1,4454]], $\delta_0 = \sqrt{\theta_p}\,\sigma_R$ = [[sim_delta0|0,17344]] (GMR [[sim_gmr0|1,1894]]).
+- nsim = 10.000 iken MCSE, oran %5 civarında [[sim_mcse05|0,22]] yüzde puanı, %80 civarında [[sim_mcse80|0,40]] yüzde puanıdır.
+- Ekranda “Gerçek fark: FDA δ₀” seçilince bu senaryonun FDA oranı “tip I hata (sınırda)” olarak gösterilir.
+
+## 7. Sınırlar
+- Tek bir log-normal büyüklük; dengeli tasarım. Çoklu APSD basamak grubu (hepsinin geçmesi) ve EMA ölçüt 6–7 kapsam dışıdır.
+- Seçim, verilen aday kümeyle sınırlıdır; sonuçlar simülasyon senaryosunun varsayımlarına bağlıdır.
+- Kurallar düzenleyici bir kural değil, araştırma amaçlı önerilerdir.
+- Araştırma ve eğitim amaçlıdır; GxP ortamında valide edilmiş sistem değildir.
+
+## 8. Kaynakça
+- FDA. Draft Guidance on Budesonide, PSG 020929. Aralık 2025; Ek.
+- FDA. Bioavailability and Bioequivalence Studies for Nasal Aerosols and Nasal Sprays for Local Action (Haziran 1999 taslak) ve 18 Ağustos 1999 istatistik bilgisi; IX.B.
+- EMA. Guideline on the requirements for demonstrating therapeutic equivalence between orally inhaled products, CPMP/EWP/4151/00 Rev. 2, 2025; §5.1.
+- Morris TP, White IR, Crowther MJ. Using simulation studies to evaluate statistical methods. Stat Med 2019;38:2074–2102.
+- FSR-TN-PBE-01 v0.11; FSR-TN-PLT-05 v0.3; FSR-VAL-SIM-1 v1.1.
+
+@@en
+# In vitro equivalence simulation and design selection
+
+## 1. Question and scope
+How do the number of batches ℓ, units per batch n and stages m affect the type I error and the power of FDA PBE and EMA OIP criterion 8, and which design is needed for a target power? The guidances ask for at least 3 batches and at least 10 units per batch, recommend more when variability is high, and give no sample-size rule. The platform answers the question by simulation, within the ADEMP framework (Morris et al. 2019). Details are in FSR-TN-PBE-01 v0.11 (Turkish).
+
+## 2. Model and notation
+On the log scale, independently for each product (k = T, R):
+
+$$ X_{ijks} = \mu_k + b_{jk} + c_{ijk} + \tau_{ks} + e_{ijks} $$ :: FDA 1999 IX.B.2.a (batch, unit); τ and e are a FarmaStatR derivation (FSR-TN-PBE-01 Eq. 8)
+
+- $b_{jk} \sim N(0, \sigma^2_{B,k})$ batch effect; $c_{ijk} \sim N(0, \sigma^2_{C,k})$ unit-within-batch effect; $e_{ijks} \sim N(0, \sigma^2_{W,k})$ random within-unit stage difference; $\tau_{ks}$ fixed stage drift ($\sum_s \tau_{ks} = 0$).
+- Total variance and shares (the components are computed from the shares, so that the total σR and the criterion stay fixed when one condition changes):
+
+$$ \sigma_k^2 = \sigma^2_{B,k} + \sigma^2_{C,k} + \sigma^2_{L,k}, \qquad \sigma^2_{L,k} = \sigma^2_{W,k} + \frac{1}{m}\sum_s \tau^2_{ks} $$ :: FDA 1999 IX.B.2.a; FSR-TN-PBE-01 Eq. 10
+$$ \sigma^2_{B,k} = p_B\sigma_k^2,\quad \sigma^2_{C,k} = p_C\sigma_k^2,\quad \sigma^2_{L,k} = p_L\sigma_k^2,\quad \sigma^2_{W,k} = (1-q)\,\sigma^2_{L,k},\quad \sigma_T = \rho\,\sigma_R $$ :: FarmaStatR derivation; KK-29 (FSR-TN-PBE-01 Eq. 9)
+
+## 3. Equations
+Hypotheses. The FDA criterion is chosen by the true σR; in a type I error scenario the difference is put on the boundary η = 0:
+
+$$ \eta = \delta^2 + \sigma_T^2 - \sigma_R^2 - \theta_p \max(\sigma_R^2,\, \sigma_{T0}^2), \qquad H_0:\ \eta \ge 0 $$ :: PSG 020929 Appendix A Step 1; FSR-TN-PLT-01 Section 5
+$$ \delta_0 = \sqrt{\theta_p \max(\sigma_R^2,\, \sigma_{T0}^2) - (\sigma_T^2 - \sigma_R^2)} $$ :: FarmaStatR derivation (FSR-TN-PBE-01 Eq. 11)
+$$ H_0:\ \mathrm{GMR} \le 0.85 \ \text{or}\ \mathrm{GMR} \ge 1.18, \qquad \text{decision: } \exp(\hat\Delta \pm t\,SE) \subset [0.85,\ 1.18] $$ :: EMA CPMP/EWP/4151/00 Rev. 2 (2025) §5.1 criterion 8
+
+The guideline does not define how the EMA 90% confidence interval should handle the batch and stage structure; the platform computes three candidate variants together (on unit means $\bar Y_{ijk}$):
+
+$$ (a):\ SE^2 = \sum_k \frac{s^2_{\text{unit},k}}{n_k\ell_k}, \qquad (b):\ SE^2 = \sum_k \frac{s^2_{\text{batch},k}}{\ell_k} $$ :: FarmaStatR derivation; KK-27 (Welch–Satterthwaite degrees of freedom)
+- (c): mixed model with random batch and unit and fixed stage (REML); solved in closed form for the balanced design and compared with SAS PROC MIXED [FarmaStatR derivation; FSR-TN-PBE-01 Section 5.3].
+
+Performance (rate of positive decisions over nsim replicates, per method) and Monte Carlo standard error:
+
+$$ \hat p = \frac{1}{n_{sim}}\sum_{i=1}^{n_{sim}} I_i, \qquad \mathrm{MCSE}(\hat p) = \sqrt{\frac{\hat p(1-\hat p)}{n_{sim}}} $$ :: Morris, White, Crowther (2019) Table 6
+
+Type I error label (H0 only; z = 1.645):
+
+$$ \hat p - z\,\mathrm{MCSE} > 0.05:\ \text{exceeds nominal};\quad \hat p + z\,\mathrm{MCSE} \le 0.05:\ \text{shown controlled};\quad \text{otherwise indistinguishable} $$ :: FarmaStatR rule; KK-38
+
+## 4. Decision rule (design selection)
+$$ \text{Rule A: } \min_{\ell, n}\ \ell\, n \ \ \text{subject to}\ \ \hat p_{\text{power}} \ge \text{target}\quad (m\ \text{fixed; ties to the smaller}\ \ell) $$ :: FarmaStatR derivation; FSR-TN-PBE-01 Table 11.3a; KK-56, KK-57
+$$ \text{Rule B: Rule A, with in addition } \ell \ge 3,\ n \ge 10\ \text{and a type I error label other than “exceeds nominal”} $$ :: FarmaStatR derivation; FSR-TN-PBE-01 Table 11.3b; KK-38, KK-57
+- Power is read at the chosen difference (default GMR 1.05); type I error at each method's own boundary (FDA δ₀, EMA GMR 1.18).
+- A selection is made only for methods that are in H1 at the chosen difference.
+- If |power − target| < 2·MCSE the selection is marked “near the target; not certain”; it should be rerun with more replicates (KK-39).
+
+## 5. Implementation in the platform
+- Engine: `invitro_fast.R` and `invitro_grid.R` (FSR-VAL-SIM-1 v1.1; pinned with SHA-256). The FDA PBE computation equals the validated `calc_pbe` exactly (tests TC-F1, TC-F2).
+- Random numbers: the seed is set once per run; RNG kind Mersenne-Twister/Inversion/Rejection; common seed 20261015 (all scenarios with the same seed, paired within a design).
+- Three tiers: precomputed results (SQLite database; Stage 1 and 2 grid), live run (webR; nsim ≤ 20,000 and ℓ·n·m·nsim ≤ 8.1 × 10⁶), R script (above the limit; same record).
+- The metric name comes from the hypothesis state: H0 boundary “type I error (at the boundary)”, inside H0 “pointwise type I error”, H1 “power”.
+
+## 6. Worked example
+FDA's type I error boundary for σR = 0.12, ρ = 1 (σT = σR):
+
+- $\theta_p$ = [[sim_thetap|2.0891]], $\sqrt{\theta_p}$ = [[sim_sqrt_thetap|1.4454]], $\delta_0 = \sqrt{\theta_p}\,\sigma_R$ = [[sim_delta0|0.17344]] (GMR [[sim_gmr0|1.1894]]).
+- With nsim = 10,000 the MCSE is [[sim_mcse05|0.22]] percentage points for a rate near 5% and [[sim_mcse80|0.40]] percentage points near 80%.
+- With “True difference: FDA δ₀” on the screen, the FDA rate of this scenario is shown as “type I error (at the boundary)”.
+
+## 7. Limits
+- One log-normal quantity; balanced design. Several APSD stage groups (all must pass) and EMA criteria 6–7 are out of scope.
+- The selection is limited to the candidate set; the results depend on the assumptions of the simulated scenario.
+- The rules are research proposals, not regulatory rules.
+- For research and education; not a system validated for GxP environments.
+
+## 8. References
+- FDA. Draft Guidance on Budesonide, PSG 020929. December 2025; appendix.
+- FDA. Bioavailability and Bioequivalence Studies for Nasal Aerosols and Nasal Sprays for Local Action (June 1999 draft) and Statistical Information of 18 August 1999; IX.B.
+- EMA. Guideline on the requirements for demonstrating therapeutic equivalence between orally inhaled products, CPMP/EWP/4151/00 Rev. 2, 2025; §5.1.
+- Morris TP, White IR, Crowther MJ. Using simulation studies to evaluate statistical methods. Stat Med 2019;38:2074–2102.
+- FSR-TN-PBE-01 v0.11; FSR-TN-PLT-05 v0.3; FSR-VAL-SIM-1 v1.1.

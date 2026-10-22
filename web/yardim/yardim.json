@@ -1,0 +1,371 @@
+{
+  "_belge": "CNK-FarmaStatR yardım metinleri (Düzey 1 ipuçları, Düzey 2 paneller); FSR-TN-PLT-07. TR ve EN aynı anahtarlar. Araştırma ve eğitim amaçlıdır; GxP ortamında valide edilmiş sistem değildir.",
+  "tr": {
+    "ui": {
+      "help": "Yardım",
+      "close": "Kapat",
+      "hint": "Açıklama",
+      "panel": "Yardım",
+      "notes": "Yöntem notları",
+      "templates": "Örnek dosyalar",
+      "screens": {
+        "tek": "Simülasyon: tek senaryo",
+        "tas": "Simülasyon: tasarım seçimi",
+        "pbe": "PBE analizi",
+        "dis": "Dissolüsyon benzerliği"
+      },
+      "sections": {
+        "ne": "Ne yapar",
+        "veri": "Veri ve girdiler",
+        "ayar": "Ayarlar",
+        "okuma": "Sonucu okuma",
+        "sinir": "Sınırlar",
+        "kaynak": "Kaynaklar"
+      }
+    },
+    "ipucu": {
+      "dis.B": "Bootstrap örnek sayısı. Boş bırakılırsa perspektifin değeri (EMA 5000, FDA 10.000) kullanılır.",
+      "dis.Dg": "Zaman noktası başına izin verilen fark, yüzde puanı (EMA’da %10). L1 sınırı ve L3 kontrolü için.",
+      "dis.birim": "Zaman sütununun birimi. f2’nin CV kuralı ve 15 dakika kontrolü dakika varsayar; “saat” seçilirse zamanlar f2 için dakikaya çevrilir.",
+      "dis.bolge": "Benzerlik bölgesi: B-L3 yanıt uzayında ±D_g (referans lotu gerekmez); B-L2a Sathe kutusu (±k·SD); B-L2b Sathe elipsi.",
+      "dis.dosya": "CSV: Product, Unit, Time, Diss (ya da urun, tablet, zaman, cozunen). Her satır bir ünitenin bir zaman noktasındaki çözünme yüzdesi. Ayraç ; , ya da sekme.",
+      "dis.gatipi": "Bootstrap güven aralığı türü: persentil (varsayılan) ya da BCa (yanlılık ve çarpıklık düzeltmeli).",
+      "dis.k": "B-L2a kutusunun genişliği: ±k × havuzlanmış SD (Sathe ve ark.: 1, 2 ya da 3).",
+      "dis.kaynak": "Tsong ve ark. (1996) örneği (MSD ve Weibull için; STD1 ve STD2 referans lotlarıyla), Noce ve ark. (2020) örneği (f2 için) ya da kendi CSV dosyanız.",
+      "dis.kesme": "Zaman noktalarının %85 çözünmeye göre kesilmesi: yok, FDA (iki ürün de > %85 olduktan sonra tek nokta), EMA (biri > %85 olduğu noktaya kadar).",
+      "dis.lot": "Referans ürünün ayrı lotları (L2a, L2b, B-L2a, B-L2b sınırları için en az 2). Karşılaştırılan referans da seçilebilir; test seçilemez.",
+      "dis.param": "MSD’nin hesaplandığı Weibull parametreleri: (ln T_d, ln β) varsayılan ve zaman biriminden bağımsız; (ln α, ln β) Sathe ve ark. (1996); (ln α, β).",
+      "dis.perspektif": "EMA: E(f2), EMA %85 kesmesi, ICH M9 CV kuralı, B = 5000. FDA: klasik f2, FDA kesmesi, FDA 1997 CV kuralı, B = 10.000 (FDA ön ayarı resmî bir FDA politikası değildir).",
+      "dis.ref": "Karşılaştırılan referans ürünün etiketi; test ile aynı zaman noktalarına sahip olmalı.",
+      "dis.seed": "Bootstrap için rastgele sayı başlangıcı; aynı seed aynı aralığı verir.",
+      "dis.sinir": "Benzerlik sınırı: L1 sabit D_g; L2a referans lotları arası en büyük ortalama fark; L2b referans lotları arası en büyük MSD.",
+      "dis.test": "Test ürününün etiketi.",
+      "dis.wDg": "B-L3 için zaman noktası başına izin verilen fark, yüzde puanı.",
+      "dis.yontem": "f2 ve bootstrap f2 (EMA’nın öncelikli yöntemi), model bağımsız MSD (FDA 1997 V.B) ya da Weibull MSD (FDA 1997 V.C).",
+      "pbe.dosya": "CSV: parti, kap, asama, urun, olcum (ya da batch, container, stage, product, score). Her satır bir ölçüm. Ayraç ; , ya da sekme; ondalık virgül olabilir.",
+      "pbe.kaynak": "FDA PSG 020929 Ek’teki simüle örnek veri ya da kendi CSV dosyanız.",
+      "pbe.log_d": "İşaretliyse analiz ln(ölçüm) üzerinde yapılır; tüm değerler pozitif olmalı. PSG Ek’teki örnek, verilen değerler üzerinde (log alınmadan) hesaplanır; ham ölçümler için işaretleyin.",
+      "pbe.ref": "Ürün sütunundaki etiketlerden referans ürün.",
+      "pbe.tek": "Değiştirilmiş tek yönlü PBE (FDA PSG 020121 Ek): test ortalaması referanstan küçükse ortalama farkı terimi kritere girmez. Yalnız ilgili ürün kılavuzu öngörüyorsa kullanın.",
+      "pbe.test": "Ürün sütunundaki etiketlerden test ürünü. Başka ürünler varsa yok sayılır.",
+      "tas.guc_choice": "Gücün hesaplandığı gerçek fark (varsayılan GMR 1,05). Tip I hata ayrıca her yöntemin kendi sınırında hesaplanır: FDA δ₀, EMA GMR 1,18.",
+      "tas.guc_custom": "Özel GMR ya da δ değeri.",
+      "tas.hedef": "Hedeflenen güç, yüzde (ör. 80).",
+      "tas.ls": "Denenecek seri sayıları, boşlukla ayrılmış (ör. 2 3 4 5 6). Her ℓ × n × m birleşimi bir aday tasarımdır.",
+      "tas.ms": "Denenecek evre sayıları (ör. 3 ya da 1 2 3).",
+      "tas.n_sim": "Simülasyon tekrar sayısı. 10.000 tekrarda %5 civarındaki bir oranın MCSE’si yaklaşık 0,22 yüzde puanıdır. Tarayıcıda en çok 20.000 ve ℓ·n·m·nsim ≤ 8,1 milyon.",
+      "tas.ns": "Denenecek seri başına birim sayıları (ör. 5 8 10 15 20 30).",
+      "tas.pB_R": "Referans ürünün seri payı (0–1); test payından ayrı verilebilir.",
+      "tas.pB_T": "Test ürününde toplam varyansın seriden seriye değişkenlikten gelen payı (0–1). 0 = seri farkı yok.",
+      "tas.pL": "Toplam varyansın aynı birimde evreden evreye değişkenlikten gelen payı (0–1). Birimden birime pay pC = 1 − pB − pL.",
+      "tas.q": "Evre varyansının sistematik (doğrusal) kaymadan gelen payı (0–1). 0 = evreler arasında yalnız rastgele fark. q > 0 için m ≥ 2 gerekir.",
+      "tas.rho": "Test ve referansın toplam standart sapma oranı, ρ = σT/σR. 1 = aynı değişkenlik.",
+      "tas.seed": "Tüm aday tasarımlar aynı seed ile koşulur (ortak rastgele sayılar); hazır sonuçlar bu seed’le üretilmiştir.",
+      "tas.sigma_R": "Referans ürünün log ölçeğindeki toplam standart sapması (seri + birim + evre). FDA kriterini seçer: σR > 0,1 ise referans ölçekli, değilse sabit ölçekli.",
+      "tek.custom": "Özel GMR (oran, ör. 1,10) ya da özel δ (log farkı, ör. 0,0953 = ln 1,10).",
+      "tek.delta_choice": "Test ile referans arasındaki gerçek ortalama fark (log ölçeği). Sınır seçenekleri tip I hatayı (FDA δ₀: η = 0; EMA GMR 0,85 ya da 1,18), GMR 1,00 ve 1,05 gücü ölçer. Ne ölçüldüğünü sonuçtaki “Hipotez durumu” söyler.",
+      "tek.l": "Ürün başına seri (parti) sayısı. FDA PSG 020929 ve EMA OIP en az 3 seri önerir; daha azı yalnız karşılaştırma içindir.",
+      "tek.m": "Birim başına yaşam evresi sayısı: 1 = birimde tek ölçüm (ör. ampul), 2 = başlangıç ve son, 3 = başlangıç, orta ve son.",
+      "tek.m_preset": "m için kısayol; yalnız m alanını doldurur, bağlayıcı değildir.",
+      "tek.n": "Seri başına birim (kap, ampul, cihaz) sayısı. Kılavuzlar en az 10 önerir.",
+      "tek.n_sim": "Simülasyon tekrar sayısı. 10.000 tekrarda %5 civarındaki bir oranın MCSE’si yaklaşık 0,22 yüzde puanıdır. Tarayıcıda en çok 20.000 ve ℓ·n·m·nsim ≤ 8,1 milyon.",
+      "tek.pB_R": "Referans ürünün seri payı (0–1); test payından ayrı verilebilir.",
+      "tek.pB_T": "Test ürününde toplam varyansın seriden seriye değişkenlikten gelen payı (0–1). 0 = seri farkı yok.",
+      "tek.pL": "Toplam varyansın aynı birimde evreden evreye değişkenlikten gelen payı (0–1). Birimden birime pay pC = 1 − pB − pL.",
+      "tek.q": "Evre varyansının sistematik (doğrusal) kaymadan gelen payı (0–1). 0 = evreler arasında yalnız rastgele fark. q > 0 için m ≥ 2 gerekir.",
+      "tek.rho": "Test ve referansın toplam standart sapma oranı, ρ = σT/σR. 1 = aynı değişkenlik.",
+      "tek.seed": "Rastgele sayı başlangıcı. Aynı seed ve aynı girdiler aynı sonucu verir; koşu kaydında saklanır.",
+      "tek.sigma_R": "Referans ürünün log ölçeğindeki toplam standart sapması (seri + birim + evre). FDA kriterini seçer: σR > 0,1 ise referans ölçekli, değilse sabit ölçekli."
+    },
+    "panel": {
+      "tek": [
+        {
+          "id": "ne",
+          "html": "<p>Bir in vitro eşdeğerlik senaryosunda iki yöntemin karar olasılığını simülasyonla hesaplar: <b>FDA PBE</b> (PSG 020929) ve <b>EMA OIP</b> Rev. 2 §5.1 ölçüt 8 (%90 GA, 0,85–1,18), EMA için üç hesaplama yoluyla (a, b, c). Gerçek fark H0’daysa oran <b>tip I hata</b>, H1’deyse <b>güç</b>tür; ekran bunu hipotez durumuna göre adlandırır.</p><p class=\"yh-links\"><a href=\"../yardim/yontem/simulasyon.html\" target=\"_blank\" rel=\"noopener\">Yöntem notu: simülasyon ve tasarım seçimi</a> · <a href=\"../yardim/yontem/pbe.html\" target=\"_blank\" rel=\"noopener\">Yöntem notu: PBE</a></p>"
+        },
+        {
+          "id": "veri",
+          "html": "<ul><li><b>Tasarım:</b> ℓ seri, seri başına n birim, birim başına m evre (her ürün için).</li><li><b>Popülasyon:</b> σR, ρ, seri payları pB,T ve pB,R, evre payı pL, sistematik kayma q; log ölçeğinde normal veri, test ve referans bağımsız üretilir.</li><li><b>Gerçek fark:</b> sınır seçenekleri (FDA δ₀, EMA 0,85 ve 1,18), GMR 1,00 ve 1,05 ya da özel değer.</li><li><b>Monte Carlo:</b> nsim ve seed.</li></ul>"
+        },
+        {
+          "id": "ayar",
+          "html": "<ul><li>Girdiler ızgaradaki bir senaryoyla aynıysa sonuç <b>hazır</b> gelir (veri tabanı, webR gerekmez).</li><li>Değilse ve tarayıcı sınırı içindeyse <b>canlı</b> koşulur (webR). “Canlı da koş” hazır sonucu yeniden üretir.</li><li>Sınırın üstündeyse <b>R betiği</b> indirilir; kendi R’nizde koşar ve aynı kaydı yazar.</li><li>Varsayılan nsim 10.000; tip I hatada MCSE ≈ 0,22 yüzde puanı.</li></ul>"
+        },
+        {
+          "id": "okuma",
+          "html": "<ul><li><b>Metrik:</b> H0 sınırında “tip I hata (sınırda)”, H0 içinde “noktasal tip I hata”, H1’de “güç”.</li><li><b>MCSE:</b> oranın Monte Carlo standart hatası (yüzde puanı).</li><li><b>KK-38 etiketi</b> (yalnız H0): p̂ − 1,645·MCSE > %5 ise <i>nominali aşıyor</i>; p̂ + 1,645·MCSE ≤ %5 ise <i>kontrol kanıtlı</i>; arada <i>ayırt edilemiyor</i> [FarmaStatR kuralı, KK-38].</li><li>Güç, nominal tip I hata korunmadan yöntemler arasında karşılaştırılmaz.</li><li>“Diğer ölçütler”: kapsama, FDA kriter seçim hatası, EMA (c) havuzlama oranı, yöntem farkları.</li></ul>"
+        },
+        {
+          "id": "sinir",
+          "html": "<ul><li>Araştırma ve eğitim amaçlıdır; GxP ortamında valide edilmiş sistem değildir.</li><li>Tek log-normal büyüklük; dengeli tasarım. Çoklu APSD basamak grubu ve EMA ölçüt 6–7 kapsam dışı.</li><li>EMA (a), (b), (c) kılavuzun tanımladığı yollar değil, aday uygulamalardır [FarmaStatR türetimi].</li><li>Tarayıcı sınırı: nsim ≤ 20.000 ve ℓ·n·m·nsim ≤ 8,1 milyon (tek cihaz ölçümü, KK-47).</li></ul>"
+        },
+        {
+          "id": "kaynak",
+          "html": "<ul><li>FDA, Draft Guidance on Budesonide, PSG 020929 (Aralık 2025), Ek Adım 1–5.</li><li>EMA, CPMP/EWP/4151/00 Rev. 2 (2025), §5.1.</li><li>FDA (2026), Statistical Approaches to Establishing Bioequivalence.</li><li>Morris, White, Crowther (2019), Stat Med 38:2074–2102 (ADEMP, MCSE).</li><li>FSR-TN-PBE-01 v0.11 (model ve sonuçlar).</li></ul>"
+        }
+      ],
+      "tas": [
+        {
+          "id": "ne",
+          "html": "<p>Hedeflenen güce ulaşmak için kaç seri (ℓ), seri başına kaç birim (n) ve kaç evre (m) gerektiğini, verdiğiniz aday tasarım kümesi içinde arar. Her aday için güç (seçilen farkta) ve tip I hata (her yöntemin kendi sınırında) R’de hesaplanır; seçim iki kurala göre yapılır.</p><p class=\"yh-links\"><a href=\"../yardim/yontem/simulasyon.html\" target=\"_blank\" rel=\"noopener\">Yöntem notu: simülasyon ve tasarım seçimi</a></p>"
+        },
+        {
+          "id": "veri",
+          "html": "<ul><li><b>Popülasyon:</b> tek senaryodaki gibi (σR, ρ, pB, pL, q).</li><li><b>Hedef:</b> güç farkı (varsayılan GMR 1,05) ve hedef güç (varsayılan %80).</li><li><b>Aday küme:</b> ℓ, n ve m değer listeleri; her birleşim bir aday.</li></ul>"
+        },
+        {
+          "id": "ayar",
+          "html": "<ul><li>Tüm adaylar aynı seed’le koşulur (ortak rastgele sayılar).</li><li>Aday küme Aşama 1 ızgarasındaysa sonuç hazır gelir; değilse canlı koşulur. Toplam iş 6×10⁷ hücreyi aşarsa küme daraltılır ya da tasarım betiği indirilir.</li></ul>"
+        },
+        {
+          "id": "okuma",
+          "html": "<ul><li><b>Kural A</b> (Tablo 11.3a): güç ≥ hedef olan en küçük toplam ℓ·n (m sabit); eşitlikte küçük ℓ.</li><li><b>Kural B</b> (Tablo 11.3b): A gibi, ama ℓ ≥ 3, n ≥ 10 ve tip I hata etiketi “nominali aşıyor” değil.</li><li>Seçim yalnız H1’de olan yöntemler için yapılır.</li><li>|güç − hedef| < 2 MCSE ise seçim “eşiğe yakın; kesin değil” diye işaretlenir (KK-39).</li><li>Izgara: hücrede güç (kalın), MCSE ve aynı tasarımın tip I hatası.</li></ul>"
+        },
+        {
+          "id": "sinir",
+          "html": "<ul><li>Seçim yalnız verilen aday kümeyle sınırlıdır; kümede olmayan daha iyi bir tasarım olabilir.</li><li>Kurallar FarmaStatR türetimidir (FSR-TN-PBE-01 Bölüm 11.5; KK-56, KK-57); kılavuzlar örneklem büyüklüğü kuralı vermez.</li><li>Araştırma ve eğitim amaçlıdır; GxP ortamında valide edilmiş sistem değildir.</li></ul>"
+        },
+        {
+          "id": "kaynak",
+          "html": "<ul><li>FSR-TN-PBE-01 v0.11, Bölüm 11.3–11.5 (Tablo 11.3a ve 11.3b).</li><li>FSR-TN-PLT-05 v0.3 (seçim kuralları ve uygulama).</li><li>Morris ve ark. (2019).</li></ul>"
+        }
+      ],
+      "pbe": [
+        {
+          "id": "ne",
+          "html": "<p>Kendi in vitro verinizle FDA <b>popülasyon biyoeşdeğerliği</b> (PBE) analizi: FDA PSG 020929 (budesonid inhalasyon süspansiyonu) Ek’teki adım adım hesap, değiştirilmemiş validasyonlu çekirdekle (calc_pbe). Karar: doğrusallaştırılmış kriterin %95 üst güven sınırı <b>Hη ≤ 0</b> ise PBE sağlanır (Adım 5).</p><p class=\"yh-links\"><a href=\"../yardim/yontem/pbe.html\" target=\"_blank\" rel=\"noopener\">Yöntem notu: PBE</a></p>"
+        },
+        {
+          "id": "veri",
+          "html": "<ul><li>Uzun biçim CSV: her satır bir ölçüm. Sütunlar <code>parti, kap, asama, urun, olcum</code> (ya da <code>batch, container, stage, product, score</code>).</li><li>Kap, parti içinde tanımlanır (farklı partilerde aynı kap numarası olabilir); her kap her evrede tam bir kez ölçülmeli.</li><li>Test ve referansın evre kümeleri aynı olmalı.</li><li>Dengesiz ama eksiksiz tasarım kabul edilir (uyarı verilir).</li></ul><p class=\"yh-links\"><a href=\"../yardim/sablon/pbe_sablon_tr.csv\" target=\"_blank\" rel=\"noopener\">Şablon (Excel, Türkçe)</a> · <a href=\"../yardim/sablon/pbe_sablon_en.csv\" target=\"_blank\" rel=\"noopener\">Şablon (uluslararası)</a></p>"
+        },
+        {
+          "id": "ayar",
+          "html": "<ul><li><b>Log dönüşümü:</b> PSG kriteri log ölçeğindedir. PSG örneği verilen değerlerle hesaplanır; ham ölçümler için işaretleyin.</li><li><b>Tek yönlü test:</b> değiştirilmiş tek yönlü PBE (PSG 020121 Ek); yalnız ürün kılavuzu öngörüyorsa.</li><li>σT0 = 0,1 ve θp = 2,0891 PSG’nin düzenleyici sabitleridir; değiştirilemez.</li></ul>"
+        },
+        {
+          "id": "okuma",
+          "html": "<ul><li><b>Ölçek:</b> tahmin edilen σR > 0,1 ise referans ölçekli, değilse sabit ölçekli kriter (Adım 3).</li><li><b>Eη</b> doğrusallaştırılmış nokta tahmini, <b>Uη</b> belirsizlik terimi, <b>Hη = Eη + √Uη</b> %95 üst sınır.</li><li><b>Bileşenler:</b> D (ortalama farkı), 1–2 (test birimler arası ve birim içi), 3–4 (referans).</li><li>PSG örneğinde Hη = −0,031499 (referans ölçekli) → PBE sağlanır.</li></ul>"
+        },
+        {
+          "id": "sinir",
+          "html": "<ul><li>PSG en az 3 seri ve seri başına en az 10 birim önerir.</li><li>Seriler havuzlanır (“süper seri”); seri varyansı ayrıca tahmin edilmez (FDA 1999).</li><li>Çekirdeğin hata iletileri Türkçedir.</li><li>Araştırma ve eğitim amaçlıdır; GxP ortamında valide edilmiş sistem değildir.</li></ul>"
+        },
+        {
+          "id": "kaynak",
+          "html": "<ul><li>FDA, Draft Guidance on Budesonide, PSG 020929 (Aralık 2025), Ek A Adım 1–5 ve Ek B (örnek).</li><li>FDA, Draft Guidance on Fluticasone Propionate nasal spray, PSG 020121 (Aralık 2025), Ek (tek yönlü PBE).</li><li>Hyslop, Hsuan, Holder (2000), Stat Med 19:2885–2897; Howe (1974).</li><li>FSR-VAL-PBE-1 v1.1 (validasyon; 213 + 25 kontrol).</li></ul>"
+        }
+      ],
+      "dis": [
+        {
+          "id": "ne",
+          "html": "<p>İki dissolüsyon profilinin benzerliğini üç yöntemle değerlendirir: <b>f2 ve bootstrap f2</b> (EMA’nın öncelikli yöntemi), <b>model bağımsız MSD</b> (FDA 1997 V.B; Tsong ve ark. 1996) ve <b>Weibull MSD</b> (FDA 1997 V.C; Sathe ve ark. 1996). Hesap değiştirilmemiş validasyonlu çekirdeklerle yapılır.</p><p class=\"yh-links\"><a href=\"../yardim/yontem/f2.html\" target=\"_blank\" rel=\"noopener\">f2 ve bootstrap f2</a> · <a href=\"../yardim/yontem/msd.html\" target=\"_blank\" rel=\"noopener\">Model bağımsız MSD</a> · <a href=\"../yardim/yontem/weibull.html\" target=\"_blank\" rel=\"noopener\">Weibull MSD</a></p>"
+        },
+        {
+          "id": "veri",
+          "html": "<ul><li>Uzun biçim CSV: her satır bir ünitenin (tablet) bir zaman noktasındaki çözünme yüzdesi. Sütunlar <code>Product, Unit, Time, Diss</code> (ya da <code>urun, tablet, zaman, cozunen</code>).</li><li>Test ve referansın zaman noktaları aynı olmalı. EMA ürün başına 12 ünite ister.</li><li>Referans lotları (L2a, L2b, B-L2a, B-L2b için) ayrı ürün adlarıyla verilir.</li></ul><p class=\"yh-links\"><a href=\"../yardim/sablon/dis_sablon_tr.csv\" target=\"_blank\" rel=\"noopener\">Şablon (Excel, Türkçe)</a> · <a href=\"../yardim/sablon/dis_sablon_en.csv\" target=\"_blank\" rel=\"noopener\">Şablon (uluslararası)</a></p>"
+        },
+        {
+          "id": "ayar",
+          "html": "<ul><li><b>f2:</b> EMA ön ayarı E(f2), EMA kesmesi, ICH M9 CV kuralı, B = 5000; FDA ön ayarı klasik f2, FDA kesmesi, FDA 1997 CV kuralı, B = 10.000. Persentil ya da BCa aralık.</li><li><b>MSD:</b> sınır L1 (D_g), L2a ya da L2b; isteğe bağlı %85 kesmesi.</li><li><b>Weibull:</b> parametreleme ve bölge (B-L3, B-L2a, B-L2b); B-L2a için k.</li></ul>"
+        },
+        {
+          "id": "okuma",
+          "html": "<ul><li><b>f2:</b> bootstrap %90 GA alt sınırı ≥ 50 → benzer; 49,5–50 arası “sınır vaka” [FarmaStatR kuralı]; |alt − 50| < 2·MCSE ise “seed’e duyarlı”. CV koşulu sağlanıyorsa EMA klasik f2’ye izin verir; ekranda “CV kuralı” satırı bunu söyler.</li><li><b>MSD:</b> D_M’nin %90 üst sınırı ≤ sınır (R_D) → benzer (FDA 1997 V.B adım 4). L3 satırı her zaman noktasında |fark| + aralık yarısı ≤ D_g kontrolüdür [FarmaStatR türetimi].</li><li><b>Weibull:</b> güven bölgesi seçilen benzerlik bölgesinin içindeyse benzer; R² min uydurma kalitesini gösterir.</li></ul>"
+        },
+        {
+          "id": "sinir",
+          "html": "<ul><li>EMA için MSD ve Weibull MSD destekleyicidir; öncelikli yöntem bootstrap f2’dir (EMA Q&amp;A 3.9).</li><li>L2a, L2b ve B-L3 kuralları FarmaStatR türetimidir; raporlarda böyle etiketlenir.</li><li>Çekirdeğin iletileri Türkçedir.</li><li>Araştırma ve eğitim amaçlıdır; GxP ortamında valide edilmiş sistem değildir.</li></ul>"
+        },
+        {
+          "id": "kaynak",
+          "html": "<ul><li>EMA, CPMP/EWP/QWP/1401/98 Rev. 1 (2010), Ek I; EMA Q&amp;A 3.9 ve 3.11.</li><li>FDA (1997), Dissolution Testing of Immediate Release Solid Oral Dosage Forms, V.A–V.C.</li><li>ICH M9 (2019).</li><li>Tsong ve ark. (1996), Drug Inf J 30:1105–1112; Sathe ve ark. (1996), Pharm Res 13:1799–1803.</li><li>Ma ve ark. (2000), J Biopharm Stat 10:229–249; Noce ve ark. (2020), Eur J Pharm Sci 146:105259; Xu ve ark. (2021), Comput Methods Programs Biomed 212:106449.</li></ul>"
+        }
+      ]
+    }
+  },
+  "en": {
+    "ui": {
+      "help": "Help",
+      "close": "Close",
+      "hint": "Explanation",
+      "panel": "Help",
+      "notes": "Method notes",
+      "templates": "Example files",
+      "screens": {
+        "tek": "Simulation: single scenario",
+        "tas": "Simulation: design selection",
+        "pbe": "PBE analysis",
+        "dis": "Dissolution similarity"
+      },
+      "sections": {
+        "ne": "What it does",
+        "veri": "Data and inputs",
+        "ayar": "Settings",
+        "okuma": "Reading the result",
+        "sinir": "Limits",
+        "kaynak": "Sources"
+      }
+    },
+    "ipucu": {
+      "dis.B": "Number of bootstrap samples. If empty, the perspective's value is used (EMA 5000, FDA 10,000).",
+      "dis.Dg": "Allowed difference per time point, percentage points (10 in EMA). Used by L1 and the L3 check.",
+      "dis.birim": "Unit of the time column. The CV rule and the 15-minute check of f2 assume minutes; with “hours” the times are converted to minutes for f2.",
+      "dis.bolge": "Similarity region: B-L3 ±D_g in the response space (no reference lots needed); B-L2a Sathe box (±k·SD); B-L2b Sathe ellipse.",
+      "dis.dosya": "CSV: Product, Unit, Time, Diss (or urun, tablet, zaman, cozunen). One row per unit and time point (percent dissolved). Separator ; , or tab.",
+      "dis.gatipi": "Type of bootstrap confidence interval: percentile (default) or BCa (bias-corrected and accelerated).",
+      "dis.k": "Width of the B-L2a box: ±k × pooled SD (Sathe et al.: 1, 2 or 3).",
+      "dis.kaynak": "The example of Tsong et al. (1996) (for MSD and Weibull; with reference lots STD1 and STD2), the example of Noce et al. (2020) (for f2), or your own CSV file.",
+      "dis.kesme": "Truncation of time points at 85% dissolved: none, FDA (one point after both products exceed 85%), EMA (up to the point where either exceeds 85%).",
+      "dis.lot": "Separate lots of the reference product (at least 2 for the L2a, L2b, B-L2a and B-L2b limits). The compared reference may be ticked; the test may not.",
+      "dis.param": "Weibull parameters on which the MSD is computed: (ln T_d, ln β) default and independent of the time unit; (ln α, ln β) Sathe et al. (1996); (ln α, β).",
+      "dis.perspektif": "EMA: E(f2), EMA 85% truncation, ICH M9 CV rule, B = 5000. FDA: classical f2, FDA truncation, FDA 1997 CV rule, B = 10,000 (the FDA preset is not an official FDA policy).",
+      "dis.ref": "Label of the reference product compared; it must have the same time points as the test.",
+      "dis.seed": "Starting value of the random numbers for the bootstrap; the same seed gives the same interval.",
+      "dis.sinir": "Similarity limit: L1 fixed D_g; L2a largest mean difference between reference lots; L2b largest MSD between reference lots.",
+      "dis.test": "Label of the test product.",
+      "dis.wDg": "Allowed difference per time point for B-L3, percentage points.",
+      "dis.yontem": "f2 and bootstrap f2 (EMA's preferred method), model-independent MSD (FDA 1997 V.B) or Weibull MSD (FDA 1997 V.C).",
+      "pbe.dosya": "CSV: batch, container, stage, product, score (or parti, kap, asama, urun, olcum). One row per measurement. Separator ; , or tab; a decimal comma is accepted.",
+      "pbe.kaynak": "The simulated example in the appendix of FDA PSG 020929, or your own CSV file.",
+      "pbe.log_d": "If ticked, the analysis uses ln(measurement); all values must be positive. The example in the PSG appendix is computed on the values as given (no log); tick this for raw measurements.",
+      "pbe.ref": "Reference product, from the labels in the product column.",
+      "pbe.tek": "Modified one-sided PBE (FDA PSG 020121 appendix): if the test mean is below the reference mean, the mean-difference term is left out of the criterion. Use only if the product guidance calls for it.",
+      "pbe.test": "Test product, from the labels in the product column. Other products are ignored.",
+      "tas.guc_choice": "True difference at which power is computed (default GMR 1.05). Type I error is computed separately at each method's own boundary: FDA δ₀, EMA GMR 1.18.",
+      "tas.guc_custom": "Custom GMR or δ.",
+      "tas.hedef": "Target power, in percent (e.g. 80).",
+      "tas.ls": "Numbers of batches to try, separated by spaces (e.g. 2 3 4 5 6). Every ℓ × n × m combination is a candidate design.",
+      "tas.ms": "Numbers of stages to try (e.g. 3 or 1 2 3).",
+      "tas.n_sim": "Number of simulation replicates. With 10,000 replicates the MCSE of a rate near 5% is about 0.22 percentage points. In the browser at most 20,000 and ℓ·n·m·nsim ≤ 8.1 million.",
+      "tas.ns": "Numbers of units per batch to try (e.g. 5 8 10 15 20 30).",
+      "tas.pB_R": "Batch share of the reference product (0–1); may differ from the test share.",
+      "tas.pB_T": "Share of the test product's total variance that comes from batch-to-batch variability (0–1). 0 = no batch differences.",
+      "tas.pL": "Share of the total variance from stage-to-stage variability within a unit (0–1). The unit-to-unit share is pC = 1 − pB − pL.",
+      "tas.q": "Share of the stage variance that comes from a systematic (linear) drift (0–1). 0 = only random differences between stages. q > 0 needs m ≥ 2.",
+      "tas.rho": "Ratio of the total standard deviations of test and reference, ρ = σT/σR. 1 = same variability.",
+      "tas.seed": "All candidate designs are run with the same seed (common random numbers); the precomputed results were made with this seed.",
+      "tas.sigma_R": "Total standard deviation of the reference product on the log scale (batch + unit + stage). It selects the FDA criterion: reference-scaled if σR > 0.1, otherwise constant-scaled.",
+      "tek.custom": "Custom GMR (ratio, e.g. 1.10) or custom δ (log difference, e.g. 0.0953 = ln 1.10).",
+      "tek.delta_choice": "True mean difference between test and reference (log scale). The boundary options measure type I error (FDA δ₀: η = 0; EMA GMR 0.85 or 1.18); GMR 1.00 and 1.05 measure power. The “Hypothesis state” in the result says what is measured.",
+      "tek.l": "Number of batches per product. FDA PSG 020929 and EMA OIP recommend at least 3 batches; fewer are shown for comparison only.",
+      "tek.m": "Number of life stages per unit: 1 = one measurement per unit (e.g. an ampoule), 2 = beginning and end, 3 = beginning, middle and end.",
+      "tek.m_preset": "Shortcut for m; it only fills the m field and is not binding.",
+      "tek.n": "Number of units (containers, ampoules, devices) per batch. The guidances recommend at least 10.",
+      "tek.n_sim": "Number of simulation replicates. With 10,000 replicates the MCSE of a rate near 5% is about 0.22 percentage points. In the browser at most 20,000 and ℓ·n·m·nsim ≤ 8.1 million.",
+      "tek.pB_R": "Batch share of the reference product (0–1); may differ from the test share.",
+      "tek.pB_T": "Share of the test product's total variance that comes from batch-to-batch variability (0–1). 0 = no batch differences.",
+      "tek.pL": "Share of the total variance from stage-to-stage variability within a unit (0–1). The unit-to-unit share is pC = 1 − pB − pL.",
+      "tek.q": "Share of the stage variance that comes from a systematic (linear) drift (0–1). 0 = only random differences between stages. q > 0 needs m ≥ 2.",
+      "tek.rho": "Ratio of the total standard deviations of test and reference, ρ = σT/σR. 1 = same variability.",
+      "tek.seed": "Starting value of the random numbers. The same seed and inputs give the same result; it is kept in the run record.",
+      "tek.sigma_R": "Total standard deviation of the reference product on the log scale (batch + unit + stage). It selects the FDA criterion: reference-scaled if σR > 0.1, otherwise constant-scaled."
+    },
+    "panel": {
+      "tek": [
+        {
+          "id": "ne",
+          "html": "<p>Simulates the probability of a positive decision for two methods in one in vitro equivalence scenario: <b>FDA PBE</b> (PSG 020929) and <b>EMA OIP</b> Rev. 2 §5.1 criterion 8 (90% CI within 0.85–1.18), the latter in three computational variants (a, b, c). If the true difference is in H0 the rate is a <b>type I error</b>; in H1 it is <b>power</b>. The screen names it by the hypothesis state.</p><p class=\"yh-links\"><a href=\"../yardim/yontem/simulasyon.html?lang=en\" target=\"_blank\" rel=\"noopener\">Method note: simulation and design selection</a> · <a href=\"../yardim/yontem/pbe.html?lang=en\" target=\"_blank\" rel=\"noopener\">Method note: PBE</a></p>"
+        },
+        {
+          "id": "veri",
+          "html": "<ul><li><b>Design:</b> ℓ batches, n units per batch, m stages per unit (per product).</li><li><b>Population:</b> σR, ρ, batch shares pB,T and pB,R, stage share pL, systematic drift q; normal data on the log scale, test and reference generated independently.</li><li><b>True difference:</b> boundary options (FDA δ₀, EMA 0.85 and 1.18), GMR 1.00 and 1.05, or a custom value.</li><li><b>Monte Carlo:</b> nsim and seed.</li></ul>"
+        },
+        {
+          "id": "ayar",
+          "html": "<ul><li>If the inputs match a scenario of the grid, the result is <b>precomputed</b> (database; no webR needed).</li><li>Otherwise, within the browser limit, it is run <b>live</b> (webR). “Run live too” reproduces a precomputed result.</li><li>Above the limit an <b>R script</b> is downloaded; it runs in your own R and writes the same record.</li><li>Default nsim 10,000; MCSE ≈ 0.22 percentage points for a type I error.</li></ul>"
+        },
+        {
+          "id": "okuma",
+          "html": "<ul><li><b>Metric:</b> “type I error (at the boundary)” on the H0 boundary, “pointwise type I error” inside H0, “power” in H1.</li><li><b>MCSE:</b> Monte Carlo standard error of the rate (percentage points).</li><li><b>KK-38 label</b> (H0 only): p̂ − 1.645·MCSE > 5% → <i>exceeds nominal</i>; p̂ + 1.645·MCSE ≤ 5% → <i>shown controlled</i>; otherwise <i>indistinguishable</i> [FarmaStatR rule, KK-38].</li><li>Power is not compared between methods unless the nominal type I error is kept.</li><li>“Other measures”: coverage, FDA criterion selection error, EMA (c) pooling rate, method differences.</li></ul>"
+        },
+        {
+          "id": "sinir",
+          "html": "<ul><li>For research and education; not a system validated for GxP environments.</li><li>One log-normal quantity; balanced design. Several APSD stage groups and EMA criteria 6–7 are out of scope.</li><li>EMA (a), (b), (c) are candidate implementations, not methods defined by the guideline [FarmaStatR derivation].</li><li>Browser limit: nsim ≤ 20,000 and ℓ·n·m·nsim ≤ 8.1 million (measured on one device, KK-47).</li></ul>"
+        },
+        {
+          "id": "kaynak",
+          "html": "<ul><li>FDA, Draft Guidance on Budesonide, PSG 020929 (December 2025), Appendix Steps 1–5.</li><li>EMA, CPMP/EWP/4151/00 Rev. 2 (2025), §5.1.</li><li>FDA (2026), Statistical Approaches to Establishing Bioequivalence.</li><li>Morris, White, Crowther (2019), Stat Med 38:2074–2102 (ADEMP, MCSE).</li><li>FSR-TN-PBE-01 v0.11 (model and results; Turkish).</li></ul>"
+        }
+      ],
+      "tas": [
+        {
+          "id": "ne",
+          "html": "<p>Searches, within the candidate set you give, how many batches (ℓ), units per batch (n) and stages (m) are needed to reach a target power. For each candidate, power (at the chosen difference) and type I error (at each method's own boundary) are computed in R; the selection follows two rules.</p><p class=\"yh-links\"><a href=\"../yardim/yontem/simulasyon.html?lang=en\" target=\"_blank\" rel=\"noopener\">Method note: simulation and design selection</a></p>"
+        },
+        {
+          "id": "veri",
+          "html": "<ul><li><b>Population:</b> as for a single scenario (σR, ρ, pB, pL, q).</li><li><b>Goal:</b> power difference (default GMR 1.05) and target power (default 80%).</li><li><b>Candidates:</b> lists of ℓ, n and m; every combination is a candidate.</li></ul>"
+        },
+        {
+          "id": "ayar",
+          "html": "<ul><li>All candidates are run with the same seed (common random numbers).</li><li>If the candidate set is in the Stage 1 grid the result is precomputed; otherwise it is run live. If the total work exceeds 6×10⁷ cells, narrow the set or download the design script.</li></ul>"
+        },
+        {
+          "id": "okuma",
+          "html": "<ul><li><b>Rule A</b> (Table 11.3a): the smallest total ℓ·n (m fixed) with power ≥ target; ties to the smaller ℓ.</li><li><b>Rule B</b> (Table 11.3b): as A, but ℓ ≥ 3, n ≥ 10 and the type I error label is not “exceeds nominal”.</li><li>A selection is made only for methods in H1.</li><li>If |power − target| < 2 MCSE the selection is marked “near the target; not certain” (KK-39).</li><li>Grid: power (bold), MCSE and the type I error of the same design in each cell.</li></ul>"
+        },
+        {
+          "id": "sinir",
+          "html": "<ul><li>The selection is limited to the candidate set; a better design outside it may exist.</li><li>The rules are a FarmaStatR derivation (FSR-TN-PBE-01 Section 11.5; KK-56, KK-57); the guidances give no sample size rule.</li><li>For research and education; not a system validated for GxP environments.</li></ul>"
+        },
+        {
+          "id": "kaynak",
+          "html": "<ul><li>FSR-TN-PBE-01 v0.11, Sections 11.3–11.5 (Tables 11.3a and 11.3b).</li><li>FSR-TN-PLT-05 v0.3 (selection rules and implementation).</li><li>Morris et al. (2019).</li></ul>"
+        }
+      ],
+      "pbe": [
+        {
+          "id": "ne",
+          "html": "<p>FDA <b>population bioequivalence</b> (PBE) analysis of your own in vitro data: the step-wise computation in the appendix of FDA PSG 020929 (budesonide inhalation suspension), with the unchanged validated core (calc_pbe). Decision: PBE is established if the 95% upper confidence bound of the linearized criterion is <b>Hη ≤ 0</b> (Step 5).</p><p class=\"yh-links\"><a href=\"../yardim/yontem/pbe.html?lang=en\" target=\"_blank\" rel=\"noopener\">Method note: PBE</a></p>"
+        },
+        {
+          "id": "veri",
+          "html": "<ul><li>Long-format CSV: one row per measurement. Columns <code>batch, container, stage, product, score</code> (or <code>parti, kap, asama, urun, olcum</code>).</li><li>A container is identified within its batch (the same number may occur in different batches); each container is measured exactly once at each stage.</li><li>Test and reference must have the same set of stages.</li><li>An unbalanced but complete design is accepted (with a warning).</li></ul><p class=\"yh-links\"><a href=\"../yardim/sablon/pbe_sablon_tr.csv\" target=\"_blank\" rel=\"noopener\">Template (Excel, Turkish)</a> · <a href=\"../yardim/sablon/pbe_sablon_en.csv\" target=\"_blank\" rel=\"noopener\">Template (international)</a></p>"
+        },
+        {
+          "id": "ayar",
+          "html": "<ul><li><b>Log transform:</b> the PSG criterion is on the log scale. The PSG example is computed on the values as given; tick it for raw measurements.</li><li><b>One-sided test:</b> modified one-sided PBE (PSG 020121 appendix); only if the product guidance calls for it.</li><li>σT0 = 0.1 and θp = 2.0891 are regulatory constants of the PSG; they cannot be changed.</li></ul>"
+        },
+        {
+          "id": "okuma",
+          "html": "<ul><li><b>Scaling:</b> reference-scaled criterion if the estimated σR > 0.1, otherwise constant-scaled (Step 3).</li><li><b>Eη</b> linearized point estimate, <b>Uη</b> uncertainty term, <b>Hη = Eη + √Uη</b> 95% upper bound.</li><li><b>Components:</b> D (mean difference), 1–2 (test between and within units), 3–4 (reference).</li><li>In the PSG example Hη = −0.031499 (reference-scaled) → PBE established.</li></ul>"
+        },
+        {
+          "id": "sinir",
+          "html": "<ul><li>The PSG recommends at least 3 batches and at least 10 units per batch.</li><li>Batches are pooled (“super-batch”); the batch variance is not estimated separately (FDA 1999).</li><li>Messages of the core are in Turkish.</li><li>For research and education; not a system validated for GxP environments.</li></ul>"
+        },
+        {
+          "id": "kaynak",
+          "html": "<ul><li>FDA, Draft Guidance on Budesonide, PSG 020929 (December 2025), Appendix A Steps 1–5 and Appendix B (example).</li><li>FDA, Draft Guidance on Fluticasone Propionate nasal spray, PSG 020121 (December 2025), appendix (one-sided PBE).</li><li>Hyslop, Hsuan, Holder (2000), Stat Med 19:2885–2897; Howe (1974).</li><li>FSR-VAL-PBE-1 v1.1 (validation; 213 + 25 checks).</li></ul>"
+        }
+      ],
+      "dis": [
+        {
+          "id": "ne",
+          "html": "<p>Assesses the similarity of two dissolution profiles with three methods: <b>f2 and bootstrap f2</b> (EMA's preferred method), <b>model-independent MSD</b> (FDA 1997 V.B; Tsong et al. 1996) and <b>Weibull MSD</b> (FDA 1997 V.C; Sathe et al. 1996). The unchanged validated cores do the computation.</p><p class=\"yh-links\"><a href=\"../yardim/yontem/f2.html?lang=en\" target=\"_blank\" rel=\"noopener\">f2 and bootstrap f2</a> · <a href=\"../yardim/yontem/msd.html?lang=en\" target=\"_blank\" rel=\"noopener\">Model-independent MSD</a> · <a href=\"../yardim/yontem/weibull.html?lang=en\" target=\"_blank\" rel=\"noopener\">Weibull MSD</a></p>"
+        },
+        {
+          "id": "veri",
+          "html": "<ul><li>Long-format CSV: one row per unit (tablet) and time point, percent dissolved. Columns <code>Product, Unit, Time, Diss</code> (or <code>urun, tablet, zaman, cozunen</code>).</li><li>Test and reference must have the same time points. EMA asks for 12 units per product.</li><li>Reference lots (for L2a, L2b, B-L2a, B-L2b) are given as separate product names.</li></ul><p class=\"yh-links\"><a href=\"../yardim/sablon/dis_sablon_tr.csv\" target=\"_blank\" rel=\"noopener\">Template (Excel, Turkish)</a> · <a href=\"../yardim/sablon/dis_sablon_en.csv\" target=\"_blank\" rel=\"noopener\">Template (international)</a></p>"
+        },
+        {
+          "id": "ayar",
+          "html": "<ul><li><b>f2:</b> EMA preset E(f2), EMA truncation, ICH M9 CV rule, B = 5000; FDA preset classical f2, FDA truncation, FDA 1997 CV rule, B = 10,000. Percentile or BCa interval.</li><li><b>MSD:</b> limit L1 (D_g), L2a or L2b; optional 85% truncation.</li><li><b>Weibull:</b> parametrisation and region (B-L3, B-L2a, B-L2b); k for B-L2a.</li></ul>"
+        },
+        {
+          "id": "okuma",
+          "html": "<ul><li><b>f2:</b> lower bound of the bootstrap 90% CI ≥ 50 → similar; between 49.5 and 50 “borderline” [FarmaStatR rule]; “seed-sensitive” if |lower − 50| < 2·MCSE. If the CV condition holds, EMA allows the classical f2; the “CV rule” line says so.</li><li><b>MSD:</b> upper 90% bound of D_M ≤ limit (R_D) → similar (FDA 1997 V.B step 4). The L3 line checks |difference| + half-width ≤ D_g at each time point [FarmaStatR derivation].</li><li><b>Weibull:</b> similar if the confidence region lies inside the chosen similarity region; minimum R² shows the quality of the fits.</li></ul>"
+        },
+        {
+          "id": "sinir",
+          "html": "<ul><li>For EMA, MSD and Weibull MSD are supportive; the preferred method is bootstrap f2 (EMA Q&amp;A 3.9).</li><li>The L2a, L2b and B-L3 rules are FarmaStatR derivations and are labelled so in the reports.</li><li>Messages of the cores are in Turkish.</li><li>For research and education; not a system validated for GxP environments.</li></ul>"
+        },
+        {
+          "id": "kaynak",
+          "html": "<ul><li>EMA, CPMP/EWP/QWP/1401/98 Rev. 1 (2010), Appendix I; EMA Q&amp;A 3.9 and 3.11.</li><li>FDA (1997), Dissolution Testing of Immediate Release Solid Oral Dosage Forms, V.A–V.C.</li><li>ICH M9 (2019).</li><li>Tsong et al. (1996), Drug Inf J 30:1105–1112; Sathe et al. (1996), Pharm Res 13:1799–1803.</li><li>Ma et al. (2000), J Biopharm Stat 10:229–249; Noce et al. (2020), Eur J Pharm Sci 146:105259; Xu et al. (2021), Comput Methods Programs Biomed 212:106449.</li></ul>"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,113 @@
+@@tr
+# Weibull modeline dayalı MSD
+
+## 1. Soru ve kapsam
+Profiller bir modelle özetlenirse (her ünite için iki Weibull parametresi), parametre vektörlerinin çok değişkenli karşılaştırması benzerliği gösterir mi? Yöntem FDA 1997 Bölüm V.C ve Sathe ve ark. (1996)’dır: ünite başına model uydurulur, parametrelerin ortalama farkı için Hotelling güven bölgesi kurulur ve bu bölge bir benzerlik bölgesiyle karşılaştırılır. Platform değiştirilmemiş validasyonlu çekirdeği (`calc_msd_weibull`) kullanır. EMA için destekleyici bir yöntemdir (EMA Q&A 3.9).
+
+## 2. Model ve gösterim
+$$ X(t) = 100\left[1 - \exp\left(-\alpha\, t^{\beta}\right)\right] $$ :: Sathe ve ark. (1996) s. 1800
+$$ \ln\left[-\ln\left(1 - \frac{X(t)}{100}\right)\right] = \ln\alpha + \beta\,\ln t $$ :: Sathe ve ark. (1996) s. 1800 (doğrusallaştırma)
+
+Her ünite için doğrusallaştırılmış denklem en küçük kareler ile uydurulur; t ≤ 0, X ≤ 0 ve X ≥ 100 noktaları dönüşümde tanımsız olduğundan dışlanır, ünite başına en az 3 nokta gerekir. MSD’nin hesaplandığı parametre vektörü üç biçimde seçilebilir:
+
+$$ \theta = (\ln T_d,\; \ln\beta), \qquad \ln T_d = -\frac{\ln\alpha}{\beta} $$ :: FarmaStatR türetimi (varsayılan); T_d Langenbucher (1972)’nin dissolüsyon zamanı (%63,2 çözünme), ln β Sathe ve ark. (1996)
+- $(\ln\alpha,\; \ln\beta)$: Sathe ve ark. (1996); yayımlanmış sonuçları yeniden üretmek için.
+- $(\ln\alpha,\; \beta)$: seçenek.
+- (ln T_d, ln β) biçiminde zaman birimi değişince ln T_d bütün ünitelerde aynı sabit kadar kayar; bu yüzden D_M ve B-L3 zaman biriminden bağımsızdır [FarmaStatR türetimi; paket testi TC-B6].
+
+## 3. Denklemler
+Parametreler üzerinde model bağımsız MSD’deki Hotelling motoru kullanılır (P = 2):
+
+$$ D_M = \sqrt{\mathbf d^{\top}\mathbf S^{-1}\mathbf d}, \qquad D_M^{\,u} = D_M + \sqrt{F_{P,\;n_T+n_R-P-1;\;0{,}90}/K} $$ :: Tsong ve ark. (1996) Denk. 3; FDA (1997) V.C adım 5; Sathe ve ark. (1996) Tablo III
+
+Benzerlik bölgeleri:
+
+$$ \text{B-L2a:}\quad \left[d_j \pm r\sqrt{S_{jj}}\right] \subset \left[-k\,SD_j,\; +k\,SD_j\right], \quad SD_j = \sqrt{\overline{s^2_{\text{lot içi},j}} + s^2_{\text{lot ortalamaları},j}} $$ :: Sathe ve ark. (1996) s. 1800–1801, Şekil 4 (k = 1, 2 ya da 3)
+$$ \text{B-L2b:}\quad \max_{\mathbf y \in CR} K'\,\mathbf y^{\top}\left(\Sigma_1 + \Sigma_2/c\right)^{-1}\mathbf y \le F_{P,\;2N-P-1;\;0{,}99} $$ :: Sathe ve ark. (1996) Ek, Şekil 5; c = N FarmaStatR seçimi (makalede √N, olası dizgi hatası)
+$$ \text{B-L3:}\quad \max_{\mathbf y \in CR}\left|F(t;\,\bar\theta_R + \mathbf y) - F(t;\,\bar\theta_R)\right| \le D_g \quad \text{her gözlenen } t \text{ için} $$ :: FarmaStatR türetimi; EMA (2010) Ek I %10 koşulu; Muselík ve ark. (2021)
+
+CR: farkın %90 güven elipsi. $\Sigma_1$ lot ortalamalarının kovaryansı, $\Sigma_2$ birleştirilmiş lot içi kovaryans, N lot başına ünite sayısı. B-L3, %10 koşulunu yanıt (çözünme yüzdesi) uzayında arar; referans lotu gerektirmez.
+
+## 4. Karar kuralı
+$$ CR \subset \text{benzerlik bölgesi} \;\Rightarrow\; \text{benzer} $$ :: FDA (1997) V.C adım 5–6; Sathe ve ark. (1996)
+
+## 5. Platformdaki uygulama
+- Varsayılanlar: parametreleme (ln T_d, ln β), bölge B-L3, D_g = 10, k = 3, Σ₂ böleni N. Ekranın B-L3 varsayılanı FarmaStatR seçimidir; çekirdeğin ilk seçeneği B-L2a en az iki referans lotu ister.
+- B-L2b ve B-L3 şu an yalnız iki parametreli model için uygulanmıştır.
+- Uydurma kalitesi R² (her ünite) olarak raporlanır; ekranda en küçük değer gösterilir.
+
+## 6. Çalışılmış örnek
+Tsong ve ark. (1996) verisi (TEST ve REF; referans lotları STD1 ve STD2):
+
+- (ln α, ln β), B-L2a (k = 3): $D_M$ = [[wb_dm_l2a|10,8123]]; %90 aralık [[wb_dml_l2a|9,3200]] – [[wb_dmu_l2a|12,3046]]; güven aralıkları kutunun dışına taşıyor → benzer değil.
+- (ln T_d, ln β), B-L3 (referans lotu kullanılmadan): $D_M$ = [[wb_dm_l3|8,5589]]; 5. dakikada en büyük olası fark [[wb_l3_max|30,07]] yüzde puanı > 10 → benzer değil. En küçük R²: test [[wb_r2t|0,9934]], referans [[wb_r2r|0,9768]].
+
+## 7. Sınırlar
+- Model uyumu kötü ise (düşük R²) model bağımlı karşılaştırma yanıltıcıdır.
+- Erken zaman noktalarında az çözünen ya da %100’e ulaşan noktalar dönüşümde dışlanır.
+- Araştırma ve eğitim amaçlıdır; GxP ortamında valide edilmiş sistem değildir.
+
+## 8. Kaynakça
+- FDA. Dissolution Testing of Immediate Release Solid Oral Dosage Forms, 1997; Bölüm V.C.
+- Sathe PM, Tsong Y, Shah VP. In-vitro dissolution profile comparison: statistics and analysis, model dependent approach. Pharm Res 1996;13:1799–1803.
+- Tsong Y, Hammerstrom T, Sathe P, Shah VP. Drug Inf J 1996;30:1105–1112.
+- Langenbucher F. Linearization of dissolution rate curves by the Weibull distribution. J Pharm Pharmacol 1972;24:979–981.
+- Muselík J ve ark. Pharmaceutics 2021;13:1703.
+- EMA. CPMP/EWP/QWP/1401/98 Rev. 1, 2010; Ek I. EMA PKWP/BSWP Q&A 3.9.
+
+@@en
+# MSD based on the Weibull model
+
+## 1. Question and scope
+If the profiles are summarised by a model (two Weibull parameters per unit), does a multivariate comparison of the parameter vectors show similarity? The method is FDA 1997 Section V.C and Sathe et al. (1996): a model is fitted per unit, a Hotelling confidence region is built for the mean difference of the parameters, and the region is compared with a similarity region. The platform uses the unchanged validated core (`calc_msd_weibull`). For EMA it is a supportive method (EMA Q&A 3.9).
+
+## 2. Model and notation
+$$ X(t) = 100\left[1 - \exp\left(-\alpha\, t^{\beta}\right)\right] $$ :: Sathe et al. (1996) p. 1800
+$$ \ln\left[-\ln\left(1 - \frac{X(t)}{100}\right)\right] = \ln\alpha + \beta\,\ln t $$ :: Sathe et al. (1996) p. 1800 (linearization)
+
+For each unit the linearized equation is fitted by least squares; points with t ≤ 0, X ≤ 0 or X ≥ 100 are undefined in the transformation and excluded; at least 3 points per unit are needed. The parameter vector on which the MSD is computed can be chosen in three ways:
+
+$$ \theta = (\ln T_d,\; \ln\beta), \qquad \ln T_d = -\frac{\ln\alpha}{\beta} $$ :: FarmaStatR derivation (default); T_d is the dissolution time of Langenbucher (1972) (63.2% dissolved), ln β of Sathe et al. (1996)
+- $(\ln\alpha,\; \ln\beta)$: Sathe et al. (1996); to reproduce the published results.
+- $(\ln\alpha,\; \beta)$: option.
+- With (ln T_d, ln β), changing the time unit shifts ln T_d by the same constant in every unit; so D_M and B-L3 do not depend on the time unit [FarmaStatR derivation; package test TC-B6].
+
+## 3. Equations
+On the parameters the Hotelling engine of the model-independent MSD is used (P = 2):
+
+$$ D_M = \sqrt{\mathbf d^{\top}\mathbf S^{-1}\mathbf d}, \qquad D_M^{\,u} = D_M + \sqrt{F_{P,\;n_T+n_R-P-1;\;0.90}/K} $$ :: Tsong et al. (1996) Eq. 3; FDA (1997) V.C step 5; Sathe et al. (1996) Table III
+
+Similarity regions:
+
+$$ \text{B-L2a:}\quad \left[d_j \pm r\sqrt{S_{jj}}\right] \subset \left[-k\,SD_j,\; +k\,SD_j\right], \quad SD_j = \sqrt{\overline{s^2_{\text{within lot},j}} + s^2_{\text{lot means},j}} $$ :: Sathe et al. (1996) pp. 1800–1801, Fig. 4 (k = 1, 2 or 3)
+$$ \text{B-L2b:}\quad \max_{\mathbf y \in CR} K'\,\mathbf y^{\top}\left(\Sigma_1 + \Sigma_2/c\right)^{-1}\mathbf y \le F_{P,\;2N-P-1;\;0.99} $$ :: Sathe et al. (1996) appendix, Fig. 5; c = N is a FarmaStatR choice (√N in the paper, a probable typesetting error)
+$$ \text{B-L3:}\quad \max_{\mathbf y \in CR}\left|F(t;\,\bar\theta_R + \mathbf y) - F(t;\,\bar\theta_R)\right| \le D_g \quad \text{for every observed } t $$ :: FarmaStatR derivation; EMA (2010) Appendix I 10% condition; Muselík et al. (2021)
+
+CR: the 90% confidence ellipse of the difference. $\Sigma_1$ covariance of the lot means, $\Sigma_2$ pooled within-lot covariance, N units per lot. B-L3 checks the 10% condition in the response (percent dissolved) space; it needs no reference lots.
+
+## 4. Decision rule
+$$ CR \subset \text{similarity region} \;\Rightarrow\; \text{similar} $$ :: FDA (1997) V.C steps 5–6; Sathe et al. (1996)
+
+## 5. Implementation in the platform
+- Defaults: parametrisation (ln T_d, ln β), region B-L3, D_g = 10, k = 3, Σ₂ divisor N. The screen's B-L3 default is a FarmaStatR choice; the core's first option B-L2a needs at least two reference lots.
+- B-L2b and B-L3 are currently implemented for the two-parameter model only.
+- Fit quality is reported as R² (per unit); the screen shows the smallest value.
+
+## 6. Worked example
+Data of Tsong et al. (1996) (TEST and REF; reference lots STD1 and STD2):
+
+- (ln α, ln β), B-L2a (k = 3): $D_M$ = [[wb_dm_l2a|10.8123]]; 90% interval [[wb_dml_l2a|9.3200]] – [[wb_dmu_l2a|12.3046]]; the confidence intervals reach outside the box → not similar.
+- (ln T_d, ln β), B-L3 (no reference lots): $D_M$ = [[wb_dm_l3|8.5589]]; largest possible difference at 5 minutes [[wb_l3_max|30.07]] percentage points > 10 → not similar. Smallest R²: test [[wb_r2t|0.9934]], reference [[wb_r2r|0.9768]].
+
+## 7. Limits
+- If the model fits poorly (low R²), a model-dependent comparison misleads.
+- Early points with little dissolution, and points reaching 100%, are excluded by the transformation.
+- For research and education; not a system validated for GxP environments.
+
+## 8. References
+- FDA. Dissolution Testing of Immediate Release Solid Oral Dosage Forms, 1997; Section V.C.
+- Sathe PM, Tsong Y, Shah VP. In-vitro dissolution profile comparison: statistics and analysis, model dependent approach. Pharm Res 1996;13:1799–1803.
+- Tsong Y, Hammerstrom T, Sathe P, Shah VP. Drug Inf J 1996;30:1105–1112.
+- Langenbucher F. Linearization of dissolution rate curves by the Weibull distribution. J Pharm Pharmacol 1972;24:979–981.
+- Muselík J et al. Pharmaceutics 2021;13:1703.
+- EMA. CPMP/EWP/QWP/1401/98 Rev. 1, 2010; Appendix I. EMA PKWP/BSWP Q&A 3.9.

@@ -11,7 +11,7 @@
 <link rel="stylesheet" href="../app/stil.css">
 <link rel="stylesheet" href="analiz.css">
 </head>
-<body>
+<body data-yardim="pbe">
 <header>
   <div>
     <h1 data-i18n="an_title"></h1>
@@ -31,22 +31,22 @@
 <form id="pbe_form" autocomplete="off" novalidate>
   <fieldset>
     <legend data-i18n="an_grp_data"></legend>
-    <label class="wide"><span data-i18n="an_source"></span>
+    <label data-help="pbe.kaynak" class="wide"><span data-i18n="an_source"></span>
       <select name="kaynak">
         <option value="psg020929" data-i18n="an_ex_psg"></option>
         <option value="dosya" data-i18n="an_file"></option>
       </select>
     </label>
-    <label class="wide" id="pbe_file_wrap" hidden><span data-i18n="an_file_pick"></span><input type="file" name="dosya" accept=".csv,.txt,text/csv"></label>
+    <label data-help="pbe.dosya" class="wide" id="pbe_file_wrap" hidden><span data-i18n="an_file_pick"></span><input type="file" name="dosya" accept=".csv,.txt,text/csv"></label>
     <p class="hint wide" data-i18n="an_pbe_cols"></p>
     <p class="hint wide" id="pbe_data_info"></p>
   </fieldset>
   <fieldset>
     <legend data-i18n="an_grp_settings"></legend>
-    <label><span data-i18n="an_test"></span><select name="test"></select></label>
-    <label><span data-i18n="an_ref"></span><select name="ref"></select></label>
-    <label class="check"><input type="checkbox" name="log_d"><span data-i18n="an_log"></span></label>
-    <label class="check"><input type="checkbox" name="tek"><span data-i18n="an_onesided"></span></label>
+    <label data-help="pbe.test"><span data-i18n="an_test"></span><select name="test"></select></label>
+    <label data-help="pbe.ref"><span data-i18n="an_ref"></span><select name="ref"></select></label>
+    <label data-help="pbe.log_d" class="check"><input type="checkbox" name="log_d"><span data-i18n="an_log"></span></label>
+    <label data-help="pbe.tek" class="check"><input type="checkbox" name="tek"><span data-i18n="an_onesided"></span></label>
   </fieldset>
   <div class="actions"><button id="pbe_run" type="submit" disabled data-i18n="an_run"></button></div>
 </form>
@@ -77,27 +77,27 @@
 <form id="dis_form" autocomplete="off" novalidate>
   <fieldset>
     <legend data-i18n="an_grp_data"></legend>
-    <label class="wide"><span data-i18n="an_source"></span>
+    <label data-help="dis.kaynak" class="wide"><span data-i18n="an_source"></span>
       <select name="kaynak">
         <option value="tsong1996" data-i18n="an_ex_tsong"></option>
         <option value="noce2020" data-i18n="an_ex_noce"></option>
         <option value="dosya" data-i18n="an_file"></option>
       </select>
     </label>
-    <label class="wide" id="dis_file_wrap" hidden><span data-i18n="an_file_pick"></span><input type="file" name="dosya" accept=".csv,.txt,text/csv"></label>
+    <label data-help="dis.dosya" class="wide" id="dis_file_wrap" hidden><span data-i18n="an_file_pick"></span><input type="file" name="dosya" accept=".csv,.txt,text/csv"></label>
     <p class="hint wide" data-i18n="an_dis_cols"></p>
     <p class="hint wide" id="dis_data_info"></p>
   </fieldset>
   <fieldset>
     <legend data-i18n="an_grp_products"></legend>
-    <label><span data-i18n="an_test"></span><select name="test"></select></label>
-    <label><span data-i18n="an_ref"></span><select name="ref"></select></label>
-    <label><span data-i18n="an_unit"></span><select name="birim"><option value="dakika" data-i18n="an_min"></option><option value="saat" data-i18n="an_hour"></option></select></label>
-    <div class="wide" id="dis_lots"><span class="lbl" data-i18n="an_lots"></span><div class="checks"></div></div>
+    <label data-help="dis.test"><span data-i18n="an_test"></span><select name="test"></select></label>
+    <label data-help="dis.ref"><span data-i18n="an_ref"></span><select name="ref"></select></label>
+    <label data-help="dis.birim"><span data-i18n="an_unit"></span><select name="birim"><option value="dakika" data-i18n="an_min"></option><option value="saat" data-i18n="an_hour"></option></select></label>
+    <div class="wide" id="dis_lots" data-help="dis.lot"><span class="lbl" data-i18n="an_lots"></span><div class="checks"></div></div>
   </fieldset>
   <fieldset>
     <legend data-i18n="an_grp_method"></legend>
-    <label class="wide"><span data-i18n="an_method"></span>
+    <label data-help="dis.yontem" class="wide"><span data-i18n="an_method"></span>
       <select name="yontem">
         <option value="f2" data-i18n="an_m_f2"></option>
         <option value="msd" data-i18n="an_m_msd"></option>
@@ -105,21 +105,21 @@
       </select>
     </label>
     <div class="wide sub-f2 grid2">
-      <label><span data-i18n="an_persp"></span><select name="perspektif"><option value="EMA">EMA</option><option value="FDA">FDA</option></select></label>
-      <label><span data-i18n="an_ci"></span><select name="gatipi"><option value="persentil" data-i18n="an_ci_p"></option><option value="BCa">BCa</option></select></label>
-      <label><span>B</span><input name="B" value="" inputmode="numeric" placeholder="5000 / 10000"></label>
-      <label><span data-i18n="seed"></span><input name="seed" value="20260927" inputmode="numeric"></label>
+      <label data-help="dis.perspektif"><span data-i18n="an_persp"></span><select name="perspektif"><option value="EMA">EMA</option><option value="FDA">FDA</option></select></label>
+      <label data-help="dis.gatipi"><span data-i18n="an_ci"></span><select name="gatipi"><option value="persentil" data-i18n="an_ci_p"></option><option value="BCa">BCa</option></select></label>
+      <label data-help="dis.B"><span>B</span><input name="B" value="" inputmode="numeric" placeholder="5000 / 10000"></label>
+      <label data-help="dis.seed"><span data-i18n="seed"></span><input name="seed" value="20260927" inputmode="numeric"></label>
     </div>
     <div class="wide sub-msd grid2" hidden>
-      <label><span data-i18n="an_limit"></span><select name="sinir"><option value="L1">L1</option><option value="L2a">L2a</option><option value="L2b">L2b</option></select></label>
-      <label><span>D<sub>g</sub></span><input name="Dg" value="10" inputmode="decimal"></label>
-      <label><span data-i18n="an_trunc"></span><select name="kesme"><option value="none" data-i18n="an_none"></option><option value="FDA">FDA</option><option value="EMA">EMA</option></select></label>
+      <label data-help="dis.sinir"><span data-i18n="an_limit"></span><select name="sinir"><option value="L1">L1</option><option value="L2a">L2a</option><option value="L2b">L2b</option></select></label>
+      <label data-help="dis.Dg"><span>D<sub>g</sub></span><input name="Dg" value="10" inputmode="decimal"></label>
+      <label data-help="dis.kesme"><span data-i18n="an_trunc"></span><select name="kesme"><option value="none" data-i18n="an_none"></option><option value="FDA">FDA</option><option value="EMA">EMA</option></select></label>
     </div>
     <div class="wide sub-wb grid2" hidden>
-      <label><span data-i18n="an_param"></span><select name="param"><option value="lnTd_lnB">ln T<sub>d</sub>, ln β</option><option value="lnA_lnB">ln α, ln β</option><option value="lnA_B">ln α, β</option></select></label>
-      <label><span data-i18n="an_region"></span><select name="bolge"><option value="B-L3">B-L3</option><option value="B-L2a">B-L2a</option><option value="B-L2b">B-L2b</option></select></label>
-      <label><span>k</span><input name="k" value="3" inputmode="decimal"></label>
-      <label><span>D<sub>g</sub></span><input name="wDg" value="10" inputmode="decimal"></label>
+      <label data-help="dis.param"><span data-i18n="an_param"></span><select name="param"><option value="lnTd_lnB">ln T<sub>d</sub>, ln β</option><option value="lnA_lnB">ln α, ln β</option><option value="lnA_B">ln α, β</option></select></label>
+      <label data-help="dis.bolge"><span data-i18n="an_region"></span><select name="bolge"><option value="B-L3">B-L3</option><option value="B-L2a">B-L2a</option><option value="B-L2b">B-L2b</option></select></label>
+      <label data-help="dis.k"><span>k</span><input name="k" value="3" inputmode="decimal"></label>
+      <label data-help="dis.wDg"><span>D<sub>g</sub></span><input name="wDg" value="10" inputmode="decimal"></label>
     </div>
     <p class="hint wide" id="dis_method_note"></p>
   </fieldset>
@@ -148,5 +148,6 @@
 </details>
 <footer><span data-i18n="disclaimer_en_tr"></span> · FSR-TN-PLT-06 · P6</footer>
 <script type="module" src="analiz.js"></script>
+<script type="module" src="../yardim/yardim.js"></script>
 </body>
 </html>

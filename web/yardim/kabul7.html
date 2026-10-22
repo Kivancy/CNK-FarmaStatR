@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CNK-FarmaStatR · Yardım kabul testleri</title>
+<!-- FSR-TN-PLT-07 v0.1, Table 6.1 (Y-1 ... Y-9, Y-11). Internal acceptance tool (Turkish only).
+     Research and education only; not a system validated for GxP environments. -->
+<link rel="stylesheet" href="../app/stil.css">
+<style>
+  main.k { display: block; max-width: 1100px; }
+  .step { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; margin-bottom: 12px; }
+  .step h2 { margin-top: 0; }
+  #log { font: 12px/1.4 ui-monospace, Consolas, monospace; white-space: pre-wrap; max-height: 300px; overflow: auto; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 8px; }
+  iframe { width: 100%; height: 640px; border: 1px solid var(--line); border-radius: 6px; background: var(--card); }
+</style>
+</head>
+<body>
+<header><div><h1>CNK-FarmaStatR · Yardım kabul testleri</h1>
+<p class="sub">FSR-TN-PLT-07 v0.1 · Tablo 6.1 (Y-1 … Y-9, Y-11)</p></div></header>
+<p class="disclaimer">Araştırma ve eğitim amaçlıdır; GxP ortamında valide edilmiş sistem değildir.</p>
+<main class="k">
+<section class="step">
+  <h2>1. Testleri başlat</h2>
+  <p>Masaüstü Chrome; bu sekme önde kalsın. Süre yaklaşık 3–5 dakikadır.</p>
+  <div class="actions"><button id="b_run" type="button">Testleri başlat</button>
+  <button id="b_zip" type="button" class="ghost" disabled>p7_kabul.zip indir</button></div>
+  <p class="hint">İndirilen <code>p7_kabul.zip</code> dosyasını (açmadan) <code>belgeler/teknik_notlar/FSR-TN-PLT-07_ek/p7/</code> klasörüne koyun; karşılaştırmayı <code>p7_kabul.R</code> yapar.</p>
+</section>
+<section class="step"><h2>Kayıt</h2><p id="status" role="status"></p><div id="log"></div></section>
+<section class="step"><h2>Ekran çerçevesi</h2><iframe id="fr" title="Ekran" src="about:blank"></iframe></section>
+</main>
+<script type="module" src="kabul7.js"></script>
+</body>
+</html>

@@ -1,0 +1,157 @@
+@@tr
+# Popülasyon biyoeşdeğerliği (PBE): FDA PSG 020929
+
+## 1. Soru ve kapsam
+Test (T) ve referans (R) ürününün in vitro ölçümleri (ör. verilen doz, nebülizasyon süresi, impaktör boyutlu kütle) ortalama ve toplam değişkenlik bakımından eşdeğer mi? PBE, T ile R arasındaki farkı R’nin kendi içindeki farkla karşılaştırır. Yöntem FDA’nın budesonid inhalasyon süspansiyonu ürün kılavuzunun (PSG 020929, Aralık 2025) Ek A’sındaki beş adımdır; platform bu adımları değiştirilmemiş validasyonlu çekirdekle (`calc_pbe`) uygular.
+
+## 2. Model ve gösterim
+Her ürün için ℓ seri, seri başına n birim (kap, ampul, cihaz) ve birim başına m yaşam evresi (ör. başlangıç, orta, son) ölçülür. $X_{ijks}$: k ürününde (T ya da R) j serisindeki i biriminin s evresindeki ölçümü. Hesap log ölçeğindedir; ölçümleriniz ham ölçekteyse ekranda log dönüşümünü işaretleyin.
+
+- $\mu_T, \mu_R$: ürün ortalamaları (log ölçeği); $\sigma_T^2, \sigma_R^2$: toplam varyanslar.
+- $\sigma_{T0} = 0{,}1$ ve $\theta_p$: düzenleyici sabitler.
+- MSB: birimler arası kareler ortalaması; MSW: birim içi (evreler arası) kareler ortalaması.
+- Seriler havuzlanır: üç seri, seri varyansını güvenilir tahmin etmeye yetmediğinden toplam varyans “süper seri”nin birimler arası varyansı olarak tahmin edilir (FDA 1999, 18 Ağustos istatistik bilgisi).
+
+## 3. Denklemler
+Kriter (Adım 1). Hangisinin kullanılacağına tahmin edilen $\sigma_R$ karar verir:
+
+$$ \eta_1 = (\mu_T-\mu_R)^2 + (\sigma_T^2-\sigma_R^2) - \theta_p\,\sigma_R^2 \quad (\sigma_R > \sigma_{T0}) $$ :: PSG 020929 Ek A, Adım 1
+$$ \eta_2 = (\mu_T-\mu_R)^2 + (\sigma_T^2-\sigma_R^2) - \theta_p\,\sigma_{T0}^2 \quad (\sigma_R \le \sigma_{T0}) $$ :: PSG 020929 Ek A, Adım 1
+$$ \theta_p = \frac{(\ln 1{,}11)^2 + 0{,}01}{0{,}1^2} = 2{,}0891 $$ :: PSG 020929 Ek A, Adım 1
+
+Kareler ortalamaları (Adım 2); $\bar X_{ijk\cdot}$ birimin m evre ortalaması, $\bar X_{\cdot\cdot k\cdot}$ ürün ortalaması:
+
+$$ MSB_k = \frac{m \sum_{j=1}^{\ell_k}\sum_{i=1}^{n_k} (\bar X_{ijk\cdot} - \bar X_{\cdot\cdot k\cdot})^2}{n_k \ell_k - 1} $$ :: PSG 020929 Ek A, Adım 2
+$$ MSW_k = \frac{\sum_{j}\sum_{i}\sum_{s=1}^{m} (X_{ijks} - \bar X_{ijk\cdot})^2}{n_k \ell_k (m-1)} $$ :: PSG 020929 Ek A, Adım 2
+$$ \hat\sigma_k = \sqrt{\frac{MSB_k}{m} + \frac{(m-1)\,MSW_k}{m}}, \qquad \hat\Delta = \bar X_{\cdot\cdot T\cdot} - \bar X_{\cdot\cdot R\cdot} $$ :: PSG 020929 Ek A, Adım 1 ve 3
+
+Doğrusallaştırılmış nokta tahmini ve %95 üst güven sınırı (Adım 4; α = 0,05). Her bileşen için $E_q$ nokta tahmini, $H_q$ güven sınırı ve $U_q = (H_q - E_q)^2$:
+
+$$ E_D = \hat\Delta^2, \qquad H_D = \left(|\hat\Delta| + t_{1-\alpha,\; n_T\ell_T + n_R\ell_R - 2}\sqrt{\frac{MSB_T}{n_T\ell_T m} + \frac{MSB_R}{n_R\ell_R m}}\right)^2 $$ :: PSG 020929 Ek A, Adım 4
+$$ E_1 = \frac{MSB_T}{m}, \qquad H_1 = \frac{(\ell_T n_T - 1)\,E_1}{\chi^2_{\ell_T n_T - 1,\;\alpha}} $$ :: PSG 020929 Ek A, Adım 4
+$$ E_2 = \frac{(m-1)\,MSW_T}{m}, \qquad H_2 = \frac{\ell_T n_T (m-1)\,E_2}{\chi^2_{\ell_T n_T (m-1),\;\alpha}} $$ :: PSG 020929 Ek A, Adım 4
+$$ E_{3s} = -(1+\theta_p)\frac{MSB_R}{m}, \qquad H_{3s} = \frac{(\ell_R n_R - 1)\,E_{3s}}{\chi^2_{\ell_R n_R - 1,\;1-\alpha}} $$ :: PSG 020929 Ek A, Adım 4
+$$ E_{4s} = -(1+\theta_p)\frac{(m-1)\,MSW_R}{m}, \qquad H_{4s} = \frac{\ell_R n_R (m-1)\,E_{4s}}{\chi^2_{\ell_R n_R (m-1),\;1-\alpha}} $$ :: PSG 020929 Ek A, Adım 4
+$$ H_{\eta 1} = (E_D + E_1 + E_2 + E_{3s} + E_{4s}) + \sqrt{U_D + U_1 + U_2 + U_{3s} + U_{4s}} $$ :: PSG 020929 Ek A, Adım 4; Hyslop ve ark. (2000) §3
+$$ H_{\eta 2} = (E_D + E_1 + E_2 + E_{3c} + E_{4c} - \theta_p\sigma_{T0}^2) + \sqrt{U_D + U_1 + U_2 + U_{3c} + U_{4c}} $$ :: PSG 020929 Ek A, Adım 4
+
+Sabit ölçekli kriterde $E_{3c} = -MSB_R/m$ ve $E_{4c} = -(m-1)MSW_R/m$ (H ve U terimleri aynı serbestlik dereceleriyle). $\chi^2_{\nu,\alpha}$, ν serbestlik dereceli ki-kare dağılımının α kantilidir: $\Pr(\chi^2_\nu \le \chi^2_{\nu,\alpha}) = \alpha$. m = 1 ise $E_2$, $E_4$ ve bunlara ait H, U terimleri hesaba girmez. Üst sınırın yapısı Howe (1974) yaklaşımının Hyslop ve ark. (2000) tarafından genişletilmesidir.
+
+Değiştirilmiş tek yönlü PBE (yalnız ürün kılavuzu öngörüyorsa). Test ortalaması referanstan küçükse ortalama farkı kritere girmez:
+
+$$ \frac{(\sigma_T^2-\sigma_R^2)}{\sigma_R^2} \le \theta_p \quad (\mu_T < \mu_R): \qquad E_D = H_D = U_D = 0 $$ :: FDA PSG 020121 (flutikazon propiyonat nazal sprey, Aralık 2025) Ek, Adım 1–3
+
+## 4. Karar kuralı
+$$ H_\eta \le 0 \;\Rightarrow\; \text{PBE sağlanır} $$ :: PSG 020929 Ek A, Adım 5; FDA (2026) Statistical Approaches to Establishing Bioequivalence
+
+$H_\eta$, tahmin edilen $\sigma_R > 0{,}1$ ise referans ölçekli ($H_{\eta 1}$), değilse sabit ölçekli ($H_{\eta 2}$) sınırdır (Adım 3).
+
+## 5. Platformdaki uygulama
+- Çekirdek: `calc_pbe` (`pbe_core.R`, SHA-256 ile sabitli; FSR-VAL-PBE-1 v1.1: 213 kontrol, bağımsız Python referansıyla). Köprü `pbe_kopru.R` girdiyi denetler (25 kontrol): aynı kap ve evrede tekrarlı ölçüm, eksik evre, farklı evre kümeleri reddedilir.
+- Ekran CSV’yi `platform_csv` ile okur; hesap değiştirilmeden köprüye verilir.
+- Karar $H_\eta \le 0$ ile verilir; 0’a eşitlik de “sağlanır”dır.
+- Dengesiz ama eksiksiz tasarımda (seri başına farklı birim sayısı) formüller tüm birimler üzerinden uygulanır ve uyarı verilir; PSG örnekleri dengeli tasarımdır.
+
+## 6. Çalışılmış örnek
+PSG 020929 Ek B’deki simüle veri: her ürün için 3 seri × 10 kap × 3 evre (B, M, E). Platformun sonucu (log dönüşümü yok):
+
+- $\hat\sigma_R$ = [[pbe_sigma_r|0,4046]] > 0,1 → referans ölçekli kriter.
+- $E_D$ = [[pbe_ed|0,022094]], $E_1$ = [[pbe_e1|0,219743]], $E_{3s}$ = [[pbe_e3s|−0,505515]].
+- $E_q$ = [[pbe_eq|−0,263896]], $U_q$ = [[pbe_uq|0,054008]], $H_\eta$ = [[pbe_heta|−0,031499]] ≤ 0 → PBE sağlanır.
+- Sabit ölçekli kriter yalnız bilgi için: $H_{\eta 2}$ = [[pbe_heta_c|0,232737]].
+
+PSG’nin kendi tablosundaki değerler aynıdır ($H_\eta$ = −0,031498721). Ekranda “Örnek: FDA PSG 020929” seçilip “Analizi çalıştır”a basılarak yeniden üretilir.
+
+## 7. Sınırlar
+- PSG en az 3 seri ve seri başına en az 10 birim önerir; daha küçük tasarımlar hesaplanır ama uyarı verilir.
+- Seri varyansı ayrıca tahmin edilmez; seriden seriye büyük değişkenlikte PSG tahmin edicisinin özellikleri FSR-TN-PBE-01’de incelenmiştir.
+- Analiz tek bir ölçüm büyüklüğü içindir; birden çok büyüklük (ör. DD ve ISM) ayrı ayrı analiz edilir.
+- Araştırma ve eğitim amaçlıdır; GxP ortamında valide edilmiş sistem değildir.
+
+## 8. Kaynakça
+- FDA. Draft Guidance on Budesonide (inhalation suspension), PSG 020929. Aralık 2025; Ek A (Adım 1–5), Ek B (örnek).
+- FDA. Draft Guidance on Fluticasone Propionate (nasal spray, metered), PSG 020121. Aralık 2025; Ek (tek yönlü PBE).
+- FDA. Statistical Approaches to Establishing Bioequivalence (Guidance for Industry). 2026.
+- FDA. Statistical Information from the June 1999 Draft Guidance and Statistical Information for In Vitro Bioequivalence Data, 18 Ağustos 1999.
+- Hyslop T, Hsuan F, Holder DJ. A small sample confidence interval approach to assess individual bioequivalence. Stat Med 2000;19:2885–2897.
+- Howe WG. Approximate confidence limits on the mean of X + Y where X and Y are two tabled independent random variables. J Am Stat Assoc 1974;69:789–794.
+- FSR-VAL-PBE-1 v1.1 (validasyon belgesi); FSR-TN-PBE-01 v0.11 (simülasyon modeli).
+
+@@en
+# Population bioequivalence (PBE): FDA PSG 020929
+
+## 1. Question and scope
+Are the in vitro measurements (e.g. delivered dose, nebulization time, impactor-sized mass) of the test (T) and reference (R) products equivalent in mean and in total variability? PBE compares the difference between T and R with the difference of R with itself. The method is the five steps in Appendix A of FDA's product-specific guidance for budesonide inhalation suspension (PSG 020929, December 2025); the platform applies them with the unchanged validated core (`calc_pbe`).
+
+## 2. Model and notation
+For each product, ℓ batches, n units (containers, ampoules, devices) per batch and m life stages per unit (e.g. beginning, middle, end) are measured. $X_{ijks}$: measurement of unit i of batch j of product k (T or R) at stage s. The computation is on the log scale; if your measurements are on the raw scale, tick the log transform on the screen.
+
+- $\mu_T, \mu_R$: product means (log scale); $\sigma_T^2, \sigma_R^2$: total variances.
+- $\sigma_{T0} = 0.1$ and $\theta_p$: regulatory constants.
+- MSB: between-unit mean square; MSW: within-unit (between-stage) mean square.
+- Batches are pooled: three batches are not enough to estimate the batch variance reliably, so the total variance is estimated as the between-unit variance of the “super-batch” (FDA 1999, statistical information of 18 August).
+
+## 3. Equations
+Criterion (Step 1). The estimated $\sigma_R$ decides which one applies:
+
+$$ \eta_1 = (\mu_T-\mu_R)^2 + (\sigma_T^2-\sigma_R^2) - \theta_p\,\sigma_R^2 \quad (\sigma_R > \sigma_{T0}) $$ :: PSG 020929 Appendix A, Step 1
+$$ \eta_2 = (\mu_T-\mu_R)^2 + (\sigma_T^2-\sigma_R^2) - \theta_p\,\sigma_{T0}^2 \quad (\sigma_R \le \sigma_{T0}) $$ :: PSG 020929 Appendix A, Step 1
+$$ \theta_p = \frac{(\ln 1.11)^2 + 0.01}{0.1^2} = 2.0891 $$ :: PSG 020929 Appendix A, Step 1
+
+Mean squares (Step 2); $\bar X_{ijk\cdot}$ is the mean of the m stages of a unit, $\bar X_{\cdot\cdot k\cdot}$ the product mean:
+
+$$ MSB_k = \frac{m \sum_{j=1}^{\ell_k}\sum_{i=1}^{n_k} (\bar X_{ijk\cdot} - \bar X_{\cdot\cdot k\cdot})^2}{n_k \ell_k - 1} $$ :: PSG 020929 Appendix A, Step 2
+$$ MSW_k = \frac{\sum_{j}\sum_{i}\sum_{s=1}^{m} (X_{ijks} - \bar X_{ijk\cdot})^2}{n_k \ell_k (m-1)} $$ :: PSG 020929 Appendix A, Step 2
+$$ \hat\sigma_k = \sqrt{\frac{MSB_k}{m} + \frac{(m-1)\,MSW_k}{m}}, \qquad \hat\Delta = \bar X_{\cdot\cdot T\cdot} - \bar X_{\cdot\cdot R\cdot} $$ :: PSG 020929 Appendix A, Steps 1 and 3
+
+Linearized point estimate and 95% upper confidence bound (Step 4; α = 0.05). For each component the point estimate $E_q$, the confidence bound $H_q$ and $U_q = (H_q - E_q)^2$:
+
+$$ E_D = \hat\Delta^2, \qquad H_D = \left(|\hat\Delta| + t_{1-\alpha,\; n_T\ell_T + n_R\ell_R - 2}\sqrt{\frac{MSB_T}{n_T\ell_T m} + \frac{MSB_R}{n_R\ell_R m}}\right)^2 $$ :: PSG 020929 Appendix A, Step 4
+$$ E_1 = \frac{MSB_T}{m}, \qquad H_1 = \frac{(\ell_T n_T - 1)\,E_1}{\chi^2_{\ell_T n_T - 1,\;\alpha}} $$ :: PSG 020929 Appendix A, Step 4
+$$ E_2 = \frac{(m-1)\,MSW_T}{m}, \qquad H_2 = \frac{\ell_T n_T (m-1)\,E_2}{\chi^2_{\ell_T n_T (m-1),\;\alpha}} $$ :: PSG 020929 Appendix A, Step 4
+$$ E_{3s} = -(1+\theta_p)\frac{MSB_R}{m}, \qquad H_{3s} = \frac{(\ell_R n_R - 1)\,E_{3s}}{\chi^2_{\ell_R n_R - 1,\;1-\alpha}} $$ :: PSG 020929 Appendix A, Step 4
+$$ E_{4s} = -(1+\theta_p)\frac{(m-1)\,MSW_R}{m}, \qquad H_{4s} = \frac{\ell_R n_R (m-1)\,E_{4s}}{\chi^2_{\ell_R n_R (m-1),\;1-\alpha}} $$ :: PSG 020929 Appendix A, Step 4
+$$ H_{\eta 1} = (E_D + E_1 + E_2 + E_{3s} + E_{4s}) + \sqrt{U_D + U_1 + U_2 + U_{3s} + U_{4s}} $$ :: PSG 020929 Appendix A, Step 4; Hyslop et al. (2000) §3
+$$ H_{\eta 2} = (E_D + E_1 + E_2 + E_{3c} + E_{4c} - \theta_p\sigma_{T0}^2) + \sqrt{U_D + U_1 + U_2 + U_{3c} + U_{4c}} $$ :: PSG 020929 Appendix A, Step 4
+
+In the constant-scaled criterion $E_{3c} = -MSB_R/m$ and $E_{4c} = -(m-1)MSW_R/m$ (H and U terms with the same degrees of freedom). $\chi^2_{\nu,\alpha}$ is the α quantile of the chi-square distribution with ν degrees of freedom: $\Pr(\chi^2_\nu \le \chi^2_{\nu,\alpha}) = \alpha$. If m = 1, $E_2$, $E_4$ and their H and U terms are left out. The structure of the bound is the extension by Hyslop et al. (2000) of Howe's (1974) approximation.
+
+Modified one-sided PBE (only if the product guidance calls for it). If the test mean is below the reference mean, the mean difference is left out of the criterion:
+
+$$ \frac{(\sigma_T^2-\sigma_R^2)}{\sigma_R^2} \le \theta_p \quad (\mu_T < \mu_R): \qquad E_D = H_D = U_D = 0 $$ :: FDA PSG 020121 (fluticasone propionate nasal spray, December 2025) appendix, Steps 1–3
+
+## 4. Decision rule
+$$ H_\eta \le 0 \;\Rightarrow\; \text{PBE established} $$ :: PSG 020929 Appendix A, Step 5; FDA (2026) Statistical Approaches to Establishing Bioequivalence
+
+$H_\eta$ is the reference-scaled bound ($H_{\eta 1}$) if the estimated $\sigma_R > 0.1$, otherwise the constant-scaled bound ($H_{\eta 2}$) (Step 3).
+
+## 5. Implementation in the platform
+- Core: `calc_pbe` (`pbe_core.R`, pinned with SHA-256; FSR-VAL-PBE-1 v1.1: 213 checks against an independent Python reference). The bridge `pbe_kopru.R` checks the input (25 checks): repeated measurements at the same container and stage, missing stages and different stage sets are rejected.
+- The screen reads the CSV with `platform_csv`; the computation is passed to the bridge unchanged.
+- The decision is $H_\eta \le 0$; equality with 0 also means “established”.
+- In an unbalanced but complete design (different numbers of units per batch) the formulas are applied over all units and a warning is given; the PSG examples are balanced.
+
+## 6. Worked example
+The simulated data of PSG 020929 Appendix B: 3 batches × 10 containers × 3 stages (B, M, E) per product. The platform's result (no log transform):
+
+- $\hat\sigma_R$ = [[pbe_sigma_r|0.4046]] > 0.1 → reference-scaled criterion.
+- $E_D$ = [[pbe_ed|0.022094]], $E_1$ = [[pbe_e1|0.219743]], $E_{3s}$ = [[pbe_e3s|−0.505515]].
+- $E_q$ = [[pbe_eq|−0.263896]], $U_q$ = [[pbe_uq|0.054008]], $H_\eta$ = [[pbe_heta|−0.031499]] ≤ 0 → PBE established.
+- Constant-scaled criterion, for information only: $H_{\eta 2}$ = [[pbe_heta_c|0.232737]].
+
+The values in the PSG's own table are the same ($H_\eta$ = −0.031498721). Reproduce it on the screen by choosing “Example: FDA PSG 020929” and “Run the analysis”.
+
+## 7. Limits
+- The PSG recommends at least 3 batches and at least 10 units per batch; smaller designs are computed with a warning.
+- The batch variance is not estimated separately; the properties of the PSG estimator under large batch-to-batch variability are studied in FSR-TN-PBE-01.
+- One measured quantity per analysis; several quantities (e.g. DD and ISM) are analysed separately.
+- For research and education; not a system validated for GxP environments.
+
+## 8. References
+- FDA. Draft Guidance on Budesonide (inhalation suspension), PSG 020929. December 2025; Appendix A (Steps 1–5), Appendix B (example).
+- FDA. Draft Guidance on Fluticasone Propionate (nasal spray, metered), PSG 020121. December 2025; appendix (one-sided PBE).
+- FDA. Statistical Approaches to Establishing Bioequivalence (Guidance for Industry). 2026.
+- FDA. Statistical Information from the June 1999 Draft Guidance and Statistical Information for In Vitro Bioequivalence Data, 18 August 1999.
+- Hyslop T, Hsuan F, Holder DJ. A small sample confidence interval approach to assess individual bioequivalence. Stat Med 2000;19:2885–2897.
+- Howe WG. Approximate confidence limits on the mean of X + Y where X and Y are two tabled independent random variables. J Am Stat Assoc 1974;69:789–794.
+- FSR-VAL-PBE-1 v1.1 (validation document); FSR-TN-PBE-01 v0.11 (simulation model).

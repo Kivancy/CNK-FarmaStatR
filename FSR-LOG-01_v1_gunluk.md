@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.94 · Son güncelleme: 21.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.95 · Son güncelleme: 21.10.2026"
 ---
 
 # Bu belge hakkında
@@ -1830,6 +1830,59 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
   - Platform makalesi.
 - **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** bu günlük.
 
+## G-98 · Yardım sistemi: alan ipuçları, ekran panelleri, yöntem notları (KK-63); FSR-TN-PLT-07 v0.1, FSR-VAL-PLT-1 1.2 — 21.10.2026
+
+- **Depo:** G-97 commit edildi; Actions başarılı.
+- **Lisans ve yayın üzerine sorular (proje sahibi):** lisans seçenekleri ve proje sahibinden beklenenler yeniden listelendi (G-15 ile aynı). Yayın kontrol listesi açıklandı. Platformun bugünkü kullanımı ve yayından sonraki kullanımı anlatıldı. Depo özel olduğundan `remotes::install_github` şimdilik yalnız erişim anahtarıyla çalışır.
+- **Proje sahibinin kararı (K):** üç ekran (PBE analizi, dissolüsyon benzerliği, simülasyon ve tasarım) için yardım istendi.
+  - Düzey 1 (alan ipucu), Düzey 2 (ekran paneli) ve Düzey 3 (yöntem notları) birlikte yapılacak.
+  - "Sonradan revize edebiliriz değil mi?" sorusuna yanıt: evet. Metinler sabitli değildir; yayından sonra düzeltmeler bir sonraki sürüme girer.
+  - Üç adım (tasarım notu, Düzey 1–2 ve şablonlar, Düzey 3) tek seferde, ara inceleme olmadan → **KK-63**.
+  - İçeriğin alan uzmanı incelemesi iş bittikten sonra proje sahibinde.
+- **FSR-TN-PLT-07 v0.1** (`belgeler/teknik_notlar/FSR-TN-PLT-07_v0.1.docx`, 3 sayfa):
+  - Düzeyler (Tablo 1.1).
+  - Tasarım kararları Y-K1 … Y-K7.
+  - Düzey 2 içerik taslağı ve Düzey 3 not yapısı (8 bölüm).
+  - Kabul ölçütleri Y-1 … Y-12; kod yazılmadan önce donduruldu.
+- **Uygulama (`web/yardim/`):**
+  - `yardim.js`, `yardim.css`, `yardim.json`.
+    - 52 alan ipucu, TR = EN.
+    - Dört ekran için altı bölümlü paneller.
+  - İki ekranda etiketlere `data-help` eklendi; `yardim.js` yüklenir.
+  - `yontem/`: 5 not (PBE, f2 ve bootstrap f2, MSD, Weibull MSD, simülasyon ve tasarım seçimi) ve dizin, TR ve EN.
+    - Toplam 50 denklem, MathML; dış kitaplık yok.
+    - Her denklemde kaynak ya da FarmaStatR türetimi etiketi.
+    - Çalışılmış örneklerde 35 sayı, yerel R ile denetlenir.
+  - Notların kaynakları `kaynak/*.txt`; derleyici `araclar/yardim_derle.py` (Python, latex2mathml).
+  - Şablonlar `sablon/`: PBE ve dissolüsyon; Excel Türkçe ve uluslararası biçim.
+  - Kabul aracı: `kabul7.html` ve `kabul7.js`, ayrıca `belgeler/teknik_notlar/FSR-TN-PLT-07_ek/p7_kabul.R`.
+- **Bulunan hata (P6, Claude):** PBE ekranının karar metni "Hη < 0 / Hη ≥ 0" yazıyordu.
+  - Kaynak kural "Hη ≤ 0"dır (PSG 020929 Ek A Adım 5; FDA 2026). Çekirdek `calc_pbe` doğruydu (`H_eta_final <= 0`).
+  - Yalnız çeviri dosyasındaki metin düzeltildi (TR ve EN). Kararlar ve sayılar değişmedi.
+  - FSR-VAL-PLT-1 1.2'ye işlendi.
+- **Kuru koşu (Claude; Linux, Chromium 141; resmî değil):**
+  - `p7_kabul.R`: 48 satır, 48 GEÇTİ. İki araç hatası düzeltildi: bölüm deseni, L2a D_g kaynağı.
+  - Gerileme:
+    - P6 kabul aracı 78/78.
+    - P5 kabul aracı 19/19 satır GEÇTİ.
+    - Sabitli dosyalar 13/13.
+    - Paket ve CI değişmedi (R dosyası değişmedi).
+  - Çıktılar `FSR-TN-PLT-07_ek/kuru/` ve `gerileme/` (CSV).
+  - P5 ve P6 resmî çıktıları geri yüklendi; değişmedi.
+- **Belgeler:**
+  - FSR-VAL-PLT-1 1.2 (revizyon: B-10 yardım sistemi, PBE metin bulgusu, gerileme).
+  - `web/yardim/README.md`.
+  - Kök `README.md` ve `OKUBENI.md`, `belgeler/yayin/site_index.html` (yöntem notları bağlantısı).
+- **İçerik notları (proje sahibinin incelemesi için):**
+  - EMA Q&A 3.11 sonucun en yakın tam sayıya yuvarlanarak raporlanmasını ister. Ekran alt sınırı 2 ondalıkla gösterir; tam sayı değeri çekirdekte var (`tamsayi`), ekranda ayrı satır olarak yok. Not f2'de açıklandı; ekrana eklenmesi ayrı karar.
+  - Weibull notunda B-L2b'deki √N/N seçimi, f2'de 49,5 sınır vaka kuralı ve MSD L2a/L2b/L3 FarmaStatR türetimi olarak etiketlendi.
+- **Sıradaki iş (proje sahibi):**
+  1. Commit + Push ve Actions sonucu.
+  2. Resmî yardım kabulü: `http://127.0.0.1:8000/web/yardim/kabul7.html` → `p7_kabul.zip` → `FSR-TN-PLT-07_ek/p7/` → `p7_kabul.R` (yaklaşık 1 dakika).
+  3. İçeriğin incelenmesi: yöntem notları `web/yardim/yontem/`.
+  4. Ardından FSR-TN-PLT-07 v0.2 (sonuçlar ve inceleme düzeltmeleri).
+- **Dosyalar:** yukarıdakiler ve bu günlük.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -1848,13 +1901,14 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Dissolüsyon köprüsü pakette (`inst/kopru/dis_kopru.R`, G-94); dışa açılan fonksiyonlar v1.0.0 öncesi |
 | A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
 | A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | **Tamam:** P0 … P6 kapandı (P5: KK-58, G-92; P6: resmî kabul 78/78, FSR-TN-PLT-06 v0.2 ve FSR-VAL-PLT-1 1.1 onaylandı, KK-62, G-97). Yayın adımları lisanstan sonra (KK-61) |
+| A-16 | Yardım sistemi (FSR-TN-PLT-07; KK-63) | Uygulama ve kuru koşu tamam (G-98); resmî kabul (kabul7) ve proje sahibinin içerik incelemesi bekliyor |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
 
 # 4. Belge ve sürüm dizini
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.94 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.95 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.1 | 1.0 onaylı; beş dosya sabitlendi (G-47). 1.1: TC-S11 (dışa aktarılan betik), onaylandı (KK-53, G-76) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.7 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68); v0.7: Tablo 8.1 ve 10.1 (KK-56, KK-57, KK-59; G-94), onay P6 kapanışında |
@@ -1863,7 +1917,8 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | FSR-TN-PLT-04 · P4 tasarımı ve kabul ölçütleri | 0.2 | v0.1 onaylı (KK-54); v0.2: resmi kabul 12/12 GECTI (G-81); onaylandı, P4 kapandı (KK-55, G-82) |
 | FSR-TN-PLT-05 · P5 tasarımı ve kabul ölçütleri (tasarım seçimi ve Word raporu) | 0.3 | v0.1 taslak (G-83); v0.2: tasarım seçimi eklendi (KK-56, G-84); onaylandı, D-1…D-7 ve R-1…R-11 donduruldu (KK-57, G-85); v0.3: resmi kabul 18/18 GECTI (G-91); onaylandı, P5 kapandı (KK-58, G-92) |
 | FSR-TN-PLT-06 · P6 tasarımı, kabul ölçütleri ve sonuçları (devralınan modellerin arayüzü, platform validasyonu, yayın hazırlığı) | 0.2 | v0.1 yetki devriyle (KK-60), F-1…F-12 donduruldu (G-94); v0.2: resmî kabul 78/78 GEÇTİ (G-95); onaylandı, P6 kapandı (KK-62, G-97) |
-| FSR-VAL-PLT-1 · Platform katmanı validasyon belgesi | 1.1 | 1.0: P1–P6 kanıtları (G-94); 1.1: P6 resmî kabulü (G-95); onaylandı (KK-62, G-97) |
+| FSR-TN-PLT-07 · Yardım sistemi: tasarım ve kabul ölçütleri | 0.1 | KK-63 yetkisiyle; Y-1…Y-12 donduruldu; kuru koşu 48/48 (G-98); resmî kabul ve içerik incelemesi bekliyor |
+| FSR-VAL-PLT-1 · Platform katmanı validasyon belgesi | 1.2 | 1.0: P1–P6 kanıtları (G-94); 1.1: P6 resmî kabulü, onaylandı (KK-62, G-97); 1.2: yardım sistemi, PBE metin bulgusu, gerileme (G-98); onay bekliyor |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
 | CNKfarmastatr (R paketi) | 1.0.0.9000 | 13 dosya SHA-256 ile sabit (8 devralınan çekirdek + simülasyon çatısı ve in vitro motoru; FSR-VAL-SIM-1 1.0, G-47); testler 26 blok, 968 beklenti GEÇTİ (G-46); G-94: 58 blok, 2.292 beklenti (yerel R ve webR) |
 
@@ -1933,3 +1988,4 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | KK-60 | P6 süresince kararlar Claude'a bırakıldı (sormadan ilerleme); geri döndürülemez ya da proje sahibine ait kararlar (lisans, depo açma, DOI, etiket, Pages) yalnız hazırlanır | G-94 |
 | KK-61 | Lisans kararı (A-6) bir süre bekletilir; yayın adımları lisanstan sonra | G-96 |
 | KK-62 | FSR-TN-PLT-06 v0.2 ve FSR-VAL-PLT-1 1.1 onaylandı; P6 kapandı | G-97 |
+| KK-63 | Üç ekran için yardım: alan ipuçları, ekran panelleri ve yöntem notları birlikte; tasarım notu, uygulama ve notlar tek seferde, ara inceleme olmadan; içerik incelemesi sonradan | G-98 |

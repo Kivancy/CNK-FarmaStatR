@@ -1,0 +1,111 @@
+@@tr
+# Model bağımsız çok değişkenli istatistiksel uzaklık (MSD)
+
+## 1. Soru ve kapsam
+İki dissolüsyon profili, zaman noktalarındaki ortalama farkların birlikte (çok değişkenli) değerlendirilmesiyle benzer mi? MSD (Mahalanobis uzaklığı), farkları ünite değişkenliği ve zaman noktaları arasındaki ilişkiyle ölçekler; benzerlik, uzaklığın %90 güven sınırının önceden belirlenmiş bir sınırla karşılaştırılmasıyla değerlendirilir. Yöntem FDA 1997 Bölüm V.B ve Tsong ve ark. (1996)’dır; platform değiştirilmemiş validasyonlu çekirdeği (`calc_msd`) kullanır. EMA için MSD destekleyici bir yöntemdir; öncelikli yöntem bootstrap f2’dir (EMA Q&A 3.9).
+
+## 2. Model ve gösterim
+- P zaman noktası; $n_T, n_R$ ünite; her ünite bir P boyutlu profil vektörüdür.
+- $\mathbf d = \bar{\mathbf X}_T - \bar{\mathbf X}_R$: ortalama fark vektörü; $\mathbf S_T, \mathbf S_R$: ürün kovaryans matrisleri.
+- Hotelling T² dağılımı ve F kantili; güven düzeyi %90.
+
+## 3. Denklemler
+$$ \mathbf S = \frac{(n_T - 1)\mathbf S_T + (n_R - 1)\mathbf S_R}{n_T + n_R - 2} $$ :: Tsong ve ark. (1996) Denk. 2 (eşit n’de (S_T + S_R)/2)
+$$ D_M = \sqrt{\mathbf d^{\top}\mathbf S^{-1}\mathbf d}, \qquad T^2 = \frac{n_T n_R}{n_T + n_R}\, D_M^2 $$ :: Tsong ve ark. (1996) Denk. 2–3; FDA (1997) V.B adım 2
+$$ K = \frac{n_T n_R}{n_T + n_R}\cdot\frac{n_T + n_R - P - 1}{(n_T + n_R - 2)\,P}, \qquad r = \sqrt{\frac{F_{P,\;n_T+n_R-P-1;\;0{,}90}}{K}} $$ :: Tsong ve ark. (1996) Denk. 3; FDA (1997) V.B adım 3
+$$ D_M^{\,l} = \max(0,\; D_M - r), \qquad D_M^{\,u} = D_M + r $$ :: Tsong ve ark. (1996) Denk. 3 (güven bölgesinin S ölçüsündeki en yakın ve en uzak noktası)
+
+Benzerlik sınırı. L1, her zaman noktasında aynı izin verilen fark $D_g$ (EMA’da %10) ile:
+
+$$ R_D = \sqrt{\mathbf g^{\top}\mathbf S^{-1}\mathbf g}, \qquad \mathbf g = D_g\,\mathbf 1 $$ :: Tsong ve ark. (1996) s. 1109 (L1)
+
+- L2a: $D_g$, referans lot çiftleri arasındaki en büyük mutlak ortalama farktır; sonra L1 formülü uygulanır [FarmaStatR türetimi; FDA 1997 V.B adım 1].
+- L2b: $R_D$, referans lot çiftleri arasındaki en büyük MSD’dir (her çift kendi birleştirilmiş kovaryansıyla) [FarmaStatR türetimi; FDA 1997 V.B adım 1’in doğrudan okuması].
+
+Zaman noktası bazında kontrol (L3): güven elipsoidinin her eksendeki uç noktası $D_g$’yi aşmamalı:
+
+$$ |d_t| + r\sqrt{S_{tt}} \le D_g \quad \text{her } t \text{ için} $$ :: FarmaStatR türetimi; EMA (2010) Ek I “%10’dan büyük olmayan fark”
+
+## 4. Karar kuralı
+$$ D_M^{\,u} \le R_D \;\Rightarrow\; \text{benzer} $$ :: FDA (1997) V.B adım 4
+
+L3 satırı ayrı bir bilgidir; MSD kararı yalnız yukarıdaki kurala göre verilir.
+
+## 5. Platformdaki uygulama
+- Değişken sayısı sınırı: $P \le n_T + n_R - 2$; kovaryans matrisi neredeyse tekilse (koşul sayısı > 10¹⁰) hesap durur.
+- %85 kesmesi isteğe bağlıdır (yok, FDA, EMA); kılavuzlar bu kuralları f2 için tanımlar, MSD’ye uygulanması FarmaStatR tasarım kararıdır.
+- Referans lotları ayrı ürün adlarıyla verilir; karşılaştırılan referans da lot olarak seçilebilir.
+- Box’ın M testi yalnız bilgi amaçlıdır.
+
+## 6. Çalışılmış örnek
+Tsong ve ark. (1996) verisi (TEST ve REF, 6’şar tablet, 8 zaman noktası; referans lotları STD1 ve STD2), kesme yok:
+
+- $D_M$ = [[msd_dm|26,4856]]; %90 aralık [[msd_dml|19,6532]] – [[msd_dmu|33,3180]].
+- L1 ($D_g$ = 10): $R_D$ = [[msd_rd_l1|19,4272]]; L2a ($D_g$ = [[msd_dg_l2a|10,54]]): $R_D$ = [[msd_rd_l2a|20,4763]].
+- Her iki sınırda da $D_M^{\,u}$ > $R_D$ → benzer değil. L3 de sağlanmıyor.
+
+## 7. Sınırlar
+- Küçük örneklemde kovaryans tahmini kararsızdır; zaman noktası sayısını ünite sayısına göre sınırlı tutun.
+- L2a, L2b ve L3 FarmaStatR türetimidir; raporda böyle etiketlenir.
+- Araştırma ve eğitim amaçlıdır; GxP ortamında valide edilmiş sistem değildir.
+
+## 8. Kaynakça
+- FDA. Dissolution Testing of Immediate Release Solid Oral Dosage Forms, 1997; Bölüm V.B.
+- Tsong Y, Hammerstrom T, Sathe P, Shah VP. Statistical assessment of mean differences between two dissolution data sets. Drug Inf J 1996;30:1105–1112.
+- EMA. CPMP/EWP/QWP/1401/98 Rev. 1, 2010; Ek I. EMA PKWP/BSWP Q&A 3.9.
+
+@@en
+# Model-independent multivariate statistical distance (MSD)
+
+## 1. Question and scope
+Are two dissolution profiles similar when the mean differences at the time points are judged together (multivariately)? The MSD (Mahalanobis distance) scales the differences by the unit variability and by the relation between time points; similarity is judged by comparing the 90% confidence bound of the distance with a predefined limit. The method is FDA 1997 Section V.B and Tsong et al. (1996); the platform uses the unchanged validated core (`calc_msd`). For EMA the MSD is supportive; the preferred method is bootstrap f2 (EMA Q&A 3.9).
+
+## 2. Model and notation
+- P time points; $n_T, n_R$ units; each unit is a P-dimensional profile vector.
+- $\mathbf d = \bar{\mathbf X}_T - \bar{\mathbf X}_R$: vector of mean differences; $\mathbf S_T, \mathbf S_R$: product covariance matrices.
+- Hotelling's T² distribution and an F quantile; confidence level 90%.
+
+## 3. Equations
+$$ \mathbf S = \frac{(n_T - 1)\mathbf S_T + (n_R - 1)\mathbf S_R}{n_T + n_R - 2} $$ :: Tsong et al. (1996) Eq. 2 ((S_T + S_R)/2 for equal n)
+$$ D_M = \sqrt{\mathbf d^{\top}\mathbf S^{-1}\mathbf d}, \qquad T^2 = \frac{n_T n_R}{n_T + n_R}\, D_M^2 $$ :: Tsong et al. (1996) Eq. 2–3; FDA (1997) V.B step 2
+$$ K = \frac{n_T n_R}{n_T + n_R}\cdot\frac{n_T + n_R - P - 1}{(n_T + n_R - 2)\,P}, \qquad r = \sqrt{\frac{F_{P,\;n_T+n_R-P-1;\;0.90}}{K}} $$ :: Tsong et al. (1996) Eq. 3; FDA (1997) V.B step 3
+$$ D_M^{\,l} = \max(0,\; D_M - r), \qquad D_M^{\,u} = D_M + r $$ :: Tsong et al. (1996) Eq. 3 (nearest and farthest point of the confidence region in the S metric)
+
+Similarity limit. L1, with the same allowed difference $D_g$ at every time point (10 in EMA):
+
+$$ R_D = \sqrt{\mathbf g^{\top}\mathbf S^{-1}\mathbf g}, \qquad \mathbf g = D_g\,\mathbf 1 $$ :: Tsong et al. (1996) p. 1109 (L1)
+
+- L2a: $D_g$ is the largest absolute mean difference between pairs of reference lots; then the L1 formula is applied [FarmaStatR derivation; FDA 1997 V.B step 1].
+- L2b: $R_D$ is the largest MSD between pairs of reference lots (each pair with its own pooled covariance) [FarmaStatR derivation; literal reading of FDA 1997 V.B step 1].
+
+Check per time point (L3): the extreme point of the confidence ellipsoid on every axis should not exceed $D_g$:
+
+$$ |d_t| + r\sqrt{S_{tt}} \le D_g \quad \text{for every } t $$ :: FarmaStatR derivation; EMA (2010) Appendix I “not greater than a 10% difference”
+
+## 4. Decision rule
+$$ D_M^{\,u} \le R_D \;\Rightarrow\; \text{similar} $$ :: FDA (1997) V.B step 4
+
+The L3 line is separate information; the MSD decision follows only the rule above.
+
+## 5. Implementation in the platform
+- Limit on the number of variables: $P \le n_T + n_R - 2$; if the covariance matrix is nearly singular (condition number > 10¹⁰) the computation stops.
+- The 85% truncation is optional (none, FDA, EMA); the guidances define these rules for f2, and their use for MSD is a FarmaStatR design decision.
+- Reference lots are given as separate product names; the compared reference may also be chosen as a lot.
+- Box's M test is for information only.
+
+## 6. Worked example
+Data of Tsong et al. (1996) (TEST and REF, 6 tablets each, 8 time points; reference lots STD1 and STD2), no truncation:
+
+- $D_M$ = [[msd_dm|26.4856]]; 90% interval [[msd_dml|19.6532]] – [[msd_dmu|33.3180]].
+- L1 ($D_g$ = 10): $R_D$ = [[msd_rd_l1|19.4272]]; L2a ($D_g$ = [[msd_dg_l2a|10.54]]): $R_D$ = [[msd_rd_l2a|20.4763]].
+- With both limits $D_M^{\,u}$ > $R_D$ → not similar. L3 is not met either.
+
+## 7. Limits
+- With small samples the covariance estimate is unstable; keep the number of time points small relative to the number of units.
+- L2a, L2b and L3 are FarmaStatR derivations and are labelled so in the report.
+- For research and education; not a system validated for GxP environments.
+
+## 8. References
+- FDA. Dissolution Testing of Immediate Release Solid Oral Dosage Forms, 1997; Section V.B.
+- Tsong Y, Hammerstrom T, Sathe P, Shah VP. Statistical assessment of mean differences between two dissolution data sets. Drug Inf J 1996;30:1105–1112.
+- EMA. CPMP/EWP/QWP/1401/98 Rev. 1, 2010; Appendix I. EMA PKWP/BSWP Q&A 3.9.
