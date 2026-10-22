@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.97 · Son güncelleme: 22.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.98 · Son güncelleme: 22.10.2026"
 ---
 
 # Bu belge hakkında
@@ -1936,6 +1936,13 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Belgeler:** FSR-TN-PLT-08 v0.1; FSR-TN-PLT-07 v0.2; FSR-VAL-PLT-1 1.3 (B-11, İ-1 kanıtı, Tablo 3.1). Onay proje sahibinde.
 - **Sıradaki iş (proje sahibi):** commit + push ve Actions sonucu (Windows beklenti sayısı); resmî koşular: `kabul8.html` → `p8_kabul.R`, `kabul7.html` → `p7_kabul.R`. Ardından FSR-TN-PLT-08 v0.2 (sonuçlar).
 
+## G-101 · G-100 commit'i ve CI: Windows 2.323 beklenti — 22.10.2026
+
+- **Depo:** G-100 dosyaları proje sahibince commit + push edildi (commit "G-100: PBE sekmesine EMA %90 GA analizi (KK-64); EMA yöntem notu; FSR-TN…"); Changes boş. Actions başarılı.
+- **CI (proje sahibi):** G-100 koşusunda Windows Step 2: 2.323 beklenti, başarısız 0, atlanan 0. Bu sayı Claude'un beklentisiyle aynı: 2.287 + A-9…A-11'in 36 beklentisi.
+- **Düzeltme notu:** proje sahibi ilk olarak Windows 2.287 / Linux 2.292 bildirdi. İki sayı da G-100'den önceki koşuya aitti; G-100 koşusu açılınca 2.323 görüldü. Linux sayısı bu koşu için ayrıca bildirilmedi; yerel Linux koşusu 2.328 (G-100).
+- **Sıradaki iş (proje sahibi):** EMA resmî kabulü (`kabul8.html` → `p8/p8_kabul.zip` → `p8_kabul.R`) ve yardımın yeniden resmî koşusu (`kabul7.html` → `p7_kabul.R`).
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -1962,7 +1969,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.97 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.98 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.1 | 1.0 onaylı; beş dosya sabitlendi (G-47). 1.1: TC-S11 (dışa aktarılan betik), onaylandı (KK-53, G-76) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.7 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68); v0.7: Tablo 8.1 ve 10.1 (KK-56, KK-57, KK-59; G-94), onay P6 kapanışında |
@@ -1975,7 +1982,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | FSR-TN-PLT-08 · EMA %90 GA analizi: tasarım ve kabul ölçütleri | 0.1 | E-1…E-10 koddan önce donduruldu (KK-64, G-100); kuru koşu 44/44; resmî kabul bekliyor |
 | FSR-VAL-PLT-1 · Platform katmanı validasyon belgesi | 1.3 | 1.0: P1–P6 kanıtları (G-94); 1.1: P6 resmî kabulü, onaylandı (KK-62, G-97); 1.2: yardım sistemi, PBE metin bulgusu, gerileme (G-98); 1.3: EMA %90 GA analizi (G-100); 1.2 ve 1.3 onay bekliyor |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
-| CNKfarmastatr (R paketi) | 1.0.0.9000 | 13 dosya SHA-256 ile sabit (8 devralınan çekirdek + simülasyon çatısı ve in vitro motoru; FSR-VAL-SIM-1 1.0, G-47); testler 26 blok, 968 beklenti GEÇTİ (G-46); G-94: 58 blok, 2.292 beklenti (yerel R ve webR); G-100: 61 blok, 2.328 beklenti |
+| CNKfarmastatr (R paketi) | 1.0.0.9000 | 13 dosya SHA-256 ile sabit (8 devralınan çekirdek + simülasyon çatısı ve in vitro motoru; FSR-VAL-SIM-1 1.0, G-47); testler 26 blok, 968 beklenti GEÇTİ (G-46); G-94: 58 blok, 2.292 beklenti (yerel R ve webR); G-100: 61 blok, 2.328 beklenti (Windows CI 2.323, G-101) |
 
 # 5. Kullanıcı kararları dizini
 
