@@ -3,6 +3,7 @@
 \alias{platform_csv}
 \alias{platform_pbe_veri}
 \alias{platform_pbe}
+\alias{platform_ema}
 \alias{platform_dis_veri}
 \alias{platform_dis_kopru}
 \alias{platform_dis}
@@ -14,6 +15,12 @@ the columns and call the inherited bridges unchanged; they compute no statistic.
 \itemize{
   \item PBE (FDA PSG 020929): \code{kp_hazirla()} and \code{kp_pbe()} of the PBE
     bridge, which call \code{\link{calc_pbe}}.
+  \item EMA OIP Rev. 2 Section 5.1 criterion 8 (FSR-TN-PLT-08 v0.1; decision KK-64):
+    the same input checks (\code{kp_hazirla()}), then \code{\link{invitro_array}} and
+    \code{\link{ema_ci_fast}} of the validated simulation engine (FSR-VAL-SIM-1).
+    The 90\% confidence intervals of the three candidate paths (a) pooled units,
+    (b) batch means and (c) mixed model (REML) are returned (FarmaStatR derivation,
+    KK-27); the decision line is path (b). Balanced designs only.
   \item Dissolution: the v0.5.1 bridge \code{inst/kopru/dis_kopru.R} (bytes unchanged,
     FSR-LOG-01 G-01), loaded into its own environment by \code{platform_dis_kopru}
     because it also defines \code{kp_hazirla()}; it calls \code{\link{calc_f2_boot}},
@@ -33,6 +40,8 @@ Research and education only; not a system validated for GxP environments.
 platform_csv(metin)
 platform_pbe_veri(metin = NULL, ornek = NULL)
 platform_pbe(veri, test = "TEST", ref = "REF", log_d = FALSE, tek_yonlu = FALSE)
+platform_ema(veri, test = "TEST", ref = "REF", log_d = FALSE, level = 0.90,
+             limits = c(0.85, 1.18))
 platform_dis_veri(metin = NULL, ornek = NULL)
 platform_dis_kopru(path = system.file("kopru", "dis_kopru.R", package = "CNKfarmastatr"),
                    parent = environment(calc_msd))
@@ -46,6 +55,7 @@ platform_dis(kopru, veri, test, ref, lotlar = character(0), birim = "dakika",
   \item{veri}{result of \code{platform_pbe_veri} or \code{platform_dis_veri}.}
   \item{test, ref}{product labels of test and reference.}
   \item{log_d}{logical; analyse \code{log(score)}.}
+  \item{level, limits}{confidence level and acceptance limits of the ratio (EMA).}
   \item{tek_yonlu}{logical; one-sided test with sigma_T0 (PSG 020929).}
   \item{path, parent}{file of the dissolution bridge and the parent environment
     (where the cores are).}
@@ -62,12 +72,16 @@ platform_dis(kopru, veri, test, ref, lotlar = character(0), birim = "dakika",
 \code{platform_pbe_veri}, \code{platform_dis_veri}: lists of columns and the product
 labels (\code{urunler}). \code{platform_pbe}, \code{platform_dis}: lists with the
 bridge's own results \code{hazir} (design, summaries, warnings) and \code{sonuc}.
+\code{platform_ema}: \code{hazir} and \code{sonuc} (per path: \code{yol, gmr, alt, ust,
+se, sd, gecti}; \code{karar} = path (b); \code{uyum}: the three paths agree).
 }
 \seealso{\code{\link{kp_hazirla}}, \code{\link{calc_pbe}}, \code{\link{calc_f2_boot}},
   \code{\link{calc_msd}}, \code{\link{calc_msd_weibull}}}
 \examples{
 r <- platform_pbe(platform_pbe_veri(ornek = "psg020929"))
 r$sonuc$pass_fail
+e <- platform_ema(platform_pbe_veri(ornek = "psg020929"))
+e$sonuc$karar
 kp <- platform_dis_kopru()
 m <- platform_dis(kp, platform_dis_veri(ornek = "tsong1996"), "TEST", "REF",
                   c("STD1", "STD2"), yontem = "msd", ayar = list(sinir = "L2a"))

@@ -75,6 +75,40 @@ platform_pbe <- function(veri, test = "TEST", ref = "REF", log_d = FALSE, tek_yo
 }
 
 # -----------------------------------------------------------------------------
+# EMA OIP Rev. 2 Section 5.1 criterion 8 (90% CI of the T/R ratio within 0.85-1.18)
+#   on one's own data (FSR-TN-PLT-08, KK-64). Input checks: the PBE bridge (kp_hazirla);
+#   long -> array: invitro_array; computation: ema_ci_fast (validated simulation engine,
+#   FSR-VAL-SIM-1 v1.1). Nothing is computed here. Paths (a), (b), (c) are candidate
+#   implementations (FarmaStatR derivation, KK-27); the decision line is path (b).
+# -----------------------------------------------------------------------------
+platform_ema <- function(veri, test = "TEST", ref = "REF", log_d = FALSE, level = 0.90, limits = c(0.85, 1.18)) {
+  h <- kp_hazirla(parti = veri$parti, kap = veri$kap, asama = veri$asama, urun = veri$urun,
+                  deger = veri$olcum, test = test, ref = ref, log_d = log_d)
+  for (p in c("T", "R")) if (h[[p]]$kap_min != h[[p]]$kap_max)
+    stop(sprintf("EMA %%90 GA yaln\u0131z dengeli tasar\u0131mda hesaplan\u0131r: %s \u00fcr\u00fcn\u00fcnde parti ba\u015f\u0131na kap say\u0131s\u0131 farkl\u0131 (%d\u2013%d). Dengesiz tasar\u0131mda FDA PBE se\u00e7ilebilir.",
+                 if (p == "T") "TEST" else "REF", h[[p]]$kap_min, h[[p]]$kap_max))
+  df <- .pbe$df
+  if (isTRUE(log_d)) df$score <- log(df$score)
+  aT <- invitro_array(df, "TEST"); aR <- invitro_array(df, "REF")
+  r <- ema_ci_fast(aT$X, aR$X, aT$l, aT$n, aR$l, aR$n, level = level, limits = limits)
+  tab <- do.call(rbind, r)
+  ok <- is.finite(tab$lower) & is.finite(tab$upper) & is.finite(tab$se) & is.finite(tab$df)
+  if (!all(ok)) {
+    tab[!ok, c("lower", "upper", "se", "df")] <- NA_real_; tab$pass[!ok] <- NA
+    h$uyarilar <- c(h$uyarilar, sprintf("Hesaplanamayan yol: %s. Serbestlik derecesi ya da standart hata s\u0131f\u0131r (en az iki seri ve seriler aras\u0131 de\u011fi\u015fkenlik gerekir).",
+                                        paste(tab$method[!ok], collapse = ", ")))
+  }
+  h$uyarilar <- h$uyarilar[!grepl("PSG_020929", h$uyarilar, fixed = TRUE)]
+  if (aT$l < 3 || aR$l < 3 || aT$n < 10 || aR$n < 10) h$uyarilar <- c(h$uyarilar, "EMA OIP Rev. 2 B\u00f6l\u00fcm 5.1: her \u00fcr\u00fcnde en az \u00fc\u00e7 seri ve seri ba\u015f\u0131na en az on birim \u00f6nerilir.")
+  list(hazir = h,
+       sonuc = list(yol = as.character(tab$method), gmr = tab$gmr, alt = tab$lower, ust = tab$upper,
+                    se = tab$se, sd = tab$df, gecti = tab$pass, karar = tab$pass[tab$method == "b"],
+                    uyum = if (anyNA(tab$pass)) NA else length(unique(tab$pass)) == 1L, duzey = level, sinir = limits,
+                    T = list(l = aT$l, n = aT$n, m = aT$m), R = list(l = aR$l, n = aR$n, m = aR$m)),
+       test = test, ref = ref, log_d = isTRUE(log_d))
+}
+
+# -----------------------------------------------------------------------------
 # Dissolution
 # -----------------------------------------------------------------------------
 .analiz_dis_adlar <- list(Product = c("product", "urun"), Unit = c("unit", "tablet", "unite", "birim", "kap"),

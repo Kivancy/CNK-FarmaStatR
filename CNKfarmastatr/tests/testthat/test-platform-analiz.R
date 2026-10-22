@@ -120,3 +120,72 @@ test_that("A-8 dissolution input errors", {
   expect_error(platform_dis_veri("Product,Unit,Zaman\nA,1,5"), "Missing column\\(s\\): Diss")
   expect_error(platform_dis(kp, ts, "TEST", "REF", yontem = "msd", ayar = list(sinir = "L2a")))   # no reference lots
 })
+
+# ---- EMA OIP Rev. 2 Section 5.1 criterion 8 on one's own data (FSR-TN-PLT-08 v0.1, KK-64)
+ema_dosya <- function(ad) {
+  f <- system.file("validasyon", "pbe", "test_verisi", ad, package = "CNKfarmastatr")
+  platform_pbe_veri(paste(readLines(f), collapse = "\n"))
+}
+
+test_that("A-9 EMA: platform_ema equals invitro_array + ema_ci_fast called directly", {
+  o <- ornek_psg020929()
+  dogrudan <- function(d) {
+    t <- invitro_array(d, "TEST"); r <- invitro_array(d, "REF")
+    do.call(rbind, ema_ci_fast(t$X, r$X, t$l, t$n, r$l, r$n))
+  }
+  v <- platform_pbe_veri(ornek = "psg020929")
+  e <- platform_ema(v, "TEST", "REF")
+  d <- dogrudan(o)
+  expect_identical(e$sonuc$yol, c("a", "b", "c"))
+  expect_identical(e$sonuc$alt, d$lower); expect_identical(e$sonuc$ust, d$upper)
+  expect_identical(e$sonuc$gmr, d$gmr); expect_identical(e$sonuc$se, d$se); expect_identical(e$sonuc$sd, d$df)
+  expect_identical(e$sonuc$gecti, d$pass); expect_identical(e$sonuc$karar, d$pass[2])
+  expect_identical(c(e$sonuc$T$l, e$sonuc$T$n, e$sonuc$T$m), c(3L, 10L, 3L))
+  expect_identical(round(c(e$sonuc$alt[2], e$sonuc$ust[2]), 6), c(0.877170, 1.534702))   # FarmaStatR reference (P8)
+  expect_false(e$sonuc$karar); expect_true(e$sonuc$uyum)
+  # raw scale + log box gives the log-scale result; the Turkish CSV gives the same
+  x <- platform_ema(ema_dosya("P5_exp.csv"), "TEST", "REF", log_d = TRUE)
+  expect_equal(x$sonuc[c("alt", "ust", "se", "sd")], e$sonuc[c("alt", "ust", "se", "sd")], tolerance = 1e-12)
+  tr <- stats::setNames(data.frame(o$Batches, o$Container, o$Stage, o$Product, o$score),
+                        c("Parti", "Kap", "Aşama", "Ürün", "Ölçüm"))
+  expect_identical(platform_ema(platform_pbe_veri(csv_yaz(tr, ";", ",")))$sonuc, e$sonuc)
+  # the FDA path is untouched by the method choice
+  expect_identical(platform_pbe(v)$sonuc$pass_fail, "PASS")
+})
+
+test_that("A-10 EMA: (a) and (b) from unit and batch means in base R; (c) against numerical REML", {
+  for (ad in c("P1_psg020929.csv", "P2_m1.csv", "P4_tekyon_aktif.csv")) {
+    v <- ema_dosya(ad); e <- platform_ema(v, "TEST", "REF")
+    d <- data.frame(b = v$parti, k = v$kap, s = v$asama, p = v$urun, y = as.numeric(v$olcum))
+    ozet <- function(p) {
+      a <- d[d$p == p, ]
+      U <- tapply(a$y, paste(a$b, a$k), mean); Ub <- tapply(a$y, a$b, mean)    # balanced: batch mean of unit means
+      list(g = mean(U), vA = stats::var(U) / length(U), dfA = length(U) - 1,
+           vB = stats::var(Ub) / length(Ub), dfB = length(Ub) - 1)
+    }
+    T <- ozet("TEST"); R <- ozet("REF"); dd <- T$g - R$g
+    ga <- ci_from_var(dd, T$vA, R$vA, T$dfA, R$dfA); gb <- ci_from_var(dd, T$vB, R$vB, T$dfB, R$dfB)
+    expect_close(c(e$sonuc$alt[1], e$sonuc$ust[1]), unname(ga), atol = 1e-10, rtol = 1e-10, info = ad)
+    expect_close(c(e$sonuc$alt[2], e$sonuc$ust[2]), unname(gb), atol = 1e-10, rtol = 1e-10, info = ad)
+    expect_close(e$sonuc$gmr[1], exp(dd), atol = 1e-12, rtol = 1e-12)
+    # (c): variance of the mean from numerical REML, df from the closed form (FarmaStatR derivation)
+    mat <- function(p) { a <- invitro_array(data.frame(v$parti, v$kap, v$asama, v$urun, as.numeric(v$olcum))[v$urun == p, ], p)
+                         list(M = matrix(a$X[1, , ], a$l * a$n, a$m), l = a$l, n = a$n) }
+    mT <- mat("TEST"); mR <- mat("REF")
+    nT <- reml_numeric(mT$M, mT$l, mT$n); nR <- reml_numeric(mR$M, mR$l, mR$n)
+    cT <- reml_closed(mT$M, mT$l, mT$n); cR <- reml_closed(mR$M, mR$l, mR$n)
+    gc <- ci_from_var(dd, nT$v_mean, nR$v_mean, cT$df, cR$df)
+    expect_close(c(e$sonuc$alt[3], e$sonuc$ust[3]), unname(gc), atol = 1e-8, rtol = 1e-6, info = ad)
+  }
+})
+
+test_that("A-11 EMA input errors and non-computable paths", {
+  expect_error(platform_ema(ema_dosya("P3_dengesiz.csv")), "dengeli")
+  expect_error(platform_ema(ema_dosya("P5_stage_hata.csv")))
+  expect_error(platform_ema(ema_dosya("P5_negatif.csv"), log_d = TRUE))
+  expect_error(platform_ema(platform_pbe_veri(ornek = "psg020929"), "TEST", "TEST"))
+  e <- platform_ema(ema_dosya("P6_sinir_esit.csv"))                 # one batch per product
+  expect_true(is.na(e$sonuc$karar)); expect_true(is.na(e$sonuc$uyum))
+  expect_true(all(is.na(e$sonuc$alt[2:3]))); expect_true(is.finite(e$sonuc$alt[1]))
+  expect_true(any(grepl("Hesaplanamayan yol: b, c", e$hazir$uyarilar, fixed = TRUE)))
+})

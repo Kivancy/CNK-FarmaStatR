@@ -11,7 +11,7 @@
       "screens": {
         "tek": "Simülasyon: tek senaryo",
         "tas": "Simülasyon: tasarım seçimi",
-        "pbe": "PBE analizi",
+        "pbe": "PBE ve EMA analizi",
         "dis": "Dissolüsyon benzerliği"
       },
       "sections": {
@@ -48,6 +48,7 @@
       "pbe.ref": "Ürün sütunundaki etiketlerden referans ürün.",
       "pbe.tek": "Değiştirilmiş tek yönlü PBE (FDA PSG 020121 Ek): test ortalaması referanstan küçükse ortalama farkı terimi kritere girmez. Yalnız ilgili ürün kılavuzu öngörüyorsa kullanın.",
       "pbe.test": "Ürün sütunundaki etiketlerden test ürünü. Başka ürünler varsa yok sayılır.",
+      "pbe.yontem": "FDA PBE (PSG 020929; doğrusallaştırılmış kriter, Hη ≤ 0) ya da EMA %90 GA (OIP Rev. 2, 5.1 ölçüt 8; GMR’nin %90 GA’sı 0,85–1,18). EMA’da üç hesaplama yolu gösterilir, karar (b) yolundandır; yalnız dengeli tasarım.",
       "tas.guc_choice": "Gücün hesaplandığı gerçek fark (varsayılan GMR 1,05). Tip I hata ayrıca her yöntemin kendi sınırında hesaplanır: FDA δ₀, EMA GMR 1,18.",
       "tas.guc_custom": "Özel GMR ya da δ değeri.",
       "tas.hedef": "Hedeflenen güç, yüzde (ör. 80).",
@@ -133,27 +134,27 @@
       "pbe": [
         {
           "id": "ne",
-          "html": "<p>Kendi in vitro verinizle FDA <b>popülasyon biyoeşdeğerliği</b> (PBE) analizi: FDA PSG 020929 (budesonid inhalasyon süspansiyonu) Ek’teki adım adım hesap, değiştirilmemiş validasyonlu çekirdekle (calc_pbe). Karar: doğrusallaştırılmış kriterin %95 üst güven sınırı <b>Hη ≤ 0</b> ise PBE sağlanır (Adım 5).</p><p class=\"yh-links\"><a href=\"../yardim/yontem/pbe.html\" target=\"_blank\" rel=\"noopener\">Yöntem notu: PBE</a></p>"
+          "html": "<p>Kendi in vitro verinizle FDA <b>popülasyon biyoeşdeğerliği</b> (PBE) analizi: FDA PSG 020929 (budesonid inhalasyon süspansiyonu) Ek’teki adım adım hesap, değiştirilmemiş validasyonlu çekirdekle (calc_pbe). Karar: doğrusallaştırılmış kriterin %95 üst güven sınırı <b>Hη ≤ 0</b> ise PBE sağlanır (Adım 5).</p><p class=\"yh-links\"><a href=\"../yardim/yontem/pbe.html\" target=\"_blank\" rel=\"noopener\">Yöntem notu: PBE</a></p><p><b>Yöntem: EMA %90 GA</b> seçilirse: EMA OIP Rev. 2 Bölüm 5.1 ölçüt 8, test/referans geometrik ortalamalar oranının %90 güven aralığı <b>0,85–1,18</b> içinde mi? Hesap simülasyon motorunun validasyonlu fonksiyonlarıyla yapılır (ema_ci_fast). Üç hesaplama yolu gösterilir; karar (b) seri ortalamaları yolundandır.</p><p class=\"yh-links\"><a href=\"../yardim/yontem/ema.html\" target=\"_blank\" rel=\"noopener\">Yöntem notu: EMA %90 GA</a></p>"
         },
         {
           "id": "veri",
-          "html": "<ul><li>Uzun biçim CSV: her satır bir ölçüm. Sütunlar <code>parti, kap, asama, urun, olcum</code> (ya da <code>batch, container, stage, product, score</code>).</li><li>Kap, parti içinde tanımlanır (farklı partilerde aynı kap numarası olabilir); her kap her evrede tam bir kez ölçülmeli.</li><li>Test ve referansın evre kümeleri aynı olmalı.</li><li>Dengesiz ama eksiksiz tasarım kabul edilir (uyarı verilir).</li></ul><p class=\"yh-links\"><a href=\"../yardim/sablon/pbe_sablon_tr.csv\" target=\"_blank\" rel=\"noopener\">Şablon (Excel, Türkçe)</a> · <a href=\"../yardim/sablon/pbe_sablon_en.csv\" target=\"_blank\" rel=\"noopener\">Şablon (uluslararası)</a></p>"
+          "html": "<ul><li>Uzun biçim CSV: her satır bir ölçüm. Sütunlar <code>parti, kap, asama, urun, olcum</code> (ya da <code>batch, container, stage, product, score</code>).</li><li>Kap, parti içinde tanımlanır (farklı partilerde aynı kap numarası olabilir); her kap her evrede tam bir kez ölçülmeli.</li><li>Test ve referansın evre kümeleri aynı olmalı.</li><li>Dengesiz ama eksiksiz tasarım kabul edilir (uyarı verilir).</li></ul><p class=\"yh-links\"><a href=\"../yardim/sablon/pbe_sablon_tr.csv\" target=\"_blank\" rel=\"noopener\">Şablon (Excel, Türkçe)</a> · <a href=\"../yardim/sablon/pbe_sablon_en.csv\" target=\"_blank\" rel=\"noopener\">Şablon (uluslararası)</a></p><ul><li>EMA: yalnız dengeli tasarım (her seride aynı kap sayısı); dengesiz dosyada hesap yapılmaz, FDA PBE seçilebilir.</li></ul>"
         },
         {
           "id": "ayar",
-          "html": "<ul><li><b>Log dönüşümü:</b> PSG kriteri log ölçeğindedir. PSG örneği verilen değerlerle hesaplanır; ham ölçümler için işaretleyin.</li><li><b>Tek yönlü test:</b> değiştirilmiş tek yönlü PBE (PSG 020121 Ek); yalnız ürün kılavuzu öngörüyorsa.</li><li>σT0 = 0,1 ve θp = 2,0891 PSG’nin düzenleyici sabitleridir; değiştirilemez.</li></ul>"
+          "html": "<ul><li><b>Log dönüşümü:</b> PSG kriteri log ölçeğindedir. PSG örneği verilen değerlerle hesaplanır; ham ölçümler için işaretleyin.</li><li><b>Tek yönlü test:</b> değiştirilmiş tek yönlü PBE (PSG 020121 Ek); yalnız ürün kılavuzu öngörüyorsa.</li><li>σT0 = 0,1 ve θp = 2,0891 PSG’nin düzenleyici sabitleridir; değiştirilemez.</li></ul><ul><li><b>Yöntem:</b> FDA PBE ya da EMA %90 GA. EMA’da log kutusu aynı anlamdadır; tek yönlü test EMA’da yoktur (kutu gizlenir).</li></ul>"
         },
         {
           "id": "okuma",
-          "html": "<ul><li><b>Ölçek:</b> tahmin edilen σR > 0,1 ise referans ölçekli, değilse sabit ölçekli kriter (Adım 3).</li><li><b>Eη</b> doğrusallaştırılmış nokta tahmini, <b>Uη</b> belirsizlik terimi, <b>Hη = Eη + √Uη</b> %95 üst sınır.</li><li><b>Bileşenler:</b> D (ortalama farkı), 1–2 (test birimler arası ve birim içi), 3–4 (referans).</li><li>PSG örneğinde Hη = −0,031499 (referans ölçekli) → PBE sağlanır.</li></ul>"
+          "html": "<ul><li><b>Ölçek:</b> tahmin edilen σR > 0,1 ise referans ölçekli, değilse sabit ölçekli kriter (Adım 3).</li><li><b>Eη</b> doğrusallaştırılmış nokta tahmini, <b>Uη</b> belirsizlik terimi, <b>Hη = Eη + √Uη</b> %95 üst sınır.</li><li><b>Bileşenler:</b> D (ortalama farkı), 1–2 (test birimler arası ve birim içi), 3–4 (referans).</li><li>PSG örneğinde Hη = −0,031499 (referans ölçekli) → PBE sağlanır.</li></ul><ul><li><b>EMA:</b> her yol için GMR, %90 GA, SE (log ölçeği), serbestlik derecesi ve karar. Kalın satır (b) karar yoludur; üç yolun kararı ayrışırsa belirtilir.</li><li>PSG örneğinde (b) yolunda %90 GA 0,8772–1,5347 → EMA ölçütü sağlanamaz; aynı veride FDA PBE sağlanır. PBE ortalama farkını varyansla birlikte, EMA yalnız ortalamalar oranını değerlendirir.</li></ul>"
         },
         {
           "id": "sinir",
-          "html": "<ul><li>PSG en az 3 seri ve seri başına en az 10 birim önerir.</li><li>Seriler havuzlanır (“süper seri”); seri varyansı ayrıca tahmin edilmez (FDA 1999).</li><li>Çekirdeğin hata iletileri Türkçedir.</li><li>Araştırma ve eğitim amaçlıdır; GxP ortamında valide edilmiş sistem değildir.</li></ul>"
+          "html": "<ul><li>PSG en az 3 seri ve seri başına en az 10 birim önerir.</li><li>Seriler havuzlanır (“süper seri”); seri varyansı ayrıca tahmin edilmez (FDA 1999).</li><li>Çekirdeğin hata iletileri Türkçedir.</li><li>Araştırma ve eğitim amaçlıdır; GxP ortamında valide edilmiş sistem değildir.</li></ul><ul><li>EMA en az 3 seri ve seri başına en az 10 birim ister (Rev. 2 Bölüm 5.1).</li><li>Üç yol aday uygulamadır (FarmaStatR türetimi, KK-27): kılavuz %90 GA’nın seri ve evre yapısıyla nasıl hesaplanacağını tanımlamaz.</li><li>Tek ölçüm büyüklüğü: APSD basamak gruplarının her biri ayrı analiz edilir; ölçüt 8 hepsinin geçmesini ister.</li></ul>"
         },
         {
           "id": "kaynak",
-          "html": "<ul><li>FDA, Draft Guidance on Budesonide, PSG 020929 (Aralık 2025), Ek A Adım 1–5 ve Ek B (örnek).</li><li>FDA, Draft Guidance on Fluticasone Propionate nasal spray, PSG 020121 (Aralık 2025), Ek (tek yönlü PBE).</li><li>Hyslop, Hsuan, Holder (2000), Stat Med 19:2885–2897; Howe (1974).</li><li>FSR-VAL-PBE-1 v1.1 (validasyon; 213 + 25 kontrol).</li></ul>"
+          "html": "<ul><li>FDA, Draft Guidance on Budesonide, PSG 020929 (Aralık 2025), Ek A Adım 1–5 ve Ek B (örnek).</li><li>FDA, Draft Guidance on Fluticasone Propionate nasal spray, PSG 020121 (Aralık 2025), Ek (tek yönlü PBE).</li><li>Hyslop, Hsuan, Holder (2000), Stat Med 19:2885–2897; Howe (1974).</li><li>FSR-VAL-PBE-1 v1.1 (validasyon; 213 + 25 kontrol).</li></ul><ul><li>EMA, CPMP/EWP/4151/00 Rev. 2 (2025), Bölüm 5.1 ölçüt 8.</li><li>FSR-TN-PBE-01 v0.11 Bölüm 5.3 (üç yol) ve 11.7; FSR-VAL-SIM-1 v1.1 (ema_ci_fast); FSR-TN-PLT-08.</li></ul>"
         }
       ],
       "dis": [
@@ -195,7 +196,7 @@
       "screens": {
         "tek": "Simulation: single scenario",
         "tas": "Simulation: design selection",
-        "pbe": "PBE analysis",
+        "pbe": "PBE and EMA analysis",
         "dis": "Dissolution similarity"
       },
       "sections": {
@@ -232,6 +233,7 @@
       "pbe.ref": "Reference product, from the labels in the product column.",
       "pbe.tek": "Modified one-sided PBE (FDA PSG 020121 appendix): if the test mean is below the reference mean, the mean-difference term is left out of the criterion. Use only if the product guidance calls for it.",
       "pbe.test": "Test product, from the labels in the product column. Other products are ignored.",
+      "pbe.yontem": "FDA PBE (PSG 020929; linearized criterion, Hη ≤ 0) or EMA 90% CI (OIP Rev. 2, 5.1 criterion 8; 90% CI of the GMR within 0.85–1.18). EMA shows three computation paths, the decision is that of path (b); balanced designs only.",
       "tas.guc_choice": "True difference at which power is computed (default GMR 1.05). Type I error is computed separately at each method's own boundary: FDA δ₀, EMA GMR 1.18.",
       "tas.guc_custom": "Custom GMR or δ.",
       "tas.hedef": "Target power, in percent (e.g. 80).",
@@ -317,27 +319,27 @@
       "pbe": [
         {
           "id": "ne",
-          "html": "<p>FDA <b>population bioequivalence</b> (PBE) analysis of your own in vitro data: the step-wise computation in the appendix of FDA PSG 020929 (budesonide inhalation suspension), with the unchanged validated core (calc_pbe). Decision: PBE is established if the 95% upper confidence bound of the linearized criterion is <b>Hη ≤ 0</b> (Step 5).</p><p class=\"yh-links\"><a href=\"../yardim/yontem/pbe.html?lang=en\" target=\"_blank\" rel=\"noopener\">Method note: PBE</a></p>"
+          "html": "<p>FDA <b>population bioequivalence</b> (PBE) analysis of your own in vitro data: the step-wise computation in the appendix of FDA PSG 020929 (budesonide inhalation suspension), with the unchanged validated core (calc_pbe). Decision: PBE is established if the 95% upper confidence bound of the linearized criterion is <b>Hη ≤ 0</b> (Step 5).</p><p class=\"yh-links\"><a href=\"../yardim/yontem/pbe.html?lang=en\" target=\"_blank\" rel=\"noopener\">Method note: PBE</a></p><p>With <b>Method: EMA 90% CI</b>: EMA OIP Rev. 2 Section 5.1 criterion 8, is the 90% confidence interval of the test/reference ratio of geometric means within <b>0.85–1.18</b>? The computation uses the validated functions of the simulation engine (ema_ci_fast). Three computation paths are shown; the decision is that of path (b), batch means.</p><p class=\"yh-links\"><a href=\"../yardim/yontem/ema.html\" target=\"_blank\" rel=\"noopener\">Method note: EMA 90% CI</a></p>"
         },
         {
           "id": "veri",
-          "html": "<ul><li>Long-format CSV: one row per measurement. Columns <code>batch, container, stage, product, score</code> (or <code>parti, kap, asama, urun, olcum</code>).</li><li>A container is identified within its batch (the same number may occur in different batches); each container is measured exactly once at each stage.</li><li>Test and reference must have the same set of stages.</li><li>An unbalanced but complete design is accepted (with a warning).</li></ul><p class=\"yh-links\"><a href=\"../yardim/sablon/pbe_sablon_tr.csv\" target=\"_blank\" rel=\"noopener\">Template (Excel, Turkish)</a> · <a href=\"../yardim/sablon/pbe_sablon_en.csv\" target=\"_blank\" rel=\"noopener\">Template (international)</a></p>"
+          "html": "<ul><li>Long-format CSV: one row per measurement. Columns <code>batch, container, stage, product, score</code> (or <code>parti, kap, asama, urun, olcum</code>).</li><li>A container is identified within its batch (the same number may occur in different batches); each container is measured exactly once at each stage.</li><li>Test and reference must have the same set of stages.</li><li>An unbalanced but complete design is accepted (with a warning).</li></ul><p class=\"yh-links\"><a href=\"../yardim/sablon/pbe_sablon_tr.csv\" target=\"_blank\" rel=\"noopener\">Template (Excel, Turkish)</a> · <a href=\"../yardim/sablon/pbe_sablon_en.csv\" target=\"_blank\" rel=\"noopener\">Template (international)</a></p><ul><li>EMA: balanced designs only (same number of containers in every batch); an unbalanced file is not computed, FDA PBE can be chosen.</li></ul>"
         },
         {
           "id": "ayar",
-          "html": "<ul><li><b>Log transform:</b> the PSG criterion is on the log scale. The PSG example is computed on the values as given; tick it for raw measurements.</li><li><b>One-sided test:</b> modified one-sided PBE (PSG 020121 appendix); only if the product guidance calls for it.</li><li>σT0 = 0.1 and θp = 2.0891 are regulatory constants of the PSG; they cannot be changed.</li></ul>"
+          "html": "<ul><li><b>Log transform:</b> the PSG criterion is on the log scale. The PSG example is computed on the values as given; tick it for raw measurements.</li><li><b>One-sided test:</b> modified one-sided PBE (PSG 020121 appendix); only if the product guidance calls for it.</li><li>σT0 = 0.1 and θp = 2.0891 are regulatory constants of the PSG; they cannot be changed.</li></ul><ul><li><b>Method:</b> FDA PBE or EMA 90% CI. The log box has the same meaning in EMA; there is no one-sided test in EMA (the box is hidden).</li></ul>"
         },
         {
           "id": "okuma",
-          "html": "<ul><li><b>Scaling:</b> reference-scaled criterion if the estimated σR > 0.1, otherwise constant-scaled (Step 3).</li><li><b>Eη</b> linearized point estimate, <b>Uη</b> uncertainty term, <b>Hη = Eη + √Uη</b> 95% upper bound.</li><li><b>Components:</b> D (mean difference), 1–2 (test between and within units), 3–4 (reference).</li><li>In the PSG example Hη = −0.031499 (reference-scaled) → PBE established.</li></ul>"
+          "html": "<ul><li><b>Scaling:</b> reference-scaled criterion if the estimated σR > 0.1, otherwise constant-scaled (Step 3).</li><li><b>Eη</b> linearized point estimate, <b>Uη</b> uncertainty term, <b>Hη = Eη + √Uη</b> 95% upper bound.</li><li><b>Components:</b> D (mean difference), 1–2 (test between and within units), 3–4 (reference).</li><li>In the PSG example Hη = −0.031499 (reference-scaled) → PBE established.</li></ul><ul><li><b>EMA:</b> for each path the GMR, 90% CI, SE (log scale), degrees of freedom and decision. The bold row is the decision path (b); if the decisions of the three paths differ, this is stated.</li><li>In the PSG example the 90% CI of path (b) is 0.8772–1.5347 → the EMA criterion is not met; on the same data FDA PBE is established. PBE weighs the mean difference together with the variances, EMA only the ratio of means.</li></ul>"
         },
         {
           "id": "sinir",
-          "html": "<ul><li>The PSG recommends at least 3 batches and at least 10 units per batch.</li><li>Batches are pooled (“super-batch”); the batch variance is not estimated separately (FDA 1999).</li><li>Messages of the core are in Turkish.</li><li>For research and education; not a system validated for GxP environments.</li></ul>"
+          "html": "<ul><li>The PSG recommends at least 3 batches and at least 10 units per batch.</li><li>Batches are pooled (“super-batch”); the batch variance is not estimated separately (FDA 1999).</li><li>Messages of the core are in Turkish.</li><li>For research and education; not a system validated for GxP environments.</li></ul><ul><li>EMA asks for at least 3 batches and at least 10 units per batch (Rev. 2 Section 5.1).</li><li>The three paths are candidate implementations (FarmaStatR derivation, KK-27): the guideline does not define how the 90% CI is computed with batches and life stages.</li><li>One quantity at a time: each APSD stage group is analysed separately; criterion 8 requires all of them to pass.</li></ul>"
         },
         {
           "id": "kaynak",
-          "html": "<ul><li>FDA, Draft Guidance on Budesonide, PSG 020929 (December 2025), Appendix A Steps 1–5 and Appendix B (example).</li><li>FDA, Draft Guidance on Fluticasone Propionate nasal spray, PSG 020121 (December 2025), appendix (one-sided PBE).</li><li>Hyslop, Hsuan, Holder (2000), Stat Med 19:2885–2897; Howe (1974).</li><li>FSR-VAL-PBE-1 v1.1 (validation; 213 + 25 checks).</li></ul>"
+          "html": "<ul><li>FDA, Draft Guidance on Budesonide, PSG 020929 (December 2025), Appendix A Steps 1–5 and Appendix B (example).</li><li>FDA, Draft Guidance on Fluticasone Propionate nasal spray, PSG 020121 (December 2025), appendix (one-sided PBE).</li><li>Hyslop, Hsuan, Holder (2000), Stat Med 19:2885–2897; Howe (1974).</li><li>FSR-VAL-PBE-1 v1.1 (validation; 213 + 25 checks).</li></ul><ul><li>EMA, CPMP/EWP/4151/00 Rev. 2 (2025), Section 5.1 criterion 8.</li><li>FSR-TN-PBE-01 v0.11 Section 5.3 (three paths) and 11.7; FSR-VAL-SIM-1 v1.1 (ema_ci_fast); FSR-TN-PLT-08.</li></ul>"
         }
       ],
       "dis": [

@@ -4,6 +4,8 @@
 // (platform_analiz.R) and the unchanged bridges call the validated cores in webR. The data stay
 // in the browser (no request carries them). Every text of a result is made once (pview, dview)
 // and used by the screen and by the Word report (rapor.js), as in P5 (P5-K1).
+// FSR-TN-PLT-08 v0.1 (KK-64): the PBE tab also runs EMA OIP Rev. 2 Section 5.1 criterion 8 (90% CI)
+// with the validated simulation engine (invitro_array, ema_ci_fast; FSR-VAL-SIM-1).
 // Research and education only; not a system validated for GxP environments.
 
 import { WEBR_VERSION, TAMPER, verifyFiles, startWebR, fetchBytes, sha256 } from '../p1/motor.js';
@@ -12,7 +14,7 @@ import { buildReport, TABLE, H2, P, download, stamp } from '../app/rapor.js';
 
 const Q = new URLSearchParams(location.search);
 // inherited validated cores (pinned in CEKIRDEK_SHA256.txt) and the platform reader
-const ENGINE = ['msd_core.R', 'msd_weibull.R', 'f2_boot.R', 'f2_noce_data.R', 'dis_ornek_veri.R', 'pbe_core.R', 'pbe_kopru.R', 'pbe_ornek_veri.R'];
+const ENGINE = ['msd_core.R', 'msd_weibull.R', 'f2_boot.R', 'f2_noce_data.R', 'dis_ornek_veri.R', 'pbe_core.R', 'pbe_kopru.R', 'pbe_ornek_veri.R', 'invitro_fast.R'];
 const PLATFORM = ['platform_analiz.R'];
 // v0.5.1 dissolution bridge, bytes unchanged (FSR-LOG-01 G-01)
 const KOPRU = { file: 'dis_kopru.R', path: 'CNKfarmastatr/inst/kopru/dis_kopru.R', expected: '5dea054408d594a2eafecfeacde272bbc8f21e9da9507bbef1b15898274c4e28' };
@@ -25,6 +27,9 @@ const R_AN = `
   .an$pbe <- v; list(ok = TRUE, urunler = v$urunler, n = length(v$olcum)) }, error = .an_hata)
 .an_pbe <- function(test, ref, log_d, tek) tryCatch({
   r <- platform_pbe(.an$pbe, test, ref, isTRUE(log_d), isTRUE(tek))
+  list(ok = TRUE, hazir = .an_null(r$hazir), sonuc = .an_null(r$sonuc)) }, error = .an_hata)
+.an_ema <- function(test, ref, log_d) tryCatch({
+  r <- platform_ema(.an$pbe, test, ref, isTRUE(log_d))
   list(ok = TRUE, hazir = .an_null(r$hazir), sonuc = .an_null(r$sonuc)) }, error = .an_hata)
 .an_dis_veri <- function(metin, ornek) tryCatch({
   v <- platform_dis_veri(if (nzchar(metin)) metin else NULL, if (nzchar(ornek)) ornek else NULL)
@@ -140,13 +145,16 @@ async function loadPbe() {
   if (k === 'psg020929') $('#pbe_form [name=log_d]').checked = false;
   setStatus('pbe', 'an_st_data_ok', 'ok'); $('#pbe_run').disabled = false; reportState('pbe');
 }
-const pbeForm = () => { const f = $('#pbe_form'); return { test: f.test.value, ref: f.ref.value, log_d: f.log_d.checked, tek: f.tek.checked }; };
+const pbeForm = () => { const f = $('#pbe_form'); const ema = f.yontem.value === 'ema';
+  return { yontem: ema ? 'ema' : 'fda', test: f.test.value, ref: f.ref.value, log_d: f.log_d.checked, tek: ema ? false : f.tek.checked }; };
+function pbeMethodVis() { const ema = $('#pbe_form [name=yontem]').value === 'ema'; $('#pbe_tek_wrap').hidden = ema; $('#pbe_ema_note').hidden = !ema; }
 function clearPbe() { st.pbe = null; $('#pbe_result').hidden = true; reportState('pbe'); }
 async function runPbe(ev) {
   ev.preventDefault();
   const c = pbeForm(); showErrors('pbe', null); $('#pbe_run').disabled = true; setStatus('pbe', 'st_running');
   const t0 = performance.now();
-  const r = await callR('.an_pbe(test, ref, log_d, tek)', c);
+  const r = c.yontem === 'ema' ? await callR('.an_ema(test, ref, log_d)', { test: c.test, ref: c.ref, log_d: c.log_d })
+                                : await callR('.an_pbe(test, ref, log_d, tek)', { test: c.test, ref: c.ref, log_d: c.log_d, tek: c.tek });
   $('#pbe_run').disabled = false;
   if (!r.ok) { setStatus('pbe', 'an_st_error', 'bad'); showErrors('pbe', [t('an_calc_error'), r.message]); clearPbe(); return; }
   st.pbe = { form: c, key: JSON.stringify(c), data: { ...pbeData }, hazir: r.hazir, sonuc: r.sonuc, ms: performance.now() - t0,
@@ -173,10 +181,45 @@ function pview(D) {
            comp, compHead: [t('an_component'), 'E', 'H', 'U'], warnings: arr(h.uyarilar),
            source: `${t('an_src_live')} · webR ${WEBR_VERSION} · ${D.r_version} · ${D.data.src}` };
 }
+// EMA view (FSR-TN-PLT-08 E-K2, E-K3): three candidate paths, decision line = path (b)
+const EMA_PATHS = ['a', 'b', 'c'];
+const isEma = (D) => !!D && D.form.yontem === 'ema';
+function eview(D) {
+  const s = D.sonuc, h = D.hazir, gec = arr(s.gecti), lim = arr(s.sinir);
+  const dec = (v) => (v === true ? t('an_pbe_pass_s') : v === false ? t('an_pbe_fail_s') : '—');
+  const karar = s.karar === true ? true : s.karar === false ? false : null;
+  const uyum = s.uyum === true ? t('an_ema_agree') : s.uyum === false ? t('an_ema_disagree') : '—';
+  const main = [[t('an_method'), t('an_ema_method')], [t('an_ema_level'), lang === 'tr' ? '%' + num(100 * s.duzey, 0, lang) : num(100 * s.duzey, 0, lang) + '%'],
+    [t('an_ema_limits'), `${N(lim[0], 2)} – ${N(lim[1], 2)}`], ['GMR (T/R)', N(arr(s.gmr)[0], 4)],
+    [t('an_ema_dpath'), t('an_ema_p_b')], [t('an_decision'), dec(karar)], [t('an_ema_paths_agree'), uyum]];
+  const paths = EMA_PATHS.map((k, i) => [t('an_ema_p_' + k) + (k === 'b' ? ' · ' + t('an_ema_dline') : ''), N(arr(s.gmr)[i], 4), N(arr(s.alt)[i], 4), N(arr(s.ust)[i], 4),
+    N(arr(s.se)[i], 4), N(arr(s.sd)[i], 2), dec(gec[i])]);
+  const des = [[`TEST (${D.form.test})`, `${fmtInt(s.T.l)} ${t('an_batch')} × ${fmtInt(s.T.n)} ${t('an_cont')} · ${fmtInt(h.T.gozlem)} ${t('an_obs')}`],
+    [`REF (${D.form.ref})`, `${fmtInt(s.R.l)} ${t('an_batch')} × ${fmtInt(s.R.n)} ${t('an_cont')} · ${fmtInt(h.R.gozlem)} ${t('an_obs')}`],
+    [t('an_stages'), `${h.m} (${arr(h.asamalar).join(', ')})`], [t('an_scale'), h.olcek === 'ölçüm' ? t('an_scale_raw') : t('an_scale_ln')]];
+  const sum = arr(h.oz_urun).map((u, i) => [u, String(arr(h.oz_asama)[i]), fmtInt(arr(h.oz_n)[i]), N(arr(h.oz_ort)[i], 4), N(arr(h.oz_sd)[i], 4)]);
+  return { verdict: karar === true ? t('an_ema_pass') : karar === false ? t('an_ema_fail') : t('an_ema_none'), pass: karar === true, main, des, sum,
+           sumHead: [t('an_product'), t('an_stage'), 'n', t('an_mean'), 'SD'], paths,
+           pathsHead: [t('an_ema_path'), 'GMR', t('an_ema_lo'), t('an_ema_hi'), t('an_ema_se'), t('an_ema_df'), t('an_decision')],
+           note: t('an_ema_label'), warnings: arr(h.uyarilar),
+           source: `${t('an_src_live')} · webR ${WEBR_VERSION} · ${D.r_version} · ${D.data.src}` };
+}
 function renderPbe() {
+  if (isEma(st.pbe)) return renderEma();
+  $('#pbe_fda_only').hidden = false; $('#pbe_ema_only').hidden = true;
   const D = st.pbe, V = pview(D);
   $('#pbe_verdict').textContent = V.verdict; $('#pbe_verdict').className = 'verdict ' + (V.pass ? 'yes' : 'no');
   fillTable('#pbe_main', V.main); fillTable('#pbe_design', V.des); fillTable('#pbe_sum', V.sum, V.sumHead); fillTable('#pbe_comp', V.comp, V.compHead);
+  warnList('#pbe_warn', V.warnings); $('#pbe_result').hidden = false; reportState('pbe');
+}
+function renderEma() {
+  const D = st.pbe, V = eview(D);
+  $('#pbe_fda_only').hidden = true; $('#pbe_ema_only').hidden = false;
+  $('#pbe_verdict').textContent = V.verdict; $('#pbe_verdict').className = 'verdict ' + (V.pass ? 'yes' : 'no');
+  fillTable('#pbe_main', V.main); fillTable('#pbe_ema_paths', V.paths, V.pathsHead);
+  $('#pbe_ema_paths tbody tr:nth-child(2)').classList.add('dline');
+  $('#pbe_ema_label').textContent = V.note;
+  fillTable('#pbe_design', V.des); fillTable('#pbe_sum', V.sum, V.sumHead);
   warnList('#pbe_warn', V.warnings); $('#pbe_result').hidden = false; reportState('pbe');
 }
 
@@ -332,6 +375,16 @@ function reportPbe() {
   R.warnings = V.warnings;
   return R;
 }
+function reportEma() {
+  const D = st.pbe, V = eview(D), R = common('ema', D);
+  R.link = location.href.split('?')[0] + `?tab=pbe&lang=${lang}`;
+  R.params = [[t('an_method'), t('an_ema_method')], [t('an_test'), D.form.test], [t('an_ref'), D.form.ref], [t('an_log'), D.form.log_d ? t('an_yes') : t('an_no')]];
+  R.source = V.source;
+  R.result = [P(V.verdict, { b: true }), TABLE([[t('rp_field'), t('rp_value')], ...V.main]), H2(t('an_ema_paths')), TABLE([V.pathsHead, ...V.paths], [1, 2, 3, 4, 5]),
+    P(V.note), H2(t('an_design')), TABLE([[t('rp_field'), t('rp_value')], ...V.des]), H2(t('an_pbe_summary')), TABLE([V.sumHead, ...V.sum], [2, 3, 4])];
+  R.warnings = V.warnings;
+  return R;
+}
 function reportDis() {
   const D = st.dis, V = dview(D), R = common('dis', D), f = D.form;
   R.params = [[t('an_test'), f.test], [t('an_ref'), f.ref], [t('an_lots'), f.lotlar.join(', ') || '—'], [t('an_unit'), t(f.birim === 'saat' ? 'an_hour' : 'an_min')],
@@ -345,12 +398,12 @@ function reportDis() {
 function makeReport(kind) {
   if (!st[kind]) return null;
   const t0 = performance.now();
-  const bytes = buildReport(kind === 'pbe' ? reportPbe() : reportDis());
-  const r = { bytes, name: `farmastatr_rapor_${kind}_${stamp()}.docx`, ms: performance.now() - t0 };
+  const bytes = buildReport(kind === 'pbe' ? (isEma(st.pbe) ? reportEma() : reportPbe()) : reportDis());
+  const r = { bytes, name: `farmastatr_rapor_${kind === 'pbe' && isEma(st.pbe) ? 'ema' : kind}_${stamp()}.docx`, ms: performance.now() - t0 };
   st.report = r; return r;
 }
 st.makeReport = makeReport;
-st.view = (kind) => (kind === 'pbe' ? pview(st.pbe) : dview(st.dis));
+st.view = (kind) => (kind === 'pbe' ? (isEma(st.pbe) ? eview(st.pbe) : pview(st.pbe)) : dview(st.dis));
 function formKey(kind) { return kind === 'pbe' ? JSON.stringify(pbeForm()) : JSON.stringify(disForm()); }
 function reportState(kind) {
   const ok = !!st[kind] && st[kind].key === formKey(kind) && !$(`#${kind}_run`).disabled;
@@ -358,12 +411,13 @@ function reportState(kind) {
 }
 function downloadJson(kind) {
   const D = st[kind]; if (!D) return;
-  const rec = { platform: 'CNK-FarmaStatR', document: 'FSR-TN-PLT-06', kind, disclaimer_tr: T.tr.disclaimer, disclaimer_en: T.en.disclaimer,
+  const ema = kind === 'pbe' && isEma(D);
+  const rec = { platform: 'CNK-FarmaStatR', document: ema ? 'FSR-TN-PLT-08' : 'FSR-TN-PLT-06', kind: ema ? 'ema' : kind, disclaimer_tr: T.tr.disclaimer, disclaimer_en: T.en.disclaimer,
     package_version: pkgVersion, webr_version: WEBR_VERSION, r_version: D.r_version, saved: new Date().toISOString(), started: D.started,
     data: D.data.src, settings: D.form, files: D.files, design: D.hazir, result: D.sonuc };
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob([JSON.stringify(rec, null, 1)], { type: 'application/json' }));
-  a.download = `farmastatr_${kind}_${stamp()}.json`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  a.download = `farmastatr_${ema ? 'ema' : kind}_${stamp()}.json`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
 
 // ---------------------------------------------------------------- tabs, language, boot
@@ -375,7 +429,7 @@ function showTab(k) {
 function applyLang() {
   document.documentElement.lang = lang;
   document.querySelectorAll('[data-i18n]').forEach((e) => { e.textContent = t(e.dataset.i18n); });
-  methodVis(); renderEngine();
+  methodVis(); pbeMethodVis(); renderEngine();
   for (const s of ['pbe', 'dis']) { const e = $(`#${s}_status`); if (e.dataset.key) setStatus(s, e.dataset.key, e.dataset.cls, e.dataset.arg); }
   if (st.pbe) renderPbe(); if (st.dis) renderDis();
 }
@@ -383,6 +437,7 @@ async function boot() {
   T = await (await fetch('../app/ceviri.json', { cache: 'no-store' })).json();
   try { const d = new TextDecoder().decode(await fetchBytes('CNKfarmastatr/DESCRIPTION')); const m = d.match(/^Version:\s*(\S+)/m); if (m) pkgVersion = m[1]; } catch (e) { /* source */ }
   showTab(Q.get('tab') === 'dis' ? 'dis' : 'pbe');
+  if (Q.get('yontem') === 'ema') $('#pbe_form [name=yontem]').value = 'ema';
   applyLang();
   setStatus('pbe', 'st_verifying'); setStatus('dis', 'st_verifying');
   files = await verifyFiles(ENGINE, PLATFORM);
@@ -410,6 +465,7 @@ $('#tab_dis').addEventListener('click', () => showTab('dis'));
 $('#pbe_form [name=kaynak]').addEventListener('change', loadPbe);
 $('#pbe_form [name=dosya]').addEventListener('change', loadPbe);
 $('#pbe_form').addEventListener('submit', runPbe);
+$('#pbe_form [name=yontem]').addEventListener('change', () => { pbeMethodVis(); clearPbe(); });
 $('#pbe_form').addEventListener('input', () => setTimeout(() => reportState('pbe'), 0));
 $('#dis_form [name=kaynak]').addEventListener('change', loadDis);
 $('#dis_form [name=dosya]').addEventListener('change', loadDis);

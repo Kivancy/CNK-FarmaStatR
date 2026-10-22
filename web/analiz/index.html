@@ -43,10 +43,17 @@
   </fieldset>
   <fieldset>
     <legend data-i18n="an_grp_settings"></legend>
+    <label data-help="pbe.yontem" class="wide"><span data-i18n="an_method"></span>
+      <select name="yontem">
+        <option value="fda" data-i18n="an_m_fda"></option>
+        <option value="ema" data-i18n="an_m_ema"></option>
+      </select>
+    </label>
+    <p class="hint wide" id="pbe_ema_note" data-i18n="an_ema_hint" hidden></p>
     <label data-help="pbe.test"><span data-i18n="an_test"></span><select name="test"></select></label>
     <label data-help="pbe.ref"><span data-i18n="an_ref"></span><select name="ref"></select></label>
     <label data-help="pbe.log_d" class="check"><input type="checkbox" name="log_d"><span data-i18n="an_log"></span></label>
-    <label data-help="pbe.tek" class="check"><input type="checkbox" name="tek"><span data-i18n="an_onesided"></span></label>
+    <label data-help="pbe.tek" class="check" id="pbe_tek_wrap"><input type="checkbox" name="tek"><span data-i18n="an_onesided"></span></label>
   </fieldset>
   <div class="actions"><button id="pbe_run" type="submit" disabled data-i18n="an_run"></button></div>
 </form>
@@ -58,12 +65,19 @@
     <p class="verdict" id="pbe_verdict"></p>
     <div class="tablewrap"><table id="pbe_main"><tbody></tbody></table></div>
     <div id="pbe_warn" class="warnings"></div>
+    <div id="pbe_ema_only" hidden>
+      <h2 data-i18n="an_ema_paths"></h2>
+      <div class="tablewrap"><table id="pbe_ema_paths"><thead></thead><tbody></tbody></table></div>
+      <p class="hint" id="pbe_ema_label"></p>
+    </div>
     <h2 data-i18n="an_design"></h2>
     <div class="tablewrap"><table id="pbe_design"><tbody></tbody></table></div>
     <h2 data-i18n="an_pbe_summary"></h2>
     <div class="tablewrap"><table id="pbe_sum"><thead></thead><tbody></tbody></table></div>
+    <div id="pbe_fda_only">
     <details><summary data-i18n="an_pbe_comp"></summary>
       <div class="tablewrap"><table id="pbe_comp"><thead></thead><tbody></tbody></table></div></details>
+    </div>
   </div>
   <div class="actions bottom">
     <button id="pbe_json" type="button" class="ghost" disabled data-i18n="btn_json"></button>

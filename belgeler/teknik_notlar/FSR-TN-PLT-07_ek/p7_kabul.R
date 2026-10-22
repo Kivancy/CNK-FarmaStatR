@@ -1,11 +1,12 @@
 # =============================================================================
-# CNK-FarmaStatR - help acceptance (FSR-TN-PLT-07 v0.1, Table 6.1; frozen in v0.1)
+# CNK-FarmaStatR - help acceptance (FSR-TN-PLT-07 v0.1, Table 6.1; frozen in v0.1;
+#   v0.2: six method notes, + ema, KK-64)
 #
 # Reads the browser output of web/yardim/kabul7.html (p7/p7_kabul.zip:
 # p7_tarayici.csv) and writes one line per criterion: GECTI, KALDI or EKSIK.
 #   Y-1 hints on every form field (4 screens, TR and EN)
 #   Y-2 help panels, six sections, follow tab and language
-#   Y-3 method notes: 5 notes + index, TR and EN, 8 sections, every equation
+#   Y-3 method notes: 6 notes + index (v0.2: + ema, KK-64), TR and EN, 8 sections, every equation
 #       with a source label, MathML
 #   Y-4 numbers of the worked examples = local R (shown decimals)
 #   Y-5 CSV templates: read in R and on the screen; same result as the example
@@ -63,7 +64,7 @@ for (s in c("tek", "tas", "pbe", "dis")) for (l in c("tr", "en")) {
 put("Y-9 yardım düğmesi", identical(v1("Y-9", "app", "", "yardim_dugmesi"), "true"), "")
 
 # ---------------------------------------------------------------- Y-3
-notes <- c("pbe", "f2", "msd", "weibull", "simulasyon")
+notes <- c("pbe", "ema", "f2", "msd", "weibull", "simulasyon")
 for (n in notes) for (l in c("tr", "en")) {
   b <- jsonlite::fromJSON(v1("Y-3", n, l, "bolumler"))
   ne <- num(v1("Y-3", n, l, "denklem"))
@@ -76,6 +77,7 @@ put("Y-3 dizin", identical(v1("Y-3", "index", "tr", "gorunur"), "true") && ident
 
 # ---------------------------------------------------------------- Y-4 numbers of the worked examples
 pbe <- pk$platform_pbe(pk$platform_pbe_veri(ornek = "psg020929"))$sonuc
+ema <- pk$platform_ema(pk$platform_pbe_veri(ornek = "psg020929"))$sonuc
 ts <- pk$platform_dis_veri(ornek = "tsong1996"); no <- pk$platform_dis_veri(ornek = "noce2020")
 m1 <- pk$platform_dis(kp, ts, "TEST", "REF", c("STD1", "STD2"), yontem = "msd", ayar = list(sinir = "L1"))$sonuc
 m2 <- pk$platform_dis(kp, ts, "TEST", "REF", c("STD1", "STD2"), yontem = "msd", ayar = list(sinir = "L2a"))$sonuc
@@ -85,6 +87,8 @@ f2 <- pk$platform_dis(kp, no, "Urun1", "Urun2", yontem = "f2")$sonuc
 th <- ((log(1.11))^2 + 0.01) / 0.1^2
 ref <- list(pbe_sigma_r = c(pbe$Sigma_R, 4), pbe_ed = c(pbe$E_D, 6), pbe_e1 = c(pbe$E1, 6), pbe_e3s = c(pbe$E3s, 6),
             pbe_eq = c(pbe$Eq_Ref, 6), pbe_uq = c(pbe$Uq_Ref, 6), pbe_heta = c(pbe$H_eta_Ref, 6), pbe_heta_c = c(pbe$H_eta_Const, 6),
+            ema_gmr = c(ema$gmr[2], 4), ema_a_lo = c(ema$alt[1], 4), ema_a_hi = c(ema$ust[1], 4), ema_a_df = c(ema$sd[1], 2),
+            ema_b_se = c(ema$se[2], 4), ema_b_df = c(ema$sd[2], 2), ema_b_lo = c(ema$alt[2], 4), ema_b_hi = c(ema$ust[2], 4),
             f2_p = c(length(f2$zamanlar), 0), f2_f2 = c(f2$f2, 2), f2_ef2 = c(f2$Ef2, 2), f2_bcf2 = c(f2$bcf2, 2),
             f2_alt = c(f2$alt, 2), f2_ust = c(f2$ust, 2), f2_mcse = c(f2$mcse, 2), f2_tamsayi = c(f2$tamsayi, 0),
             msd_dm = c(m2$DM, 4), msd_dml = c(m2$DM_l, 4), msd_dmu = c(m2$DM_u, 4), msd_rd_l1 = c(m1$RD, 4),
@@ -144,7 +148,7 @@ put("Y-11 PBE karar metni", grepl("Hη ≤ 0", v1("Y-11", "pbe", "tr", "karar_me
     paste(v1("Y-11", "pbe", "tr", "karar_metni"), "|", v1("Y-11", "pbe", "en", "karar_metni")))
 
 # ---------------------------------------------------------------- Y-12
-docs <- c(file.path("belgeler", "teknik_notlar", "FSR-TN-PLT-07_v0.1.docx"), file.path("belgeler", "validasyon", "FSR-VAL-PLT-1_v1.2.docx"),
+docs <- c(file.path("belgeler", "teknik_notlar", "FSR-TN-PLT-07_v0.2.docx"), file.path("belgeler", "validasyon", "FSR-VAL-PLT-1_v1.3.docx"),
           file.path("web", "yardim", "README.md"), "FSR-LOG-01_v1_gunluk.md")
 put("Y-12 belgeler", all(file.exists(docs)), paste(basename(docs)[!file.exists(docs)], collapse = ", "))
 

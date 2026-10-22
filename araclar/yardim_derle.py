@@ -31,7 +31,7 @@ from latex2mathml.converter import convert
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 SRC = ROOT / 'web' / 'yardim' / 'kaynak'
 OUT = ROOT / 'web' / 'yardim' / 'yontem'
-NOTES = ['pbe', 'f2', 'msd', 'weibull', 'simulasyon']
+NOTES = ['pbe', 'ema', 'f2', 'msd', 'weibull', 'simulasyon']
 DISCLAIMER = {'tr': 'Araştırma ve eğitim amaçlıdır; GxP ortamında valide edilmiş sistem değildir.',
               'en': 'For research and education; not a system validated for GxP environments.'}
 UI = {'tr': {'lang': 'English', 'back': 'Yöntem notları', 'eq': 'denklem'},

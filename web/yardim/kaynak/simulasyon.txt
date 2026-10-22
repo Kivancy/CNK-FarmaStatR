@@ -26,6 +26,7 @@ EMA %90 güven aralığının seri ve evre yapısıyla nasıl hesaplanacağı k�
 
 $$ (a):\ SE^2 = \sum_k \frac{s^2_{\text{birim},k}}{n_k\ell_k}, \qquad (b):\ SE^2 = \sum_k \frac{s^2_{\text{seri},k}}{\ell_k} $$ :: FarmaStatR türetimi; KK-27 (Welch–Satterthwaite serbestlik derecesi)
 - (c): seri ve birim rastgele, evre sabit karma model (REML); dengeli tasarımda kapalı biçimle çözülür, SAS PROC MIXED ile karşılaştırılmıştır [FarmaStatR türetimi; FSR-TN-PBE-01 Bölüm 5.3].
+- Üç yolun denklemleri ve kendi verinizle EMA analizi (PBE ve EMA analizi sekmesi): [Yöntem notu: EMA %90 GA](ema.html).
 
 Performans (her yöntem için nsim tekrarda pozitif karar oranı) ve Monte Carlo standart hatası:
 
@@ -96,6 +97,7 @@ The guideline does not define how the EMA 90% confidence interval should handle 
 
 $$ (a):\ SE^2 = \sum_k \frac{s^2_{\text{unit},k}}{n_k\ell_k}, \qquad (b):\ SE^2 = \sum_k \frac{s^2_{\text{batch},k}}{\ell_k} $$ :: FarmaStatR derivation; KK-27 (Welch–Satterthwaite degrees of freedom)
 - (c): mixed model with random batch and unit and fixed stage (REML); solved in closed form for the balanced design and compared with SAS PROC MIXED [FarmaStatR derivation; FSR-TN-PBE-01 Section 5.3].
+- The equations of the three paths and EMA analysis of your own data (PBE and EMA analysis tab): [Method note: EMA 90% CI](ema.html?lang=en).
 
 Performance (rate of positive decisions over nsim replicates, per method) and Monte Carlo standard error:
 

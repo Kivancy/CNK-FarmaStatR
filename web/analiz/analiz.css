@@ -26,3 +26,6 @@ svg.chart .tick, svg.chart .legend { font-size: 11px; fill: var(--muted); }
 svg.chart .legend { fill: var(--fg); }
 svg.chart circle.s-t, svg.chart circle.s-r { fill: var(--card); }
 main.an.one { grid-template-columns: minmax(0, 1fr); }
+
+/* EMA decision line (FSR-TN-PLT-08 E-K3) */
+#pbe_ema_paths tr.dline td { font-weight: 600; background: var(--bg); }

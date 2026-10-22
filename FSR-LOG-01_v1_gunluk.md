@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.96 · Son güncelleme: 22.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 1.97 · Son güncelleme: 22.10.2026"
 ---
 
 # Bu belge hakkında
@@ -1905,6 +1905,37 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Sıradaki iş:** proje sahibinin içerik incelemesi (yöntem notları ve paneller). Ardından FSR-TN-PLT-07 v0.2 (sonuçlar ve inceleme düzeltmeleri) ve onayı. A-16 açık.
 - **Dosyalar (depoya yazıldı, bayt bayt doğrulandı):** bu günlük.
 
+## G-100 · PBE sekmesine EMA %90 GA analizi; yöntem notları revizyonu (KK-64); FSR-TN-PLT-08 v0.1, FSR-TN-PLT-07 v0.2, FSR-VAL-PLT-1 1.3 — 22.10.2026
+
+- **Tespit (proje sahibi):** P6'da taşınan "PBE analizi" sekmesi yalnız FDA'ya göre çalışıyor; simülasyon ekranında EMA yaklaşımı da var.
+- **Karar (K): KK-64.** "EMA'yı ekle. Yöntem notları bölümünü de bu kapsamda revizyona al." Claude'un önerisi (Ö) bu kararla uygulandı: PBE sekmesinde "Yöntem: FDA PBE / EMA %90 GA" seçimi; EMA'da üç yol birlikte, hepsi "aday uygulama, FarmaStatR türetimi" etiketli; karar satırı (b) yolu. Proje sahibi tek yol ile üç yol arasında ayrıca seçim yapmadı; Claude önerisini (üç yol, (b) öne çıkan) uyguladı.
+- **Tasarım ve ölçütler (KK-45 ilkesiyle, koddan önce):** FSR-TN-PLT-08 v0.1, E-1…E-10 donduruldu.
+  - Hesap: yeni istatistik kodu yok. `platform_ema()` (`platform_analiz.R`) girdiyi PBE köprüsüyle denetler (`kp_hazirla`), sonra sabitli `invitro_array` ve `ema_ci_fast`'ı çağırır (FSR-VAL-SIM-1 v1.1).
+  - Yalnız dengeli tasarım; dengesizde açık ileti (FDA PBE seçilebilir).
+  - (b) gerekçesi: Aşama 1'de (b) ve (c)'nin tip I hatası bütün tasarımlarda ≤ %5, (a)'nınki seri varyansı varken nominalin üstünde (G-33, G-34; FSR-TN-PBE-01 Bölüm 11.7); (b) daha yalın.
+- **Uygulamada verilen kararlar (Ö, Claude; ölçütleri değiştirmez):**
+  - Bir yolun serbestlik derecesi ya da SE'si sıfırsa (ör. tek seri, P6 test dosyaları) yol "hesaplanamadı", (b) yoksa "Karar verilemedi".
+  - Uyarı: "EMA OIP Rev. 2 Bölüm 5.1: en az üç seri ve seri başına en az on birim" [birincil metin: "At least three consecutive batches … minimum of ten inhalers or units of each batch"]. PSG'nin "en az üç parti" uyarısı EMA sonucunda gösterilmez.
+  - Sekme adı "PBE ve EMA analizi"; ekran alt başlığı güncellendi; ekran motoruna `invitro_fast.R` eklendi (sabitli).
+- **Ön deneme (PSG 020929 örneği):** GMR 1,1603; %90 GA (a) 0,9604–1,4017, (b) = (c) 0,8772–1,5347 → EMA sağlanamaz. Aynı veride FDA PBE sağlanır (Hη = −0,031499). Not ve panelde öğretici fark olarak anlatıldı.
+- **Testler:** `test-platform-analiz.R` A-9 (`platform_ema` = doğrudan çağrı, `identical`), A-10 ((a), (b) temel R ile 10⁻¹⁰; (c) sayısal REML ile 10⁻⁶), A-11 (hatalı girdi, hesaplanamayan yol). Linux: 61 blok, 2.328 beklenti (önce 58, 2.292); webR'deki testthat yerine geçen kodda aynı.
+- **Yöntem notları revizyonu (KK-64):**
+  - Yeni not `ema.html` (TR, EN): 8 bölüm, 9 denklem; çalışılmış örneğin 8 sayısı yerel R ile denetlenir.
+  - Kaynak etiketleri: (a), (b), (c) havuzlama ve serbestlik derecesi FarmaStatR türetimi; tabaka kareler ortalamaları Searle, Casella ve McCulloch (2006) Bölüm 4; REML sınırlı çözüm Bölüm 3.8, üç tabakaya genişletme FarmaStatR türetimi; Satterthwaite (1946); karar EMA Rev. 2 §5.1 ölçüt 8.
+  - PBE ve simülasyon notlarına EMA notu bağlantısı; PBE paneli altı bölümde EMA metni; yeni ipucu `pbe.yontem`; dizin altı not.
+  - FSR-TN-PLT-07 v0.2: Y-3 "beş not" → "altı not", Y-12 belge sürümleri; v0.1 resmî sonucu (48/48) işlendi. İçerik incelemesi (A-16) hâlâ açık.
+- **Kabul araçları:**
+  - Yeni: `web/analiz/kabul8.html` + `belgeler/teknik_notlar/FSR-TN-PLT-08_ek/p8_kabul.R`.
+  - Revize: `p6_kabul.R` F-10 motor sayısı 9 → 10 (invitro_fast.R); `kabul7.js` ve `p7_kabul.R` altı not ve 8 yeni Y-4 sayısı.
+- **Claude kuru koşuları (Linux kapsayıcı, Chromium 141):**
+  - EMA: 44/44 GEÇTİ (`FSR-TN-PLT-08_ek/kuru/`).
+  - Gerileme P6: 78/78 GEÇTİ; webR paket testleri 61 blok, 2.328 beklenti (`kuru/p6_gerileme_kuru.csv`).
+  - Yardım: 51/51 GEÇTİ (altı not, Y-4 86 sayı, Y-6 24 bağlantı; `FSR-TN-PLT-07_ek/kuru/p7_kabul_kuru_v0.2.*`).
+  - Resmî P6 ve P7 çıktıları (`p6/`, `p7/`) değiştirilmedi.
+- **CI:** `dogrulama.yml` başlığındaki sayılar güncellendi (61 blok, 2.328; Windows beklenen 2.323). Dosya korumalı olduğundan proje sahibine gönderildi.
+- **Belgeler:** FSR-TN-PLT-08 v0.1; FSR-TN-PLT-07 v0.2; FSR-VAL-PLT-1 1.3 (B-11, İ-1 kanıtı, Tablo 3.1). Onay proje sahibinde.
+- **Sıradaki iş (proje sahibi):** commit + push ve Actions sonucu (Windows beklenti sayısı); resmî koşular: `kabul8.html` → `p8_kabul.R`, `kabul7.html` → `p7_kabul.R`. Ardından FSR-TN-PLT-08 v0.2 (sonuçlar).
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -1923,14 +1954,15 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Dissolüsyon köprüsü pakette (`inst/kopru/dis_kopru.R`, G-94); dışa açılan fonksiyonlar v1.0.0 öncesi |
 | A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
 | A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | **Tamam:** P0 … P6 kapandı (P5: KK-58, G-92; P6: resmî kabul 78/78, FSR-TN-PLT-06 v0.2 ve FSR-VAL-PLT-1 1.1 onaylandı, KK-62, G-97). Yayın adımları lisanstan sonra (KK-61) |
-| A-16 | Yardım sistemi (FSR-TN-PLT-07; KK-63) | Uygulama tamam (G-98); resmî kabul 48/48 GEÇTİ (G-99); proje sahibinin içerik incelemesi ve FSR-TN-PLT-07 v0.2 bekliyor |
+| A-16 | Yardım sistemi (FSR-TN-PLT-07; KK-63) | Uygulama tamam (G-98); resmî kabul 48/48 GEÇTİ (G-99); v0.2: EMA notu ve ölçüt revizyonu, kuru 51/51 (G-100); resmî yeniden koşu ve proje sahibinin içerik incelemesi bekliyor |
+| A-17 | EMA %90 GA analizi (FSR-TN-PLT-08; KK-64) | Uygulama ve kuru koşu 44/44 (G-100); resmî kabul ve FSR-TN-PLT-08 v0.2 bekliyor |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
 
 # 4. Belge ve sürüm dizini
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.96 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 1.97 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.1 | 1.0 onaylı; beş dosya sabitlendi (G-47). 1.1: TC-S11 (dışa aktarılan betik), onaylandı (KK-53, G-76) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.7 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68); v0.7: Tablo 8.1 ve 10.1 (KK-56, KK-57, KK-59; G-94), onay P6 kapanışında |
@@ -1939,10 +1971,11 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | FSR-TN-PLT-04 · P4 tasarımı ve kabul ölçütleri | 0.2 | v0.1 onaylı (KK-54); v0.2: resmi kabul 12/12 GECTI (G-81); onaylandı, P4 kapandı (KK-55, G-82) |
 | FSR-TN-PLT-05 · P5 tasarımı ve kabul ölçütleri (tasarım seçimi ve Word raporu) | 0.3 | v0.1 taslak (G-83); v0.2: tasarım seçimi eklendi (KK-56, G-84); onaylandı, D-1…D-7 ve R-1…R-11 donduruldu (KK-57, G-85); v0.3: resmi kabul 18/18 GECTI (G-91); onaylandı, P5 kapandı (KK-58, G-92) |
 | FSR-TN-PLT-06 · P6 tasarımı, kabul ölçütleri ve sonuçları (devralınan modellerin arayüzü, platform validasyonu, yayın hazırlığı) | 0.2 | v0.1 yetki devriyle (KK-60), F-1…F-12 donduruldu (G-94); v0.2: resmî kabul 78/78 GEÇTİ (G-95); onaylandı, P6 kapandı (KK-62, G-97) |
-| FSR-TN-PLT-07 · Yardım sistemi: tasarım ve kabul ölçütleri | 0.1 | KK-63 yetkisiyle; Y-1…Y-12 donduruldu; kuru koşu 48/48 (G-98); resmî kabul 48/48 (G-99); içerik incelemesi bekliyor |
-| FSR-VAL-PLT-1 · Platform katmanı validasyon belgesi | 1.2 | 1.0: P1–P6 kanıtları (G-94); 1.1: P6 resmî kabulü, onaylandı (KK-62, G-97); 1.2: yardım sistemi, PBE metin bulgusu, gerileme (G-98); onay bekliyor |
+| FSR-TN-PLT-07 · Yardım sistemi: tasarım ve kabul ölçütleri | 0.2 | KK-63 yetkisiyle; Y-1…Y-12 donduruldu; kuru koşu 48/48 (G-98); resmî kabul 48/48 (G-99); v0.2: altı not (KK-64), kuru 51/51 (G-100); içerik incelemesi bekliyor |
+| FSR-TN-PLT-08 · EMA %90 GA analizi: tasarım ve kabul ölçütleri | 0.1 | E-1…E-10 koddan önce donduruldu (KK-64, G-100); kuru koşu 44/44; resmî kabul bekliyor |
+| FSR-VAL-PLT-1 · Platform katmanı validasyon belgesi | 1.3 | 1.0: P1–P6 kanıtları (G-94); 1.1: P6 resmî kabulü, onaylandı (KK-62, G-97); 1.2: yardım sistemi, PBE metin bulgusu, gerileme (G-98); 1.3: EMA %90 GA analizi (G-100); 1.2 ve 1.3 onay bekliyor |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
-| CNKfarmastatr (R paketi) | 1.0.0.9000 | 13 dosya SHA-256 ile sabit (8 devralınan çekirdek + simülasyon çatısı ve in vitro motoru; FSR-VAL-SIM-1 1.0, G-47); testler 26 blok, 968 beklenti GEÇTİ (G-46); G-94: 58 blok, 2.292 beklenti (yerel R ve webR) |
+| CNKfarmastatr (R paketi) | 1.0.0.9000 | 13 dosya SHA-256 ile sabit (8 devralınan çekirdek + simülasyon çatısı ve in vitro motoru; FSR-VAL-SIM-1 1.0, G-47); testler 26 blok, 968 beklenti GEÇTİ (G-46); G-94: 58 blok, 2.292 beklenti (yerel R ve webR); G-100: 61 blok, 2.328 beklenti |
 
 # 5. Kullanıcı kararları dizini
 
@@ -2011,3 +2044,4 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | KK-61 | Lisans kararı (A-6) bir süre bekletilir; yayın adımları lisanstan sonra | G-96 |
 | KK-62 | FSR-TN-PLT-06 v0.2 ve FSR-VAL-PLT-1 1.1 onaylandı; P6 kapandı | G-97 |
 | KK-63 | Üç ekran için yardım: alan ipuçları, ekran panelleri ve yöntem notları birlikte; tasarım notu, uygulama ve notlar tek seferde, ara inceleme olmadan; içerik incelemesi sonradan | G-98 |
+| KK-64 | PBE sekmesine EMA %90 GA eklenir (üç yol, karar (b); Claude önerisi); yöntem notları bu kapsamda revize edilir | G-100 |

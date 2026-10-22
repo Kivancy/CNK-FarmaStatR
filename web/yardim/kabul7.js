@@ -1,4 +1,4 @@
-// CNK-FarmaStatR - help acceptance tool (FSR-TN-PLT-07 v0.1, Table 6.1: Y-1 ... Y-9, Y-11).
+// CNK-FarmaStatR - help acceptance tool (FSR-TN-PLT-07 v0.1, Table 6.1: Y-1 ... Y-9, Y-11; v0.2: six notes).
 // Drives the simulation screen, the analysis screen and the method notes in a same-origin frame,
 // records what they show and hold, and packs the record into one stored ZIP (p7_kabul.zip).
 // The comparison with local R (numbers of the worked examples, templates) and the verdicts are
@@ -17,7 +17,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const out = [];
 const enc = new TextEncoder();
 const put = (bolum, durum, ayar, ad, deger) => out.push([bolum, durum, ayar, ad, deger === null || deger === undefined ? 'NA' : String(deger)]);
-const NOTES = ['pbe', 'f2', 'msd', 'weibull', 'simulasyon', 'index'];
+const NOTES = ['pbe', 'ema', 'f2', 'msd', 'weibull', 'simulasyon', 'index'];   // ema: FSR-TN-PLT-07 v0.2 (KK-64)
 let H = null;
 function log(s) { const l = $('#log'); l.textContent += `[${new Date().toLocaleTimeString()}] ${s}\n`; l.scrollTop = l.scrollHeight; }
 async function waitFor(fn, ms = 600000) {

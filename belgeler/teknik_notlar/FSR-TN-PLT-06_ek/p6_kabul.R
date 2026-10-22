@@ -196,8 +196,10 @@ put("F-10 dis_kopru.R (G-01)", identical(pk$.fsr_sha256(readBin(kb, "raw", file.
 mt <- jsonlite::fromJSON(v1("F-10", "motor", "", "dosyalar"), simplifyVector = FALSE)
 n_ok <- sum(vapply(mt, function(r) length(r) >= 2 && grepl("^\u2713", r[[2]]), NA))
 n_kay <- sum(vapply(mt, function(r) length(r) >= 2 && r[[1]] == "platform_analiz.R" && !grepl("\u2717", r[[2]]), NA))
-put("F-10 ekran motor denetimi", v1("F-10", "motor", "", "durum") == "an_st_data_ok" && n_ok == 9 && n_kay == 1,
-    sprintf("%d dosya \u2713 (8 sabitli + dis_kopru.R); platform_analiz.R kaydedildi: %d", n_ok, n_kay))
+# FSR-TN-PLT-08 v0.1 (KK-64): the screen also loads the pinned invitro_fast.R (EMA) -> 9 pinned + dis_kopru.R
+put("F-10 ekran motor denetimi", v1("F-10", "motor", "", "durum") == "an_st_data_ok" && n_ok == 10 && n_kay == 1 &&
+      any(vapply(mt, function(r) r[[1]] == "invitro_fast.R" && grepl("^\u2713", r[[2]]), NA)),
+    sprintf("%d dosya \u2713 (9 sabitli, invitro_fast.R dahil, + dis_kopru.R); platform_analiz.R kaydedildi: %d", n_ok, n_kay))
 p5z <- file.path("belgeler", "teknik_notlar", "FSR-TN-PLT-05_ek", "p5", "p5_kabul.zip")
 fn <- v1("F-10", "p5", "tr", "dosya")
 if (file.exists(p5z) && !is.na(fn)) {

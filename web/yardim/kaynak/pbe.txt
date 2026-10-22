@@ -63,6 +63,7 @@ PSG 020929 Ek B’deki simüle veri: her ürün için 3 seri × 10 kap × 3 evre
 PSG’nin kendi tablosundaki değerler aynıdır ($H_\eta$ = −0,031498721). Ekranda “Örnek: FDA PSG 020929” seçilip “Analizi çalıştır”a basılarak yeniden üretilir.
 
 ## 7. Sınırlar
+- EMA OIP Rev. 2 ölçüt 8 (%90 GA) aynı sekmede “Yöntem” seçimiyle hesaplanır: [Yöntem notu: EMA %90 GA](ema.html).
 - PSG en az 3 seri ve seri başına en az 10 birim önerir; daha küçük tasarımlar hesaplanır ama uyarı verilir.
 - Seri varyansı ayrıca tahmin edilmez; seriden seriye büyük değişkenlikte PSG tahmin edicisinin özellikleri FSR-TN-PBE-01’de incelenmiştir.
 - Analiz tek bir ölçüm büyüklüğü içindir; birden çok büyüklük (ör. DD ve ISM) ayrı ayrı analiz edilir.
@@ -142,6 +143,7 @@ The simulated data of PSG 020929 Appendix B: 3 batches × 10 containers × 3 sta
 The values in the PSG's own table are the same ($H_\eta$ = −0.031498721). Reproduce it on the screen by choosing “Example: FDA PSG 020929” and “Run the analysis”.
 
 ## 7. Limits
+- EMA OIP Rev. 2 criterion 8 (90% CI) is computed on the same tab by choosing “Method”: [Method note: EMA 90% CI](ema.html?lang=en).
 - The PSG recommends at least 3 batches and at least 10 units per batch; smaller designs are computed with a warning.
 - The batch variance is not estimated separately; the properties of the PSG estimator under large batch-to-batch variability are studied in FSR-TN-PBE-01.
 - One measured quantity per analysis; several quantities (e.g. DD and ISM) are analysed separately.

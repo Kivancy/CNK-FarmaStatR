@@ -13,7 +13,7 @@ Kaynak / source: FSR-TN-PLT-07 (KK-63).
    (anahtar `<ekran>.<alan>`, ör. `pbe.log_d`). Ekranlarda etiketler `data-help` ile işaretlidir.
 2. **Yardım paneli:** başlıktaki “Yardım” düğmesi; açık sekmenin yardımı (Ne yapar · Veri ve girdiler ·
    Ayarlar · Sonucu okuma · Sınırlar · Kaynaklar). Metinler `yardim.json` → `panel`.
-3. **Yöntem notları:** `yontem/` (PBE, f2 ve bootstrap f2, MSD, Weibull MSD, simülasyon ve tasarım
+3. **Yöntem notları:** `yontem/` (PBE, EMA %90 GA, f2 ve bootstrap f2, MSD, Weibull MSD, simülasyon ve tasarım
    seçimi). Kaynakları `kaynak/<not>.txt`; HTML `araclar/yardim_derle.py` ile üretilir
    (`python3 araclar/yardim_derle.py`; gerekli: `pip install latex2mathml`). Üretilen HTML’i elle
    değiştirmeyin; kaynağı değiştirip yeniden derleyin.
