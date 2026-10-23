@@ -45,6 +45,10 @@ def mathml(tex, display):
     m = re.sub(r'(<mi>(?:ln|exp|log)</mi>)(?!</msub>)', r'\1<mspace width="0.167em"></mspace>', m)
     if display:
         m = m.replace('display="inline"', 'display="block"')
+    # a command latex2mathml does not know is left as text (e.g. <mi>\arg</mi>): stop the build
+    bad = re.findall(r'<m[ion]>\\[A-Za-z]+</m[ion]>', m)
+    if bad:
+        raise SystemExit(f'unconverted LaTeX {bad} in: {tex.strip()}')
     return m
 
 
