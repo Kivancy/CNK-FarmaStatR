@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 1.99 · Son güncelleme: 22.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 2.00 · Son güncelleme: 23.10.2026"
 ---
 
 # Bu belge hakkında
@@ -1961,6 +1961,30 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
   - FSR-TN-PLT-07'nin sonuç tablosu v0.3'te (içerik incelemesiyle) güncellenecek; v0.2'de "resmî: bekliyor" yazıyor, sonuç bu girdidedir.
 - **Onay bekleyenler (proje sahibi):** FSR-TN-PLT-08 v0.2, FSR-VAL-PLT-1 1.2–1.4, FSR-TN-PLT-07 v0.2; yardım içerik incelemesi (A-16).
 
+## G-103 · Tanıtım ve kılavuz; m = 1 SAS çapraz kontrolü; EMA notunda denklem düzeltmesi; literatür taraması; yerel kaynak klasörü — 22–23.10.2026
+
+- **Depo:** G-102 commit'i (5292421, 8 dosya: p7 ve p8 çıktıları dahil); Actions başarılı.
+- **Bilgi notu (Claude, proje sahibinin isteği):** üniversite için lisans bilgi notu (Claude Docs belgesi). İçerik: kullanılan çerçeveler ve lisansları (R GPL-2/3; webR ikili dosyaları GPL-3, betikleri MIT; sql.js MIT, SQLite kamu malı; GitHub, Pages, Zenodo), lisanslanacak parçalar, üniversiteye altı soru. Not: platform MySQL değil SQLite kullanır.
+- **Tanıtım (Claude):** "CNK-FarmaStatR tanıtım" sunumu, 16 slayt, konuşmacı notlarıyla; hedef okuyucu farmasötik teknoloji uzmanı. Ardından "CNK-FarmaStatR kullanıcı kılavuzu" (Claude Docs belgesi; 8 bölüm, ekran görüntüleri, ileti tablosu). Sayılar platform çıktılarından ve FSR-TN-PBE-01 Tablo 11.3b'den alındı.
+- **m = 1 SAS çapraz kontrolü (proje sahibi, SAS):** P2_m1 verisi (PSG 020929 örneğinin yalnız B evresi; 3 × 10, kap başına tek ölçüm). Program Claude'un (`fsr_m1_kontrol.sas`); PBE adımları PSG formüllerinden yazıldı, EMA (c) için PROC MIXED REML.
+  - FDA PBE: bütün ara değerler ve Hη = −0,0319199903 on basamakta R ile aynı; PASS.
+  - EMA (a), (b), (c): sınırlar, SE ve serbestlik derecesi aynı. (b) = (c) = 0,8770732888–1,5362531861. PROC MIXED seri varyansı REF 0,006676, TEST 0,007278 (sıfırdan büyük; havuzlama yok).
+  - Sınır (Claude): SAS kodunu da Claude yazdığı için "m = 1'de evre terimleri düşer" okumasını doğrulamaz; (c)'deki SAS REML'i bağımsız yazılımdır. Programın ve çıktının depoya alınması için SAS çıktısı dosya olarak bekleniyor.
+- **Bulgu ve düzeltme (proje sahibinin ekran görüntüsü):** `ema.html` denklem (5) "\arg min" ham LaTeX olarak görünüyordu (latex2mathml `\arg`'ı tanımıyor). Kaynak `\mathrm{arg\,min}` olarak düzeltildi. `araclar/yardim_derle.py` artık dönüştürülemeyen komut kalırsa derlemeyi durduruyor. Yardım kabul aracı (Y-3) bunu yakalamamıştı; denetim derleme aşamasına alındı. Diğer notlar bayt bayt aynı kaldı. Commit'lendi; Actions başarılı (proje sahibi).
+- **Doğrulama tartışması:** FDA PBE (m = 3) için gold standard var: FDA'nın kendi örneği aynen üretiliyor. EMA %90 GA için düzenleyici gold standard yok; hesap doğruluğu bağımsız yollarla (elle, SAS, sayısal REML) kontrol edilebiliyor, yöntemin doğruluğu yalnız simülasyonla (ADEMP) değerlendirilebiliyor. Kaynaksız tek denklem: (c)'nin serbestlik derecesi kuralı (FarmaStatR türetimi).
+- **Literatür taraması (Claude):** EMA'nın %90 GA'sını seri ve evre yapısıyla tanımlayan bir kaynak bulunamadı. Destekleyen bulgular:
+  - Chen ve ark. 2019, AAPS PharmSciTech 20:296 (yalnız özet okundu): ISM verisinde ABE'nin beklenen performansı için seri içi ve seriler arası değişkenliğin ayrı modellenmesi ve seri sayısının artırılması gerekli.
+  - "Performance of Multiple-Batch Approaches…" 2021, AAPS PharmSciTech (IPAC-RS; DOI 10.1208/s12249-021-02063-1; yazar listesi görülemedi): PK'da yalnız rastgele seri etkisi tip I hatayı nominale yakın tutuyor; süper seri yaklaşık dört kat şişiyor.
+  - Burmeister Getz ve ark. 2021, AAPS PharmSciTech 22:224; Petitcolas ve ark. 2020, AAPS J 22:119 (BBE); Kurumaddali ve ark. 2019, AAPS PharmSciTech 20:249 (yalnız özet okundu).
+  - EMA yorum özeti (EMA/CHMP/225697/2025): paydaşlar hesap yöntemini sordu, Medicines for Europe PBE ya da BBE önerdi; okunabilen kısım kesikti, EMA yanıtları görülmedi.
+  - Sonuç (Claude): (a) yerine (b)/(c) tercihi literatürle aynı yönde; (c) literatürdeki "random batch effect" yaklaşımına karşılık gelir. Türetim olarak kalanlar: evrelerin birleştirilmesi ve (c)'nin serbestlik derecesi kuralı. Chen 2019 ve Kurumaddali 2019'un tam metinleri istendi.
+- **Yerel kaynak klasörü (proje sahibi):** `kaynaklar/` oluşturuldu (`.gitignore` ile dışarıda; depoya girmez). İçerik:
+  - `Casella_Berger_Statistical_Inference2.pdf` (Casella G, Berger RL. Statistical Inference, 2. baskı).
+  - `SAS for Mixed Models_ Introduction and Basic Applications-SAS Institute (2018).pdf` (SAS Institute, 2018).
+  - Gerekçe: proje bilgi alanı %81 dolu; kitaplar sığmaz.
+- **Çalışma kuralı (Claude önerisi, proje sahibinin sorusu üzerine):** Claude her oturum başında günlükle birlikte `kaynaklar/` klasörünü listeler. Atıf gerektiren matematiksel ve istatistiksel iddialarda önce bu klasördeki kaynaklara bakar, atfı kitap + bölüm/denklem numarasıyla verir. Klasöre yalnız bilgisayar bağlıyken erişilebilir; bağlı değilse bunu söyler ve iddiayı "kaynak kontrol edilmedi" diye işaretler.
+- **Sıradaki iş:** kaynaksız iddiaların kitaplarla eşlenmesi: (a)'nın beklenen değeri, (b)'nin χ² dağılımı, GA–TOST denkliği, Satterthwaite koşulları ve PROC MIXED serbestlik derecesi seçenekleri.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -1987,7 +2011,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 1.99 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 2.00 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.1 | 1.0 onaylı; beş dosya sabitlendi (G-47). 1.1: TC-S11 (dışa aktarılan betik), onaylandı (KK-53, G-76) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.7 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68); v0.7: Tablo 8.1 ve 10.1 (KK-56, KK-57, KK-59; G-94), onay P6 kapanışında |
