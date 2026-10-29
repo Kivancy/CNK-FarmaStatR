@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 2.00 · Son güncelleme: 23.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 2.01 · Son güncelleme: 29.10.2026"
 ---
 
 # Bu belge hakkında
@@ -1985,6 +1985,21 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Çalışma kuralı (Claude önerisi, proje sahibinin sorusu üzerine):** Claude her oturum başında günlükle birlikte `kaynaklar/` klasörünü listeler. Atıf gerektiren matematiksel ve istatistiksel iddialarda önce bu klasördeki kaynaklara bakar, atfı kitap + bölüm/denklem numarasıyla verir. Klasöre yalnız bilgisayar bağlıyken erişilebilir; bağlı değilse bunu söyler ve iddiayı "kaynak kontrol edilmedi" diye işaretler.
 - **Sıradaki iş:** kaynaksız iddiaların kitaplarla eşlenmesi: (a)'nın beklenen değeri, (b)'nin χ² dağılımı, GA–TOST denkliği, Satterthwaite koşulları ve PROC MIXED serbestlik derecesi seçenekleri.
 
+## G-104 · Kaynaksız beş iddia kitaplarla eşlendi; PROC MIXED NOBOUND bulgusu ve SAS kontrolü — 24–29.10.2026
+
+- **Talimat (proje sahibi):** proje talimatına eklendi: her oturumda `kaynaklar/` klasörü günlükle birlikte listelenir; atıflar önce bu kaynaklarla eşlenir (Kullanıcı Profili ve Çalışma Modeli bölümleri).
+- **Eşleme (Claude; kitaplar okundu):** Casella ve Berger, *Statistical Inference* 2. baskı (2002; CRC yeniden basımı, sayfalar bu basıma göre); Stroup, Milliken, Claassen, Wolfinger, *SAS for Mixed Models* (SAS Institute 2018).
+  - (a)'nın beklenen değeri: Searle ve ark. 2006 §3.5a, Denk. (50)–(51), Tablo 3.3'ten cebirle türetilir; kitaplarda hazır değil.
+  - (b)'nin χ² dağılımı: Casella ve Berger Teorem 5.3.1(c).
+  - %90 GA ile TOST denkliği: Chow ve Liu 2008 §4.3.2 (Denk. 4.3.4); Casella ve Berger Alıştırma 8.47, Teorem 8.3.23, Alıştırma 9.33, Teorem 9.2.2.
+  - Satterthwaite: Casella ve Berger Örnek 7.2.3 (s. 254–255), Alıştırma 8.42; SAS for Mixed Models §5.4 (s. 158–159), §6.1.5. Koşul: bağımsız, yaklaşık ölçeklenmiş χ² bileşenler; pozitif varyans tahminleri varsayılır (§5.7.2).
+  - PROC MIXED serbestlik derecesi: varsayılan containment; SATTERTH, KR2 (§5.4, s. 158–159).
+- **Bulgu (Claude; SAS for Mixed Models §5.7.2–5.7.3, s. 172–175; Stroup ve Littell 2002):** REML'in varyans bileşenini sıfıra çekmesi üst düzey hatayı küçük tahmin edip tip I hatayı şişirebilir; serbestlik dereceleri birleşir. Kitabın önerisi NOBOUND ya da METHOD=TYPE3; negatif tahminin raporlanması bir ikilem (§5.7.3, bileşik simetri alternatifi). Bu, (c)'nin havuzlama durumuna karşılık gelir. Claude'un türetimi: dengeli tasarımda NOBOUND/TYPE3 ile kesişim varyansı MS_seri/(ℓnm), serbestlik derecesi ℓ − 1, yani (b). Kendi simülasyonumuzda (c) nominali aşmadı (G-38, E bloğu), uyarı genel.
+- **Soru (proje sahibi):** NOBOUND negatif varyansı hesaba katmaz mı? Yanıt (Claude): negatif çıkan σ̂²_B tahminidir; aralığa giren Var(ḡ) = MS_seri/(ℓnm) her zaman ≥ 0 (Searle ve ark. 2006 §2.3b-i, negatif tahminler).
+- **SAS kontrolü (`fsr_nobound_kontrol.sas`, Claude):** kurgu veri (R, set.seed(2); 3 × 10, m = 1); TEST'te MS_seri < MS_kap (ANOVA seri varyansı −0,0231). Dört koşu: sınırlı REML (containment, Satterthwaite), NOBOUND, TYPE3. Beklenen: NOBOUND = TYPE3 = (b), %90 GA 0,8024–1,7985; sınırlı REML 0,8296–1,7394 (TEST SE 0,0857, df 2); platform (c) 0,8422–1,7135.
+  - Proje sahibi 29.10.2026'da çalıştırdı ("başarılı"). **Sayılar Claude tarafından henüz görülmedi; çıktı bekleniyor.** Doğrulama kaydı çıktı gelince yapılacak.
+- **Sıradaki iş:** SAS çıktısının incelenmesi; ardından atıfların ve "(b)'nin karma model karşılığı" gerekçesinin EMA yöntem notuna ve FSR-TN-PLT-08'e işlenmesi (proje sahibinin onayıyla; yardım kabul aracı yeniden koşulur).
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -2011,7 +2026,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 2.00 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 2.01 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.1 | 1.0 onaylı; beş dosya sabitlendi (G-47). 1.1: TC-S11 (dışa aktarılan betik), onaylandı (KK-53, G-76) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.7 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68); v0.7: Tablo 8.1 ve 10.1 (KK-56, KK-57, KK-59; G-94), onay P6 kapanışında |
