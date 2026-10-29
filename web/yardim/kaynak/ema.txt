@@ -15,24 +15,29 @@ Her ürün için ℓ seri, seri başına n birim ve birim başına m yaşam evre
 Ortalamanın varyansı ve serbestlik derecesi, üç yol (k = T, R; ürün indisi yazılmamıştır):
 
 $$ s_U^2 = \frac{\sum_{j=1}^{\ell}\sum_{i=1}^{n} (\bar U_{ij} - \bar g)^2}{\ell n - 1}, \qquad v^{(a)} = \frac{s_U^2}{\ell n}, \qquad \nu^{(a)} = \ell n - 1 $$ :: FarmaStatR türetimi (KK-27; FSR-TN-PBE-01 Bölüm 5.3, yol a)
-$$ s_B^2 = \frac{\sum_{j=1}^{\ell} (\bar B_j - \bar g)^2}{\ell - 1}, \qquad v^{(b)} = \frac{s_B^2}{\ell}, \qquad \nu^{(b)} = \ell - 1 $$ :: FarmaStatR türetimi (KK-27; FSR-TN-PBE-01 Bölüm 5.3, yol b)
+
+Gerçek modelde ($\sigma^2_B$ seri, $\sigma^2_C$ kap, $\sigma^2_W$ kap içi varyans) ortalamanın varyansı $\operatorname{Var}(\bar g) = \sigma^2_B/\ell + \sigma^2_C/(\ell n) + \sigma^2_W/(\ell n m)$’dir. (a)’nın beklentisi ise seri terimini yalnız $(\ell-1)/(\ell n - 1)$ oranında içerir (3 × 10’da 2/29); seri varyansı varken aralık bu yüzden dar çıkar:
+
+$$ E\left[v^{(a)}\right] = \frac{1}{\ell n}\left(\sigma^2_C + \frac{\sigma^2_W}{m} + \sigma^2_B\,\frac{n(\ell-1)}{\ell n - 1}\right) $$ :: Searle, Casella ve McCulloch (2006) §3.5a, Denk. (50)–(51), Tablo 3.3’ten türetildi (FarmaStatR türetimi)
+
+$$ s_B^2 = \frac{\sum_{j=1}^{\ell} (\bar B_j - \bar g)^2}{\ell - 1}, \qquad v^{(b)} = \frac{s_B^2}{\ell}, \qquad \nu^{(b)} = \ell - 1 $$ :: FarmaStatR türetimi (KK-27; FSR-TN-PBE-01 Bölüm 5.3, yol b); dağılım: (ℓ − 1)v^(b)/Var(ḡ) ~ χ²(ℓ − 1), Casella ve Berger (2002) Teorem 5.3.1(c); dengeli tasarımda PROC MIXED NOBOUND ya da METHOD=TYPE3 ile aynı (Stroup ve ark. 2018 §5.7.2; SAS kontrolü, FSR-LOG-01 G-105)
 
 Yol (c), seri ve birimi rastgele etkili karma model (REML). Dengeli tasarımda üç tabakanın kareler ortalaması:
 
 $$ MS_{\mathrm{seri}} = \frac{n m \sum_j (\bar B_j - \bar g)^2}{\ell - 1}, \qquad MS_{\mathrm{birim}} = \frac{m \sum_j \sum_i (\bar U_{ij} - \bar B_j)^2}{\ell (n - 1)} $$ :: Searle, Casella ve McCulloch (2006) Bölüm 4 (dengeli tasarım)
 $$ MS_{\mathrm{art}} = \frac{\sum_j \sum_i \sum_s (X_{ijs} - \bar U_{ij} - \bar S_s + \bar g)^2}{(\ell n - 1)(m - 1)} $$ :: Searle, Casella ve McCulloch (2006) Bölüm 4 (dengeli tasarım)
 $$ (\hat\theta_1, \hat\theta_2, \hat\theta_3) = \underset{\theta_1 \ge \theta_2 \ge \theta_3}{\mathrm{arg\,min}} \sum_{t=1}^{3} \mathrm{sd}_t\,(MS_t - \theta_t)^2, \qquad v^{(c)} = \frac{\hat\theta_1}{\ell n m} $$ :: Searle, Casella ve McCulloch (2006) Bölüm 3.8 (dengeli veride REML, sınırlı çözüm); üç tabakaya genişletme: FarmaStatR türetimi
-$$ \nu^{(c)} = \text{seri tabakasıyla havuzlanan tabakaların serbestlik dereceleri toplamı} $$ :: FarmaStatR türetimi (FSR-TN-PBE-01 Bölüm 5.3)
+$$ \nu^{(c)} = \text{seri tabakasıyla havuzlanan tabakaların serbestlik dereceleri toplamı} $$ :: FarmaStatR türetimi (FSR-TN-PBE-01 Bölüm 5.3); m = 1’de PROC MIXED sınırlı REML + DDFM=SATTERTHWAITE ile aynı (SAS kontrolü, FSR-LOG-01 G-105)
 
 Havuzlama olmazsa $v^{(c)} = MS_{\mathrm{seri}}/(\ell n m) = v^{(b)}$ ve $\nu^{(c)} = \ell - 1$; (c) yolu (b) ile aynıdır. $\bar S_s$ evre ortalamasıdır; m = 1 ise artık tabakası yoktur. Güven aralığı (her yol için):
 
-$$ SE = \sqrt{v_T + v_R}, \qquad \nu = \frac{(v_T + v_R)^2}{v_T^2/\nu_T + v_R^2/\nu_R} $$ :: Satterthwaite (1946)
+$$ SE = \sqrt{v_T + v_R}, \qquad \nu = \frac{(v_T + v_R)^2}{v_T^2/\nu_T + v_R^2/\nu_R} $$ :: Satterthwaite (1946); Casella ve Berger (2002) Örnek 7.2.3 (bağımsız, yaklaşık ölçeklenmiş χ² bileşenler)
 $$ \%90\ \mathrm{GA} = \left[\, e^{\hat d - t_{0{,}95;\,\nu}\,SE},\; e^{\hat d + t_{0{,}95;\,\nu}\,SE} \,\right] $$ :: EMA OIP Rev. 2 Bölüm 5.1 ölçüt 8 (log-normal varsayım)
 
 ## 4. Karar kuralı
-$$ 0{,}85 \le e^{\hat d - t_{0{,}95;\,\nu}\,SE} \quad \text{ve} \quad e^{\hat d + t_{0{,}95;\,\nu}\,SE} \le 1{,}18 \;\Rightarrow\; \text{ölçüt sağlanır} $$ :: EMA OIP Rev. 2 Bölüm 5.1 ölçüt 8 (85–118)
+$$ 0{,}85 \le e^{\hat d - t_{0{,}95;\,\nu}\,SE} \quad \text{ve} \quad e^{\hat d + t_{0{,}95;\,\nu}\,SE} \le 1{,}18 \;\Rightarrow\; \text{ölçüt sağlanır} $$ :: EMA OIP Rev. 2 Bölüm 5.1 ölçüt 8 (85–118); %90 GA’nın sınırlar içinde olması α = 0,05’te iki tek yönlü teste (TOST) denktir: Chow ve Liu (2008) §4.3.2; Casella ve Berger (2002) Alıştırma 8.47
 
-Ekrandaki karar satırı (b) yoludur (FSR-TN-PLT-08 E-K3): Aşama 1 simülasyonunda (b) ve (c)’nin tip I hatası bütün tasarımlarda ≤ %5 iken (a) seri varyansı olduğunda nominali aşar (FSR-TN-PBE-01 Bölüm 11.7); (b) bu ikisinden daha yalın olanıdır. Diğer iki yolun kararı yanında gösterilir; yollar ayrışırsa belirtilir.
+Ekrandaki karar satırı (b) yoludur (FSR-TN-PLT-08 E-K3): Aşama 1 simülasyonunda (b) ve (c)’nin tip I hatası bütün tasarımlarda ≤ %5 iken (a) seri varyansı olduğunda nominali aşar (FSR-TN-PBE-01 Bölüm 11.7); (b) bu ikisinden daha yalın olanıdır. Ayrıca (b), bir varyans bileşeni sıfıra çekildiğinde SAS for Mixed Models’ın önerdiği analizin (NOBOUND ya da METHOD=TYPE3; Stroup ve ark. 2018 §5.7.2) dengeli tasarımdaki karşılığıdır; (c) ise varsayılan sınırlı REML ile Satterthwaite serbestlik derecesine karşılık gelir. Kitap bu sınırlı ve havuzlanmış analizin tip I hatayı şişirebileceğini belirtir (Stroup ve Littell 2002’ye atıfla); bizim simülasyonumuzda (c) nominali aşmadı. Diğer iki yolun kararı yanında gösterilir; yollar ayrışırsa belirtilir.
 
 ## 5. Platformdaki uygulama
 - Ekranda “Yöntem: EMA %90 GA” seçilir. Veri biçimi ve girdi denetimleri FDA PBE ile aynıdır (`pbe_kopru.R`): tekrarlı ya da eksik evre ve farklı evre kümeleri reddedilir.
@@ -40,6 +45,7 @@ Ekrandaki karar satırı (b) yoludur (FSR-TN-PLT-08 E-K3): Aşama 1 simülasyonu
 - Hesap `invitro_array` ve `ema_ci_fast` ile yapılır (FSR-VAL-SIM-1 v1.1: TC-F3, TC-F4, TC-F11; SHA-256 ile sabitli). `platform_ema` yalnız bunları çağırır.
 - Bir yolun serbestlik derecesi ya da standart hatası sıfırsa (ör. tek seri) o yol “hesaplanamadı” olarak gösterilir; (b) hesaplanamazsa karar verilmez.
 - Tek yönlü test EMA’da yoktur; log dönüşümü kutusu FDA’daki anlamıyla aynıdır.
+- SAS çapraz kontrolleri: m = 1 PSG verisi ve negatif seri varyanslı kurgu veri; (b) ve (c) PROC MIXED ile on basamakta aynı (FSR-LOG-01 G-103, G-105; programlar `belgeler/teknik_notlar/FSR-TN-PLT-08_ek/sas/`).
 
 ## 6. Çalışılmış örnek
 PSG 020929 Ek B’deki simüle veri (3 seri × 10 kap × 3 evre, verilen değerler log ölçeğinde kabul edilir):
@@ -61,6 +67,9 @@ Aynı veride FDA PBE sağlanır ($H_\eta$ = −0,031499). Fark öğreticidir: PB
 - EMA. Guideline on the requirements for demonstrating therapeutic equivalence between orally inhaled products (OIP) for asthma and COPD, CPMP/EWP/4151/00 Rev. 2. 2025; Bölüm 5.1 ölçüt 8.
 - Searle SR, Casella G, McCulloch CE. Variance Components. Wiley-Interscience, 2006.
 - Satterthwaite FE. An approximate distribution of estimates of variance components. Biometrics Bulletin 1946;2:110–114.
+- Casella G, Berger RL. Statistical Inference. 2. baskı. Duxbury, 2002 (CRC yeniden basımı).
+- Stroup WW, Milliken GA, Claassen EA, Wolfinger RD. SAS for Mixed Models: Introduction and Basic Applications. SAS Institute, 2018.
+- Chow SC, Liu JP. Design and Analysis of Bioavailability and Bioequivalence Studies. 3. baskı. Chapman & Hall/CRC, 2008.
 - FDA. Draft Guidance on Budesonide (inhalation suspension), PSG 020929. Aralık 2025; Ek B (örnek veri).
 - FSR-TN-PBE-01 v0.11 (model, üç yol, simülasyon); FSR-VAL-SIM-1 v1.1 (validasyon); FSR-TN-PLT-08 (ekran).
 
@@ -81,24 +90,29 @@ For each product ℓ batches, n units per batch and m life stages per unit are m
 Variance of the mean and degrees of freedom, three paths (k = T, R; the product index is omitted):
 
 $$ s_U^2 = \frac{\sum_{j=1}^{\ell}\sum_{i=1}^{n} (\bar U_{ij} - \bar g)^2}{\ell n - 1}, \qquad v^{(a)} = \frac{s_U^2}{\ell n}, \qquad \nu^{(a)} = \ell n - 1 $$ :: FarmaStatR derivation (KK-27; FSR-TN-PBE-01 Section 5.3, path a)
-$$ s_B^2 = \frac{\sum_{j=1}^{\ell} (\bar B_j - \bar g)^2}{\ell - 1}, \qquad v^{(b)} = \frac{s_B^2}{\ell}, \qquad \nu^{(b)} = \ell - 1 $$ :: FarmaStatR derivation (KK-27; FSR-TN-PBE-01 Section 5.3, path b)
+
+Under the true model ($\sigma^2_B$ batch, $\sigma^2_C$ container, $\sigma^2_W$ within-container variance) the variance of the mean is $\operatorname{Var}(\bar g) = \sigma^2_B/\ell + \sigma^2_C/(\ell n) + \sigma^2_W/(\ell n m)$. The expectation of (a) contains the batch term only in the proportion $(\ell-1)/(\ell n - 1)$ (2/29 for 3 × 10); this is why the interval is too narrow when there is batch variance:
+
+$$ E\left[v^{(a)}\right] = \frac{1}{\ell n}\left(\sigma^2_C + \frac{\sigma^2_W}{m} + \sigma^2_B\,\frac{n(\ell-1)}{\ell n - 1}\right) $$ :: Derived from Searle, Casella and McCulloch (2006) §3.5a, Eq. (50)–(51), Table 3.3 (FarmaStatR derivation)
+
+$$ s_B^2 = \frac{\sum_{j=1}^{\ell} (\bar B_j - \bar g)^2}{\ell - 1}, \qquad v^{(b)} = \frac{s_B^2}{\ell}, \qquad \nu^{(b)} = \ell - 1 $$ :: FarmaStatR derivation (KK-27; FSR-TN-PBE-01 Section 5.3, path b); distribution: (ℓ − 1)v^(b)/Var(ḡ) ~ χ²(ℓ − 1), Casella and Berger (2002) Theorem 5.3.1(c); in a balanced design equal to PROC MIXED NOBOUND or METHOD=TYPE3 (Stroup et al. 2018 §5.7.2; SAS check, FSR-LOG-01 G-105)
 
 Path (c), mixed model with random batch and unit (REML). Mean squares of the three strata in a balanced design:
 
 $$ MS_{\mathrm{batch}} = \frac{n m \sum_j (\bar B_j - \bar g)^2}{\ell - 1}, \qquad MS_{\mathrm{unit}} = \frac{m \sum_j \sum_i (\bar U_{ij} - \bar B_j)^2}{\ell (n - 1)} $$ :: Searle, Casella and McCulloch (2006) Chapter 4 (balanced design)
 $$ MS_{\mathrm{res}} = \frac{\sum_j \sum_i \sum_s (X_{ijs} - \bar U_{ij} - \bar S_s + \bar g)^2}{(\ell n - 1)(m - 1)} $$ :: Searle, Casella and McCulloch (2006) Chapter 4 (balanced design)
 $$ (\hat\theta_1, \hat\theta_2, \hat\theta_3) = \underset{\theta_1 \ge \theta_2 \ge \theta_3}{\mathrm{arg\,min}} \sum_{t=1}^{3} \mathrm{df}_t\,(MS_t - \theta_t)^2, \qquad v^{(c)} = \frac{\hat\theta_1}{\ell n m} $$ :: Searle, Casella and McCulloch (2006) Section 3.8 (REML for balanced data, constrained solution); extension to three strata: FarmaStatR derivation
-$$ \nu^{(c)} = \text{sum of the df of the strata pooled with the batch stratum} $$ :: FarmaStatR derivation (FSR-TN-PBE-01 Section 5.3)
+$$ \nu^{(c)} = \text{sum of the df of the strata pooled with the batch stratum} $$ :: FarmaStatR derivation (FSR-TN-PBE-01 Section 5.3); with m = 1 equal to PROC MIXED bounded REML + DDFM=SATTERTHWAITE (SAS check, FSR-LOG-01 G-105)
 
 Without pooling $v^{(c)} = MS_{\mathrm{batch}}/(\ell n m) = v^{(b)}$ and $\nu^{(c)} = \ell - 1$; path (c) equals path (b). $\bar S_s$ is the stage mean; with m = 1 there is no residual stratum. Confidence interval (for each path):
 
-$$ SE = \sqrt{v_T + v_R}, \qquad \nu = \frac{(v_T + v_R)^2}{v_T^2/\nu_T + v_R^2/\nu_R} $$ :: Satterthwaite (1946)
+$$ SE = \sqrt{v_T + v_R}, \qquad \nu = \frac{(v_T + v_R)^2}{v_T^2/\nu_T + v_R^2/\nu_R} $$ :: Satterthwaite (1946); Casella and Berger (2002) Example 7.2.3 (independent, approximately scaled χ² components)
 $$ 90\%\ \mathrm{CI} = \left[\, e^{\hat d - t_{0.95;\,\nu}\,SE},\; e^{\hat d + t_{0.95;\,\nu}\,SE} \,\right] $$ :: EMA OIP Rev. 2 Section 5.1 criterion 8 (log-normal assumption)
 
 ## 4. Decision rule
-$$ 0.85 \le e^{\hat d - t_{0.95;\,\nu}\,SE} \quad \text{and} \quad e^{\hat d + t_{0.95;\,\nu}\,SE} \le 1.18 \;\Rightarrow\; \text{criterion met} $$ :: EMA OIP Rev. 2 Section 5.1 criterion 8 (85–118)
+$$ 0.85 \le e^{\hat d - t_{0.95;\,\nu}\,SE} \quad \text{and} \quad e^{\hat d + t_{0.95;\,\nu}\,SE} \le 1.18 \;\Rightarrow\; \text{criterion met} $$ :: EMA OIP Rev. 2 Section 5.1 criterion 8 (85–118); the 90% CI within the limits is equivalent to two one-sided tests (TOST) at α = 0.05: Chow and Liu (2008) §4.3.2; Casella and Berger (2002) Exercise 8.47
 
-The decision line on the screen is path (b) (FSR-TN-PLT-08 E-K3): in the Stage 1 simulation the type I error of (b) and (c) is ≤ 5% in all designs, whereas (a) exceeds the nominal level when there is batch variance (FSR-TN-PBE-01 Section 11.7); (b) is the simpler of the two. The decisions of the other two paths are shown alongside; if the paths differ, this is stated.
+The decision line on the screen is path (b) (FSR-TN-PLT-08 E-K3): in the Stage 1 simulation the type I error of (b) and (c) is ≤ 5% in all designs, whereas (a) exceeds the nominal level when there is batch variance (FSR-TN-PBE-01 Section 11.7); (b) is the simpler of the two. Moreover, (b) is the balanced-design counterpart of the analysis SAS for Mixed Models recommends when a variance component is set to zero (NOBOUND or METHOD=TYPE3; Stroup et al. 2018 §5.7.2), while (c) corresponds to the default bounded REML with Satterthwaite degrees of freedom. The book notes that this bounded, pooled analysis can inflate the type I error (citing Stroup and Littell 2002); in our simulation (c) did not exceed the nominal level. The decisions of the other two paths are shown alongside; if the paths differ, this is stated.
 
 ## 5. Implementation in the platform
 - Choose “Method: EMA 90% CI” on the screen. The data format and input checks are those of FDA PBE (`pbe_kopru.R`): repeated or missing stages and different stage sets are rejected.
@@ -106,6 +120,7 @@ The decision line on the screen is path (b) (FSR-TN-PLT-08 E-K3): in the Stage 1
 - The computation uses `invitro_array` and `ema_ci_fast` (FSR-VAL-SIM-1 v1.1: TC-F3, TC-F4, TC-F11; pinned with SHA-256). `platform_ema` only calls them.
 - If the degrees of freedom or the standard error of a path are zero (e.g. one batch), that path is shown as “could not be computed”; if (b) cannot be computed, no decision is given.
 - There is no one-sided test in EMA; the log transform box has the same meaning as in FDA.
+- SAS cross-checks: m = 1 PSG data and constructed data with a negative batch-variance estimate; (b) and (c) equal PROC MIXED to ten digits (FSR-LOG-01 G-103, G-105; programs in `belgeler/teknik_notlar/FSR-TN-PLT-08_ek/sas/`).
 
 ## 6. Worked example
 The simulated data of PSG 020929 Appendix B (3 batches × 10 containers × 3 stages; the values given are taken as log scale):
@@ -127,5 +142,8 @@ On the same data FDA PBE is established ($H_\eta$ = −0.031499). The difference
 - EMA. Guideline on the requirements for demonstrating therapeutic equivalence between orally inhaled products (OIP) for asthma and COPD, CPMP/EWP/4151/00 Rev. 2. 2025; Section 5.1 criterion 8.
 - Searle SR, Casella G, McCulloch CE. Variance Components. Wiley-Interscience, 2006.
 - Satterthwaite FE. An approximate distribution of estimates of variance components. Biometrics Bulletin 1946;2:110–114.
+- Casella G, Berger RL. Statistical Inference. 2nd ed. Duxbury, 2002 (CRC reprint).
+- Stroup WW, Milliken GA, Claassen EA, Wolfinger RD. SAS for Mixed Models: Introduction and Basic Applications. SAS Institute, 2018.
+- Chow SC, Liu JP. Design and Analysis of Bioavailability and Bioequivalence Studies. 3rd ed. Chapman & Hall/CRC, 2008.
 - FDA. Draft Guidance on Budesonide (inhalation suspension), PSG 020929. December 2025; Appendix B (example data).
 - FSR-TN-PBE-01 v0.11 (model, three paths, simulation); FSR-VAL-SIM-1 v1.1 (validation); FSR-TN-PLT-08 (screen).

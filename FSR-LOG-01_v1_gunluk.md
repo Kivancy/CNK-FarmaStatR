@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 2.01 · Son güncelleme: 29.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 2.03 · Son güncelleme: 29.10.2026"
 ---
 
 # Bu belge hakkında
@@ -2000,6 +2000,40 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
   - Proje sahibi 29.10.2026'da çalıştırdı ("başarılı"). **Sayılar Claude tarafından henüz görülmedi; çıktı bekleniyor.** Doğrulama kaydı çıktı gelince yapılacak.
 - **Sıradaki iş:** SAS çıktısının incelenmesi; ardından atıfların ve "(b)'nin karma model karşılığı" gerekçesinin EMA yöntem notuna ve FSR-TN-PLT-08'e işlenmesi (proje sahibinin onayıyla; yardım kabul aracı yeniden koşulur).
 
+## G-105 · NOBOUND SAS kontrolünün sonuçları: (b) = NOBOUND = TYPE3; (c) = sınırlı REML + Satterthwaite — 29.10.2026
+
+- **Çıktı (proje sahibi, SAS; ekran görüntüleri Claude tarafından incelendi):** `fsr_nobound_kontrol.sas`, kurgu veri (TEST'te MS_seri < MS_kap). Bütün değerler G-104'teki beklentilerle 10 basamakta aynı.
+  - **NOBOUND ve TYPE3:** TEST seri varyansı −0,0230634737, kalıntı 0,2363228621; TEST ortalamasının SE'si 0,0137696826, df 2; %90 GA 0,8023764327–1,7984530530. **Platformun (b) yoluyla birebir aynı.**
+  - **Sınırlı REML + containment:** TEST seri varyansı 0, kalıntı 0,2204170181 (= havuzlanmış MS); SE 0,0857160075, df 2; %90 GA 0,8296240562–1,7393858512.
+  - **Sınırlı REML + DDFM=SATTERTHWAITE:** TEST df 29; %90 GA 0,8421613700–1,7134914951. **Platformun (c) yoluyla birebir aynı** (birleşik ν 3,76300315).
+  - REF (seri varyansı pozitif) dört koşuda aynı: seri 0,0368759808, SE 0,1393368302, df 2.
+- **Sonuç (Claude):**
+  - (b), SAS for Mixed Models §5.7.2'nin önerdiği analizin (NOBOUND ya da METHOD=TYPE3) dengeli tasarımdaki karşılığıdır; bu veride SAS ile gösterildi. Negatif seri varyansı tahmini raporlansa da aralığa giren varyans pozitiftir.
+  - (c)'nin havuzlama durumundaki serbestlik derecesi kuralı (FarmaStatR türetimi), PROC MIXED'in varsayılan sınırlı REML'i ile DDFM=SATTERTHWAITE seçeneğinin sonucuyla bu veride (m = 1, iki tabaka) aynıdır. Üç tabakalı (m > 1) kısmi havuzlama durumu SAS ile ayrıca gösterilmedi.
+  - Kitap (§5.7.2, Stroup ve Littell 2002) tam bu sınırlı ve havuzlanmış analizin tip I hatayı şişirebileceğini söylüyor; (b)'nin karar yolu olması bu kaynakla da desteklenir. Kendi simülasyonumuzda (c) nominali aşmadı (G-38).
+- **Kayıt:** çıktı ekran görüntüsü olarak alındı. SAS programı Claude'un çalışma alanında; depoya alınması ve EMA notu ile FSR-TN-PLT-08'e işlenmesi proje sahibinin onayını bekliyor.
+
+## G-106 · EMA yöntem notu ve FSR-TN-PLT-08 v0.3: kaynak eşlemesi ve SAS kontrolleri işlendi — 29.10.2026
+
+- **Karar (K, proje sahibi):** "Yapalım." G-104 eşlemesi ve G-105 SAS bulguları nota ve teknik nota işlenir; SAS programları depoya alınır.
+- **EMA yöntem notu (`ema.txt` → `ema.html`, TR ve EN):**
+  - Yeni denklem: (a)'nın beklenen değeri; Searle ve ark. 2006 §3.5a, Denk. (50)–(51), Tablo 3.3'ten türetildi (FarmaStatR türetimi). Not 9 → 10 denklem.
+  - Kaynak etiketleri:
+    - (b): Casella ve Berger 2002 Teorem 5.3.1(c); NOBOUND/TYPE3 karşılığı (Stroup ve ark. 2018 §5.7.2; G-105).
+    - (c)'nin serbestlik derecesi: m = 1'de sınırlı REML + DDFM=SATTERTHWAITE karşılığı (G-105).
+    - Satterthwaite: Casella ve Berger Örnek 7.2.3.
+    - Karar kuralı: TOST denkliği, Chow ve Liu 2008 §4.3.2 ve Casella ve Berger Alıştırma 8.47.
+  - "Neden (b)" paragrafına kitap gerekçesi eklendi; Bölüm 5'e SAS kontrolleri; kaynakçaya üç kitap.
+  - Diğer notlar bayt bayt aynı.
+- **Yardım kabul aracı (Claude kuru koşusu, Chromium 141):** 51/51 GEÇTİ (EMA notu 8 bölüm, 10 denklem, TR = EN). Çıktı `FSR-TN-PLT-07_ek/kuru/p7_kabul_kuru_v0.3.*`; resmî `p7/` dokunulmadı.
+- **SAS programları:** `belgeler/teknik_notlar/FSR-TN-PLT-08_ek/sas/` klasörüne konuldu: `fsr_m1_kontrol.sas`, `fsr_nobound_kontrol.sas` ve sonuçları özetleyen `README.md`.
+- **FSR-TN-PLT-08 v0.3:** Bölüm 8 eklendi.
+  - Tablo 8.1: kaynak eşlemesi.
+  - Tablo 8.2: SAS kontrolleri.
+  - Maddeler: (b)'nin ve (c)'nin konumu, negatif varyans tahmini, sınır, literatür.
+  - Hesap ve ölçütler değişmedi. Onay proje sahibinde.
+- **Sıradaki iş (proje sahibi):** commit; yardım kabulünün resmî koşusu (isteğe bağlı; yalnız EMA notu değişti); FSR-TN-PLT-08 v0.2–v0.3 ve bekleyen diğer belgelerin onayı.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -2026,7 +2060,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 2.01 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 2.03 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.1 | 1.0 onaylı; beş dosya sabitlendi (G-47). 1.1: TC-S11 (dışa aktarılan betik), onaylandı (KK-53, G-76) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.7 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68); v0.7: Tablo 8.1 ve 10.1 (KK-56, KK-57, KK-59; G-94), onay P6 kapanışında |
@@ -2036,7 +2070,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | FSR-TN-PLT-05 · P5 tasarımı ve kabul ölçütleri (tasarım seçimi ve Word raporu) | 0.3 | v0.1 taslak (G-83); v0.2: tasarım seçimi eklendi (KK-56, G-84); onaylandı, D-1…D-7 ve R-1…R-11 donduruldu (KK-57, G-85); v0.3: resmi kabul 18/18 GECTI (G-91); onaylandı, P5 kapandı (KK-58, G-92) |
 | FSR-TN-PLT-06 · P6 tasarımı, kabul ölçütleri ve sonuçları (devralınan modellerin arayüzü, platform validasyonu, yayın hazırlığı) | 0.2 | v0.1 yetki devriyle (KK-60), F-1…F-12 donduruldu (G-94); v0.2: resmî kabul 78/78 GEÇTİ (G-95); onaylandı, P6 kapandı (KK-62, G-97) |
 | FSR-TN-PLT-07 · Yardım sistemi: tasarım ve kabul ölçütleri | 0.2 | KK-63 yetkisiyle; Y-1…Y-12 donduruldu; kuru koşu 48/48 (G-98); resmî kabul 48/48 (G-99); v0.2: altı not (KK-64), kuru 51/51 (G-100), resmî 51/51 (G-102); içerik incelemesi bekliyor |
-| FSR-TN-PLT-08 · EMA %90 GA analizi: tasarım ve kabul ölçütleri | 0.2 | E-1…E-10 koddan önce donduruldu (KK-64, G-100); kuru koşu 44/44; v0.2: resmî kabul 44/44 (G-102); onay bekliyor |
+| FSR-TN-PLT-08 · EMA %90 GA analizi: tasarım ve kabul ölçütleri | 0.3 | E-1…E-10 koddan önce donduruldu (KK-64, G-100); kuru koşu 44/44; v0.2: resmî kabul 44/44 (G-102); v0.3: kaynak eşlemesi ve SAS kontrolleri (G-106); onay bekliyor |
 | FSR-VAL-PLT-1 · Platform katmanı validasyon belgesi | 1.4 | 1.0: P1–P6 kanıtları (G-94); 1.1: P6 resmî kabulü, onaylandı (KK-62, G-97); 1.2: yardım sistemi, PBE metin bulgusu, gerileme (G-98); 1.3: EMA %90 GA analizi (G-100); 1.4: EMA ve yardım resmî kabulleri (G-102); 1.2–1.4 onay bekliyor |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
 | CNKfarmastatr (R paketi) | 1.0.0.9000 | 13 dosya SHA-256 ile sabit (8 devralınan çekirdek + simülasyon çatısı ve in vitro motoru; FSR-VAL-SIM-1 1.0, G-47); testler 26 blok, 968 beklenti GEÇTİ (G-46); G-94: 58 blok, 2.292 beklenti (yerel R ve webR); G-100: 61 blok, 2.328 beklenti (Windows CI 2.323, G-101) |
