@@ -2,25 +2,26 @@
 # EMA %90 güven aralığı: OIP Rev. 2, Bölüm 5.1 ölçüt 8
 
 ## 1. Soru ve kapsam
-Test (T) ve referans (R) ürününün in vitro ölçümünün (ör. aerodinamik partikül boyutu dağılımında bir basamak grubunun kütlesi) geometrik ortalamaları oranı 0,85–1,18 içinde mi? EMA’nın inhalasyon ürünleri kılavuzu (CPMP/EWP/4151/00 Rev. 2, 2025) Bölüm 5.1 ölçüt 8’e göre karşılaştırma, log-normal dağılım varsayımıyla bu oranın %90 güven aralığı (GA) olarak sunulur. Kılavuz, %90 GA’nın seri ve yaşam evresi yapısıyla nasıl hesaplanacağını tanımlamaz; platform üç aday yolu birlikte gösterir (KK-27). Hesap simülasyon motorunun validasyonlu fonksiyonlarıyla yapılır (`invitro_array`, `ema_ci_fast`).
+Test (T) ve referans (R) ürününün in vitro ölçümünün (ör. aerodinamik partikül boyutu dağılımında bir basamak grubunun kütlesi) geometrik ortalamaları oranı 0,85–1,18 içinde mi? EMA’nın inhalasyon ürünleri kılavuzu (CPMP/EWP/4151/00 Rev. 2, 2025) Bölüm 5.1 ölçüt 8’e göre karşılaştırma, log-normal dağılım varsayımıyla bu oranın %90 güven aralığı (GA) olarak sunulur. Kılavuz, %90 GA’nın seri ve yaşam evresi yapısıyla nasıl hesaplanacağını tanımlamaz; platform üç aday yolu birlikte gösterir (KK-27). (a) ve (b) yolları yayımlanmış uygulamalarda kullanılmıştır (Chen ve ark. 2019; Kurumaddali ve ark. 2019). Hesap simülasyon motorunun validasyonlu fonksiyonlarıyla yapılır (`invitro_array`, `ema_ci_fast`).
 
 ## 2. Model ve gösterim
 Her ürün için ℓ seri, seri başına n birim ve birim başına m yaşam evresi ölçülür (dengeli tasarım). $X_{ijs}$: j serisindeki i biriminin s evresindeki log ölçümü. Veri üretme modeli FSR-TN-PBE-01’dekidir: sabit evre etkisi, rastgele seri ve birim etkileri, birim içi hata.
 
 - $\bar U_{ij}$: birimin m evre ortalaması; $\bar B_j$: serinin birim ortalamalarının ortalaması; $\bar g$: ürün ortalaması.
+- Birim, Chen ve ark. (2019) Tablo II’deki kaba (can) karşılık gelir; oradaki SE formüllerinde n toplam kap sayısıdır, bu yüzden kareler ortalaması kap düzeyindeki değerlerden hesaplanır. Tek evrede (m = 1) bu okuma kendiliğinden geçerlidir.
 - $\hat d = \bar g_T - \bar g_R$; nokta tahmini $\mathrm{GMR} = e^{\hat d}$.
 - $v_k$ ve $\nu_k$: k ürününde ortalamanın varyansı ve serbestlik derecesi; üç yol bu ikisini farklı tahmin eder.
 
 ## 3. Denklemler
 Ortalamanın varyansı ve serbestlik derecesi, üç yol (k = T, R; ürün indisi yazılmamıştır):
 
-$$ s_U^2 = \frac{\sum_{j=1}^{\ell}\sum_{i=1}^{n} (\bar U_{ij} - \bar g)^2}{\ell n - 1}, \qquad v^{(a)} = \frac{s_U^2}{\ell n}, \qquad \nu^{(a)} = \ell n - 1 $$ :: FarmaStatR türetimi (KK-27; FSR-TN-PBE-01 Bölüm 5.3, yol a)
+$$ s_U^2 = \frac{\sum_{j=1}^{\ell}\sum_{i=1}^{n} (\bar U_{ij} - \bar g)^2}{\ell n - 1}, \qquad v^{(a)} = \frac{s_U^2}{\ell n}, \qquad \nu^{(a)} = \ell n - 1 $$ :: Chen ve ark. (2019) Tablo II Yöntem 3 (“Log-Can” ABE: SE₁ = √(MSC_T/n + MSC_R/n)); Kurumaddali ve ark. (2019) s. 4 (“EMA ABE”, s²_T/n_T + s²_R/n_R); PSG örneğinde 11 basamakta aynı (FSR-LOG-01 G-107)
 
 Gerçek modelde ($\sigma^2_B$ seri, $\sigma^2_C$ kap, $\sigma^2_W$ kap içi varyans) ortalamanın varyansı $\operatorname{Var}(\bar g) = \sigma^2_B/\ell + \sigma^2_C/(\ell n) + \sigma^2_W/(\ell n m)$’dir. (a)’nın beklentisi ise seri terimini yalnız $(\ell-1)/(\ell n - 1)$ oranında içerir (3 × 10’da 2/29); seri varyansı varken aralık bu yüzden dar çıkar:
 
-$$ E\left[v^{(a)}\right] = \frac{1}{\ell n}\left(\sigma^2_C + \frac{\sigma^2_W}{m} + \sigma^2_B\,\frac{n(\ell-1)}{\ell n - 1}\right) $$ :: Searle, Casella ve McCulloch (2006) §3.5a, Denk. (50)–(51), Tablo 3.3’ten türetildi (FarmaStatR türetimi)
+$$ E\left[v^{(a)}\right] = \frac{1}{\ell n}\left(\sigma^2_C + \frac{\sigma^2_W}{m} + \sigma^2_B\,\frac{n(\ell-1)}{\ell n - 1}\right) $$ :: Searle, Casella ve McCulloch (2006) §3.5a, Denk. (50)–(51), Tablo 3.3’teki beklenen kareler ortalamalarından cebirle; sonucu Chen ve ark. (2019) simülasyonunda görülür (Tartışma, Şekil 5: seri değişkenliği yüksekken “Log-Can” yanlış eşdeğerliği artar)
 
-$$ s_B^2 = \frac{\sum_{j=1}^{\ell} (\bar B_j - \bar g)^2}{\ell - 1}, \qquad v^{(b)} = \frac{s_B^2}{\ell}, \qquad \nu^{(b)} = \ell - 1 $$ :: FarmaStatR türetimi (KK-27; FSR-TN-PBE-01 Bölüm 5.3, yol b); dağılım: (ℓ − 1)v^(b)/Var(ḡ) ~ χ²(ℓ − 1), Casella ve Berger (2002) Teorem 5.3.1(c); dengeli tasarımda PROC MIXED NOBOUND ya da METHOD=TYPE3 ile aynı (Stroup ve ark. 2018 §5.7.2; SAS kontrolü, FSR-LOG-01 G-105)
+$$ s_B^2 = \frac{\sum_{j=1}^{\ell} (\bar B_j - \bar g)^2}{\ell - 1}, \qquad v^{(b)} = \frac{s_B^2}{\ell}, \qquad \nu^{(b)} = \ell - 1 $$ :: Chen ve ark. (2019) Tablo II Yöntem 4 (“Log-Batch” ABE: SE₂ = √(MSB_T/n + MSB_R/n), df₂ = (b − 1)(MSB_T + MSB_R)²/(MSB_T² + MSB_R²); MSB/n = s²_B/ℓ); PSG örneğinde 11 basamakta aynı (FSR-LOG-01 G-107); dağılım: (ℓ − 1)v^(b)/Var(ḡ) ~ χ²(ℓ − 1), Casella ve Berger (2002) Teorem 5.3.1(c); dengeli tasarımda PROC MIXED NOBOUND ya da METHOD=TYPE3 ile aynı (Stroup ve ark. 2018 §5.7.2; SAS kontrolü, FSR-LOG-01 G-105)
 
 Yol (c), seri ve birimi rastgele etkili karma model (REML). Dengeli tasarımda üç tabakanın kareler ortalaması:
 
@@ -37,7 +38,7 @@ $$ \%90\ \mathrm{GA} = \left[\, e^{\hat d - t_{0{,}95;\,\nu}\,SE},\; e^{\hat d +
 ## 4. Karar kuralı
 $$ 0{,}85 \le e^{\hat d - t_{0{,}95;\,\nu}\,SE} \quad \text{ve} \quad e^{\hat d + t_{0{,}95;\,\nu}\,SE} \le 1{,}18 \;\Rightarrow\; \text{ölçüt sağlanır} $$ :: EMA OIP Rev. 2 Bölüm 5.1 ölçüt 8 (85–118); %90 GA’nın sınırlar içinde olması α = 0,05’te iki tek yönlü teste (TOST) denktir: Chow ve Liu (2008) §4.3.2; Casella ve Berger (2002) Alıştırma 8.47
 
-Ekrandaki karar satırı (b) yoludur (FSR-TN-PLT-08 E-K3): Aşama 1 simülasyonunda (b) ve (c)’nin tip I hatası bütün tasarımlarda ≤ %5 iken (a) seri varyansı olduğunda nominali aşar (FSR-TN-PBE-01 Bölüm 11.7); (b) bu ikisinden daha yalın olanıdır. Ayrıca (b), bir varyans bileşeni sıfıra çekildiğinde SAS for Mixed Models’ın önerdiği analizin (NOBOUND ya da METHOD=TYPE3; Stroup ve ark. 2018 §5.7.2) dengeli tasarımdaki karşılığıdır; (c) ise varsayılan sınırlı REML ile Satterthwaite serbestlik derecesine karşılık gelir. Kitap bu sınırlı ve havuzlanmış analizin tip I hatayı şişirebileceğini belirtir (Stroup ve Littell 2002’ye atıfla); bizim simülasyonumuzda (c) nominali aşmadı. Diğer iki yolun kararı yanında gösterilir; yollar ayrışırsa belirtilir.
+Ekrandaki karar satırı (b) yoludur (FSR-TN-PLT-08 E-K3): Aşama 1 simülasyonunda (b) ve (c)’nin tip I hatası bütün tasarımlarda ≤ %5 iken (a) seri varyansı olduğunda nominali aşar (FSR-TN-PBE-01 Bölüm 11.7); (b) bu ikisinden daha yalın olanıdır. Ayrıca (b), bir varyans bileşeni sıfıra çekildiğinde SAS for Mixed Models’ın önerdiği analizin (NOBOUND ya da METHOD=TYPE3; Stroup ve ark. 2018 §5.7.2) dengeli tasarımdaki karşılığıdır; (c) ise varsayılan sınırlı REML ile Satterthwaite serbestlik derecesine karşılık gelir. Kitap bu sınırlı ve havuzlanmış analizin tip I hatayı şişirebileceğini belirtir (Stroup ve Littell 2002’ye atıfla); bizim simülasyonumuzda (c) nominali aşmadı. Chen ve ark. (2019), aynı veri modeliyle (Denk. 1) bağımsız bir simülasyonda aynı sonuca ulaşır: seri değişkenliği yüksekken (a)’ya karşılık gelen “Log-Can” ABE’nin yanlış eşdeğerlik oranı yükselir, (b)’ye karşılık gelen “Log-Batch” ABE bu oranı %5 dolayında tutar, gücü daha düşüktür; altı seri gücü belirgin artırır (Tartışma, Şekil 5–6). Diğer iki yolun kararı yanında gösterilir; yollar ayrışırsa belirtilir.
 
 ## 5. Platformdaki uygulama
 - Ekranda “Yöntem: EMA %90 GA” seçilir. Veri biçimi ve girdi denetimleri FDA PBE ile aynıdır (`pbe_kopru.R`): tekrarlı ya da eksik evre ve farklı evre kümeleri reddedilir.
@@ -46,6 +47,7 @@ Ekrandaki karar satırı (b) yoludur (FSR-TN-PLT-08 E-K3): Aşama 1 simülasyonu
 - Bir yolun serbestlik derecesi ya da standart hatası sıfırsa (ör. tek seri) o yol “hesaplanamadı” olarak gösterilir; (b) hesaplanamazsa karar verilmez.
 - Tek yönlü test EMA’da yoktur; log dönüşümü kutusu FDA’daki anlamıyla aynıdır.
 - SAS çapraz kontrolleri: m = 1 PSG verisi ve negatif seri varyanslı kurgu veri; (b) ve (c) PROC MIXED ile on basamakta aynı (FSR-LOG-01 G-103, G-105; programlar `belgeler/teknik_notlar/FSR-TN-PLT-08_ek/sas/`).
+- Literatür karşılaştırması: Chen ve ark. (2019) “Log-Can” ve “Log-Batch” ABE formülleri, PSG verisinde (3 evre ve yalnız B evresi) (a) ve (b) ile 11 basamakta aynı (FSR-LOG-01 G-107).
 
 ## 6. Çalışılmış örnek
 PSG 020929 Ek B’deki simüle veri (3 seri × 10 kap × 3 evre, verilen değerler log ölçeğinde kabul edilir):
@@ -58,7 +60,8 @@ PSG 020929 Ek B’deki simüle veri (3 seri × 10 kap × 3 evre, verilen değerl
 Aynı veride FDA PBE sağlanır ($H_\eta$ = −0,031499). Fark öğreticidir: PBE ortalama farkını toplam değişkenlikle birlikte değerlendirir; EMA yalnız ortalamalar oranına bakar ve 30 kabı değil 3 seriyi bağımsız bilgi sayan (b) yolunda aralık geniştir. Ekranda “Örnek: FDA PSG 020929” ve “Yöntem: EMA %90 GA” seçilerek yeniden üretilir.
 
 ## 7. Sınırlar
-- Üç yol aday uygulamadır (FarmaStatR türetimi, KK-27); hiçbiri kılavuzda tanımlı değildir.
+- Kılavuz hesap yolunu tanımlamaz. (a) ve (b) yayımlanmış uygulamalardır (Chen ve ark. 2019; Kurumaddali ve ark. 2019); (c)’nin üç tabakalı biçimi ve serbestlik derecesi kuralı yayımlanmış bir kaynağa dayanmaz (FarmaStatR türetimi; m = 1’de SAS ile doğrulandı).
+- Chen ve ark. (2019) ±log(1,15) sınırlarını ve %95 GA’yı kullanır; Kurumaddali ve ark. (2019) EMA’nın 2009 kılavuzuna dayanır ve verilerinde seri yapısı yoktur. Formüller aynıdır; karar ölçütleri ve tasarımlar farklıdır.
 - EMA en az üç seri ve seri başına en az on birim ister; yüksek değişkenlikte daha fazlası gerekir (Rev. 2 Bölüm 5.1). Daha küçük tasarımlar hesaplanır, uyarı verilir.
 - Analiz tek ölçüm büyüklüğü içindir; ölçüt 8 bütün basamak gruplarının geçmesini ister (her grup ayrı analiz edilir; olağanüstü durumda birinin geçmemesi kabul edilebilir).
 - Araştırma ve eğitim amaçlıdır; GxP ortamında valide edilmiş sistem değildir.
@@ -70,6 +73,8 @@ Aynı veride FDA PBE sağlanır ($H_\eta$ = −0,031499). Fark öğreticidir: PB
 - Casella G, Berger RL. Statistical Inference. 2. baskı. Duxbury, 2002 (CRC yeniden basımı).
 - Stroup WW, Milliken GA, Claassen EA, Wolfinger RD. SAS for Mixed Models: Introduction and Basic Applications. SAS Institute, 2018.
 - Chow SC, Liu JP. Design and Analysis of Bioavailability and Bioequivalence Studies. 3. baskı. Chapman & Hall/CRC, 2008.
+- Chen S, Morgan B, Beresford H, Burmeister Getz E, Christopher D, Långström G, Strickland H, Wiggenhorn C, Lyapustina S. Performance of the population bioequivalence (PBE) statistical test with impactor sized mass data. AAPS PharmSciTech 2019;20:296. doi:10.1208/s12249-019-1507-8
+- Kurumaddali A, Christopher D, Sandell D, Strickland H, Morgan B, Bulitta J, Wiggenhorn C, Stein S, Lyapustina S, Hochhaus G. Cascade impactor equivalence testing: comparison of the performance of the modified chi-square ratio statistic (mCSRS) with the original CSRS and EMA’s average bioequivalence approach. AAPS PharmSciTech 2019;20:249. doi:10.1208/s12249-019-1443-7
 - FDA. Draft Guidance on Budesonide (inhalation suspension), PSG 020929. Aralık 2025; Ek B (örnek veri).
 - FSR-TN-PBE-01 v0.11 (model, üç yol, simülasyon); FSR-VAL-SIM-1 v1.1 (validasyon); FSR-TN-PLT-08 (ekran).
 
@@ -77,25 +82,26 @@ Aynı veride FDA PBE sağlanır ($H_\eta$ = −0,031499). Fark öğreticidir: PB
 # EMA 90% confidence interval: OIP Rev. 2, Section 5.1 criterion 8
 
 ## 1. Question and scope
-Is the ratio of the geometric means of an in vitro measurement (e.g. the mass of a stage group of the aerodynamic particle size distribution) of test (T) and reference (R) within 0.85–1.18? Under Section 5.1 criterion 8 of the EMA guideline on inhaled products (CPMP/EWP/4151/00 Rev. 2, 2025) the comparison is presented as the 90% confidence interval (CI) of this ratio, assuming a log-normal distribution. The guideline does not define how the 90% CI is computed with batches and life stages; the platform shows three candidate paths together (KK-27). The computation uses the validated functions of the simulation engine (`invitro_array`, `ema_ci_fast`).
+Is the ratio of the geometric means of an in vitro measurement (e.g. the mass of a stage group of the aerodynamic particle size distribution) of test (T) and reference (R) within 0.85–1.18? Under Section 5.1 criterion 8 of the EMA guideline on inhaled products (CPMP/EWP/4151/00 Rev. 2, 2025) the comparison is presented as the 90% confidence interval (CI) of this ratio, assuming a log-normal distribution. The guideline does not define how the 90% CI is computed with batches and life stages; the platform shows three candidate paths together (KK-27). Paths (a) and (b) have been used in published applications (Chen et al. 2019; Kurumaddali et al. 2019). The computation uses the validated functions of the simulation engine (`invitro_array`, `ema_ci_fast`).
 
 ## 2. Model and notation
 For each product ℓ batches, n units per batch and m life stages per unit are measured (balanced design). $X_{ijs}$: log measurement of unit i of batch j at stage s. The data-generating model is that of FSR-TN-PBE-01: fixed stage effect, random batch and unit effects, within-unit error.
 
 - $\bar U_{ij}$: mean of the unit over the m stages; $\bar B_j$: mean of the unit means of the batch; $\bar g$: product mean.
+- The unit corresponds to the can of Chen et al. (2019) Table II; there n in the SE formulas is the total number of cans, so the mean squares are computed from can-level values. With one stage (m = 1) this reading holds trivially.
 - $\hat d = \bar g_T - \bar g_R$; point estimate $\mathrm{GMR} = e^{\hat d}$.
 - $v_k$ and $\nu_k$: variance of the mean and degrees of freedom for product k; the three paths estimate these two differently.
 
 ## 3. Equations
 Variance of the mean and degrees of freedom, three paths (k = T, R; the product index is omitted):
 
-$$ s_U^2 = \frac{\sum_{j=1}^{\ell}\sum_{i=1}^{n} (\bar U_{ij} - \bar g)^2}{\ell n - 1}, \qquad v^{(a)} = \frac{s_U^2}{\ell n}, \qquad \nu^{(a)} = \ell n - 1 $$ :: FarmaStatR derivation (KK-27; FSR-TN-PBE-01 Section 5.3, path a)
+$$ s_U^2 = \frac{\sum_{j=1}^{\ell}\sum_{i=1}^{n} (\bar U_{ij} - \bar g)^2}{\ell n - 1}, \qquad v^{(a)} = \frac{s_U^2}{\ell n}, \qquad \nu^{(a)} = \ell n - 1 $$ :: Chen et al. (2019) Table II Method 3 (“Log-Can” ABE: SE₁ = √(MSC_T/n + MSC_R/n)); Kurumaddali et al. (2019) p. 4 (“EMA ABE”, s²_T/n_T + s²_R/n_R); identical to 11 digits on the PSG example (FSR-LOG-01 G-107)
 
 Under the true model ($\sigma^2_B$ batch, $\sigma^2_C$ container, $\sigma^2_W$ within-container variance) the variance of the mean is $\operatorname{Var}(\bar g) = \sigma^2_B/\ell + \sigma^2_C/(\ell n) + \sigma^2_W/(\ell n m)$. The expectation of (a) contains the batch term only in the proportion $(\ell-1)/(\ell n - 1)$ (2/29 for 3 × 10); this is why the interval is too narrow when there is batch variance:
 
-$$ E\left[v^{(a)}\right] = \frac{1}{\ell n}\left(\sigma^2_C + \frac{\sigma^2_W}{m} + \sigma^2_B\,\frac{n(\ell-1)}{\ell n - 1}\right) $$ :: Derived from Searle, Casella and McCulloch (2006) §3.5a, Eq. (50)–(51), Table 3.3 (FarmaStatR derivation)
+$$ E\left[v^{(a)}\right] = \frac{1}{\ell n}\left(\sigma^2_C + \frac{\sigma^2_W}{m} + \sigma^2_B\,\frac{n(\ell-1)}{\ell n - 1}\right) $$ :: Algebra on the expected mean squares of Searle, Casella and McCulloch (2006) §3.5a, Eq. (50)–(51), Table 3.3; its consequence is seen in the simulation of Chen et al. (2019) (Discussion, Fig. 5: with high batch variability the false equivalence of “Log-Can” rises)
 
-$$ s_B^2 = \frac{\sum_{j=1}^{\ell} (\bar B_j - \bar g)^2}{\ell - 1}, \qquad v^{(b)} = \frac{s_B^2}{\ell}, \qquad \nu^{(b)} = \ell - 1 $$ :: FarmaStatR derivation (KK-27; FSR-TN-PBE-01 Section 5.3, path b); distribution: (ℓ − 1)v^(b)/Var(ḡ) ~ χ²(ℓ − 1), Casella and Berger (2002) Theorem 5.3.1(c); in a balanced design equal to PROC MIXED NOBOUND or METHOD=TYPE3 (Stroup et al. 2018 §5.7.2; SAS check, FSR-LOG-01 G-105)
+$$ s_B^2 = \frac{\sum_{j=1}^{\ell} (\bar B_j - \bar g)^2}{\ell - 1}, \qquad v^{(b)} = \frac{s_B^2}{\ell}, \qquad \nu^{(b)} = \ell - 1 $$ :: Chen et al. (2019) Table II Method 4 (“Log-Batch” ABE: SE₂ = √(MSB_T/n + MSB_R/n), df₂ = (b − 1)(MSB_T + MSB_R)²/(MSB_T² + MSB_R²); MSB/n = s²_B/ℓ); identical to 11 digits on the PSG example (FSR-LOG-01 G-107); distribution: (ℓ − 1)v^(b)/Var(ḡ) ~ χ²(ℓ − 1), Casella and Berger (2002) Theorem 5.3.1(c); in a balanced design equal to PROC MIXED NOBOUND or METHOD=TYPE3 (Stroup et al. 2018 §5.7.2; SAS check, FSR-LOG-01 G-105)
 
 Path (c), mixed model with random batch and unit (REML). Mean squares of the three strata in a balanced design:
 
@@ -112,7 +118,7 @@ $$ 90\%\ \mathrm{CI} = \left[\, e^{\hat d - t_{0.95;\,\nu}\,SE},\; e^{\hat d + t
 ## 4. Decision rule
 $$ 0.85 \le e^{\hat d - t_{0.95;\,\nu}\,SE} \quad \text{and} \quad e^{\hat d + t_{0.95;\,\nu}\,SE} \le 1.18 \;\Rightarrow\; \text{criterion met} $$ :: EMA OIP Rev. 2 Section 5.1 criterion 8 (85–118); the 90% CI within the limits is equivalent to two one-sided tests (TOST) at α = 0.05: Chow and Liu (2008) §4.3.2; Casella and Berger (2002) Exercise 8.47
 
-The decision line on the screen is path (b) (FSR-TN-PLT-08 E-K3): in the Stage 1 simulation the type I error of (b) and (c) is ≤ 5% in all designs, whereas (a) exceeds the nominal level when there is batch variance (FSR-TN-PBE-01 Section 11.7); (b) is the simpler of the two. Moreover, (b) is the balanced-design counterpart of the analysis SAS for Mixed Models recommends when a variance component is set to zero (NOBOUND or METHOD=TYPE3; Stroup et al. 2018 §5.7.2), while (c) corresponds to the default bounded REML with Satterthwaite degrees of freedom. The book notes that this bounded, pooled analysis can inflate the type I error (citing Stroup and Littell 2002); in our simulation (c) did not exceed the nominal level. The decisions of the other two paths are shown alongside; if the paths differ, this is stated.
+The decision line on the screen is path (b) (FSR-TN-PLT-08 E-K3): in the Stage 1 simulation the type I error of (b) and (c) is ≤ 5% in all designs, whereas (a) exceeds the nominal level when there is batch variance (FSR-TN-PBE-01 Section 11.7); (b) is the simpler of the two. Moreover, (b) is the balanced-design counterpart of the analysis SAS for Mixed Models recommends when a variance component is set to zero (NOBOUND or METHOD=TYPE3; Stroup et al. 2018 §5.7.2), while (c) corresponds to the default bounded REML with Satterthwaite degrees of freedom. The book notes that this bounded, pooled analysis can inflate the type I error (citing Stroup and Littell 2002); in our simulation (c) did not exceed the nominal level. Chen et al. (2019) reach the same conclusion in an independent simulation with the same data model (Eq. 1): with high batch variability the false equivalence rate of “Log-Can” ABE, which corresponds to (a), rises, while “Log-Batch” ABE, which corresponds to (b), keeps it near 5% with lower power; six batches raise the power markedly (Discussion, Fig. 5–6). The decisions of the other two paths are shown alongside; if the paths differ, this is stated.
 
 ## 5. Implementation in the platform
 - Choose “Method: EMA 90% CI” on the screen. The data format and input checks are those of FDA PBE (`pbe_kopru.R`): repeated or missing stages and different stage sets are rejected.
@@ -121,6 +127,7 @@ The decision line on the screen is path (b) (FSR-TN-PLT-08 E-K3): in the Stage 1
 - If the degrees of freedom or the standard error of a path are zero (e.g. one batch), that path is shown as “could not be computed”; if (b) cannot be computed, no decision is given.
 - There is no one-sided test in EMA; the log transform box has the same meaning as in FDA.
 - SAS cross-checks: m = 1 PSG data and constructed data with a negative batch-variance estimate; (b) and (c) equal PROC MIXED to ten digits (FSR-LOG-01 G-103, G-105; programs in `belgeler/teknik_notlar/FSR-TN-PLT-08_ek/sas/`).
+- Literature comparison: the “Log-Can” and “Log-Batch” ABE formulas of Chen et al. (2019) equal (a) and (b) to 11 digits on the PSG data (3 stages and stage B alone) (FSR-LOG-01 G-107).
 
 ## 6. Worked example
 The simulated data of PSG 020929 Appendix B (3 batches × 10 containers × 3 stages; the values given are taken as log scale):
@@ -133,7 +140,8 @@ The simulated data of PSG 020929 Appendix B (3 batches × 10 containers × 3 sta
 On the same data FDA PBE is established ($H_\eta$ = −0.031499). The difference is instructive: PBE weighs the mean difference together with the total variability; EMA looks only at the ratio of means, and path (b), which counts 3 batches rather than 30 containers as independent information, gives a wide interval. Reproduce it on the screen with “Example: FDA PSG 020929” and “Method: EMA 90% CI”.
 
 ## 7. Limitations
-- The three paths are candidate implementations (FarmaStatR derivation, KK-27); none is defined in the guideline.
+- The guideline does not define the computation. Paths (a) and (b) are published implementations (Chen et al. 2019; Kurumaddali et al. 2019); the three-stratum form of (c) and its degrees-of-freedom rule rest on no published source (FarmaStatR derivation; checked against SAS with m = 1).
+- Chen et al. (2019) use the ±log(1.15) limits and a 95% CI; Kurumaddali et al. (2019) rely on the 2009 EMA guideline and their data have no batch structure. The formulas are the same; the decision criteria and designs differ.
 - EMA asks for at least three batches and at least ten units per batch; more with high variability (Rev. 2 Section 5.1). Smaller designs are computed with a warning.
 - The analysis is for one quantity; criterion 8 requires all stage groups to pass (each group is analysed separately; one group failing may be acceptable in exceptional cases).
 - For research and education; not a system validated for GxP environments.
@@ -145,5 +153,7 @@ On the same data FDA PBE is established ($H_\eta$ = −0.031499). The difference
 - Casella G, Berger RL. Statistical Inference. 2nd ed. Duxbury, 2002 (CRC reprint).
 - Stroup WW, Milliken GA, Claassen EA, Wolfinger RD. SAS for Mixed Models: Introduction and Basic Applications. SAS Institute, 2018.
 - Chow SC, Liu JP. Design and Analysis of Bioavailability and Bioequivalence Studies. 3rd ed. Chapman & Hall/CRC, 2008.
+- Chen S, Morgan B, Beresford H, Burmeister Getz E, Christopher D, Långström G, Strickland H, Wiggenhorn C, Lyapustina S. Performance of the population bioequivalence (PBE) statistical test with impactor sized mass data. AAPS PharmSciTech 2019;20:296. doi:10.1208/s12249-019-1507-8
+- Kurumaddali A, Christopher D, Sandell D, Strickland H, Morgan B, Bulitta J, Wiggenhorn C, Stein S, Lyapustina S, Hochhaus G. Cascade impactor equivalence testing: comparison of the performance of the modified chi-square ratio statistic (mCSRS) with the original CSRS and EMA’s average bioequivalence approach. AAPS PharmSciTech 2019;20:249. doi:10.1208/s12249-019-1443-7
 - FDA. Draft Guidance on Budesonide (inhalation suspension), PSG 020929. December 2025; Appendix B (example data).
 - FSR-TN-PBE-01 v0.11 (model, three paths, simulation); FSR-VAL-SIM-1 v1.1 (validation); FSR-TN-PLT-08 (screen).

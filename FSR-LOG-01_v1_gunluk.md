@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 2.03 · Son güncelleme: 29.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 2.05 · Son güncelleme: 29.10.2026"
 ---
 
 # Bu belge hakkında
@@ -2034,6 +2034,45 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
   - Hesap ve ölçütler değişmedi. Onay proje sahibinde.
 - **Sıradaki iş (proje sahibi):** commit; yardım kabulünün resmî koşusu (isteğe bağlı; yalnız EMA notu değişti); FSR-TN-PLT-08 v0.2–v0.3 ve bekleyen diğer belgelerin onayı.
 
+## G-107 · Literatür karşılaştırması: Chen ve ark. 2019 ve Kurumaddali ve ark. 2019; (a) ve (b) yayımlanmış yöntemlerle aynı — 29.10.2026
+
+- **G-106'nın kapanışı:** proje sahibi commit etti; GitHub Actions başarılı ("action ok").
+- **Kaynaklar (`kaynaklar/`, proje sahibi yükledi):**
+  - Chen S, Morgan B, Beresford H ve ark. AAPS PharmSciTech 2019;20:296, doi:10.1208/s12249-019-1507-8.
+  - Kurumaddali A, Christopher D, Sandell D ve ark. AAPS PharmSciTech 2019;20:249, doi:10.1208/s12249-019-1443-7.
+- **Eşleme:**
+  - (a) = Chen Tablo II Yöntem 3 ("Log-Can" ABE) = Kurumaddali s. 4 ("EMA ABE"; 30 T ve 30 R profili, Welch–Satterthwaite).
+  - (b) = Chen Tablo II Yöntem 4 ("Log-Batch" ABE): SE₂ = √(MSB_T/n + MSB_R/n), df₂ = (b − 1)(MSB_T + MSB_R)²/(MSB_T² + MSB_R²).
+  - (c): yayımlanmış karşılığı bulunmadı.
+- **Sayısal kontrol (Claude):** Chen'in formülleri temel R ile (lm/anova) `ema_ci_fast`'tan bağımsız yazıldı; PSG 020929 Ek B verisinde platformla karşılaştırıldı.
+  - 3 evre, kap ortalamasından: (a) ve (b) ile aynı (en büyük fark 1,3·10⁻¹⁵).
+  - Yalnız B evresi (m = 1): aynı (1,4·10⁻¹⁴).
+  - 3 evre, ham satırdan: SE tam √3 kat büyük. Chen'de n toplam kap sayısı olduğundan bu okuma tutarsızdır; kap ortalaması okuması platformun evre birleştirmesiyle aynıdır.
+  - Program: `belgeler/teknik_notlar/FSR-TN-PLT-08_ek/literatur/chen2019_kontrol.R`.
+- **Simülasyon bulguları (Chen, Tartışma, Şekil 5–6):** seri değişkenliği yüksekken "Log-Can" yanlış eşdeğerliği artar; "Log-Batch" %5 dolayında kalır, gücü düşüktür; altı seri gücü belirgin artırır. Aynı veri modeli (Denk. 1); FSR-TN-PBE-01 Aşama 1 bulgularıyla aynı yön.
+- **Farklar:** Chen ±log(1,15) ve %95 GA; Kurumaddali EMA 2009 kılavuzu ve seri yapısı olmayan veri (55 PQRI senaryosu; uzman görüşüne göre yanlış "eşdeğer değil" %87, Tablo I).
+- **Karar (K, proje sahibi):** "FarmaStatR türetimi etiketini pek kullanmak istemiyorum. Bu nedenle yap." Kaynağı bulunan adımlarda etiket kaldırılır, yerine yayın atfı konur; kaynağı olmayan adımlar etiketli kalır (proje talimatı).
+- **EMA yöntem notu (`ema.txt` → `ema.html`, TR ve EN):**
+  - (a) ve (b) denklemlerinin etiketi Chen 2019 ve Kurumaddali 2019 atfıyla değişti.
+  - E[v^(a)]: "Searle ve ark. 2006 Tablo 3.3'ten cebirle" olarak yazıldı; Chen Şekil 5'e bağlandı.
+  - Bölüm 2'ye birim = kap (can) açıklaması; Bölüm 4'e Chen'in simülasyon bulgusu; Bölüm 5'e literatür kontrolü; Bölüm 7'de sınır maddesi yeniden yazıldı; kaynakçaya iki makale.
+  - Denklem etiketlerinde "FarmaStatR türetimi" 5 denklemden 2 denkleme indi (her dilde): (c)'nin üç tabakaya genişletilmesi ve (c)'nin serbestlik derecesi kuralı. Bölüm 7'deki sınır maddesi bunları adlandırır.
+  - Diğer notlar bayt bayt aynı; hesap ve sayılar değişmedi.
+- **Yardım kabul aracı (Claude kuru koşusu):** 51/51 GEÇTİ (EMA notu 8 bölüm, 10 denklem, FarmaStatR etiketli 2). Çıktı `FSR-TN-PLT-07_ek/kuru/p7_kabul_kuru_v0.4.*`; resmî `p7/` dokunulmadı.
+- **Açık:** FSR-TN-PLT-08 Bölüm 8 (Tablo 8.1 ve literatür maddesi) bu eşlemeyi henüz içermiyor; v0.4 olarak güncellenmesi proje sahibinin kararına bırakıldı.
+- **Sıradaki iş (proje sahibi):** commit.
+
+## G-108 · FSR-TN-PLT-08 v0.4: literatür eşlemesi teknik nota işlendi — 29.10.2026
+
+- **Karar (K, proje sahibi):** "güncelle." G-107'deki literatür eşlemesi FSR-TN-PLT-08'e işlenir.
+- **FSR-TN-PLT-08 v0.4 (Bölüm 8; başlık "Kaynak eşlemesi, SAS ve literatür kontrolleri"):**
+  - Tablo 8.1'e üç satır: (a) formülü (Chen 2019 Yöntem 3; Kurumaddali 2019 s. 4), (b) formülü (Chen 2019 Yöntem 4), evrelerin birim ortalamasında birleştirilmesi (Chen 2019, n = toplam kap).
+  - (a)'nın beklenen değeri satırında "FarmaStatR türetimi" yerine "cebirle; sonucu Chen 2019 Şekil 5".
+  - Yeni Tablo 8.3: literatür kontrolü (G-107 sayıları).
+  - Literatür ve sınır maddeleri yeniden yazıldı; etiket kararı maddesi eklendi. E-K2'deki v0.1 ifadesi tarihsel kayıt olarak değişmedi.
+  - Sürüm geçmişine 0.4 satırı. Hesap ve ölçütler değişmedi. Onay proje sahibinde (v0.2–v0.4).
+- **Sıradaki iş (proje sahibi):** commit (G-107 ve G-108 birlikte).
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -2070,7 +2109,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | FSR-TN-PLT-05 · P5 tasarımı ve kabul ölçütleri (tasarım seçimi ve Word raporu) | 0.3 | v0.1 taslak (G-83); v0.2: tasarım seçimi eklendi (KK-56, G-84); onaylandı, D-1…D-7 ve R-1…R-11 donduruldu (KK-57, G-85); v0.3: resmi kabul 18/18 GECTI (G-91); onaylandı, P5 kapandı (KK-58, G-92) |
 | FSR-TN-PLT-06 · P6 tasarımı, kabul ölçütleri ve sonuçları (devralınan modellerin arayüzü, platform validasyonu, yayın hazırlığı) | 0.2 | v0.1 yetki devriyle (KK-60), F-1…F-12 donduruldu (G-94); v0.2: resmî kabul 78/78 GEÇTİ (G-95); onaylandı, P6 kapandı (KK-62, G-97) |
 | FSR-TN-PLT-07 · Yardım sistemi: tasarım ve kabul ölçütleri | 0.2 | KK-63 yetkisiyle; Y-1…Y-12 donduruldu; kuru koşu 48/48 (G-98); resmî kabul 48/48 (G-99); v0.2: altı not (KK-64), kuru 51/51 (G-100), resmî 51/51 (G-102); içerik incelemesi bekliyor |
-| FSR-TN-PLT-08 · EMA %90 GA analizi: tasarım ve kabul ölçütleri | 0.3 | E-1…E-10 koddan önce donduruldu (KK-64, G-100); kuru koşu 44/44; v0.2: resmî kabul 44/44 (G-102); v0.3: kaynak eşlemesi ve SAS kontrolleri (G-106); onay bekliyor |
+| FSR-TN-PLT-08 · EMA %90 GA analizi: tasarım ve kabul ölçütleri | 0.4 | E-1…E-10 koddan önce donduruldu (KK-64, G-100); kuru koşu 44/44; v0.2: resmî kabul 44/44 (G-102); v0.3: kaynak eşlemesi ve SAS kontrolleri (G-106); v0.4: literatür eşlemesi (G-108); onay bekliyor |
 | FSR-VAL-PLT-1 · Platform katmanı validasyon belgesi | 1.4 | 1.0: P1–P6 kanıtları (G-94); 1.1: P6 resmî kabulü, onaylandı (KK-62, G-97); 1.2: yardım sistemi, PBE metin bulgusu, gerileme (G-98); 1.3: EMA %90 GA analizi (G-100); 1.4: EMA ve yardım resmî kabulleri (G-102); 1.2–1.4 onay bekliyor |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
 | CNKfarmastatr (R paketi) | 1.0.0.9000 | 13 dosya SHA-256 ile sabit (8 devralınan çekirdek + simülasyon çatısı ve in vitro motoru; FSR-VAL-SIM-1 1.0, G-47); testler 26 blok, 968 beklenti GEÇTİ (G-46); G-94: 58 blok, 2.292 beklenti (yerel R ve webR); G-100: 61 blok, 2.328 beklenti (Windows CI 2.323, G-101) |
