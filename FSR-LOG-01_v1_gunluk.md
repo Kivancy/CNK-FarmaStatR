@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 2.07 · Son güncelleme: 30.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 2.09 · Son güncelleme: 30.10.2026"
 ---
 
 # Bu belge hakkında
@@ -2106,6 +2106,33 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Bulgu (açık):** aynı etiketler ekran ve rapor metinlerinde de geçiyor (`ceviri.json`: `an_ema_label`, `rp_src_ema_2`, `rp_src_sim`; `yardim.json`: MSD ve tasarım panelleri). Validasyonlu ekranın parçası olduğu için dokunulmadı; K-1 … K-10 kararlarından sonra tek pakette güncellenmesi ve üç kabul aracının yeniden koşulması önerildi (FSR-VAL-PLT-1 1.5).
 - **Sıradaki iş (proje sahibi):** commit; kılavuzdaki K-1 … K-10 kararları.
 
+## G-111 · K-8 incelemesi: Sathe 1996 benzerlik bölgesi (B-L2b) kendi modelinde %99 kapsamıyor — 30.10.2026
+
+- **Depo:** G-110 commit edildi; GitHub Actions başarılı (proje sahibi).
+- **Proje sahibinin isteği:** K-8 (Σ₂ böleni N mi √N mi) için "Hogg ve Craig'in matematik istatistik kitabına bir kez daha bak. Emin ol."
+- **Kaynak durumu:** Hogg ve Craig `kaynaklar/` klasöründe yok; okunmadı. Aynı sonuç Casella ve Berger 2002 Teorem 5.2.6(b) ile kullanıldı (a′E için Var = a′Σa/N, dolayısıyla Cov(ortalama) = Σ/N). Sathe ve ark. 1996 proje dosyası 8 olarak duruyor; metin katmanı yok, Ek sayfası görüntü olarak okundu: makalede `Σ₁ + (Σ₂/√N)` yazıyor.
+- **Bulgu (Claude):**
+  - Sathe'nin Ek modeli y_ij = μ + A_i + E_ij (A ~ MVN(0, Σ₁), E ~ MVN(0, Σ₂)) altında seri ortalamasının kovaryansı Σ₁ + Σ₂/N'dir; √N'nin bu modelde karşılığı yok.
+  - Ancak K′ (s. 1801) zaten N/2 çarpanını taşıdığı için bölgenin %99 olması için gereken matris N·Σ₁ + Σ₂'dir. Simülasyon (2·10⁵ tekrar; N = 6 ve 12; dört varyans oranı): %99 hedefine karşı kapsama N ile %39–77, √N ile %42–88, çekirdeğin Σ₁ tahminine yaklaşık karşılık gelen durum %41–85, N·Σ₁ + Σ₂ ile %99,8. Sonuç tasarıma göre değişiyor, hiçbir durumda %99'a ulaşmıyor.
+  - Çekirdekte Σ₁, lot ortalamalarının kovaryansıyla tahmin ediliyor; bunun beklentisi Σ₁ + Σ₂/N'dir (Σ₂/N iki kez sayılır).
+  - Önceki ifadem ("N doğru, makaledeki dizgi hatası") eksikti: N, modelle tutarlı yapı; ama yayımlanmış bölgenin ölçeği hangi bölenle olursa olsun %99 değil.
+  - Etki: ekran varsayılanı B-L3; B-L2b yalnız seçilirse kullanılır. Bölge dar olduğundan "benzer değil" yönünde katıdır.
+  - Program: `belgeler/teknik_notlar/FSR-TN-PLT-07_ek/inceleme/k8_sathe_sr.R`.
+- **Okuma kılavuzu:** K-8 satırı bu bulguyla güncellendi. Öneri: B-L2b ekrandaki seçeneklerden çıkarılır, çekirdekte kalır; düzeltilmiş biçim (N·Σ₁ + Σ₂, Σ₁'in ANOVA tahmini) sabitli çekirdeğe dokunduğu için ayrı karar.
+- **Sıradaki iş (proje sahibi):** K-8 kararı; commit.
+
+## G-112 · Johnson ve Wichern (6. baskı) kaynaklara eklendi; K-8 bulgusu kitapla doğrulandı — 30.10.2026
+
+- **Proje sahibinin sorusu:** `kaynaklar/` ve proje dosyalarında çok değişkenli istatistik kitabı var mı? Yanıt (Claude): yok; Casella ve Berger'de Hotelling T² yok. Öneri: Johnson ve Wichern (Sathe 1996 kaynak 8, Tsong 1996 kaynak 3). Proje sahibinin isteğiyle K-8 kararı kitap gelene kadar bekletildi.
+- **Kaynak (proje sahibi):** Johnson RA, Wichern DW. *Applied Multivariate Statistical Analysis*, 6. baskı (Pearson, 2007); `kaynaklar/` (PDF 395 sayfa, iki kitap sayfası bir PDF sayfasında). Atıflar 6. baskının sayfa numaralarıyla.
+- **K-8 için okunan sonuçlar (görüntüden doğrulandı):**
+  - §4.4, s. 173: X̄, Np(μ, (1/n)Σ) dağılır (ortalamanın kovaryansı Σ/n). Doğrusal birleşimler: Sonuç 4.8, s. 165.
+  - Sonuç 6.2, s. 286: iki örneklem T² = (X̄₁ − X̄₂ − δ)′[(1/n₁ + 1/n₂)S_pooled]⁻¹(X̄₁ − X̄₂ − δ) ~ [(n₁ + n₂ − 2)p/(n₁ + n₂ − p − 1)]F(p, n₁ + n₂ − p − 1). Sathe'nin K′'su bu ölçektir ve birim başına kovaryans (S_pooled) ister.
+- **Sonuç:** Sathe modelinde iki seri ortalaması farkının kovaryansı 2(Σ₁ + Σ₂/N) = (2/N)(N·Σ₁ + Σ₂). K′ ile kullanılacak birim başına matris N·Σ₁ + Σ₂'dir. Makaledeki Σ₁ + Σ₂/√N ve platformun Σ₁ + Σ₂/N biçimi bu ölçekte değildir; G-111 simülasyonu (%99,8'e karşı %39–88) kitapla doğrulandı. √N'nin hiçbir okumada dayanağı yok.
+- **Ek eşleme (sırada, notlar henüz değişmedi):** MSD L3'ün sol tarafı |d_t| + r√S_tt, Johnson ve Wichern Sonuç 6.3 (s. 288) eşzamanlı aralıklarının (X̄₁ᵢ − X̄₂ᵢ) ± c√[(1/n₁ + 1/n₂)s_ii,pooled] karşılığıdır; G-110'daki "Cauchy–Schwarz ile cebirle" atfı bununla değiştirilecek. Tsong 1996 Denk. 2–3 ve Weibull B-L2a da bu bölümle eşlenecek; kararlar paketinde işlenir.
+- **Okuma kılavuzu:** K-8 satırına kitap atfı eklendi.
+- **Sıradaki iş (proje sahibi):** K-8 kararı (B-L2b ekrandan çıkarılsın mı); commit.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -2132,7 +2159,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 2.07 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 2.09 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.1 | 1.0 onaylı; beş dosya sabitlendi (G-47). 1.1: TC-S11 (dışa aktarılan betik), onaylandı (KK-53, G-76) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.7 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68); v0.7: Tablo 8.1 ve 10.1 (KK-56, KK-57, KK-59; G-94), onay P6 kapanışında |
