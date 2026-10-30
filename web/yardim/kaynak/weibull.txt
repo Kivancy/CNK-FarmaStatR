@@ -13,7 +13,7 @@ Her ünite için doğrusallaştırılmış denklem en küçük kareler ile uydur
 $$ \theta = (\ln T_d,\; \ln\beta), \qquad \ln T_d = -\frac{\ln\alpha}{\beta} $$ :: FarmaStatR türetimi (varsayılan); T_d Langenbucher (1972)’nin dissolüsyon zamanı (%63,2 çözünme), ln β Sathe ve ark. (1996)
 - $(\ln\alpha,\; \ln\beta)$: Sathe ve ark. (1996); yayımlanmış sonuçları yeniden üretmek için.
 - $(\ln\alpha,\; \beta)$: seçenek.
-- (ln T_d, ln β) biçiminde zaman birimi değişince ln T_d bütün ünitelerde aynı sabit kadar kayar; bu yüzden D_M ve B-L3 zaman biriminden bağımsızdır [FarmaStatR türetimi; paket testi TC-B6].
+- (ln T_d, ln β) biçiminde zaman birimi değişince ln T_d bütün ünitelerde aynı sabit kadar kayar; bu yüzden D_M ve B-L3 zaman biriminden bağımsızdır [cebirle: t → c·t için T_d → c·T_d ve β değişmez; paket testi TC-B6].
 
 ## 3. Denklemler
 Parametreler üzerinde model bağımsız MSD’deki Hotelling motoru kullanılır (P = 2):
@@ -70,7 +70,7 @@ For each unit the linearized equation is fitted by least squares; points with t 
 $$ \theta = (\ln T_d,\; \ln\beta), \qquad \ln T_d = -\frac{\ln\alpha}{\beta} $$ :: FarmaStatR derivation (default); T_d is the dissolution time of Langenbucher (1972) (63.2% dissolved), ln β of Sathe et al. (1996)
 - $(\ln\alpha,\; \ln\beta)$: Sathe et al. (1996); to reproduce the published results.
 - $(\ln\alpha,\; \beta)$: option.
-- With (ln T_d, ln β), changing the time unit shifts ln T_d by the same constant in every unit; so D_M and B-L3 do not depend on the time unit [FarmaStatR derivation; package test TC-B6].
+- With (ln T_d, ln β), changing the time unit shifts ln T_d by the same constant in every unit; so D_M and B-L3 do not depend on the time unit [algebra: for t → c·t, T_d → c·T_d and β is unchanged; package test TC-B6].
 
 ## 3. Equations
 On the parameters the Hotelling engine of the model-independent MSD is used (P = 2):

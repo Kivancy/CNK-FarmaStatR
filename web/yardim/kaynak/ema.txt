@@ -27,8 +27,8 @@ Yol (c), seri ve birimi rastgele etkili karma model (REML). Dengeli tasarımda �
 
 $$ MS_{\mathrm{seri}} = \frac{n m \sum_j (\bar B_j - \bar g)^2}{\ell - 1}, \qquad MS_{\mathrm{birim}} = \frac{m \sum_j \sum_i (\bar U_{ij} - \bar B_j)^2}{\ell (n - 1)} $$ :: Searle, Casella ve McCulloch (2006) Bölüm 4 (dengeli tasarım)
 $$ MS_{\mathrm{art}} = \frac{\sum_j \sum_i \sum_s (X_{ijs} - \bar U_{ij} - \bar S_s + \bar g)^2}{(\ell n - 1)(m - 1)} $$ :: Searle, Casella ve McCulloch (2006) Bölüm 4 (dengeli tasarım)
-$$ (\hat\theta_1, \hat\theta_2, \hat\theta_3) = \underset{\theta_1 \ge \theta_2 \ge \theta_3}{\mathrm{arg\,min}} \sum_{t=1}^{3} \mathrm{sd}_t\,(MS_t - \theta_t)^2, \qquad v^{(c)} = \frac{\hat\theta_1}{\ell n m} $$ :: Searle, Casella ve McCulloch (2006) Bölüm 3.8 (dengeli veride REML, sınırlı çözüm); üç tabakaya genişletme: FarmaStatR türetimi
-$$ \nu^{(c)} = \text{seri tabakasıyla havuzlanan tabakaların serbestlik dereceleri toplamı} $$ :: FarmaStatR türetimi (FSR-TN-PBE-01 Bölüm 5.3); m = 1’de PROC MIXED sınırlı REML + DDFM=SATTERTHWAITE ile aynı (SAS kontrolü, FSR-LOG-01 G-105)
+$$ (\hat\theta_1, \hat\theta_2, \hat\theta_3) = \underset{\theta_1 \ge \theta_2 \ge \theta_3}{\mathrm{arg\,min}} \sum_{t=1}^{3} \mathrm{sd}_t\,(MS_t - \theta_t)^2, \qquad v^{(c)} = \frac{\hat\theta_1}{\ell n m} $$ :: Searle, Casella ve McCulloch (2006) Bölüm 3.8 (dengeli veride REML, sınırlı çözüm); negatif tahminde kareler ortalamasının bir önceki tabakayla havuzlanması: Thompson (1962) kuralı, Searle ve ark. (2006) §4.4 (iii), s. 130 ve §6.2, s. 235
+$$ \nu^{(c)} = \text{seri tabakasıyla havuzlanan tabakaların serbestlik dereceleri toplamı} $$ :: havuzlanan tabakaların kareler toplamı, havuzlanan bileşenler sıfırken bağımsız ölçeklenmiş χ²’lerin toplamıdır ve serbestlik dereceleri toplanır: Casella ve Berger (2002) Lemma 5.3.2(b) (FSR-TN-PBE-01 Bölüm 5.3); m = 1’de PROC MIXED sınırlı REML + DDFM=SATTERTHWAITE ile aynı (SAS kontrolü, FSR-LOG-01 G-105)
 
 Havuzlama olmazsa $v^{(c)} = MS_{\mathrm{seri}}/(\ell n m) = v^{(b)}$ ve $\nu^{(c)} = \ell - 1$; (c) yolu (b) ile aynıdır. $\bar S_s$ evre ortalamasıdır; m = 1 ise artık tabakası yoktur. Güven aralığı (her yol için):
 
@@ -60,7 +60,7 @@ PSG 020929 Ek B’deki simüle veri (3 seri × 10 kap × 3 evre, verilen değerl
 Aynı veride FDA PBE sağlanır ($H_\eta$ = −0,031499). Fark öğreticidir: PBE ortalama farkını toplam değişkenlikle birlikte değerlendirir; EMA yalnız ortalamalar oranına bakar ve 30 kabı değil 3 seriyi bağımsız bilgi sayan (b) yolunda aralık geniştir. Ekranda “Örnek: FDA PSG 020929” ve “Yöntem: EMA %90 GA” seçilerek yeniden üretilir.
 
 ## 7. Sınırlar
-- Kılavuz hesap yolunu tanımlamaz. (a) ve (b) yayımlanmış uygulamalardır (Chen ve ark. 2019; Kurumaddali ve ark. 2019); (c)’nin üç tabakalı biçimi ve serbestlik derecesi kuralı yayımlanmış bir kaynağa dayanmaz (FarmaStatR türetimi; m = 1’de SAS ile doğrulandı).
+- Kılavuz hesap yolunu tanımlamaz. (a) ve (b) yayımlanmış uygulamalardır (Chen ve ark. 2019; Kurumaddali ve ark. 2019); (c), Thompson (1962) havuzlama kuralına (Searle ve ark. 2006) ve Casella ve Berger (2002) Lemma 5.3.2(b)’ye dayanır; EMA bağlamında yayımlanmış bir uygulaması bulunamadı (m = 1’de SAS ile doğrulandı).
 - Chen ve ark. (2019) ±log(1,15) sınırlarını ve %95 GA’yı kullanır; Kurumaddali ve ark. (2019) EMA’nın 2009 kılavuzuna dayanır ve verilerinde seri yapısı yoktur. Formüller aynıdır; karar ölçütleri ve tasarımlar farklıdır.
 - EMA en az üç seri ve seri başına en az on birim ister; yüksek değişkenlikte daha fazlası gerekir (Rev. 2 Bölüm 5.1). Daha küçük tasarımlar hesaplanır, uyarı verilir.
 - Analiz tek ölçüm büyüklüğü içindir; ölçüt 8 bütün basamak gruplarının geçmesini ister (her grup ayrı analiz edilir; olağanüstü durumda birinin geçmemesi kabul edilebilir).
@@ -107,8 +107,8 @@ Path (c), mixed model with random batch and unit (REML). Mean squares of the thr
 
 $$ MS_{\mathrm{batch}} = \frac{n m \sum_j (\bar B_j - \bar g)^2}{\ell - 1}, \qquad MS_{\mathrm{unit}} = \frac{m \sum_j \sum_i (\bar U_{ij} - \bar B_j)^2}{\ell (n - 1)} $$ :: Searle, Casella and McCulloch (2006) Chapter 4 (balanced design)
 $$ MS_{\mathrm{res}} = \frac{\sum_j \sum_i \sum_s (X_{ijs} - \bar U_{ij} - \bar S_s + \bar g)^2}{(\ell n - 1)(m - 1)} $$ :: Searle, Casella and McCulloch (2006) Chapter 4 (balanced design)
-$$ (\hat\theta_1, \hat\theta_2, \hat\theta_3) = \underset{\theta_1 \ge \theta_2 \ge \theta_3}{\mathrm{arg\,min}} \sum_{t=1}^{3} \mathrm{df}_t\,(MS_t - \theta_t)^2, \qquad v^{(c)} = \frac{\hat\theta_1}{\ell n m} $$ :: Searle, Casella and McCulloch (2006) Section 3.8 (REML for balanced data, constrained solution); extension to three strata: FarmaStatR derivation
-$$ \nu^{(c)} = \text{sum of the df of the strata pooled with the batch stratum} $$ :: FarmaStatR derivation (FSR-TN-PBE-01 Section 5.3); with m = 1 equal to PROC MIXED bounded REML + DDFM=SATTERTHWAITE (SAS check, FSR-LOG-01 G-105)
+$$ (\hat\theta_1, \hat\theta_2, \hat\theta_3) = \underset{\theta_1 \ge \theta_2 \ge \theta_3}{\mathrm{arg\,min}} \sum_{t=1}^{3} \mathrm{df}_t\,(MS_t - \theta_t)^2, \qquad v^{(c)} = \frac{\hat\theta_1}{\ell n m} $$ :: Searle, Casella and McCulloch (2006) Section 3.8 (REML for balanced data, constrained solution); pooling a mean square with the preceding stratum when an estimate is negative: the rule of Thompson (1962), Searle et al. (2006) §4.4 (iii), p. 130 and §6.2, p. 235
+$$ \nu^{(c)} = \text{sum of the df of the strata pooled with the batch stratum} $$ :: the sum of squares of the pooled strata is, when the pooled components are zero, a sum of independent scaled χ² variables and the degrees of freedom add: Casella and Berger (2002) Lemma 5.3.2(b) (FSR-TN-PBE-01 Section 5.3); with m = 1 equal to PROC MIXED bounded REML + DDFM=SATTERTHWAITE (SAS check, FSR-LOG-01 G-105)
 
 Without pooling $v^{(c)} = MS_{\mathrm{batch}}/(\ell n m) = v^{(b)}$ and $\nu^{(c)} = \ell - 1$; path (c) equals path (b). $\bar S_s$ is the stage mean; with m = 1 there is no residual stratum. Confidence interval (for each path):
 
@@ -140,7 +140,7 @@ The simulated data of PSG 020929 Appendix B (3 batches × 10 containers × 3 sta
 On the same data FDA PBE is established ($H_\eta$ = −0.031499). The difference is instructive: PBE weighs the mean difference together with the total variability; EMA looks only at the ratio of means, and path (b), which counts 3 batches rather than 30 containers as independent information, gives a wide interval. Reproduce it on the screen with “Example: FDA PSG 020929” and “Method: EMA 90% CI”.
 
 ## 7. Limitations
-- The guideline does not define the computation. Paths (a) and (b) are published implementations (Chen et al. 2019; Kurumaddali et al. 2019); the three-stratum form of (c) and its degrees-of-freedom rule rest on no published source (FarmaStatR derivation; checked against SAS with m = 1).
+- The guideline does not define the computation. Paths (a) and (b) are published implementations (Chen et al. 2019; Kurumaddali et al. 2019); (c) rests on the pooling rule of Thompson (1962) (Searle et al. 2006) and on Casella and Berger (2002) Lemma 5.3.2(b); no published application in the EMA setting was found (checked against SAS with m = 1).
 - Chen et al. (2019) use the ±log(1.15) limits and a 95% CI; Kurumaddali et al. (2019) rely on the 2009 EMA guideline and their data have no batch structure. The formulas are the same; the decision criteria and designs differ.
 - EMA asks for at least three batches and at least ten units per batch; more with high variability (Rev. 2 Section 5.1). Smaller designs are computed with a warning.
 - The analysis is for one quantity; criterion 8 requires all stage groups to pass (each group is analysed separately; one group failing may be acceptable in exceptional cases).

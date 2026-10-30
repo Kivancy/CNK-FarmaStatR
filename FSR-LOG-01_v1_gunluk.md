@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 2.06 · Son güncelleme: 30.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 2.07 · Son güncelleme: 30.10.2026"
 ---
 
 # Bu belge hakkında
@@ -2088,6 +2088,24 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Açık kalan:** A-16 yardım içeriğinin alan uzmanı incelemesi (etiketler: simülasyon 7, MSD 4, Weibull 3, EMA 3, f2 2, PBE 0; f2 tam sayı satırı; Weibull √N/N, f2 49,5 sınır vakası, MSD L2a/L2b/L3 seçimleri).
 - **Sıradaki iş (proje sahibi):** commit.
 
+## G-110 · Yardım içeriği: 11 "FarmaStatR türetimi" ifadesi kaynağa bağlandı; okuma kılavuzu (A-16) — 30.10.2026
+
+- **Depo:** G-107/G-108 ve G-109 commit edildi; GitHub Actions başarılı (proje sahibi). G-107'deki "bildirilmedi" kaydı böylece kapandı.
+- **Karar (K, proje sahibi):** "Tamamdır. ilerle." A-16 için okuma kılavuzu; kalan etiketler için kaynak araması; kaynağı bulunanların etiketi kalkar (G-107 kararı).
+- **Tarama:** altı notta 19 "FarmaStatR türetimi" ifadesi (EMA 3, f2 2, MSD 4, Weibull 3, simülasyon 7, PBE 0). Kaynaklar: `kaynaklar/` (Casella ve Berger; Chen 2019) ve proje dosyaları (Searle 2006; Tsong 1996; Xu 2021; PSG 020929).
+- **Kaynağa bağlanan 11 ifade (notlar TR ve EN):**
+  - EMA (c): negatif tahminde havuzlama = Thompson (1962) kuralı, Searle ve ark. 2006 §4.4 (iii) s. 130 ve §6.2 s. 235 (Thompson'ın makalesi okunmadı; Searle üzerinden atıf). Serbestlik derecesi: Casella ve Berger Lemma 5.3.2(b). Sınırlar maddesi yeniden yazıldı. EMA notunda etiket kalmadı.
+  - f2: V'nin n_T ≠ n_R genellemesi = Xu ve ark. 2021 Denk. (9)–(10) + Casella ve Berger Teorem 5.2.6(b).
+  - MSD: L2a ve L3 = Tsong ve ark. 1996 s. 1106 ve 1109 (L3'ün sol tarafı Cauchy–Schwarz ile cebirle). L2b etiketli kaldı.
+  - Weibull: zaman birimi değişmezliği tanımdan cebirle (TC-B6).
+  - Simülasyon: τ ve e = Chen 2019 Denk. 1; δ₀ = PSG 020929 Ek A Adım 1'den cebirle; (a), (b) = Chen 2019 Tablo II; (c) = Thompson (1962) / Searle 2006.
+  - Kaynakçalara Casella ve Berger (f2), Chen 2019 ve Searle 2006 (simülasyon) eklendi.
+- **Kalan 8 ifade:** f2 1 (MCSE formülü), MSD 2 (L2b ve sınırlar maddesi), Weibull 2 (parametreleme, B-L3), simülasyon 3 (varyans payları, Kural A, Kural B). Denklem etiketleri (Y-3 sayımı): EMA 0, MSD 0, f2 1, Weibull 3, simülasyon 4.
+- **Kontroller:** derleme hatasız, PBE notu ve dizin bayt bayt aynı; yardım kabulü kuru koşusu 51/51 (`kuru/p7_kabul_kuru_v0.5.*`). Hesap, sayılar ve ekran değişmedi.
+- **Okuma kılavuzu (Claude Docs belgesi, depo dışı):** "CNK-FarmaStatR: yardım içeriği okuma kılavuzu (A-16)", https://claude.ai/artifact/NtCtgSM8KtVKnh2nWzC9DH. İçerik: 11 kaynaklı ifade tablosu; K-1 … K-10 karar bekleyen noktalar (önerilerle); ekran ve rapor metinleri; okuma sırası.
+- **Bulgu (açık):** aynı etiketler ekran ve rapor metinlerinde de geçiyor (`ceviri.json`: `an_ema_label`, `rp_src_ema_2`, `rp_src_sim`; `yardim.json`: MSD ve tasarım panelleri). Validasyonlu ekranın parçası olduğu için dokunulmadı; K-1 … K-10 kararlarından sonra tek pakette güncellenmesi ve üç kabul aracının yeniden koşulması önerildi (FSR-VAL-PLT-1 1.5).
+- **Sıradaki iş (proje sahibi):** commit; kılavuzdaki K-1 … K-10 kararları.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -2106,7 +2124,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Dissolüsyon köprüsü pakette (`inst/kopru/dis_kopru.R`, G-94); dışa açılan fonksiyonlar v1.0.0 öncesi |
 | A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
 | A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | **Tamam:** P0 … P6 kapandı (P5: KK-58, G-92; P6: resmî kabul 78/78, FSR-TN-PLT-06 v0.2 ve FSR-VAL-PLT-1 1.1 onaylandı, KK-62, G-97). Yayın adımları lisanstan sonra (KK-61) |
-| A-16 | Yardım sistemi (FSR-TN-PLT-07; KK-63) | Uygulama tamam (G-98); resmî kabul 48/48 GEÇTİ (G-99); v0.2: EMA notu ve ölçüt revizyonu, kuru 51/51 (G-100), resmî 51/51 (G-102); FSR-TN-PLT-07 v0.2 onaylandı (KK-65, G-109); proje sahibinin içerik incelemesi bekliyor |
+| A-16 | Yardım sistemi (FSR-TN-PLT-07; KK-63) | Uygulama tamam (G-98); resmî kabul 48/48 GEÇTİ (G-99); v0.2: EMA notu ve ölçüt revizyonu, kuru 51/51 (G-100), resmî 51/51 (G-102); FSR-TN-PLT-07 v0.2 onaylandı (KK-65, G-109); 11 etiket kaynağa bağlandı, okuma kılavuzu K-1 … K-10 (G-110); proje sahibinin kararları bekliyor |
 | A-17 | EMA %90 GA analizi (FSR-TN-PLT-08; KK-64) | Uygulama ve kuru koşu 44/44 (G-100); resmî kabul 44/44, FSR-TN-PLT-08 v0.2 (G-102); **Tamam:** FSR-TN-PLT-08 v0.4 onaylandı (KK-65, G-109) |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
 
@@ -2114,7 +2132,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 2.06 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 2.07 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.1 | 1.0 onaylı; beş dosya sabitlendi (G-47). 1.1: TC-S11 (dışa aktarılan betik), onaylandı (KK-53, G-76) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.7 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68); v0.7: Tablo 8.1 ve 10.1 (KK-56, KK-57, KK-59; G-94), onay P6 kapanışında |

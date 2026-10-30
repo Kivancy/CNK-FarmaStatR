@@ -9,7 +9,7 @@
 - $\bar R_t, \bar T_t$: t zamanındaki ortalama çözünme yüzdeleri; $S^2_{T,t}, S^2_{R,t}$: ünite varyansları.
 - D: ortalama farkların kareleri toplamı; V: ortalamaların varyanslarının toplamı.
 
-$$ D = \sum_{t=1}^{P} (\bar T_t - \bar R_t)^2, \qquad V = \sum_{t=1}^{P}\left(\frac{S^2_{T,t}}{n_T} + \frac{S^2_{R,t}}{n_R}\right) $$ :: EMA PKWP/BSWP Q&A 3.11 (n_T = n_R için); n_T ≠ n_R genellemesi FarmaStatR türetimi
+$$ D = \sum_{t=1}^{P} (\bar T_t - \bar R_t)^2, \qquad V = \sum_{t=1}^{P}\left(\frac{S^2_{T,t}}{n_T} + \frac{S^2_{R,t}}{n_R}\right) $$ :: EMA PKWP/BSWP Q&A 3.11 ve Xu ve ark. (2021) Denk. (9)–(10) (n_T = n_R için); n_T ≠ n_R: bağımsız ortalamalarda Var(T̄_t − R̄_t) = σ²_T/n_T + σ²_R/n_R, Casella ve Berger (2002) Teorem 5.2.6(b)
 
 ## 3. Denklemler
 $$ f_2 = 50\,\log_{10}\left\{\left[1 + \frac{1}{P}\sum_{t=1}^{P}(\bar R_t - \bar T_t)^2\right]^{-1/2} \cdot 100\right\} = 100 - 25\log_{10}\left(1 + \frac{D}{P}\right) $$ :: EMA CPMP/EWP/QWP/1401/98 Rev. 1 (2010) Ek I; ikinci biçim cebirsel eşdeğer
@@ -65,6 +65,7 @@ Noce ve ark. (2020) veri seti (Urun1 test, Urun2 referans; 12 ünite), EMA ön a
 - Hyndman RJ, Fan Y. Sample quantiles in statistical packages. Am Stat 1996;50:361–365.
 - Noce L, Gwaza L, Mangas-Sanjuan V, Garcia-Arieta A. Comparison of free software platforms for the calculation of the 90% confidence interval of f2 similarity factor by bootstrap analysis. Eur J Pharm Sci 2020;146:105259.
 - Xu Z ve ark. Comput Methods Programs Biomed 2021;212:106449.
+- Casella G, Berger RL. Statistical Inference. 2. baskı. Duxbury, 2002 (CRC yeniden basımı).
 - Gong X. FDA/OGD sunumu, SBIA 2020 (resmî FDA politikası değil).
 
 @@en
@@ -78,7 +79,7 @@ Are two dissolution profiles (test T and reference R) similar? f2 is a logarithm
 - $\bar R_t, \bar T_t$: mean percent dissolved at time t; $S^2_{T,t}, S^2_{R,t}$: unit variances.
 - D: sum of squared mean differences; V: sum of the variances of the means.
 
-$$ D = \sum_{t=1}^{P} (\bar T_t - \bar R_t)^2, \qquad V = \sum_{t=1}^{P}\left(\frac{S^2_{T,t}}{n_T} + \frac{S^2_{R,t}}{n_R}\right) $$ :: EMA PKWP/BSWP Q&A 3.11 (for n_T = n_R); the n_T ≠ n_R generalisation is a FarmaStatR derivation
+$$ D = \sum_{t=1}^{P} (\bar T_t - \bar R_t)^2, \qquad V = \sum_{t=1}^{P}\left(\frac{S^2_{T,t}}{n_T} + \frac{S^2_{R,t}}{n_R}\right) $$ :: EMA PKWP/BSWP Q&A 3.11 and Xu et al. (2021) Eq. (9)–(10) (for n_T = n_R); n_T ≠ n_R: for independent means Var(T̄_t − R̄_t) = σ²_T/n_T + σ²_R/n_R, Casella and Berger (2002) Theorem 5.2.6(b)
 
 ## 3. Equations
 $$ f_2 = 50\,\log_{10}\left\{\left[1 + \frac{1}{P}\sum_{t=1}^{P}(\bar R_t - \bar T_t)^2\right]^{-1/2} \cdot 100\right\} = 100 - 25\log_{10}\left(1 + \frac{D}{P}\right) $$ :: EMA CPMP/EWP/QWP/1401/98 Rev. 1 (2010) Appendix I; the second form is algebraically equal
@@ -134,4 +135,5 @@ Data set of Noce et al. (2020) (Urun1 test, Urun2 reference; 12 units), EMA pres
 - Hyndman RJ, Fan Y. Sample quantiles in statistical packages. Am Stat 1996;50:361–365.
 - Noce L, Gwaza L, Mangas-Sanjuan V, Garcia-Arieta A. Comparison of free software platforms for the calculation of the 90% confidence interval of f2 similarity factor by bootstrap analysis. Eur J Pharm Sci 2020;146:105259.
 - Xu Z et al. Comput Methods Programs Biomed 2021;212:106449.
+- Casella G, Berger RL. Statistical Inference. 2nd ed. Duxbury, 2002 (CRC reprint).
 - Gong X. FDA/OGD presentation, SBIA 2020 (not official FDA policy).

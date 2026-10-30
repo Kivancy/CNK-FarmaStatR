@@ -19,12 +19,12 @@ Benzerlik sınırı. L1, her zaman noktasında aynı izin verilen fark $D_g$ (EM
 
 $$ R_D = \sqrt{\mathbf g^{\top}\mathbf S^{-1}\mathbf g}, \qquad \mathbf g = D_g\,\mathbf 1 $$ :: Tsong ve ark. (1996) s. 1109 (L1)
 
-- L2a: $D_g$, referans lot çiftleri arasındaki en büyük mutlak ortalama farktır; sonra L1 formülü uygulanır [FarmaStatR türetimi; FDA 1997 V.B adım 1].
+- L2a: $D_g$, referans lot çiftleri arasındaki en büyük mutlak ortalama farktır; sonra L1 formülü uygulanır [Tsong ve ark. (1996) s. 1106 ve s. 1109: D_g, referans serilerinden ampirik olarak belirlenir; tek zaman noktası örneğinde seriler arası en büyük fark (%7,5); FDA 1997 V.B adım 1].
 - L2b: $R_D$, referans lot çiftleri arasındaki en büyük MSD’dir (her çift kendi birleştirilmiş kovaryansıyla) [FarmaStatR türetimi; FDA 1997 V.B adım 1’in doğrudan okuması].
 
 Zaman noktası bazında kontrol (L3): güven elipsoidinin her eksendeki uç noktası $D_g$’yi aşmamalı:
 
-$$ |d_t| + r\sqrt{S_{tt}} \le D_g \quad \text{her } t \text{ için} $$ :: FarmaStatR türetimi; EMA (2010) Ek I “%10’dan büyük olmayan fark”
+$$ |d_t| + r\sqrt{S_{tt}} \le D_g \quad \text{her } t \text{ için} $$ :: Tsong ve ark. (1996) s. 1106 (düzgün yerel benzerlik: her zaman noktasında izin verilen fark); EMA (2010) Ek I “%10’dan büyük olmayan fark”; sol taraf, güven elipsoidinin t eksenindeki en uç noktasıdır (Cauchy–Schwarz ile cebirle)
 
 ## 4. Karar kuralı
 $$ D_M^{\,u} \le R_D \;\Rightarrow\; \text{benzer} $$ :: FDA (1997) V.B adım 4
@@ -46,7 +46,7 @@ Tsong ve ark. (1996) verisi (TEST ve REF, 6’şar tablet, 8 zaman noktası; ref
 
 ## 7. Sınırlar
 - Küçük örneklemde kovaryans tahmini kararsızdır; zaman noktası sayısını ünite sayısına göre sınırlı tutun.
-- L2a, L2b ve L3 FarmaStatR türetimidir; raporda böyle etiketlenir.
+- L2a ve L3, Tsong ve ark. (1996) tanımlarına dayanır; L2b’nin çift başına MSD okuması FarmaStatR türetimidir ve raporda böyle etiketlenir.
 - Araştırma ve eğitim amaçlıdır; GxP ortamında valide edilmiş sistem değildir.
 
 ## 8. Kaynakça
@@ -75,12 +75,12 @@ Similarity limit. L1, with the same allowed difference $D_g$ at every time point
 
 $$ R_D = \sqrt{\mathbf g^{\top}\mathbf S^{-1}\mathbf g}, \qquad \mathbf g = D_g\,\mathbf 1 $$ :: Tsong et al. (1996) p. 1109 (L1)
 
-- L2a: $D_g$ is the largest absolute mean difference between pairs of reference lots; then the L1 formula is applied [FarmaStatR derivation; FDA 1997 V.B step 1].
+- L2a: $D_g$ is the largest absolute mean difference between pairs of reference lots; then the L1 formula is applied [Tsong et al. (1996) pp. 1106 and 1109: D_g is set empirically from the reference batches; in the single time point example, the largest batch-to-batch difference (7.5%); FDA 1997 V.B step 1].
 - L2b: $R_D$ is the largest MSD between pairs of reference lots (each pair with its own pooled covariance) [FarmaStatR derivation; literal reading of FDA 1997 V.B step 1].
 
 Check per time point (L3): the extreme point of the confidence ellipsoid on every axis should not exceed $D_g$:
 
-$$ |d_t| + r\sqrt{S_{tt}} \le D_g \quad \text{for every } t $$ :: FarmaStatR derivation; EMA (2010) Appendix I “not greater than a 10% difference”
+$$ |d_t| + r\sqrt{S_{tt}} \le D_g \quad \text{for every } t $$ :: Tsong et al. (1996) p. 1106 (uniform local similarity: an allowed difference at each time point); EMA (2010) Appendix I “not greater than a 10% difference”; the left side is the extreme point of the confidence ellipsoid on axis t (algebra, Cauchy–Schwarz)
 
 ## 4. Decision rule
 $$ D_M^{\,u} \le R_D \;\Rightarrow\; \text{similar} $$ :: FDA (1997) V.B step 4
@@ -102,7 +102,7 @@ Data of Tsong et al. (1996) (TEST and REF, 6 tablets each, 8 time points; refere
 
 ## 7. Limits
 - With small samples the covariance estimate is unstable; keep the number of time points small relative to the number of units.
-- L2a, L2b and L3 are FarmaStatR derivations and are labelled so in the report.
+- L2a and L3 rest on the definitions of Tsong et al. (1996); the pairwise MSD reading of L2b is a FarmaStatR derivation and is labelled so in the report.
 - For research and education; not a system validated for GxP environments.
 
 ## 8. References
