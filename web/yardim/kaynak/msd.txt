@@ -24,7 +24,7 @@ $$ R_D = \sqrt{\mathbf g^{\top}\mathbf S^{-1}\mathbf g}, \qquad \mathbf g = D_g\
 
 Zaman noktası bazında kontrol (L3): güven elipsoidinin her eksendeki uç noktası $D_g$’yi aşmamalı:
 
-$$ |d_t| + r\sqrt{S_{tt}} \le D_g \quad \text{her } t \text{ için} $$ :: Tsong ve ark. (1996) s. 1106 (düzgün yerel benzerlik: her zaman noktasında izin verilen fark); EMA (2010) Ek I “%10’dan büyük olmayan fark”; sol taraf, güven elipsoidinin t eksenindeki en uç noktasıdır (Cauchy–Schwarz ile cebirle)
+$$ |d_t| + r\sqrt{S_{tt}} \le D_g \quad \text{her } t \text{ için} $$ :: Tsong ve ark. (1996) s. 1106 (düzgün yerel benzerlik: her zaman noktasında izin verilen fark); EMA (2010) Ek I “%10’dan büyük olmayan fark”; sol taraf, Johnson ve Wichern (2007) Sonuç 6.3, s. 288’deki eşzamanlı güven aralığının t bileşeninin uç noktasıdır
 
 ## 4. Karar kuralı
 $$ D_M^{\,u} \le R_D \;\Rightarrow\; \text{benzer} $$ :: FDA (1997) V.B adım 4
@@ -52,6 +52,7 @@ Tsong ve ark. (1996) verisi (TEST ve REF, 6’şar tablet, 8 zaman noktası; ref
 ## 8. Kaynakça
 - FDA. Dissolution Testing of Immediate Release Solid Oral Dosage Forms, 1997; Bölüm V.B.
 - Tsong Y, Hammerstrom T, Sathe P, Shah VP. Statistical assessment of mean differences between two dissolution data sets. Drug Inf J 1996;30:1105–1112.
+- Johnson RA, Wichern DW. Applied Multivariate Statistical Analysis. 6. baskı. Pearson Prentice Hall, 2007.
 - EMA. CPMP/EWP/QWP/1401/98 Rev. 1, 2010; Ek I. EMA PKWP/BSWP Q&A 3.9.
 
 @@en
@@ -80,7 +81,7 @@ $$ R_D = \sqrt{\mathbf g^{\top}\mathbf S^{-1}\mathbf g}, \qquad \mathbf g = D_g\
 
 Check per time point (L3): the extreme point of the confidence ellipsoid on every axis should not exceed $D_g$:
 
-$$ |d_t| + r\sqrt{S_{tt}} \le D_g \quad \text{for every } t $$ :: Tsong et al. (1996) p. 1106 (uniform local similarity: an allowed difference at each time point); EMA (2010) Appendix I “not greater than a 10% difference”; the left side is the extreme point of the confidence ellipsoid on axis t (algebra, Cauchy–Schwarz)
+$$ |d_t| + r\sqrt{S_{tt}} \le D_g \quad \text{for every } t $$ :: Tsong et al. (1996) p. 1106 (uniform local similarity: an allowed difference at each time point); EMA (2010) Appendix I “not greater than a 10% difference”; the left side is the end point of component t of the simultaneous confidence interval in Johnson and Wichern (2007) Result 6.3, p. 288
 
 ## 4. Decision rule
 $$ D_M^{\,u} \le R_D \;\Rightarrow\; \text{similar} $$ :: FDA (1997) V.B step 4
@@ -108,4 +109,5 @@ Data of Tsong et al. (1996) (TEST and REF, 6 tablets each, 8 time points; refere
 ## 8. References
 - FDA. Dissolution Testing of Immediate Release Solid Oral Dosage Forms, 1997; Section V.B.
 - Tsong Y, Hammerstrom T, Sathe P, Shah VP. Statistical assessment of mean differences between two dissolution data sets. Drug Inf J 1996;30:1105–1112.
+- Johnson RA, Wichern DW. Applied Multivariate Statistical Analysis. 6th ed. Pearson Prentice Hall, 2007.
 - EMA. CPMP/EWP/QWP/1401/98 Rev. 1, 2010; Appendix I. EMA PKWP/BSWP Q&A 3.9.

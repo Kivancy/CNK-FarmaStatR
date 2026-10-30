@@ -27,7 +27,7 @@ $$ \alpha_1 = \Phi\left(z_0 + \frac{z_0 + z_\alpha}{1 - a(z_0 + z_\alpha)}\right
 
 Alt sınırın Monte Carlo standart hatası, sıra istatistiği (binom) yöntemiyle:
 
-$$ \text{MCSE} \approx \frac{\hat Q_{(Bp + z\sqrt{Bp(1-p)})} - \hat Q_{(Bp - z\sqrt{Bp(1-p)})}}{2z}, \quad p = 0{,}05 $$ :: FarmaStatR türetimi (f2_boot.R)
+$$ \text{MCSE} \approx \frac{\hat Q_{(Bp + z\sqrt{Bp(1-p)})} - \hat Q_{(Bp - z\sqrt{Bp(1-p)})}}{2z}, \quad p = 0{,}05 $$ :: Conover (1999) §3.2 Yöntem B, Denk. (21)–(22), s. 144 (kantilin sıra istatistiği güven aralığı); aralık genişliğinin 2z’ye bölünmesi normal yaklaşımla standart hatayı verir (f2_boot.R)
 
 ## 4. Karar kuralı
 $$ \hat Q_{0,05}\left(E(f_2)^*\right) \ge 50 \;\Rightarrow\; \text{benzer} $$ :: EMA PKWP/BSWP Q&A 3.11
@@ -63,6 +63,7 @@ Noce ve ark. (2020) veri seti (Urun1 test, Urun2 referans; 12 ünite), EMA ön a
 - FDA. Dissolution Testing of Immediate Release Solid Oral Dosage Forms, 1997; Bölüm V.A.
 - Ma M-C, Wang BBC, Liu J-P, Tsong Y. Assessment of similarity between dissolution profiles. J Biopharm Stat 2000;10:229–249.
 - Hyndman RJ, Fan Y. Sample quantiles in statistical packages. Am Stat 1996;50:361–365.
+- Conover WJ. Practical Nonparametric Statistics. 3. baskı. Wiley, 1999.
 - Noce L, Gwaza L, Mangas-Sanjuan V, Garcia-Arieta A. Comparison of free software platforms for the calculation of the 90% confidence interval of f2 similarity factor by bootstrap analysis. Eur J Pharm Sci 2020;146:105259.
 - Xu Z ve ark. Comput Methods Programs Biomed 2021;212:106449.
 - Casella G, Berger RL. Statistical Inference. 2. baskı. Duxbury, 2002 (CRC yeniden basımı).
@@ -97,7 +98,7 @@ $$ \alpha_1 = \Phi\left(z_0 + \frac{z_0 + z_\alpha}{1 - a(z_0 + z_\alpha)}\right
 
 Monte Carlo standard error of the lower bound, by the order-statistic (binomial) method:
 
-$$ \text{MCSE} \approx \frac{\hat Q_{(Bp + z\sqrt{Bp(1-p)})} - \hat Q_{(Bp - z\sqrt{Bp(1-p)})}}{2z}, \quad p = 0.05 $$ :: FarmaStatR derivation (f2_boot.R)
+$$ \text{MCSE} \approx \frac{\hat Q_{(Bp + z\sqrt{Bp(1-p)})} - \hat Q_{(Bp - z\sqrt{Bp(1-p)})}}{2z}, \quad p = 0.05 $$ :: Conover (1999) §3.2 Method B, Eq. (21)–(22), p. 144 (order-statistic confidence interval for a quantile); dividing the interval width by 2z gives the standard error under the normal approximation (f2_boot.R)
 
 ## 4. Decision rule
 $$ \hat Q_{0.05}\left(E(f_2)^*\right) \ge 50 \;\Rightarrow\; \text{similar} $$ :: EMA PKWP/BSWP Q&A 3.11
@@ -133,6 +134,7 @@ Data set of Noce et al. (2020) (Urun1 test, Urun2 reference; 12 units), EMA pres
 - FDA. Dissolution Testing of Immediate Release Solid Oral Dosage Forms, 1997; Section V.A.
 - Ma M-C, Wang BBC, Liu J-P, Tsong Y. Assessment of similarity between dissolution profiles. J Biopharm Stat 2000;10:229–249.
 - Hyndman RJ, Fan Y. Sample quantiles in statistical packages. Am Stat 1996;50:361–365.
+- Conover WJ. Practical Nonparametric Statistics. 3rd ed. Wiley, 1999.
 - Noce L, Gwaza L, Mangas-Sanjuan V, Garcia-Arieta A. Comparison of free software platforms for the calculation of the 90% confidence interval of f2 similarity factor by bootstrap analysis. Eur J Pharm Sci 2020;146:105259.
 - Xu Z et al. Comput Methods Programs Biomed 2021;212:106449.
 - Casella G, Berger RL. Statistical Inference. 2nd ed. Duxbury, 2002 (CRC reprint).

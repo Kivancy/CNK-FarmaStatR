@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 2.09 · Son güncelleme: 30.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 2.10 · Son güncelleme: 30.10.2026"
 ---
 
 # Bu belge hakkında
@@ -2133,6 +2133,25 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Okuma kılavuzu:** K-8 satırına kitap atfı eklendi.
 - **Sıradaki iş (proje sahibi):** K-8 kararı (B-L2b ekrandan çıkarılsın mı); commit.
 
+## G-113 · Beş yeni kaynak okundu (Langenbucher, Thompson, Ting, Conover, Hogg); notlara işlendi; A-11 kapandı — 30.10.2026
+
+- **Depo:** G-112 commit edildi; GitHub Actions başarılı (proje sahibi).
+- **Proje sahibinin sorusu ve kararı:** istenen kaynakların künyeleri (DOI'li) istendi; Claude doğrulayarak verdi. Proje sahibi beş dosyayı `kaynaklar/` klasörüne koydu: "tamamı istediklerinin orada var. incele lütfen". Johnson ve Wichern 6. baskı başka bir kopyayla değiştirildi (794 sayfa, tek sayfa düzeni); G-112'deki sayfa numaraları bu kopyada da aynı (Sonuç 4.8 s. 165, Sonuç 6.3 s. 288).
+- **Okunan kaynaklar ve eşleme (Claude):**
+  - Thompson WA Jr. 1962, Ann Math Stat 33:273–289 (taranmış, OCR ile okundu). Özet s. 273: ağaç yapılı beklenen kareler ortalamalarında en küçük kareler ortalaması kök değilse bir öncekiyle havuzlanır; Denk. (3.4) s. 278: havuzlanmış kareler ortalaması serbestlik dereceleriyle ağırlıklı ortalamadır. EMA (c) yolunun formülüyle aynı; atıf artık doğrudan (G-110'da Searle üzerinden).
+  - Langenbucher F. 1972, J Pharm Pharmacol 24:979–981. Denk. (1) ve s. 979: a = T_d^b, T_d %63,2 çözünme zamanı. Weibull notundaki ln T_d = −ln α/β ilişkisi bundan çıkar. (ln T_d, ln β)'nin birlikte varsayılan olması "FarmaStatR seçimi" olarak etiketli kaldı (K-7).
+  - Conover WJ. 1999, Practical Nonparametric Statistics, 3. baskı (taranmış, OCR ile okundu). §3.2 Yöntem B, Denk. (21)–(22), s. 144: kantil için sıra istatistiği güven aralığı r*, s* = np* ± z√[np*(1 − p*)]. f2 notundaki MCSE formülü bu aralığın genişliğinin 2z'ye bölünmesidir; etiket kaldırıldı (K-1 kapandı).
+  - Ting N, Burdick RK, Graybill FA, Jeyaratnam S, Lu TFC. 1990, J Stat Comput Simul 35:135–143. İşaret sınırsız varyans bileşeni doğrusal birleşimine Howe (1974) yapısında güven sınırları; PBE üst sınırının (Hyslop 2000, PSG 020929) dayandığı yapı. FSR-TN-PBE-01'deki "birincil metin bulunamadı" notu bir sonraki revizyonda kaldırılacak.
+  - Hogg RV, McKean JW, Craig AT. 2019, Introduction to Mathematical Statistics, 8. baskı. Örnek 2.8.1, Denk. (2.8.6), s. 152: Var(X̄) = σ²/n; Sonuç 3.3.1, s. 180: bağımsız χ²'lerin toplamı; Sonuç 3.4.1, s. 193: X̄ ~ N(μ, σ²/n). Casella ve Berger atıflarıyla aynı sonuçlar; notlara eklenmedi (gerekirse ikinci atıf).
+  - Johnson ve Wichern Sonuç 6.3 (s. 288): MSD L3 sınırı |d_t| + r√S_tt eşzamanlı aralığın t bileşenidir; G-110'daki "Cauchy–Schwarz ile cebirle" yerine bu atıf kondu.
+- **Notlar (TR ve EN):** EMA ve simülasyon (Thompson doğrudan), f2 (Conover), Weibull (Langenbucher), MSD (Johnson ve Wichern). Kaynakçalar eklendi.
+- **Düzeltme (G-110'a):** G-110'da simülasyon notunun İngilizce kaynakçasına Chen 2019 ve Searle 2006 eklenmemişti; eklendi. TR ve EN kaynakça sayıları artık her notta eşit.
+- **Etiket durumu:** "FarmaStatR türetimi" ifadesi: EMA 0, f2 0, MSD 2, Weibull 1, simülasyon 3, PBE 0 (19 → 6). Denklem etiketleri (Y-3): EMA 0, f2 0, MSD 0, Weibull 3 (ikisi "FarmaStatR seçimi"), simülasyon 4.
+- **Kontroller:** derleme hatasız; PBE notu ve dizin bayt bayt aynı; yardım kabulü kuru koşusu 51/51 (`kuru/p7_kabul_kuru_v0.6.*`). Hesap, sayılar ve ekran değişmedi.
+- **A-11:** eksik birincil kaynaklar (Ting ve ark. 1990, Langenbucher 1972) okundu; kapandı.
+- **Okuma kılavuzu:** K-1 kapandı; K-7 sorusu "(ln T_d, ln β) mi, (ln α, ln β) mi" olarak güncellendi.
+- **Sıradaki iş (proje sahibi):** commit; K-2 … K-10 kararları.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -2149,9 +2168,9 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-13 | Teknik not v0.7: D1–D13 (G-38) | Tamam: v0.7 (G-39) |
 | A-14 | Tip I uyum ölçütü kararı; teknik not v0.8 (rapor 02) ve Aşama 2 sonuçları; yeniden üretim paketi (G-40) | Tamam: ölçüt (KK-38), v0.8, paket (G-41), Aşama 2 sonuçları v0.9 (G-42); v0.9 onaylandı, hedefli deney ve v0.10 (G-43); 12.10 onay bekliyor; v0.10 onaylandı, v0.11 (G-48) |
 | A-9 | Dışa açılan fonksiyonların gözden geçirilmesi (şu an tümü açık; `exportPattern`) ve dissolüsyon köprüsü | Dissolüsyon köprüsü pakette (`inst/kopru/dis_kopru.R`, G-94); dışa açılan fonksiyonlar v1.0.0 öncesi |
-| A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | Büyük ölçüde tamam (G-21); eksik: Ting ve ark. 1990, Langenbucher 1972 |
+| A-11 | Birincil kaynakların temini ve incelenmesi (KK-25; liste G-20) | **Tamam:** büyük ölçüde (G-21); Ting ve ark. 1990 ve Langenbucher 1972 okundu (G-113) |
 | A-15 | Platform: tasarım notu FSR-TN-PLT-01, P0 spesifikasyonu, prototip (P1) ve P2–P6 | **Tamam:** P0 … P6 kapandı (P5: KK-58, G-92; P6: resmî kabul 78/78, FSR-TN-PLT-06 v0.2 ve FSR-VAL-PLT-1 1.1 onaylandı, KK-62, G-97). Yayın adımları lisanstan sonra (KK-61) |
-| A-16 | Yardım sistemi (FSR-TN-PLT-07; KK-63) | Uygulama tamam (G-98); resmî kabul 48/48 GEÇTİ (G-99); v0.2: EMA notu ve ölçüt revizyonu, kuru 51/51 (G-100), resmî 51/51 (G-102); FSR-TN-PLT-07 v0.2 onaylandı (KK-65, G-109); 11 etiket kaynağa bağlandı, okuma kılavuzu K-1 … K-10 (G-110); proje sahibinin kararları bekliyor |
+| A-16 | Yardım sistemi (FSR-TN-PLT-07; KK-63) | Uygulama tamam (G-98); resmî kabul 48/48 GEÇTİ (G-99); v0.2: EMA notu ve ölçüt revizyonu, kuru 51/51 (G-100), resmî 51/51 (G-102); FSR-TN-PLT-07 v0.2 onaylandı (KK-65, G-109); 11 etiket kaynağa bağlandı, okuma kılavuzu K-1 … K-10 (G-110); K-8 bulgusu (G-111, G-112); K-1 kapandı, etiket 19 → 6 (G-113); proje sahibinin kararları bekliyor |
 | A-17 | EMA %90 GA analizi (FSR-TN-PLT-08; KK-64) | Uygulama ve kuru koşu 44/44 (G-100); resmî kabul 44/44, FSR-TN-PLT-08 v0.2 (G-102); **Tamam:** FSR-TN-PLT-08 v0.4 onaylandı (KK-65, G-109) |
 | A-2 | Proje dosyalarının temizlenmesi: eski günlük, yol haritası, app.R, PBE_webr HTML'leri, GMP kılavuzları kaldırılır | Proje sahibi |
 
@@ -2159,7 +2178,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 2.09 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 2.10 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.1 | 1.0 onaylı; beş dosya sabitlendi (G-47). 1.1: TC-S11 (dışa aktarılan betik), onaylandı (KK-53, G-76) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.7 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68); v0.7: Tablo 8.1 ve 10.1 (KK-56, KK-57, KK-59; G-94), onay P6 kapanışında |

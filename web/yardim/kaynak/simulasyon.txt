@@ -25,7 +25,7 @@ $$ H_0:\ \mathrm{GMR} \le 0{,}85 \ \text{ya da}\ \mathrm{GMR} \ge 1{,}18, \qquad
 EMA %90 güven aralığının seri ve evre yapısıyla nasıl hesaplanacağı kılavuzda tanımlı değildir; platform üç aday yolu birlikte hesaplar (birim ortalamaları $\bar Y_{ijk}$ üzerinden):
 
 $$ (a):\ SE^2 = \sum_k \frac{s^2_{\text{birim},k}}{n_k\ell_k}, \qquad (b):\ SE^2 = \sum_k \frac{s^2_{\text{seri},k}}{\ell_k} $$ :: Chen ve ark. (2019) Tablo II Yöntem 3 (“Log-Can” ABE) ve Yöntem 4 (“Log-Batch” ABE); KK-27 (Welch–Satterthwaite serbestlik derecesi)
-- (c): seri ve birim rastgele, evre sabit karma model (REML); dengeli tasarımda kapalı biçimle çözülür, SAS PROC MIXED ile karşılaştırılmıştır [negatif tahminde Thompson (1962) havuzlama kuralı, Searle ve ark. (2006) §4.4 (iii), s. 130 ve §6.2, s. 235; FSR-TN-PBE-01 Bölüm 5.3].
+- (c): seri ve birim rastgele, evre sabit karma model (REML); dengeli tasarımda kapalı biçimle çözülür, SAS PROC MIXED ile karşılaştırılmıştır [negatif tahminde Thompson (1962) havuzlama kuralı, Özet s. 273 ve Denk. (3.4) s. 278; Searle ve ark. (2006) §4.4 (iii), s. 130 ve §6.2, s. 235; FSR-TN-PBE-01 Bölüm 5.3].
 - Üç yolun denklemleri ve kendi verinizle EMA analizi (PBE ve EMA analizi sekmesi): [Yöntem notu: EMA %90 GA](ema.html).
 
 Performans (her yöntem için nsim tekrarda pozitif karar oranı) ve Monte Carlo standart hatası:
@@ -69,6 +69,7 @@ $$ \text{Kural B: Kural A, ek olarak } \ell \ge 3,\ n \ge 10\ \text{ve tip I hat
 - Morris TP, White IR, Crowther MJ. Using simulation studies to evaluate statistical methods. Stat Med 2019;38:2074–2102.
 - Chen S, Morgan B, Beresford H, Burmeister Getz E, Christopher D, Långström G, Strickland H, Wiggenhorn C, Lyapustina S. Performance of the population bioequivalence (PBE) statistical test with impactor sized mass data. AAPS PharmSciTech 2019;20:296. doi:10.1208/s12249-019-1507-8
 - Searle SR, Casella G, McCulloch CE. Variance Components. Wiley-Interscience, 2006.
+- Thompson WA Jr. The problem of negative estimates of variance components. Ann Math Stat 1962;33:273–289. doi:10.1214/aoms/1177704731
 - FSR-TN-PBE-01 v0.11; FSR-TN-PLT-05 v0.3; FSR-VAL-SIM-1 v1.1.
 
 @@en
@@ -98,7 +99,7 @@ $$ H_0:\ \mathrm{GMR} \le 0.85 \ \text{or}\ \mathrm{GMR} \ge 1.18, \qquad \text{
 The guideline does not define how the EMA 90% confidence interval should handle the batch and stage structure; the platform computes three candidate variants together (on unit means $\bar Y_{ijk}$):
 
 $$ (a):\ SE^2 = \sum_k \frac{s^2_{\text{unit},k}}{n_k\ell_k}, \qquad (b):\ SE^2 = \sum_k \frac{s^2_{\text{batch},k}}{\ell_k} $$ :: Chen et al. (2019) Table II Method 3 (“Log-Can” ABE) and Method 4 (“Log-Batch” ABE); KK-27 (Welch–Satterthwaite degrees of freedom)
-- (c): mixed model with random batch and unit and fixed stage (REML); solved in closed form for the balanced design and compared with SAS PROC MIXED [for a negative estimate, the pooling rule of Thompson (1962), Searle et al. (2006) §4.4 (iii), p. 130 and §6.2, p. 235; FSR-TN-PBE-01 Section 5.3].
+- (c): mixed model with random batch and unit and fixed stage (REML); solved in closed form for the balanced design and compared with SAS PROC MIXED [for a negative estimate, the pooling rule of Thompson (1962), Summary p. 273 and Eq. (3.4) p. 278; Searle et al. (2006) §4.4 (iii), p. 130 and §6.2, p. 235; FSR-TN-PBE-01 Section 5.3].
 - The equations of the three paths and EMA analysis of your own data (PBE and EMA analysis tab): [Method note: EMA 90% CI](ema.html?lang=en).
 
 Performance (rate of positive decisions over nsim replicates, per method) and Monte Carlo standard error:
@@ -140,4 +141,7 @@ FDA's type I error boundary for σR = 0.12, ρ = 1 (σT = σR):
 - FDA. Bioavailability and Bioequivalence Studies for Nasal Aerosols and Nasal Sprays for Local Action (June 1999 draft) and Statistical Information of 18 August 1999; IX.B.
 - EMA. Guideline on the requirements for demonstrating therapeutic equivalence between orally inhaled products, CPMP/EWP/4151/00 Rev. 2, 2025; §5.1.
 - Morris TP, White IR, Crowther MJ. Using simulation studies to evaluate statistical methods. Stat Med 2019;38:2074–2102.
+- Chen S, Morgan B, Beresford H, Burmeister Getz E, Christopher D, Långström G, Strickland H, Wiggenhorn C, Lyapustina S. Performance of the population bioequivalence (PBE) statistical test with impactor sized mass data. AAPS PharmSciTech 2019;20:296. doi:10.1208/s12249-019-1507-8
+- Searle SR, Casella G, McCulloch CE. Variance Components. Wiley-Interscience, 2006.
+- Thompson WA Jr. The problem of negative estimates of variance components. Ann Math Stat 1962;33:273–289. doi:10.1214/aoms/1177704731
 - FSR-TN-PBE-01 v0.11; FSR-TN-PLT-05 v0.3; FSR-VAL-SIM-1 v1.1.

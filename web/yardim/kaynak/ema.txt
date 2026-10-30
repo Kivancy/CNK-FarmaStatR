@@ -27,7 +27,7 @@ Yol (c), seri ve birimi rastgele etkili karma model (REML). Dengeli tasarımda �
 
 $$ MS_{\mathrm{seri}} = \frac{n m \sum_j (\bar B_j - \bar g)^2}{\ell - 1}, \qquad MS_{\mathrm{birim}} = \frac{m \sum_j \sum_i (\bar U_{ij} - \bar B_j)^2}{\ell (n - 1)} $$ :: Searle, Casella ve McCulloch (2006) Bölüm 4 (dengeli tasarım)
 $$ MS_{\mathrm{art}} = \frac{\sum_j \sum_i \sum_s (X_{ijs} - \bar U_{ij} - \bar S_s + \bar g)^2}{(\ell n - 1)(m - 1)} $$ :: Searle, Casella ve McCulloch (2006) Bölüm 4 (dengeli tasarım)
-$$ (\hat\theta_1, \hat\theta_2, \hat\theta_3) = \underset{\theta_1 \ge \theta_2 \ge \theta_3}{\mathrm{arg\,min}} \sum_{t=1}^{3} \mathrm{sd}_t\,(MS_t - \theta_t)^2, \qquad v^{(c)} = \frac{\hat\theta_1}{\ell n m} $$ :: Searle, Casella ve McCulloch (2006) Bölüm 3.8 (dengeli veride REML, sınırlı çözüm); negatif tahminde kareler ortalamasının bir önceki tabakayla havuzlanması: Thompson (1962) kuralı, Searle ve ark. (2006) §4.4 (iii), s. 130 ve §6.2, s. 235
+$$ (\hat\theta_1, \hat\theta_2, \hat\theta_3) = \underset{\theta_1 \ge \theta_2 \ge \theta_3}{\mathrm{arg\,min}} \sum_{t=1}^{3} \mathrm{sd}_t\,(MS_t - \theta_t)^2, \qquad v^{(c)} = \frac{\hat\theta_1}{\ell n m} $$ :: Searle, Casella ve McCulloch (2006) Bölüm 3.8 (dengeli veride REML, sınırlı çözüm); negatif tahminde kareler ortalamasının bir önceki tabakayla havuzlanması: Thompson (1962) kuralı, Özet s. 273 ve Denk. (3.4) s. 278 (serbestlik dereceleriyle ağırlıklı havuzlanmış kareler ortalaması); Searle ve ark. (2006) §4.4 (iii), s. 130 ve §6.2, s. 235
 $$ \nu^{(c)} = \text{seri tabakasıyla havuzlanan tabakaların serbestlik dereceleri toplamı} $$ :: havuzlanan tabakaların kareler toplamı, havuzlanan bileşenler sıfırken bağımsız ölçeklenmiş χ²’lerin toplamıdır ve serbestlik dereceleri toplanır: Casella ve Berger (2002) Lemma 5.3.2(b) (FSR-TN-PBE-01 Bölüm 5.3); m = 1’de PROC MIXED sınırlı REML + DDFM=SATTERTHWAITE ile aynı (SAS kontrolü, FSR-LOG-01 G-105)
 
 Havuzlama olmazsa $v^{(c)} = MS_{\mathrm{seri}}/(\ell n m) = v^{(b)}$ ve $\nu^{(c)} = \ell - 1$; (c) yolu (b) ile aynıdır. $\bar S_s$ evre ortalamasıdır; m = 1 ise artık tabakası yoktur. Güven aralığı (her yol için):
@@ -69,6 +69,7 @@ Aynı veride FDA PBE sağlanır ($H_\eta$ = −0,031499). Fark öğreticidir: PB
 ## 8. Kaynakça
 - EMA. Guideline on the requirements for demonstrating therapeutic equivalence between orally inhaled products (OIP) for asthma and COPD, CPMP/EWP/4151/00 Rev. 2. 2025; Bölüm 5.1 ölçüt 8.
 - Searle SR, Casella G, McCulloch CE. Variance Components. Wiley-Interscience, 2006.
+- Thompson WA Jr. The problem of negative estimates of variance components. Ann Math Stat 1962;33:273–289. doi:10.1214/aoms/1177704731
 - Satterthwaite FE. An approximate distribution of estimates of variance components. Biometrics Bulletin 1946;2:110–114.
 - Casella G, Berger RL. Statistical Inference. 2. baskı. Duxbury, 2002 (CRC yeniden basımı).
 - Stroup WW, Milliken GA, Claassen EA, Wolfinger RD. SAS for Mixed Models: Introduction and Basic Applications. SAS Institute, 2018.
@@ -107,7 +108,7 @@ Path (c), mixed model with random batch and unit (REML). Mean squares of the thr
 
 $$ MS_{\mathrm{batch}} = \frac{n m \sum_j (\bar B_j - \bar g)^2}{\ell - 1}, \qquad MS_{\mathrm{unit}} = \frac{m \sum_j \sum_i (\bar U_{ij} - \bar B_j)^2}{\ell (n - 1)} $$ :: Searle, Casella and McCulloch (2006) Chapter 4 (balanced design)
 $$ MS_{\mathrm{res}} = \frac{\sum_j \sum_i \sum_s (X_{ijs} - \bar U_{ij} - \bar S_s + \bar g)^2}{(\ell n - 1)(m - 1)} $$ :: Searle, Casella and McCulloch (2006) Chapter 4 (balanced design)
-$$ (\hat\theta_1, \hat\theta_2, \hat\theta_3) = \underset{\theta_1 \ge \theta_2 \ge \theta_3}{\mathrm{arg\,min}} \sum_{t=1}^{3} \mathrm{df}_t\,(MS_t - \theta_t)^2, \qquad v^{(c)} = \frac{\hat\theta_1}{\ell n m} $$ :: Searle, Casella and McCulloch (2006) Section 3.8 (REML for balanced data, constrained solution); pooling a mean square with the preceding stratum when an estimate is negative: the rule of Thompson (1962), Searle et al. (2006) §4.4 (iii), p. 130 and §6.2, p. 235
+$$ (\hat\theta_1, \hat\theta_2, \hat\theta_3) = \underset{\theta_1 \ge \theta_2 \ge \theta_3}{\mathrm{arg\,min}} \sum_{t=1}^{3} \mathrm{df}_t\,(MS_t - \theta_t)^2, \qquad v^{(c)} = \frac{\hat\theta_1}{\ell n m} $$ :: Searle, Casella and McCulloch (2006) Section 3.8 (REML for balanced data, constrained solution); pooling a mean square with the preceding stratum when an estimate is negative: the rule of Thompson (1962), Summary p. 273 and Eq. (3.4) p. 278 (degrees-of-freedom-weighted pooled mean square); Searle et al. (2006) §4.4 (iii), p. 130 and §6.2, p. 235
 $$ \nu^{(c)} = \text{sum of the df of the strata pooled with the batch stratum} $$ :: the sum of squares of the pooled strata is, when the pooled components are zero, a sum of independent scaled χ² variables and the degrees of freedom add: Casella and Berger (2002) Lemma 5.3.2(b) (FSR-TN-PBE-01 Section 5.3); with m = 1 equal to PROC MIXED bounded REML + DDFM=SATTERTHWAITE (SAS check, FSR-LOG-01 G-105)
 
 Without pooling $v^{(c)} = MS_{\mathrm{batch}}/(\ell n m) = v^{(b)}$ and $\nu^{(c)} = \ell - 1$; path (c) equals path (b). $\bar S_s$ is the stage mean; with m = 1 there is no residual stratum. Confidence interval (for each path):
@@ -149,6 +150,7 @@ On the same data FDA PBE is established ($H_\eta$ = −0.031499). The difference
 ## 8. References
 - EMA. Guideline on the requirements for demonstrating therapeutic equivalence between orally inhaled products (OIP) for asthma and COPD, CPMP/EWP/4151/00 Rev. 2. 2025; Section 5.1 criterion 8.
 - Searle SR, Casella G, McCulloch CE. Variance Components. Wiley-Interscience, 2006.
+- Thompson WA Jr. The problem of negative estimates of variance components. Ann Math Stat 1962;33:273–289. doi:10.1214/aoms/1177704731
 - Satterthwaite FE. An approximate distribution of estimates of variance components. Biometrics Bulletin 1946;2:110–114.
 - Casella G, Berger RL. Statistical Inference. 2nd ed. Duxbury, 2002 (CRC reprint).
 - Stroup WW, Milliken GA, Claassen EA, Wolfinger RD. SAS for Mixed Models: Introduction and Basic Applications. SAS Institute, 2018.
