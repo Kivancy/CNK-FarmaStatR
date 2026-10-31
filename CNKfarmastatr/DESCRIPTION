@@ -3,7 +3,7 @@ Type: Package
 Title: Reproducible Pharmaceutical Statistics for Education and Research
 Version: 1.0.0.9000
 Authors@R: person("Kıvanç", "Yüksel", email = "kivancyuksel@gmail.com",
-    role = c("aut", "cre"))
+    role = c("aut", "cre"), comment = c(ORCID = "0000-0003-3491-0099"))
 Description: Statistical core of the CNK-FarmaStatR platform. Implements
     model-independent multivariate statistical distance (MSD) for dissolution
     profile comparison (Tsong et al. 1996), Weibull model-dependent MSD

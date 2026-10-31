@@ -11,6 +11,7 @@ authors:
   - family-names: "Yüksel"
     given-names: "Kıvanç"
     email: "kivanc.yuksel@ege.edu.tr"
+    orcid: "https://orcid.org/0000-0003-3491-0099"
     affiliation: "Department of Biostatistics and Medical Informatics, Faculty of Medicine, Ege University, İzmir, Türkiye"
 repository-code: "https://github.com/Kivancy/CNK-FarmaStatR"
 license: MIT
