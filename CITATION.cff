@@ -1,6 +1,7 @@
 # CNK-FarmaStatR - citation metadata (Citation File Format 1.2.0).
-# DRAFT prepared in P6 (FSR-TN-PLT-06): license (open item A-6), DOI and release
-# date are filled in when v1.0.0 is released (belgeler/yayin/YAYIN_KONTROL_LISTESI.md).
+# License decided by the project owner (KK-69, FSR-LOG-01 G-118): code MIT, documents CC BY 4.0
+# (LICENSE, LICENSE-belgeler.md). DOI and release date are filled in at v1.0.0
+# (belgeler/yayin/YAYIN_KONTROL_LISTESI.md).
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
 type: software
@@ -11,6 +12,7 @@ authors:
     given-names: "Kıvanç"
     email: "kivancyuksel@gmail.com"
 repository-code: "https://github.com/Kivancy/CNK-FarmaStatR"
+license: MIT
 abstract: >-
   Research and education platform for pharmaceutical statistics: in vitro population
   bioequivalence (FDA PSG 020929) with simulation-based design selection, f2 and bootstrap f2,
@@ -26,6 +28,5 @@ keywords:
   - simulation
   - R
   - webR
-# license: (A-6, pending)
 # doi: (Zenodo, at release)
 # date-released: (at release)

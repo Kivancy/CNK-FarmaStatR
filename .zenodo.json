@@ -1,11 +1,22 @@
 {
   "title": "CNK-FarmaStatR: a reproducible platform for pharmaceutical statistics in education and research",
   "upload_type": "software",
-  "description": "Research and education platform for pharmaceutical statistics: in vitro population bioequivalence (FDA PSG 020929) with simulation-based design selection, f2 and bootstrap f2, model-independent and Weibull multivariate statistical distance for dissolution profiles. Validated R cores run in the browser (webR). Not a system validated for GxP environments. DRAFT prepared in P6 (FSR-TN-PLT-06); the license (open item A-6) is added before the first release.",
+  "description": "Research and education platform for pharmaceutical statistics: in vitro population bioequivalence (FDA PSG 020929) with simulation-based design selection, f2 and bootstrap f2, model-independent and Weibull multivariate statistical distance for dissolution profiles. Validated R cores run in the browser (webR). Not a system validated for GxP environments. Code: MIT; documents: CC BY 4.0 (see LICENSE-belgeler.md).",
   "creators": [
-    { "name": "Yüksel, Kıvanç" }
+    {
+      "name": "Yüksel, Kıvanç"
+    }
   ],
-  "keywords": ["bioequivalence", "population bioequivalence", "dissolution", "f2", "simulation", "R", "webR"],
+  "keywords": [
+    "bioequivalence",
+    "population bioequivalence",
+    "dissolution",
+    "f2",
+    "simulation",
+    "R",
+    "webR"
+  ],
   "language": "eng",
-  "access_right": "open"
+  "access_right": "open",
+  "license": "MIT"
 }

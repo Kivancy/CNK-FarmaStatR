@@ -12,7 +12,7 @@ Description: Statistical core of the CNK-FarmaStatR platform. Implements
     (FDA PSG 020929). Each statistical model is validated once against
     analytic cases and published examples. For research and education; not
     a validated system for GxP environments.
-License: file LICENSE
+License: MIT + file LICENSE
 Encoding: UTF-8
 Depends: R (>= 4.1.0)
 Imports: stats, utils

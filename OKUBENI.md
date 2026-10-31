@@ -20,7 +20,7 @@ httpuv::runStaticServer(".", port = 8000)
 | `http://127.0.0.1:8000/web/app/` | In vitro PBE simülasyonu ve tasarım seçimi (ℓ × n × m; FDA, EMA) |
 | `http://127.0.0.1:8000/web/analiz/` | Kendi verinizle analiz: PBE; f2 ve bootstrap f2; model bağımsız MSD; Weibull MSD |
 | `http://127.0.0.1:8000/web/analiz/dogrula.html` | Tarayıcıda doğrulama (devralınan 516 kontrol, paket testleri) |
-| `http://127.0.0.1:8000/web/yardim/yontem/` | Yöntem notları (PBE, f2, MSD, Weibull, simülasyon) |
+| `http://127.0.0.1:8000/web/yardim/yontem/` | Yöntem notları (PBE, EMA %90 GA, f2, MSD, Weibull, simülasyon) |
 
 Hesaplar tarayıcıdaki R'de (webR) yapılır; veriler tarayıcıdan çıkmaz. Her sonuç seed, RNG ve
 sürümlerle kaydedilir; bağlantıyla ya da dışa aktarılan R betiğiyle yeniden üretilir.
@@ -37,6 +37,31 @@ sürümlerle kaydedilir; bağlantıyla ya da dışa aktarılan R betiğiyle yeni
 - `belgeler/` — teknik notlar ve validasyon belgeleri (Word); ekleri (betik, sonuç tabloları) yanlarında;
   `yayin/` yayın hazırlığı (kontrol listesi, Pages taslağı)
 
-Atıf: `CITATION.cff` (taslak; lisans A-6 ve DOI sürümde).
+## R paketinin kurulumu
 
-Özel GitHub deposu: github.com/Kivancy/CNK-FarmaStatR
+```r
+# install.packages("remotes")
+remotes::install_github("Kivancy/CNK-FarmaStatR", subdir = "CNKfarmastatr")
+```
+
+İstatistik çekirdekleri yalnız temel R kullanır.
+
+## Durum
+
+Geliştirme sürümü 1.0.0.9000. Depo açık geliştirilir; bir yazılım makalesi planlanmaktadır
+(Journal of Open Source Software).
+
+## Katkı ve destek
+
+Soru, sorun bildirimi ve öneriler: GitHub issues. Ayrıntı: [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Lisans
+
+Kod: MIT ([LICENSE](LICENSE)). Belgeler ve içerik: CC BY 4.0. Yayımlanmış kaynaklardan aktarılan
+örnek veriler kaynaklarına aittir. Ayrıntı: [LICENSE-belgeler.md](LICENSE-belgeler.md).
+
+## Atıf
+
+`CITATION.cff` (DOI sürümde).
+
+GitHub deposu: https://github.com/Kivancy/CNK-FarmaStatR

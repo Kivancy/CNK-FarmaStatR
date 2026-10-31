@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 2.14 · Son güncelleme: 31.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 2.15 · Son güncelleme: 31.10.2026"
 ---
 
 # Bu belge hakkında
@@ -2203,6 +2203,26 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Künyeler:** FSR-TN-PLT-09 v0.2 ve FSR-VAL-PLT-1 1.5 künyelerinde "onay bekliyor" yazıyor; onay bu girdi ve KK-68 ile kayıtlıdır, künyeler bir sonraki revizyonda düzeltilir (G-76'daki uygulama).
 - **Proje talimatı (hatırlatma):** "FarmaStatR türetimi" cümlesinin "Tasarım gereği" olarak güncellenmesi proje sahibinde (P9-K4).
 
+## G-118 · Lisans ve yayın yolu (KK-69): JOSS hedefi, kod MIT + belgeler CC BY 4.0, depo açılmadan önce hazırlık — 31.10.2026
+
+- **Depo:** G-117 commit edildi; GitHub Actions başarılı (proje sahibi).
+- **Proje sahibinin bilgileri:** "lisans konusunda rahat olabiliriz. Bu proje hiçbir fon almıyor. Kendi bireysel zamanımda yapıyorum." Hedef dergiler: JOSS ya da JORS; "kolay olan, az uğraştıran hangisi ise". "6 ay beklemek sorun değil. Burada amaç bir başlangıç yapmak. Devamında yeni modüller ile bir biyoeşdeğerlik portalı benzeri bir yapı oluşturmak. 10 yıllık hedefim bu." Örnek topluluk: BEBAC forumu (Helmut Schütz).
+- **Claude'un bilgilendirmesi:** üniversitelerin fikri mülkiyet yönetmelikleri fon olmasa da alandaki yazılımı kapsayabilir; iş sözleşmesine bir kez bakılması önerildi (hukuki görüş değil). Dergi koşulları birincil kaynaklardan okundu: JOSS (Ocak 2026 güncellemesi) OSI lisansı, en az altı aylık açık geliştirme geçmişi, yapay zekâ beyanı, "Statement of need" ve "State of the field" ister, ücretsizdir; JORS açık lisans ve açık depo ister, APC £824'tür. Öneri: JOSS (kısa makale, ücretsiz, hakem süreci depoda issue'larla).
+- **Karar (K, proje sahibi): KK-69.** "Başla." Hedef JOSS; lisans kod MIT, belgeler CC BY 4.0; depo, JOSS'un altı aylık süresi başlasın diye v1.0.0'dan önce açılır (önceki "v1.0.0'a kadar özel" kuralının değişikliği). A-6 kapandı. Depoyu açma işlemini proje sahibi yapar.
+- **Hazırlık (Claude):**
+  - `LICENSE` (kök, MIT tam metin, © 2026 Kıvanç Yüksel); `CNKfarmastatr/LICENSE` (CRAN biçimi: YEAR, COPYRIGHT HOLDER) ve `DESCRIPTION` License: `MIT + file LICENSE` (`tools:::analyze_license`: kanonik, doğrulanmış, FOSS). Paket klasörüne yeni dosya eklenmedi (tarayıcıdaki paket dosya listesi denetimi değişmez).
+  - `LICENSE-belgeler.md` (TR, EN): kapsam tablosu (yazılım MIT; belgeler, yardım metinleri, günlük ve platformun ürettiği simülasyon sonuçları CC BY 4.0); üçüncü taraf verilerinin listesi ve lisans dışı olduğu (FDA PSG 020929; Tsong 1996; Noce 2020; Ma 2000/Shah 1998; Chow ve Liu 2008).
+  - `CITATION.cff` (license: MIT; taslak notu güncellendi), `.zenodo.json` (license: MIT; açıklama).
+  - `CONTRIBUTING.md` (EN, TR): sorun bildirme, soru, değişiklik önerme (önce issue; testler; sabitli çekirdekte teknik not ve validasyon revizyonu), "By design" etiketi, davranış, bakım sorumlusu.
+  - `README.md`, `OKUBENI.md`: R paketinin GitHub'dan kurulumu, durum (açık geliştirme, JOSS planı), katkı, lisans, atıf; yöntem notları satırına EMA; "Özel GitHub deposu" satırı kaldırıldı.
+  - `belgeler/yayin/YAYIN_KONTROL_LISTESI.md` yeni yola göre yeniden yazıldı: A (depoyu açma, A1–A11), B (altı aylık açık geliştirme), C (JOSS başvurusu ve v1.0.0).
+- **Telif ve gizlilik taraması (Claude):**
+  - İzlenen dosyalar (`.git/index`, 400 dosya): PDF yok; `kaynaklar/` izlenmiyor; `.gitignore` (`*.pdf`, `kaynaklar/`) ilk günden (13.10.2026) beri yerinde. Devralınan JPG'ler eski PBE validasyon raporunun kendi sayfaları; Excel ve CSV dosyaları yayımlanmış makale tablolarındaki sayısal verileri atıfla içeriyor.
+  - İçerik taraması: parola, anahtar ya da yerel kullanıcı yolu yok ("token" geçen yerler kod içi değişken adları); e-posta yalnız künye dosyalarında; webR ve sql.js internetten yükleniyor, depoda üçüncü taraf kodu yok.
+  - Commit geçmişi: 99 commit, hepsi proje sahibinin adıyla (13–31.10.2026). Geçmişteki bütün dosya adlarının taranması için proje sahibinin tek komut çalıştırması istenecek (kontrol listesi A4); yerel `.git` nesneleriyle tek tek okumak yavaş kaldı.
+  - Proje sahibinin kararına bırakılanlar: `chow1452.csv` (kitaptan aktarılmış 1080 değer; düşük risk, karar sahibinde; G-28'de depoya alınmıştı), `G-98_yardim_dosyalari.zip` (eski kopyalar; silinmesi önerildi), commit e-postasının görünür olması.
+- **Sıradaki iş (proje sahibi):** commit; git geçmişi listesi için tek komut; A5, A6 kararları; ORCID; ardından depoyu açma.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -2212,7 +2232,8 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-4 | Paket testlerinin proje sahibinin bilgisayarında çalıştırılması (`testthat::test_local()`) | Tamam: 12/12, R 4.6.1 (G-06) |
 | A-5 | GitHub deposu (CNK-FarmaStatR) ve bağlantı | Tamam: dosyalar GitHub'da, commit `80556e5` (G-10, G-11) |
 | A-8 | Otomatik doğrulama (GitHub Actions): her push'ta SHA-256 + 491 kontrol | Tamam: ilk koşu Linux + Windows GEÇTİ (G-12) |
-| A-6 | Lisans kararı (MIT / GPL-3 / diğer) | Üniversite görüşü bekleniyor (G-15); proje sahibinin isteğiyle bir süre bekletiliyor (KK-61, G-96); yayın kontrol listesi adım 3 |
+| A-6 | Lisans kararı (MIT / GPL-3 / diğer) | **Tamam:** kod MIT, belgeler CC BY 4.0 (KK-69, G-118); dosyalar yazıldı |
+| A-18 | Açık geliştirme ve JOSS (KK-69) | Hazırlık tamam (G-118); git geçmişi taraması, A5–A8 kararları ve depoyu açma proje sahibinde; kontrol listesi `belgeler/yayin/YAYIN_KONTROL_LISTESI.md` |
 | A-7 | Fonksiyon belgeleri (İngilizce) ve PBE köprüsünün pakete alınması | Tamam: PBE köprüsü (G-13), belgeler (G-14) |
 | A-10 | Simülasyon altyapısı: validasyon belgesi FSR-VAL-SIM-1 ve SHA-256 sabitleme; ilk yayın senaryosu | Altyapı v0.1.0 tamam (G-15); ilk senaryo PBE güç / seri başına kap sayısı; teknik not v0.4 (G-31); hızlı motor `invitro_fast.R` (G-32); Aşama 1 koşuldu (G-33) ve nota işlendi (G-34); SAS kontrolü (G-36); sırada Aşama 2; Aşama 2 listesi sabitlendi, 725 senaryo (G-38); motor 0.2.0, Aşama 2 koşuldu (G-40); FSR-VAL-SIM-1 v0.1 taslak (G-44); FSR-VAL-SIM-1 1.0 ve sabitleme tamam (G-47) |
 | A-12 | `invitro_fast.R` ve `invitro_grid.R` için validasyon belgesi (FSR-VAL-SIM-1 kapsamında) ve SHA-256 sabitleme; EMS testi (teknik not 8.5) pakete | Tamam: FSR-VAL-SIM-1 1.0 onaylandı, beş dosya SHA-256 ile sabitlendi (G-47) |
@@ -2229,7 +2250,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 2.14 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 2.15 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.1 | 1.0 onaylı; beş dosya sabitlendi (G-47). 1.1: TC-S11 (dışa aktarılan betik), onaylandı (KK-53, G-76) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.7 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68); v0.7: Tablo 8.1 ve 10.1 (KK-56, KK-57, KK-59; G-94), onay P6 kapanışında |
@@ -2317,3 +2338,4 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | KK-66 | Okuma kılavuzu K-2 … K-10 önerildiği gibi onaylandı; kaynağı olmayan adımların etiketi "Tasarım gereği" | G-114 |
 | KK-67 | FSR-TN-PLT-09 v0.1 onaylandı; G-1 … G-9 donduruldu; P9-K1 için önerilen (a) uygulandı | G-115 |
 | KK-68 | FSR-TN-PLT-09 v0.2 ve FSR-VAL-PLT-1 1.5 onaylandı; A-16 kapandı | G-117 |
+| KK-69 | Hedef dergi JOSS; lisans kod MIT, belgeler CC BY 4.0; depo JOSS için v1.0.0 öncesi açılır; uzun vadeli hedef biyoeşdeğerlik portalı | G-118 |
