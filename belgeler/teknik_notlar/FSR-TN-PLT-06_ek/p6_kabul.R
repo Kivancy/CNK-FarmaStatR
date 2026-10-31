@@ -1,5 +1,7 @@
 # =============================================================================
 # CNK-FarmaStatR - P6 acceptance (FSR-TN-PLT-06 v0.1, Table 7.1; frozen in v0.1)
+# Revised for FSR-TN-PLT-09 v0.1 (KK-66): dissolution cases 10 -> 9 (Weibull B-L2b removed from the
+# screen) and three added rows: P9-G1 (EMA integer row of f2), P9-G2 (region options), P9-G3 (labels).
 #
 # Reads the browser output of web/analiz/kabul6.html (p6/p6_kabul.zip:
 # p6_tarayici.csv and the Word reports), recomputes in local R every analysis the
@@ -92,10 +94,29 @@ for (id in ids) {
   if (id %in% c("pbe-csv-tr", "dis-csv-tr")) o <- "F-6"
   put(paste(o, id), c1$ok, sprintf("%d alan%s", c1$n, if (length(c1$bad)) paste0("; farklı: ", paste(c1$bad, collapse = ", ")) else ""))
 }
-# expected number of analyses: PBE example 3 + files 24 valid (30 runs, 6 rejected; F-2); dissolution 10
+# expected number of analyses: PBE example 3 + files 24 valid (30 runs, 6 rejected; F-2); dissolution 9
 nf <- sum(grepl("\\|", ids) & !grepl("^(tsong1996|noce2020)", ids))
 put("F-1 kapsam", length(grep("^pbe-ornek", ids)) == 3 && nf == 24, sprintf("örnek %d, test verisi %d (beklenen 3 ve 24)", length(grep("^pbe-ornek", ids)), nf))
-put("F-3/4/5 kapsam", sum(grepl("^(tsong1996|noce2020)\\|", ids)) == 10, sprintf("%d dissolüsyon durumu (beklenen 10)", sum(grepl("^(tsong1996|noce2020)\\|", ids))))
+put("F-3/4/5 kapsam", sum(grepl("^(tsong1996|noce2020)\\|", ids)) == 9, sprintf("%d dissolüsyon durumu (beklenen 9)", sum(grepl("^(tsong1996|noce2020)\\|", ids))))
+# ---------------------------------------------------------------- FSR-TN-PLT-09 G-1, G-2 (KK-66)
+f2ids <- ids[grepl("\\|f2\\|", ids)]
+g1 <- vapply(f2ids, function(id) {
+  sec <- g("F", id, a = "sonuc")$ayar[1]; s <- jsonlite::fromJSON(v1("F", id, sec, "sonuc"))
+  rows <- jsonlite::fromJSON(v1("F", id, sec, "ekran"), simplifyVector = FALSE)
+  hit <- Filter(function(r) length(r) >= 2 && grepl("^(EMA raporlamas\u0131|EMA reporting)", r[[1]]), rows)
+  if (identical(s$perspektif, "EMA")) length(hit) == 1 && identical(hit[[1]][[2]], format(s$tamsayi)) && isTRUE(s$tamsayi == round(s$alt))
+  else length(hit) == 0 }, NA)
+put("P9-G1 f2 tam sayı satırı", length(g1) >= 3 && all(g1), sprintf("%d f2 analizi (EMA'da satır = round(alt), FDA'da yok)", length(g1)))
+opt <- v1("P9-G2", "weibull", "", "bolge_secenekleri")
+put("P9-G2 Weibull bölgeleri", identical(jsonlite::fromJSON(opt), c("B-L3", "B-L2a")), if (is.na(opt)) "kayıt yok" else opt)
+# G-3: old labels absent and "Tasarım gereği" / "By design" equal in number in notes, screen and help texts
+lf <- c(Sys.glob(file.path("web", "yardim", "kaynak", "*.txt")), file.path("web", "app", "ceviri.json"), file.path("web", "yardim", "yardim.json"))
+old_re <- "FarmaStatR (türet|kural|seçim|tasarım kararı|derivation|rule|choice|design decision|reading)|FarmaStatR’in"
+cnt <- vapply(lf, function(f) { x <- paste(readLines(f, encoding = "UTF-8", warn = FALSE), collapse = "\n")
+  c(eski = length(gregexpr(old_re, x, perl = TRUE)[[1]][gregexpr(old_re, x, perl = TRUE)[[1]] > 0]),
+    tr = lengths(regmatches(x, gregexpr("asarım gereği", x))), en = lengths(regmatches(x, gregexpr("y design", x)))) }, numeric(3))
+put("P9-G3 etiketler", all(cnt["eski", ] == 0) && all(cnt["tr", ] == cnt["en", ]),
+    sprintf("%d dosya; eski etiket %d; Tasarım gereği %d, By design %d", length(lf), sum(cnt["eski", ]), sum(cnt["tr", ]), sum(cnt["en", ])))
 if (!is.null(sonuc[["pbe-csv-tr"]]) && !is.null(sonuc[["pbe-ornek-ham"]]))
   put("F-6 PBE CSV = örnek", identical(sonuc[["pbe-csv-tr"]], sonuc[["pbe-ornek-ham"]]), "Türkçe CSV ile örnek, yerel R'de birebir")
 if (!is.null(sonuc[["dis-csv-tr"]]) && !is.null(sonuc[["tsong1996|msd|L2a-none"]])) {
@@ -208,7 +229,13 @@ if (file.exists(p5z) && !is.na(fn)) {
   file.copy(file.path(d5, "raporlar", "tek-hazir-1_tr.docx"), file.path(X, "p5_eski.docx"))
   a <- paras(doc_xml("p5_eski.docx")$xml); b <- paras(doc_xml(fn)$xml)
   drop <- function(p) p[!grepl("^(Oluşturma|Created)|^https?://|^Başlama|UTC", p)]
-  put("F-10 P5 raporu değişmedi", identical(drop(a), drop(b)), sprintf("%d paragraf (oluşturma zamanı, bağlantı ve zaman satırları hariç)", length(drop(a))))
+  # FSR-TN-PLT-09 (KK-66, T-3): only the two source sentences rp_src_ema and rp_src_sim may change, to the new text
+  tr <- jsonlite::fromJSON(file.path("web", "app", "ceviri.json"))$tr
+  src <- "^(EMA, CPMP/EWP/4151/00 Rev\\. 2, Bölüm 5\\.1|Morris, White ve Crowther 2019)"
+  a2 <- drop(a); b2 <- drop(b); ia <- grepl(src, a2); ib <- grepl(src, b2)
+  ok_src <- sum(ia) == 2 && sum(ib) == 2 && all(trimws(b2[ib]) %in% trimws(c(tr$rp_src_ema, tr$rp_src_sim)))
+  put("F-10 P5 raporu değişmedi", identical(a2[!ia], b2[!ib]) && ok_src,
+      sprintf("%d paragraf (oluşturma zamanı, bağlantı ve zaman satırları hariç); kaynak cümleleri yeni metinle: %s", length(a2), if (ok_src) "evet" else "HAYIR"))
 } else put("F-10 P5 raporu değişmedi", NA, "p5_kabul.zip ya da yeni rapor yok")
 
 # ---------------------------------------------------------------- F-11, F-12

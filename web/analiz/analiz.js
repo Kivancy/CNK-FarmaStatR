@@ -295,6 +295,7 @@ function dview(D) {
     verdict = k === 'BENZER' ? t('an_f2_sim') : k === 'BENZER DEĞİL' ? t('an_f2_nosim') : t('an_f2_border');
     main.push([t('an_persp'), s.perspektif], [t('an_estimator'), s.tahminci], ['f2', N(s.f2, 2)], ['E(f2)', N(s.Ef2, 2)], ['bc-f2', N(s.bcf2, 2)],
       [`${t('an_ci90')} (${s.ga_tipi})`, `${N(s.alt, 2)} – ${N(s.ust, 2)}`], [t('an_mcse_lower'), N(s.mcse, 2)], [t('an_boot_mean'), N(s.ortalama, 2)],
+      ...(s.perspektif === 'EMA' ? [[t('an_f2_int'), String(s.tamsayi)]] : []),
       ['B · seed', `${fmtInt(s.B)} · ${s.seed}`], ['RNG', s.rng], [t('an_trunc'), `${s.kesme} (${s.kmod})`], [t('an_points'), arr(s.zamanlar).map((z) => N(z, 0)).join(', ')],
       [t('an_cvrule'), `${s.cvkural} · ${s.oneri}`], [t('an_seed_sens'), s.seed_duyarli ? t('an_yes') : t('an_no')]);
     tables.push({ title: t('an_cv_table'), head: [`${t('an_time')} (${u})`, 'CV T (%)', 'CV R (%)', t('an_cv_limit'), t('an_cv_violation')],

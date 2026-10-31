@@ -32,14 +32,14 @@ $$ \text{MCSE} \approx \frac{\hat Q_{(Bp + z\sqrt{Bp(1-p)})} - \hat Q_{(Bp - z\s
 ## 4. Karar kuralı
 $$ \hat Q_{0,05}\left(E(f_2)^*\right) \ge 50 \;\Rightarrow\; \text{benzer} $$ :: EMA PKWP/BSWP Q&A 3.11
 
-- EMA, sonucun en yakın tam sayıya yuvarlanarak raporlanmasını ister. Platform alt sınırı yuvarlamadan değerlendirir: ≥ 50 benzer; 49,5–50 arası “sınır vaka, değerlendirici yorumu gerekli” (yuvarlanınca 50 olabilecek bölge) [FarmaStatR kuralı]; < 49,5 benzer değil.
-- |alt sınır − 50| < 2·MCSE ise “seed’e duyarlı” uyarısı verilir [FarmaStatR kuralı].
+- EMA, sonucun en yakın tam sayıya yuvarlanarak raporlanmasını ister. Platform alt sınırı yuvarlamadan değerlendirir: ≥ 50 benzer; 49,5–50 arası “sınır vaka, değerlendirici yorumu gerekli” (yuvarlanınca 50 olabilecek bölge) [Tasarım gereği]; < 49,5 benzer değil.
+- |alt sınır − 50| < 2·MCSE ise “seed’e duyarlı” uyarısı verilir [Tasarım gereği].
 - CV koşulu sağlanıyorsa EMA klasik f2 ≥ 50 kuralına da izin verir (Ek I); ekrandaki “CV kuralı” satırı hangi yöntemin önerildiğini söyler.
 
 ## 5. Platformdaki uygulama
 - Uygulanabilirlik (EMA Ek I sırasıyla): t = 0 çıkarılır; iki ürün 15 dakikada > %85 çözündüyse profil karşılaştırması gerekmez (not); %85 kesmesi ortalamalar üzerinden (EMA: ürünlerden biri > %85 olduğu noktaya kadar, o nokta dahil; FDA: ikisi de > %85 olduktan sonra tek nokta); en az 3 zaman noktası; ünite sayısı 12 kontrolü.
-- CV kuralı: ICH M9 (≤ 10 dk %20, sonrası %10), EMA Ek I (ilk nokta %20, sonrakiler %10) ya da FDA 1997 (erken noktalar %20, diğerleri %10; “erken = ≤ 15 dk” yorumu FarmaStatR’indir).
-- %85 kesmesi her bootstrap örneğinde, o örneğin ortalamalarına yeniden uygulanır (varsayılan “replika” modu) [FarmaStatR seçimi; Noce ve ark. 2020’deki eleştiri].
+- CV kuralı: ICH M9 (≤ 10 dk %20, sonrası %10), EMA Ek I (ilk nokta %20, sonrakiler %10) ya da FDA 1997 (erken noktalar %20, diğerleri %10; “erken = ≤ 15 dk” yorumu tasarım gereğidir).
+- %85 kesmesi her bootstrap örneğinde, o örneğin ortalamalarına yeniden uygulanır (varsayılan “replika” modu) [Tasarım gereği; Noce ve ark. 2020’deki eleştiri].
 - Perspektif ön ayarları: EMA E(f2), EMA kesmesi, M9, B = 5000; FDA f2, FDA kesmesi, FDA97, B = 10.000. FDA ön ayarı bir FDA sunumuna (Gong 2020) dayanır, resmî FDA politikası değildir.
 - Rastgele sayı üreteci (Mersenne-Twister, Inversion, Rejection), seed ve B raporlanır; seed varsayılanı 20260927.
 
@@ -103,14 +103,14 @@ $$ \text{MCSE} \approx \frac{\hat Q_{(Bp + z\sqrt{Bp(1-p)})} - \hat Q_{(Bp - z\s
 ## 4. Decision rule
 $$ \hat Q_{0.05}\left(E(f_2)^*\right) \ge 50 \;\Rightarrow\; \text{similar} $$ :: EMA PKWP/BSWP Q&A 3.11
 
-- EMA asks for the result to be reported rounded to the nearest integer. The platform judges the unrounded lower bound: ≥ 50 similar; between 49.5 and 50 “borderline, assessor judgement needed” (the zone that may round to 50) [FarmaStatR rule]; < 49.5 not similar.
-- If |lower bound − 50| < 2·MCSE a “seed-sensitive” warning is given [FarmaStatR rule].
+- EMA asks for the result to be reported rounded to the nearest integer. The platform judges the unrounded lower bound: ≥ 50 similar; between 49.5 and 50 “borderline, assessor judgement needed” (the zone that may round to 50) [By design]; < 49.5 not similar.
+- If |lower bound − 50| < 2·MCSE a “seed-sensitive” warning is given [By design].
 - If the CV condition holds, EMA also allows the classical rule f2 ≥ 50 (Appendix I); the “CV rule” line on the screen says which method is recommended.
 
 ## 5. Implementation in the platform
 - Applicability (in the order of EMA Appendix I): t = 0 is excluded; if both products dissolve > 85% within 15 minutes no profile comparison is needed (note); 85% truncation on the means (EMA: up to and including the point where either product exceeds 85%; FDA: one point after both exceed 85%); at least 3 time points; check of 12 units.
-- CV rule: ICH M9 (≤ 10 min 20%, later 10%), EMA Appendix I (first point 20%, later 10%) or FDA 1997 (early points 20%, others 10%; “early = ≤ 15 min” is a FarmaStatR reading).
-- The 85% truncation is re-applied in every bootstrap sample to that sample's means (default “replicate” mode) [FarmaStatR choice; criticism in Noce et al. 2020].
+- CV rule: ICH M9 (≤ 10 min 20%, later 10%), EMA Appendix I (first point 20%, later 10%) or FDA 1997 (early points 20%, others 10%; the reading “early = ≤ 15 min” is by design).
+- The 85% truncation is re-applied in every bootstrap sample to that sample's means (default “replicate” mode) [By design; criticism in Noce et al. 2020].
 - Perspective presets: EMA E(f2), EMA truncation, M9, B = 5000; FDA f2, FDA truncation, FDA97, B = 10,000. The FDA preset follows an FDA presentation (Gong 2020) and is not official FDA policy.
 - Random number generator (Mersenne-Twister, Inversion, Rejection), seed and B are reported; default seed 20260927.
 

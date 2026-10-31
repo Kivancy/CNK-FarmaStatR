@@ -1,4 +1,6 @@
 // CNK-FarmaStatR - P6 acceptance tool (FSR-TN-PLT-06 v0.1, Table 7.1: F-1 ... F-12; frozen in v0.1).
+// Revised for FSR-TN-PLT-09 v0.1 (KK-66): the Weibull B-L2b case is removed (no longer offered on the
+// screen; the core test stays in testthat) and the region options are recorded (G-2).
 // Drives the analysis screen (index.html) and the validation page (dogrula.html) in a same-origin
 // frame, reads what they show (DOM) and hold (window.__p6, window.__p6v), makes the Word reports with
 // the screen's own report function and packs everything into one stored ZIP (p6_kabul.zip): the
@@ -82,7 +84,7 @@ const PBE_FILES = ['P1_psg020929.csv', 'P2_m1.csv', 'P3_dengesiz.csv', 'P4_tekyo
 const PBE_SET = [['ham', false, false], ['log', true, false], ['tek', false, true]];
 const DIS = [['tsong1996', 'msd', { sinir: 'L1', kesme: 'none' }], ['tsong1996', 'msd', { sinir: 'L2a', kesme: 'none' }],
   ['tsong1996', 'msd', { sinir: 'L2b', kesme: 'FDA' }], ['tsong1996', 'weibull', { param: 'lnTd_lnB', bolge: 'B-L3' }],
-  ['tsong1996', 'weibull', { param: 'lnA_lnB', bolge: 'B-L2a' }], ['tsong1996', 'weibull', { param: 'lnTd_lnB', bolge: 'B-L2b' }],
+  ['tsong1996', 'weibull', { param: 'lnA_lnB', bolge: 'B-L2a' }],
   ['tsong1996', 'f2', { perspektif: 'EMA', gatipi: 'persentil' }], ['noce2020', 'f2', { perspektif: 'EMA', gatipi: 'persentil' }],
   ['noce2020', 'f2', { perspektif: 'FDA', gatipi: 'persentil' }], ['noce2020', 'f2', { perspektif: 'EMA', gatipi: 'BCa' }]];
 
@@ -132,6 +134,7 @@ async function main() {
 
   // ---- dissolution
   Dc().querySelector('#tab_dis').click(); await waitSt('dis', DATA);
+  put('P9-G2', 'weibull', '', 'bolge_secenekleri', JSON.stringify([...Dc().querySelectorAll('#dis_form [name=bolge] option')].map((o) => o.value)));
   let cur = 'tsong1996';
   for (const [src, y, set] of DIS) {
     if (src !== cur) { st().status.dis = null; await select('dis_form', 'kaynak', src); await waitSt('dis', DATA); cur = src; }

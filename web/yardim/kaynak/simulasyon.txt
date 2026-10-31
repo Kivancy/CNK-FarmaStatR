@@ -13,7 +13,7 @@ $$ X_{ijks} = \mu_k + b_{jk} + c_{ijk} + \tau_{ks} + e_{ijks} $$ :: FDA 1999 IX.
 - Toplam varyans ve paylar (bir koşul değişince toplam σR ve kriter sabit kalsın diye bileşenler paylardan hesaplanır):
 
 $$ \sigma_k^2 = \sigma^2_{B,k} + \sigma^2_{C,k} + \sigma^2_{L,k}, \qquad \sigma^2_{L,k} = \sigma^2_{W,k} + \frac{1}{m}\sum_s \tau^2_{ks} $$ :: FDA 1999 IX.B.2.a; FSR-TN-PBE-01 Denk. 10
-$$ \sigma^2_{B,k} = p_B\sigma_k^2,\quad \sigma^2_{C,k} = p_C\sigma_k^2,\quad \sigma^2_{L,k} = p_L\sigma_k^2,\quad \sigma^2_{W,k} = (1-q)\,\sigma^2_{L,k},\quad \sigma_T = \rho\,\sigma_R $$ :: FarmaStatR türetimi; KK-29 (FSR-TN-PBE-01 Denk. 9)
+$$ \sigma^2_{B,k} = p_B\sigma_k^2,\quad \sigma^2_{C,k} = p_C\sigma_k^2,\quad \sigma^2_{L,k} = p_L\sigma_k^2,\quad \sigma^2_{W,k} = (1-q)\,\sigma^2_{L,k},\quad \sigma_T = \rho\,\sigma_R $$ :: Tasarım gereği (simülasyon tasarımı); KK-29 (FSR-TN-PBE-01 Denk. 9); seri payı ve T/R için ayrı RSD Chen ve ark. (2019) Tablo I ile aynı yapıdadır
 
 ## 3. Denklemler
 Hipotezler. FDA kriteri gerçek σR ile seçilir; tip I hata senaryosunda fark η = 0 sınırına konur:
@@ -34,11 +34,11 @@ $$ \hat p = \frac{1}{n_{sim}}\sum_{i=1}^{n_{sim}} I_i, \qquad \mathrm{MCSE}(\hat
 
 Tip I hata etiketi (yalnız H0’da; z = 1,645):
 
-$$ \hat p - z\,\mathrm{MCSE} > 0{,}05:\ \text{nominali aşıyor};\quad \hat p + z\,\mathrm{MCSE} \le 0{,}05:\ \text{kontrol kanıtlı};\quad \text{aksi halde ayırt edilemiyor} $$ :: FarmaStatR kuralı; KK-38
+$$ \hat p - z\,\mathrm{MCSE} > 0{,}05:\ \text{nominali aşıyor};\quad \hat p + z\,\mathrm{MCSE} \le 0{,}05:\ \text{kontrol kanıtlı};\quad \text{aksi halde ayırt edilemiyor} $$ :: Tasarım gereği; KK-38
 
 ## 4. Karar kuralı (tasarım seçimi)
-$$ \text{Kural A: } \min_{\ell, n}\ \ell\, n \ \ \text{koşul}\ \ \hat p_{\text{güç}} \ge \text{hedef}\quad (m\ \text{sabit; eşitlikte küçük}\ \ell) $$ :: FarmaStatR türetimi; FSR-TN-PBE-01 Tablo 11.3a; KK-56, KK-57
-$$ \text{Kural B: Kural A, ek olarak } \ell \ge 3,\ n \ge 10\ \text{ve tip I hata etiketi “nominali aşıyor” değil} $$ :: FarmaStatR türetimi; FSR-TN-PBE-01 Tablo 11.3b; KK-38, KK-57
+$$ \text{Kural A: } \min_{\ell, n}\ \ell\, n \ \ \text{koşul}\ \ \hat p_{\text{güç}} \ge \text{hedef}\quad (m\ \text{sabit; eşitlikte küçük}\ \ell) $$ :: Tasarım gereği; FSR-TN-PBE-01 Tablo 11.3a; KK-56, KK-57
+$$ \text{Kural B: Kural A, ek olarak } \ell \ge 3,\ n \ge 10\ \text{ve tip I hata etiketi “nominali aşıyor” değil} $$ :: Tasarım gereği; FSR-TN-PBE-01 Tablo 11.3b; KK-38, KK-57
 - Güç, seçilen farkta (varsayılan GMR 1,05); tip I hata her yöntemin kendi sınırında (FDA δ₀, EMA GMR 1,18) okunur.
 - Seçim yalnız seçilen farkta H1’de olan yöntemler için yapılır.
 - |güç − hedef| < 2·MCSE ise seçim “eşiğe yakın; kesin değil” diye işaretlenir; daha çok tekrarla yeniden koşmak gerekir (KK-39).
@@ -87,7 +87,7 @@ $$ X_{ijks} = \mu_k + b_{jk} + c_{ijk} + \tau_{ks} + e_{ijks} $$ :: FDA 1999 IX.
 - Total variance and shares (the components are computed from the shares, so that the total σR and the criterion stay fixed when one condition changes):
 
 $$ \sigma_k^2 = \sigma^2_{B,k} + \sigma^2_{C,k} + \sigma^2_{L,k}, \qquad \sigma^2_{L,k} = \sigma^2_{W,k} + \frac{1}{m}\sum_s \tau^2_{ks} $$ :: FDA 1999 IX.B.2.a; FSR-TN-PBE-01 Eq. 10
-$$ \sigma^2_{B,k} = p_B\sigma_k^2,\quad \sigma^2_{C,k} = p_C\sigma_k^2,\quad \sigma^2_{L,k} = p_L\sigma_k^2,\quad \sigma^2_{W,k} = (1-q)\,\sigma^2_{L,k},\quad \sigma_T = \rho\,\sigma_R $$ :: FarmaStatR derivation; KK-29 (FSR-TN-PBE-01 Eq. 9)
+$$ \sigma^2_{B,k} = p_B\sigma_k^2,\quad \sigma^2_{C,k} = p_C\sigma_k^2,\quad \sigma^2_{L,k} = p_L\sigma_k^2,\quad \sigma^2_{W,k} = (1-q)\,\sigma^2_{L,k},\quad \sigma_T = \rho\,\sigma_R $$ :: By design (simulation design); KK-29 (FSR-TN-PBE-01 Eq. 9); the batch share and separate RSD for T and R have the same structure as Chen et al. (2019) Table I
 
 ## 3. Equations
 Hypotheses. The FDA criterion is chosen by the true σR; in a type I error scenario the difference is put on the boundary η = 0:
@@ -108,11 +108,11 @@ $$ \hat p = \frac{1}{n_{sim}}\sum_{i=1}^{n_{sim}} I_i, \qquad \mathrm{MCSE}(\hat
 
 Type I error label (H0 only; z = 1.645):
 
-$$ \hat p - z\,\mathrm{MCSE} > 0.05:\ \text{exceeds nominal};\quad \hat p + z\,\mathrm{MCSE} \le 0.05:\ \text{shown controlled};\quad \text{otherwise indistinguishable} $$ :: FarmaStatR rule; KK-38
+$$ \hat p - z\,\mathrm{MCSE} > 0.05:\ \text{exceeds nominal};\quad \hat p + z\,\mathrm{MCSE} \le 0.05:\ \text{shown controlled};\quad \text{otherwise indistinguishable} $$ :: By design; KK-38
 
 ## 4. Decision rule (design selection)
-$$ \text{Rule A: } \min_{\ell, n}\ \ell\, n \ \ \text{subject to}\ \ \hat p_{\text{power}} \ge \text{target}\quad (m\ \text{fixed; ties to the smaller}\ \ell) $$ :: FarmaStatR derivation; FSR-TN-PBE-01 Table 11.3a; KK-56, KK-57
-$$ \text{Rule B: Rule A, with in addition } \ell \ge 3,\ n \ge 10\ \text{and a type I error label other than “exceeds nominal”} $$ :: FarmaStatR derivation; FSR-TN-PBE-01 Table 11.3b; KK-38, KK-57
+$$ \text{Rule A: } \min_{\ell, n}\ \ell\, n \ \ \text{subject to}\ \ \hat p_{\text{power}} \ge \text{target}\quad (m\ \text{fixed; ties to the smaller}\ \ell) $$ :: By design; FSR-TN-PBE-01 Table 11.3a; KK-56, KK-57
+$$ \text{Rule B: Rule A, with in addition } \ell \ge 3,\ n \ge 10\ \text{and a type I error label other than “exceeds nominal”} $$ :: By design; FSR-TN-PBE-01 Table 11.3b; KK-38, KK-57
 - Power is read at the chosen difference (default GMR 1.05); type I error at each method's own boundary (FDA δ₀, EMA GMR 1.18).
 - A selection is made only for methods that are in H1 at the chosen difference.
 - If |power − target| < 2·MCSE the selection is marked “near the target; not certain”; it should be rerun with more replicates (KK-39).

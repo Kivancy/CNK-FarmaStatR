@@ -1,4 +1,5 @@
 // CNK-FarmaStatR - help acceptance tool (FSR-TN-PLT-07 v0.1, Table 6.1: Y-1 ... Y-9, Y-11; v0.2: six notes).
+// FSR-TN-PLT-09 v0.1 (KK-66): the Y-3 counter counts the label “Tasarım gereği” / “By design”.
 // Drives the simulation screen, the analysis screen and the method notes in a same-origin frame,
 // records what they show and hold, and packs the record into one stored ZIP (p7_kabul.zip).
 // The comparison with local R (numbers of the worked examples, templates) and the verdicts are
@@ -168,7 +169,7 @@ async function main() {
       put('Y-3', n, lg, 'denklem', eqs.length);
       put('Y-3', n, lg, 'denklem_kaynaksiz', eqs.filter((e) => !(e.dataset.kaynak || '').trim()).length);
       put('Y-3', n, lg, 'denklem_mathml', eqs.filter((e) => e.querySelector('math')).length);
-      put('Y-3', n, lg, 'farmastatr_etiketi', eqs.filter((e) => /FarmaStatR/.test(e.dataset.kaynak)).length);
+      put('Y-3', n, lg, 'farmastatr_etiketi', eqs.filter((e) => /Tasarım gereği|By design/i.test(e.dataset.kaynak)).length);
       for (const d of s.querySelectorAll('[data-deger]')) put('Y-4', n, lg, d.dataset.deger, d.textContent);
       for (const a of s.querySelectorAll('a[href]')) links.add(a.href.split('#')[0]);
       const de = Dc().documentElement;

@@ -70,7 +70,7 @@ for (n in notes) for (l in c("tr", "en")) {
   ne <- num(v1("Y-3", n, l, "denklem"))
   ok <- identical(v1("Y-3", n, l, "gorunur"), "true") && length(b) == 8 && all(vapply(1:8, function(i) startsWith(b[i], paste0(i, ". ")), NA)) &&
     ne > 0 && identical(v1("Y-3", n, l, "denklem_kaynaksiz"), "0") && identical(num(v1("Y-3", n, l, "denklem_mathml")), ne)
-  put(paste("Y-3", n, l), ok, sprintf("%s · %d bölüm, %g denklem, FarmaStatR etiketli %s", v1("Y-3", n, l, "baslik"), length(b), ne, v1("Y-3", n, l, "farmastatr_etiketi")))
+  put(paste("Y-3", n, l), ok, sprintf("%s · %d bölüm, %g denklem, Tasarım gereği etiketli %s", v1("Y-3", n, l, "baslik"), length(b), ne, v1("Y-3", n, l, "farmastatr_etiketi")))
 }
 for (n in notes) put(paste("Y-3", n, "TR = EN denklem"), identical(v1("Y-3", n, "tr", "denklem"), v1("Y-3", n, "en", "denklem")), "")
 put("Y-3 dizin", identical(v1("Y-3", "index", "tr", "gorunur"), "true") && identical(v1("Y-3", "index", "en", "gorunur"), "true"), "")

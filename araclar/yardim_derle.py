@@ -147,9 +147,9 @@ def index(titles):
     secs = []
     for lang in ('tr', 'en'):
         head = 'Yöntem notları' if lang == 'tr' else 'Method notes'
-        intro = ('Platformdaki yöntemlerin modeli, denklemleri, karar kuralı ve çalışılmış örneği. Her denklemin yanında kaynağı ya da “FarmaStatR türetimi” etiketi vardır.'
+        intro = ('Platformdaki yöntemlerin modeli, denklemleri, karar kuralı ve çalışılmış örneği. Her denklemin yanında kaynağı ya da “Tasarım gereği” etiketi vardır.'
                  if lang == 'tr' else
-                 'Model, equations, decision rule and a worked example of the methods in the platform. Every equation carries its source or the label “FarmaStatR derivation”.')
+                 'Model, equations, decision rule and a worked example of the methods in the platform. Every equation carries its source or the label “By design”.')
         items = ''.join(f'<li><a href="{n}.html?lang={lang}">{html.escape(titles[n][lang])}</a></li>' for n in NOTES)
         secs.append(f'<section class="not" lang="{lang}" data-lang="{lang}"{" hidden" if lang == "en" else ""}>\n<h1>{head}</h1>\n'
                     f'<p class="disclaimer">{DISCLAIMER[lang]}</p>\n<p>{intro}</p>\n<ul>{items}</ul>\n</section>')

@@ -27,13 +27,13 @@
       "dis.B": "Bootstrap örnek sayısı. Boş bırakılırsa perspektifin değeri (EMA 5000, FDA 10.000) kullanılır.",
       "dis.Dg": "Zaman noktası başına izin verilen fark, yüzde puanı (EMA’da %10). L1 sınırı ve L3 kontrolü için.",
       "dis.birim": "Zaman sütununun birimi. f2’nin CV kuralı ve 15 dakika kontrolü dakika varsayar; “saat” seçilirse zamanlar f2 için dakikaya çevrilir.",
-      "dis.bolge": "Benzerlik bölgesi: B-L3 yanıt uzayında ±D_g (referans lotu gerekmez); B-L2a Sathe kutusu (±k·SD); B-L2b Sathe elipsi.",
+      "dis.bolge": "Benzerlik bölgesi: B-L3 yanıt uzayında ±D_g (referans lotu gerekmez); B-L2a Sathe kutusu (±k·SD).",
       "dis.dosya": "CSV: Product, Unit, Time, Diss (ya da urun, tablet, zaman, cozunen). Her satır bir ünitenin bir zaman noktasındaki çözünme yüzdesi. Ayraç ; , ya da sekme.",
       "dis.gatipi": "Bootstrap güven aralığı türü: persentil (varsayılan) ya da BCa (yanlılık ve çarpıklık düzeltmeli).",
       "dis.k": "B-L2a kutusunun genişliği: ±k × havuzlanmış SD (Sathe ve ark.: 1, 2 ya da 3).",
       "dis.kaynak": "Tsong ve ark. (1996) örneği (MSD ve Weibull için; STD1 ve STD2 referans lotlarıyla), Noce ve ark. (2020) örneği (f2 için) ya da kendi CSV dosyanız.",
       "dis.kesme": "Zaman noktalarının %85 çözünmeye göre kesilmesi: yok, FDA (iki ürün de > %85 olduktan sonra tek nokta), EMA (biri > %85 olduğu noktaya kadar).",
-      "dis.lot": "Referans ürünün ayrı lotları (L2a, L2b, B-L2a, B-L2b sınırları için en az 2). Karşılaştırılan referans da seçilebilir; test seçilemez.",
+      "dis.lot": "Referans ürünün ayrı lotları (L2a, L2b ve B-L2a sınırları için en az 2). Karşılaştırılan referans da seçilebilir; test seçilemez.",
       "dis.param": "MSD’nin hesaplandığı Weibull parametreleri: (ln T_d, ln β) varsayılan ve zaman biriminden bağımsız; (ln α, ln β) Sathe ve ark. (1996); (ln α, β).",
       "dis.perspektif": "EMA: E(f2), EMA %85 kesmesi, ICH M9 CV kuralı, B = 5000. FDA: klasik f2, FDA kesmesi, FDA 1997 CV kuralı, B = 10.000 (FDA ön ayarı resmî bir FDA politikası değildir).",
       "dis.ref": "Karşılaştırılan referans ürünün etiketi; test ile aynı zaman noktalarına sahip olmalı.",
@@ -94,11 +94,11 @@
         },
         {
           "id": "okuma",
-          "html": "<ul><li><b>Metrik:</b> H0 sınırında “tip I hata (sınırda)”, H0 içinde “noktasal tip I hata”, H1’de “güç”.</li><li><b>MCSE:</b> oranın Monte Carlo standart hatası (yüzde puanı).</li><li><b>KK-38 etiketi</b> (yalnız H0): p̂ − 1,645·MCSE > %5 ise <i>nominali aşıyor</i>; p̂ + 1,645·MCSE ≤ %5 ise <i>kontrol kanıtlı</i>; arada <i>ayırt edilemiyor</i> [FarmaStatR kuralı, KK-38].</li><li>Güç, nominal tip I hata korunmadan yöntemler arasında karşılaştırılmaz.</li><li>“Diğer ölçütler”: kapsama, FDA kriter seçim hatası, EMA (c) havuzlama oranı, yöntem farkları.</li></ul>"
+          "html": "<ul><li><b>Metrik:</b> H0 sınırında “tip I hata (sınırda)”, H0 içinde “noktasal tip I hata”, H1’de “güç”.</li><li><b>MCSE:</b> oranın Monte Carlo standart hatası (yüzde puanı).</li><li><b>KK-38 etiketi</b> (yalnız H0): p̂ − 1,645·MCSE > %5 ise <i>nominali aşıyor</i>; p̂ + 1,645·MCSE ≤ %5 ise <i>kontrol kanıtlı</i>; arada <i>ayırt edilemiyor</i> [Tasarım gereği, KK-38].</li><li>Güç, nominal tip I hata korunmadan yöntemler arasında karşılaştırılmaz.</li><li>“Diğer ölçütler”: kapsama, FDA kriter seçim hatası, EMA (c) havuzlama oranı, yöntem farkları.</li></ul>"
         },
         {
           "id": "sinir",
-          "html": "<ul><li>Araştırma ve eğitim amaçlıdır; GxP ortamında valide edilmiş sistem değildir.</li><li>Tek log-normal büyüklük; dengeli tasarım. Çoklu APSD basamak grubu ve EMA ölçüt 6–7 kapsam dışı.</li><li>EMA (a), (b), (c) kılavuzun tanımladığı yollar değil, aday uygulamalardır [FarmaStatR türetimi].</li><li>Tarayıcı sınırı: nsim ≤ 20.000 ve ℓ·n·m·nsim ≤ 8,1 milyon (tek cihaz ölçümü, KK-47).</li></ul>"
+          "html": "<ul><li>Araştırma ve eğitim amaçlıdır; GxP ortamında valide edilmiş sistem değildir.</li><li>Tek log-normal büyüklük; dengeli tasarım. Çoklu APSD basamak grubu ve EMA ölçüt 6–7 kapsam dışı.</li><li>EMA (a), (b), (c) kılavuzun tanımladığı yollar değil, aday uygulamalardır; (a) ve (b) yayımlanmış uygulamalardır (Chen ve ark. 2019; Kurumaddali ve ark. 2019), (c) Thompson (1962) havuzlama kuralına dayanır.</li><li>Tarayıcı sınırı: nsim ≤ 20.000 ve ℓ·n·m·nsim ≤ 8,1 milyon (tek cihaz ölçümü, KK-47).</li></ul>"
         },
         {
           "id": "kaynak",
@@ -124,7 +124,7 @@
         },
         {
           "id": "sinir",
-          "html": "<ul><li>Seçim yalnız verilen aday kümeyle sınırlıdır; kümede olmayan daha iyi bir tasarım olabilir.</li><li>Kurallar FarmaStatR türetimidir (FSR-TN-PBE-01 Bölüm 11.5; KK-56, KK-57); kılavuzlar örneklem büyüklüğü kuralı vermez.</li><li>Araştırma ve eğitim amaçlıdır; GxP ortamında valide edilmiş sistem değildir.</li></ul>"
+          "html": "<ul><li>Seçim yalnız verilen aday kümeyle sınırlıdır; kümede olmayan daha iyi bir tasarım olabilir.</li><li>Kurallar tasarım gereğidir (FSR-TN-PBE-01 Bölüm 11.5; KK-56, KK-57); kılavuzlar örneklem büyüklüğü kuralı vermez.</li><li>Araştırma ve eğitim amaçlıdır; GxP ortamında valide edilmiş sistem değildir.</li></ul>"
         },
         {
           "id": "kaynak",
@@ -150,7 +150,7 @@
         },
         {
           "id": "sinir",
-          "html": "<ul><li>PSG en az 3 seri ve seri başına en az 10 birim önerir.</li><li>Seriler havuzlanır (“süper seri”); seri varyansı ayrıca tahmin edilmez (FDA 1999).</li><li>Çekirdeğin hata iletileri Türkçedir.</li><li>Araştırma ve eğitim amaçlıdır; GxP ortamında valide edilmiş sistem değildir.</li></ul><ul><li>EMA en az 3 seri ve seri başına en az 10 birim ister (Rev. 2 Bölüm 5.1).</li><li>Üç yol aday uygulamadır (FarmaStatR türetimi, KK-27): kılavuz %90 GA’nın seri ve evre yapısıyla nasıl hesaplanacağını tanımlamaz.</li><li>Tek ölçüm büyüklüğü: APSD basamak gruplarının her biri ayrı analiz edilir; ölçüt 8 hepsinin geçmesini ister.</li></ul>"
+          "html": "<ul><li>PSG en az 3 seri ve seri başına en az 10 birim önerir.</li><li>Seriler havuzlanır (“süper seri”); seri varyansı ayrıca tahmin edilmez (FDA 1999).</li><li>Çekirdeğin hata iletileri Türkçedir.</li><li>Araştırma ve eğitim amaçlıdır; GxP ortamında valide edilmiş sistem değildir.</li></ul><ul><li>EMA en az 3 seri ve seri başına en az 10 birim ister (Rev. 2 Bölüm 5.1).</li><li>Üç yol aday uygulamadır (KK-27): kılavuz %90 GA’nın seri ve evre yapısıyla nasıl hesaplanacağını tanımlamaz; (a) ve (b) yayımlanmış uygulamalardır (Chen ve ark. 2019; Kurumaddali ve ark. 2019), (c) Thompson (1962) havuzlama kuralına dayanır.</li><li>Tek ölçüm büyüklüğü: APSD basamak gruplarının her biri ayrı analiz edilir; ölçüt 8 hepsinin geçmesini ister.</li></ul>"
         },
         {
           "id": "kaynak",
@@ -164,19 +164,19 @@
         },
         {
           "id": "veri",
-          "html": "<ul><li>Uzun biçim CSV: her satır bir ünitenin (tablet) bir zaman noktasındaki çözünme yüzdesi. Sütunlar <code>Product, Unit, Time, Diss</code> (ya da <code>urun, tablet, zaman, cozunen</code>).</li><li>Test ve referansın zaman noktaları aynı olmalı. EMA ürün başına 12 ünite ister.</li><li>Referans lotları (L2a, L2b, B-L2a, B-L2b için) ayrı ürün adlarıyla verilir.</li></ul><p class=\"yh-links\"><a href=\"../yardim/sablon/dis_sablon_tr.csv\" target=\"_blank\" rel=\"noopener\">Şablon (Excel, Türkçe)</a> · <a href=\"../yardim/sablon/dis_sablon_en.csv\" target=\"_blank\" rel=\"noopener\">Şablon (uluslararası)</a></p>"
+          "html": "<ul><li>Uzun biçim CSV: her satır bir ünitenin (tablet) bir zaman noktasındaki çözünme yüzdesi. Sütunlar <code>Product, Unit, Time, Diss</code> (ya da <code>urun, tablet, zaman, cozunen</code>).</li><li>Test ve referansın zaman noktaları aynı olmalı. EMA ürün başına 12 ünite ister.</li><li>Referans lotları (L2a, L2b, B-L2a için) ayrı ürün adlarıyla verilir.</li></ul><p class=\"yh-links\"><a href=\"../yardim/sablon/dis_sablon_tr.csv\" target=\"_blank\" rel=\"noopener\">Şablon (Excel, Türkçe)</a> · <a href=\"../yardim/sablon/dis_sablon_en.csv\" target=\"_blank\" rel=\"noopener\">Şablon (uluslararası)</a></p>"
         },
         {
           "id": "ayar",
-          "html": "<ul><li><b>f2:</b> EMA ön ayarı E(f2), EMA kesmesi, ICH M9 CV kuralı, B = 5000; FDA ön ayarı klasik f2, FDA kesmesi, FDA 1997 CV kuralı, B = 10.000. Persentil ya da BCa aralık.</li><li><b>MSD:</b> sınır L1 (D_g), L2a ya da L2b; isteğe bağlı %85 kesmesi.</li><li><b>Weibull:</b> parametreleme ve bölge (B-L3, B-L2a, B-L2b); B-L2a için k.</li></ul>"
+          "html": "<ul><li><b>f2:</b> EMA ön ayarı E(f2), EMA kesmesi, ICH M9 CV kuralı, B = 5000; FDA ön ayarı klasik f2, FDA kesmesi, FDA 1997 CV kuralı, B = 10.000. Persentil ya da BCa aralık.</li><li><b>MSD:</b> sınır L1 (D_g), L2a ya da L2b; isteğe bağlı %85 kesmesi.</li><li><b>Weibull:</b> parametreleme ve bölge (B-L3, B-L2a); B-L2a için k.</li></ul>"
         },
         {
           "id": "okuma",
-          "html": "<ul><li><b>f2:</b> bootstrap %90 GA alt sınırı ≥ 50 → benzer; 49,5–50 arası “sınır vaka” [FarmaStatR kuralı]; |alt − 50| < 2·MCSE ise “seed’e duyarlı”. CV koşulu sağlanıyorsa EMA klasik f2’ye izin verir; ekranda “CV kuralı” satırı bunu söyler.</li><li><b>MSD:</b> D_M’nin %90 üst sınırı ≤ sınır (R_D) → benzer (FDA 1997 V.B adım 4). L3 satırı her zaman noktasında |fark| + aralık yarısı ≤ D_g kontrolüdür [FarmaStatR türetimi].</li><li><b>Weibull:</b> güven bölgesi seçilen benzerlik bölgesinin içindeyse benzer; R² min uydurma kalitesini gösterir.</li></ul>"
+          "html": "<ul><li><b>f2:</b> bootstrap %90 GA alt sınırı ≥ 50 → benzer; 49,5–50 arası “sınır vaka” [Tasarım gereği]; |alt − 50| < 2·MCSE ise “seed’e duyarlı”. CV koşulu sağlanıyorsa EMA klasik f2’ye izin verir; ekranda “CV kuralı” satırı bunu söyler.</li><li><b>MSD:</b> D_M’nin %90 üst sınırı ≤ sınır (R_D) → benzer (FDA 1997 V.B adım 4). L3 satırı her zaman noktasında |fark| + aralık yarısı ≤ D_g kontrolüdür [Tsong ve ark. 1996; Johnson ve Wichern 2007 Sonuç 6.3].</li><li><b>Weibull:</b> güven bölgesi seçilen benzerlik bölgesinin içindeyse benzer; R² min uydurma kalitesini gösterir.</li></ul>"
         },
         {
           "id": "sinir",
-          "html": "<ul><li>EMA için MSD ve Weibull MSD destekleyicidir; öncelikli yöntem bootstrap f2’dir (EMA Q&amp;A 3.9).</li><li>L2a, L2b ve B-L3 kuralları FarmaStatR türetimidir; raporlarda böyle etiketlenir.</li><li>Çekirdeğin iletileri Türkçedir.</li><li>Araştırma ve eğitim amaçlıdır; GxP ortamında valide edilmiş sistem değildir.</li></ul>"
+          "html": "<ul><li>EMA için MSD ve Weibull MSD destekleyicidir; öncelikli yöntem bootstrap f2’dir (EMA Q&amp;A 3.9).</li><li>L2a ve L3 Tsong ve ark. (1996) tanımlarına dayanır; L2b ve B-L3 tasarım gereğidir.</li><li>Çekirdeğin iletileri Türkçedir.</li><li>Araştırma ve eğitim amaçlıdır; GxP ortamında valide edilmiş sistem değildir.</li></ul>"
         },
         {
           "id": "kaynak",
@@ -212,13 +212,13 @@
       "dis.B": "Number of bootstrap samples. If empty, the perspective's value is used (EMA 5000, FDA 10,000).",
       "dis.Dg": "Allowed difference per time point, percentage points (10 in EMA). Used by L1 and the L3 check.",
       "dis.birim": "Unit of the time column. The CV rule and the 15-minute check of f2 assume minutes; with “hours” the times are converted to minutes for f2.",
-      "dis.bolge": "Similarity region: B-L3 ±D_g in the response space (no reference lots needed); B-L2a Sathe box (±k·SD); B-L2b Sathe ellipse.",
+      "dis.bolge": "Similarity region: B-L3 ±D_g in the response space (no reference lots needed); B-L2a Sathe box (±k·SD).",
       "dis.dosya": "CSV: Product, Unit, Time, Diss (or urun, tablet, zaman, cozunen). One row per unit and time point (percent dissolved). Separator ; , or tab.",
       "dis.gatipi": "Type of bootstrap confidence interval: percentile (default) or BCa (bias-corrected and accelerated).",
       "dis.k": "Width of the B-L2a box: ±k × pooled SD (Sathe et al.: 1, 2 or 3).",
       "dis.kaynak": "The example of Tsong et al. (1996) (for MSD and Weibull; with reference lots STD1 and STD2), the example of Noce et al. (2020) (for f2), or your own CSV file.",
       "dis.kesme": "Truncation of time points at 85% dissolved: none, FDA (one point after both products exceed 85%), EMA (up to the point where either exceeds 85%).",
-      "dis.lot": "Separate lots of the reference product (at least 2 for the L2a, L2b, B-L2a and B-L2b limits). The compared reference may be ticked; the test may not.",
+      "dis.lot": "Separate lots of the reference product (at least 2 for the L2a, L2b and B-L2a limits). The compared reference may be ticked; the test may not.",
       "dis.param": "Weibull parameters on which the MSD is computed: (ln T_d, ln β) default and independent of the time unit; (ln α, ln β) Sathe et al. (1996); (ln α, β).",
       "dis.perspektif": "EMA: E(f2), EMA 85% truncation, ICH M9 CV rule, B = 5000. FDA: classical f2, FDA truncation, FDA 1997 CV rule, B = 10,000 (the FDA preset is not an official FDA policy).",
       "dis.ref": "Label of the reference product compared; it must have the same time points as the test.",
@@ -279,11 +279,11 @@
         },
         {
           "id": "okuma",
-          "html": "<ul><li><b>Metric:</b> “type I error (at the boundary)” on the H0 boundary, “pointwise type I error” inside H0, “power” in H1.</li><li><b>MCSE:</b> Monte Carlo standard error of the rate (percentage points).</li><li><b>KK-38 label</b> (H0 only): p̂ − 1.645·MCSE > 5% → <i>exceeds nominal</i>; p̂ + 1.645·MCSE ≤ 5% → <i>shown controlled</i>; otherwise <i>indistinguishable</i> [FarmaStatR rule, KK-38].</li><li>Power is not compared between methods unless the nominal type I error is kept.</li><li>“Other measures”: coverage, FDA criterion selection error, EMA (c) pooling rate, method differences.</li></ul>"
+          "html": "<ul><li><b>Metric:</b> “type I error (at the boundary)” on the H0 boundary, “pointwise type I error” inside H0, “power” in H1.</li><li><b>MCSE:</b> Monte Carlo standard error of the rate (percentage points).</li><li><b>KK-38 label</b> (H0 only): p̂ − 1.645·MCSE > 5% → <i>exceeds nominal</i>; p̂ + 1.645·MCSE ≤ 5% → <i>shown controlled</i>; otherwise <i>indistinguishable</i> [By design, KK-38].</li><li>Power is not compared between methods unless the nominal type I error is kept.</li><li>“Other measures”: coverage, FDA criterion selection error, EMA (c) pooling rate, method differences.</li></ul>"
         },
         {
           "id": "sinir",
-          "html": "<ul><li>For research and education; not a system validated for GxP environments.</li><li>One log-normal quantity; balanced design. Several APSD stage groups and EMA criteria 6–7 are out of scope.</li><li>EMA (a), (b), (c) are candidate implementations, not methods defined by the guideline [FarmaStatR derivation].</li><li>Browser limit: nsim ≤ 20,000 and ℓ·n·m·nsim ≤ 8.1 million (measured on one device, KK-47).</li></ul>"
+          "html": "<ul><li>For research and education; not a system validated for GxP environments.</li><li>One log-normal quantity; balanced design. Several APSD stage groups and EMA criteria 6–7 are out of scope.</li><li>EMA (a), (b), (c) are candidate implementations, not methods defined by the guideline; (a) and (b) are published implementations (Chen et al. 2019; Kurumaddali et al. 2019), (c) rests on the pooling rule of Thompson (1962).</li><li>Browser limit: nsim ≤ 20,000 and ℓ·n·m·nsim ≤ 8.1 million (measured on one device, KK-47).</li></ul>"
         },
         {
           "id": "kaynak",
@@ -309,7 +309,7 @@
         },
         {
           "id": "sinir",
-          "html": "<ul><li>The selection is limited to the candidate set; a better design outside it may exist.</li><li>The rules are a FarmaStatR derivation (FSR-TN-PBE-01 Section 11.5; KK-56, KK-57); the guidances give no sample size rule.</li><li>For research and education; not a system validated for GxP environments.</li></ul>"
+          "html": "<ul><li>The selection is limited to the candidate set; a better design outside it may exist.</li><li>The rules are by design (FSR-TN-PBE-01 Section 11.5; KK-56, KK-57); the guidances give no sample size rule.</li><li>For research and education; not a system validated for GxP environments.</li></ul>"
         },
         {
           "id": "kaynak",
@@ -335,7 +335,7 @@
         },
         {
           "id": "sinir",
-          "html": "<ul><li>The PSG recommends at least 3 batches and at least 10 units per batch.</li><li>Batches are pooled (“super-batch”); the batch variance is not estimated separately (FDA 1999).</li><li>Messages of the core are in Turkish.</li><li>For research and education; not a system validated for GxP environments.</li></ul><ul><li>EMA asks for at least 3 batches and at least 10 units per batch (Rev. 2 Section 5.1).</li><li>The three paths are candidate implementations (FarmaStatR derivation, KK-27): the guideline does not define how the 90% CI is computed with batches and life stages.</li><li>One quantity at a time: each APSD stage group is analysed separately; criterion 8 requires all of them to pass.</li></ul>"
+          "html": "<ul><li>The PSG recommends at least 3 batches and at least 10 units per batch.</li><li>Batches are pooled (“super-batch”); the batch variance is not estimated separately (FDA 1999).</li><li>Messages of the core are in Turkish.</li><li>For research and education; not a system validated for GxP environments.</li></ul><ul><li>EMA asks for at least 3 batches and at least 10 units per batch (Rev. 2 Section 5.1).</li><li>The three paths are candidate implementations (KK-27): the guideline does not define how the 90% CI is computed with batches and life stages; (a) and (b) are published implementations (Chen et al. 2019; Kurumaddali et al. 2019), (c) rests on the pooling rule of Thompson (1962).</li><li>One quantity at a time: each APSD stage group is analysed separately; criterion 8 requires all of them to pass.</li></ul>"
         },
         {
           "id": "kaynak",
@@ -349,19 +349,19 @@
         },
         {
           "id": "veri",
-          "html": "<ul><li>Long-format CSV: one row per unit (tablet) and time point, percent dissolved. Columns <code>Product, Unit, Time, Diss</code> (or <code>urun, tablet, zaman, cozunen</code>).</li><li>Test and reference must have the same time points. EMA asks for 12 units per product.</li><li>Reference lots (for L2a, L2b, B-L2a, B-L2b) are given as separate product names.</li></ul><p class=\"yh-links\"><a href=\"../yardim/sablon/dis_sablon_tr.csv\" target=\"_blank\" rel=\"noopener\">Template (Excel, Turkish)</a> · <a href=\"../yardim/sablon/dis_sablon_en.csv\" target=\"_blank\" rel=\"noopener\">Template (international)</a></p>"
+          "html": "<ul><li>Long-format CSV: one row per unit (tablet) and time point, percent dissolved. Columns <code>Product, Unit, Time, Diss</code> (or <code>urun, tablet, zaman, cozunen</code>).</li><li>Test and reference must have the same time points. EMA asks for 12 units per product.</li><li>Reference lots (for L2a, L2b, B-L2a) are given as separate product names.</li></ul><p class=\"yh-links\"><a href=\"../yardim/sablon/dis_sablon_tr.csv\" target=\"_blank\" rel=\"noopener\">Template (Excel, Turkish)</a> · <a href=\"../yardim/sablon/dis_sablon_en.csv\" target=\"_blank\" rel=\"noopener\">Template (international)</a></p>"
         },
         {
           "id": "ayar",
-          "html": "<ul><li><b>f2:</b> EMA preset E(f2), EMA truncation, ICH M9 CV rule, B = 5000; FDA preset classical f2, FDA truncation, FDA 1997 CV rule, B = 10,000. Percentile or BCa interval.</li><li><b>MSD:</b> limit L1 (D_g), L2a or L2b; optional 85% truncation.</li><li><b>Weibull:</b> parametrisation and region (B-L3, B-L2a, B-L2b); k for B-L2a.</li></ul>"
+          "html": "<ul><li><b>f2:</b> EMA preset E(f2), EMA truncation, ICH M9 CV rule, B = 5000; FDA preset classical f2, FDA truncation, FDA 1997 CV rule, B = 10,000. Percentile or BCa interval.</li><li><b>MSD:</b> limit L1 (D_g), L2a or L2b; optional 85% truncation.</li><li><b>Weibull:</b> parametrisation and region (B-L3, B-L2a); k for B-L2a.</li></ul>"
         },
         {
           "id": "okuma",
-          "html": "<ul><li><b>f2:</b> lower bound of the bootstrap 90% CI ≥ 50 → similar; between 49.5 and 50 “borderline” [FarmaStatR rule]; “seed-sensitive” if |lower − 50| < 2·MCSE. If the CV condition holds, EMA allows the classical f2; the “CV rule” line says so.</li><li><b>MSD:</b> upper 90% bound of D_M ≤ limit (R_D) → similar (FDA 1997 V.B step 4). The L3 line checks |difference| + half-width ≤ D_g at each time point [FarmaStatR derivation].</li><li><b>Weibull:</b> similar if the confidence region lies inside the chosen similarity region; minimum R² shows the quality of the fits.</li></ul>"
+          "html": "<ul><li><b>f2:</b> lower bound of the bootstrap 90% CI ≥ 50 → similar; between 49.5 and 50 “borderline” [By design]; “seed-sensitive” if |lower − 50| < 2·MCSE. If the CV condition holds, EMA allows the classical f2; the “CV rule” line says so.</li><li><b>MSD:</b> upper 90% bound of D_M ≤ limit (R_D) → similar (FDA 1997 V.B step 4). The L3 line checks |difference| + half-width ≤ D_g at each time point [Tsong et al. 1996; Johnson and Wichern 2007 Result 6.3].</li><li><b>Weibull:</b> similar if the confidence region lies inside the chosen similarity region; minimum R² shows the quality of the fits.</li></ul>"
         },
         {
           "id": "sinir",
-          "html": "<ul><li>For EMA, MSD and Weibull MSD are supportive; the preferred method is bootstrap f2 (EMA Q&amp;A 3.9).</li><li>The L2a, L2b and B-L3 rules are FarmaStatR derivations and are labelled so in the reports.</li><li>Messages of the cores are in Turkish.</li><li>For research and education; not a system validated for GxP environments.</li></ul>"
+          "html": "<ul><li>For EMA, MSD and Weibull MSD are supportive; the preferred method is bootstrap f2 (EMA Q&amp;A 3.9).</li><li>L2a and L3 rest on the definitions of Tsong et al. (1996); L2b and B-L3 are by design.</li><li>Messages of the cores are in Turkish.</li><li>For research and education; not a system validated for GxP environments.</li></ul>"
         },
         {
           "id": "kaynak",

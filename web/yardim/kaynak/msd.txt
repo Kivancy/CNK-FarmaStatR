@@ -20,7 +20,7 @@ Benzerlik sınırı. L1, her zaman noktasında aynı izin verilen fark $D_g$ (EM
 $$ R_D = \sqrt{\mathbf g^{\top}\mathbf S^{-1}\mathbf g}, \qquad \mathbf g = D_g\,\mathbf 1 $$ :: Tsong ve ark. (1996) s. 1109 (L1)
 
 - L2a: $D_g$, referans lot çiftleri arasındaki en büyük mutlak ortalama farktır; sonra L1 formülü uygulanır [Tsong ve ark. (1996) s. 1106 ve s. 1109: D_g, referans serilerinden ampirik olarak belirlenir; tek zaman noktası örneğinde seriler arası en büyük fark (%7,5); FDA 1997 V.B adım 1].
-- L2b: $R_D$, referans lot çiftleri arasındaki en büyük MSD’dir (her çift kendi birleştirilmiş kovaryansıyla) [FarmaStatR türetimi; FDA 1997 V.B adım 1’in doğrudan okuması].
+- L2b: $R_D$, referans lot çiftleri arasındaki en büyük MSD’dir (her çift kendi birleştirilmiş kovaryansıyla) [Tasarım gereği; FDA 1997 V.B adım 1’in doğrudan okuması].
 
 Zaman noktası bazında kontrol (L3): güven elipsoidinin her eksendeki uç noktası $D_g$’yi aşmamalı:
 
@@ -33,7 +33,7 @@ L3 satırı ayrı bir bilgidir; MSD kararı yalnız yukarıdaki kurala göre ver
 
 ## 5. Platformdaki uygulama
 - Değişken sayısı sınırı: $P \le n_T + n_R - 2$; kovaryans matrisi neredeyse tekilse (koşul sayısı > 10¹⁰) hesap durur.
-- %85 kesmesi isteğe bağlıdır (yok, FDA, EMA); kılavuzlar bu kuralları f2 için tanımlar, MSD’ye uygulanması FarmaStatR tasarım kararıdır.
+- %85 kesmesi isteğe bağlıdır (yok, FDA, EMA); kılavuzlar bu kuralları f2 için tanımlar, MSD’ye uygulanması tasarım gereğidir.
 - Referans lotları ayrı ürün adlarıyla verilir; karşılaştırılan referans da lot olarak seçilebilir.
 - Box’ın M testi yalnız bilgi amaçlıdır.
 
@@ -46,7 +46,7 @@ Tsong ve ark. (1996) verisi (TEST ve REF, 6’şar tablet, 8 zaman noktası; ref
 
 ## 7. Sınırlar
 - Küçük örneklemde kovaryans tahmini kararsızdır; zaman noktası sayısını ünite sayısına göre sınırlı tutun.
-- L2a ve L3, Tsong ve ark. (1996) tanımlarına dayanır; L2b’nin çift başına MSD okuması FarmaStatR türetimidir ve raporda böyle etiketlenir.
+- L2a ve L3, Tsong ve ark. (1996) tanımlarına dayanır; L2b’nin çift başına MSD okuması tasarım gereğidir.
 - Araştırma ve eğitim amaçlıdır; GxP ortamında valide edilmiş sistem değildir.
 
 ## 8. Kaynakça
@@ -77,7 +77,7 @@ Similarity limit. L1, with the same allowed difference $D_g$ at every time point
 $$ R_D = \sqrt{\mathbf g^{\top}\mathbf S^{-1}\mathbf g}, \qquad \mathbf g = D_g\,\mathbf 1 $$ :: Tsong et al. (1996) p. 1109 (L1)
 
 - L2a: $D_g$ is the largest absolute mean difference between pairs of reference lots; then the L1 formula is applied [Tsong et al. (1996) pp. 1106 and 1109: D_g is set empirically from the reference batches; in the single time point example, the largest batch-to-batch difference (7.5%); FDA 1997 V.B step 1].
-- L2b: $R_D$ is the largest MSD between pairs of reference lots (each pair with its own pooled covariance) [FarmaStatR derivation; literal reading of FDA 1997 V.B step 1].
+- L2b: $R_D$ is the largest MSD between pairs of reference lots (each pair with its own pooled covariance) [By design; literal reading of FDA 1997 V.B step 1].
 
 Check per time point (L3): the extreme point of the confidence ellipsoid on every axis should not exceed $D_g$:
 
@@ -90,7 +90,7 @@ The L3 line is separate information; the MSD decision follows only the rule abov
 
 ## 5. Implementation in the platform
 - Limit on the number of variables: $P \le n_T + n_R - 2$; if the covariance matrix is nearly singular (condition number > 10¹⁰) the computation stops.
-- The 85% truncation is optional (none, FDA, EMA); the guidances define these rules for f2, and their use for MSD is a FarmaStatR design decision.
+- The 85% truncation is optional (none, FDA, EMA); the guidances define these rules for f2, and their use for MSD is by design.
 - Reference lots are given as separate product names; the compared reference may also be chosen as a lot.
 - Box's M test is for information only.
 
@@ -103,7 +103,7 @@ Data of Tsong et al. (1996) (TEST and REF, 6 tablets each, 8 time points; refere
 
 ## 7. Limits
 - With small samples the covariance estimate is unstable; keep the number of time points small relative to the number of units.
-- L2a and L3 rest on the definitions of Tsong et al. (1996); the pairwise MSD reading of L2b is a FarmaStatR derivation and is labelled so in the report.
+- L2a and L3 rest on the definitions of Tsong et al. (1996); the pairwise MSD reading of L2b is by design.
 - For research and education; not a system validated for GxP environments.
 
 ## 8. References
