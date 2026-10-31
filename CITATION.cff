@@ -10,7 +10,7 @@ version: "1.0.0.9000"
 authors:
   - family-names: "Yüksel"
     given-names: "Kıvanç"
-    email: "kivancyuksel@gmail.com"
+    email: "kivanc.yuksel@ege.edu.tr"
 repository-code: "https://github.com/Kivancy/CNK-FarmaStatR"
 license: MIT
 abstract: >-
