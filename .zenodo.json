@@ -4,7 +4,8 @@
   "description": "Research and education platform for pharmaceutical statistics: in vitro population bioequivalence (FDA PSG 020929) with simulation-based design selection, f2 and bootstrap f2, model-independent and Weibull multivariate statistical distance for dissolution profiles. Validated R cores run in the browser (webR). Not a system validated for GxP environments. Code: MIT; documents: CC BY 4.0 (see LICENSE-belgeler.md).",
   "creators": [
     {
-      "name": "Yüksel, Kıvanç"
+      "name": "Yüksel, Kıvanç",
+      "affiliation": "Department of Biostatistics and Medical Informatics, Faculty of Medicine, Ege University, İzmir, Türkiye"
     }
   ],
   "keywords": [
