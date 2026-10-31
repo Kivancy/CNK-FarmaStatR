@@ -49,6 +49,7 @@ Development version 1.0.0.9000. The repository is developed in the open; a softw
 ## Contributing and support
 
 Questions, problem reports and proposals: GitHub issues. See [CONTRIBUTING.md](CONTRIBUTING.md).
+Contact: Kıvanç Yüksel (kivancyuksel@gmail.com; kivanc.yuksel@ege.edu.tr).
 
 ## Licence
 

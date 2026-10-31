@@ -52,4 +52,4 @@ Yöntemle ilgili sorular (ör. bir kılavuzun nasıl yorumlandığı) issue olar
 Saygılı ve yapıcı olun. Yöntem üzerine görüş ayrılığı değerlidir; kişisel ifadeler değildir.
 
 ## Bakım / Maintainer
-Kıvanç Yüksel (kivancyuksel@gmail.com)
+Kıvanç Yüksel (kivancyuksel@gmail.com; kivanc.yuksel@ege.edu.tr)

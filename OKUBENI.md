@@ -54,6 +54,7 @@ Geliştirme sürümü 1.0.0.9000. Depo açık geliştirilir; bir yazılım makal
 ## Katkı ve destek
 
 Soru, sorun bildirimi ve öneriler: GitHub issues. Ayrıntı: [CONTRIBUTING.md](CONTRIBUTING.md).
+İletişim: Kıvanç Yüksel (kivancyuksel@gmail.com; kivanc.yuksel@ege.edu.tr).
 
 ## Lisans
 
