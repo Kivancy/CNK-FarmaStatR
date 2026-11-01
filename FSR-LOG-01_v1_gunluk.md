@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 2.19 · Son güncelleme: 01.11.2026"
+subtitle: "FSR-LOG-01 · Sürüm 2.20 · Son güncelleme: 01.11.2026"
 ---
 
 # Bu belge hakkında
@@ -2280,6 +2280,17 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Kuru koşular (Claude, yalıtılmış kök):** P6 80/80 GECTI (F-7 sekiz rapor, eksik metin 0; F-10 "P5 raporu değişmedi" GECTI; paket testleri ve devralınan validasyon dahil); P8 44/44 GECTI. Üretilen raporların başlıkları: analiz raporlarının hepsi 8 bölüm ("8. Doğrulama / Validation") ve `tab=` yok; P5 simülasyon raporu 9 bölüm. ("ortam" satırı bilgi amaçlı EKSIK, önceki koşularla aynı.)
 - **Not:** Siteye yansıması için sürüm etiketi ya da elle tetikleme gerekir (G-121); düzeltmeler biriktirilip toplu yayımlanacak.
 
+## G-123 · Chow, Shao ve Wang 2003 Tablo I platform üreteciyle yeniden üretildi; Tablo III'te üç baskı hatası — 01.11.2026
+
+- **Depo:** G-122 commit edildi; GitHub Actions başarılı (proje sahibi).
+- **Proje sahibinin soruları:** (1) `dogrula.html` yalnız koşunun yolunda gittiğini mi gösterir? Claude: hayır; kullanıcının kendi tarayıcısında, sunulan dosyaların SHA-256 ile valide edilmiş dosyalar olduğunu, devralınan validasyonun (516) ve paket testlerinin (2328) o ortamda geçtiğini gösterir; Actions'ın görmediği gerçek ortamı (tarayıcı, webR, R sürümü) sınar; GxP kurulum kalifikasyonu değildir. (2) Simülasyon ekranında Chow ve Liu'nun simülasyonuna benzer parametrelerle Chow'un sonuçları bulundu mu? Claude: hayır, hiç denenmedi ve ekranda yapılamaz: platform PSG 020929 ölçütünü (t kantili, θ_P, σ_T0 = 0,1 sabit; G-01 kapsam sınırı) kullanır; Chow ve Liu 2008 §14.7 / Chow, Shao ve Wang 2003 FDA 1999 ölçütünü (z kantili, θ_BE = 1,125, σ₀ = 0,2) ve seri düzeyi olmayan modeli kullanır (G-21: karşılaştırma yalnız nitel). Öneri: platform dışı literatür kontrolü. Proje sahibi: "uzun sürmezse yapalım."
+- **Yöntem (Claude):** Chow, Shao ve Wang 2003 (Stat Med 22:55–68; proje dosyası) Bölüm 2 test istatistiği (η̂_U, beş U terimi) temel R ile yazıldı (`csw2003.R`); veri platformun üreteciyle (`invitro_gen`; l = 1, seri varyansı 0, kap = birim, tekrar = evre) üretildi. Sabitli çekirdeğe ve ekrana dokunulmadı.
+- **Sonuç 1 · sayısal örnek (Bölüm 5, Tablo III):** tekrarsız hesap (FDA 1999 sınırı) altı ondalıkta tuttu. Tekrarlı hesap basılı veriyle tutmadı; üç baskı hatası bulundu: (i) Tablo III'te "Test" ve "Reference" sütun başlıkları yer değiştirmiş; (ii) "Test product, Replicate 2" sütunu 17. satır −0,033335 basılmış, −0,053335 olmalı (tek basamaklı değişiklik taramasında yayımlanan δ̂, s²_BR, s²_WR, U, η̂_U değerlerini 10⁻⁶ içinde birlikte üreten tek değer; ikinci aday 4 × 10⁻⁵ uzakta); (iii) s²_T = 0,292889 basılmış, makalenin kendi bileşenleriyle 0,288373 olmalı (U ve η̂_U'yu etkilemez). G-21'de Chow ve Liu 2008 aktarımındaki "0,29889 → makalede 0,292889" farkı not edilmişti; ikisi de yanlış.
+- **Sonuç 2 · tip I hata (Bölüm 3, Tablo I):** 96 hücre × 10 000 tekrar (makaleyle aynı), seed 20031. Makale 0,0341–0,0517, CNK 0,0308–0,0486; ortalama fark 0,00018; |z| > 2 dört hücre (beklenen ≈ 4,4), |z| > 3 yok; Σz² = 93,7 (96 sd, p = 0,55). Tablo I Monte Carlo hatası sınırları içinde yeniden üretildi; platformun veri üreteci bağımsız bir yayınla uyumlu. Süre birkaç dakika (R 4.3.3).
+- **Uygulama notu (Tasarım gereği):** makalede c (ölçekleme seçimi) yalnız beşinci U teriminde basılı; dördüncü terimde de kullanıldı (tekrarsız sınırdaki (1 + cθ_BE)² ile tutarlı). Tablo I senaryolarında σ²_R > σ₀² olduğundan c çoğunlukla 1.
+- **Dosyalar:** `belgeler/literatur_hatalari/chow2003/` (OKUBENI.md, `csw2003.R`, `csw2003_ornek.R/.csv`, `csw2003_tablo1.R/.csv`). Platform makalesinin malzemesi (Tsong 1996 ile birlikte, G-119).
+- **Açık:** Tablo II (güç ve örneklem büyüklüğü adımları) ve Şekil 1 karşılaştırılmadı; istenirse aynı betiklerle yapılabilir.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -2307,7 +2318,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 2.19 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 2.20 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.1 | 1.0 onaylı; beş dosya sabitlendi (G-47). 1.1: TC-S11 (dışa aktarılan betik), onaylandı (KK-53, G-76) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.7 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68); v0.7: Tablo 8.1 ve 10.1 (KK-56, KK-57, KK-59; G-94), onay P6 kapanışında |
