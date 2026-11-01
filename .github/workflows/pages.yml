@@ -1,0 +1,46 @@
+# CNK-FarmaStatR · GitHub Pages publication (FSR-TN-PLT-06, P6-K7; FSR-LOG-01 G-121).
+# Activated after the repository was made public (01.11.2026, G-120).
+# Publishes on version tags (v*) or when run by hand (Actions > pages > Run workflow).
+# The site is the repository itself (the pages load the R sources, the database and
+# the test files by relative paths), without .git and the R check folders.
+# Settings > Pages > Source: "GitHub Actions".
+# Research and education only; not a system validated for GxP environments.
+
+name: pages
+
+on:
+  push:
+    tags: ['v*']          # publish released versions only
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Build the site folder
+        shell: bash
+        run: |
+          mkdir _site
+          cp -r web veri CNKfarmastatr simulasyon belgeler CITATION.cff _site/
+          rm -rf _site/CNKfarmastatr/*.Rcheck
+          cp belgeler/yayin/site_index.html _site/index.html
+          touch _site/.nojekyll
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4
