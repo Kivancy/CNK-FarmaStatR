@@ -19,9 +19,9 @@ sahibindedir (geri döndürülemez ya da proje sahibine ait). Bir aşama önceki
 | A6 | Karar: kökteki `G-98_yardim_dosyalari.zip` (21.10.2026 tarihli eski dosya kopyaları) silinsin mi; Claude önerisi: silinsin | Proje sahibi | Tamam: silindi (G-119) |
 | A7 | Bilgi: açılınca commit'lerdeki e-posta adresi görünür olur (adres zaten `DESCRIPTION` ve `CITATION.cff`'te iletişim adresi) | Proje sahibi | Tamam: açık kalır; `CITATION.cff`'te kurumsal adres (KK-70, G-119) |
 | A8 | ORCID ve kurum bilgisi (`CITATION.cff`, `.zenodo.json`, `DESCRIPTION`); JOSS'ta ORCID beklenir | Proje sahibi bilgileri verir | Tamam: Ege Üniversitesi; ORCID 0000-0003-3491-0099 (G-119) |
-| A9 | **Deponun açılması**: GitHub > Settings > General > Danger Zone > Change visibility > Public | Proje sahibi | Bekliyor |
-| A10 | GitHub > About: kısa açıklama, konu etiketleri (bioequivalence, dissolution, r, webr); Issues açık | Proje sahibi (Claude metni hazırlar) | Bekliyor |
-| A11 | Günlük: açılış tarihi (JOSS'un altı aylık süresi bu tarihten başlar) | Claude | Bekliyor |
+| A9 | **Deponun açılması**: GitHub > Settings > General > Danger Zone > Change visibility > Public | Proje sahibi | Tamam: 01.11.2026 (G-120) |
+| A10 | GitHub > About: kısa açıklama, konu etiketleri (bioequivalence, dissolution, r, webr); Issues açık | Proje sahibi (Claude metni hazırlar) | Tamam (G-120) |
+| A11 | Günlük: açılış tarihi (JOSS'un altı aylık süresi bu tarihten başlar) | Claude | Tamam: 01.11.2026; JOSS en erken Mayıs 2027 (G-120) |
 
 ## B · Altı aylık açık geliştirme
 

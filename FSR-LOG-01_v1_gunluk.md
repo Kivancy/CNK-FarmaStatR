@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 2.16 · Son güncelleme: 01.11.2026"
+subtitle: "FSR-LOG-01 · Sürüm 2.17 · Son güncelleme: 01.11.2026"
 ---
 
 # Bu belge hakkında
@@ -2247,6 +2247,15 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
   - Kanıt: `belgeler/literatur_hatalari/tsong1996/` (OKUBENI.md, veri ve beklenen sonuç dosyası, iki DDSolver ekranı). Platform makalesinin malzemesi.
 - **Sıradaki iş (proje sahibi):** mevcut hâlin incelenmesi; depoyu açma (A9), About (A10); açılış tarihinin bildirilmesi (A11).
 
+## G-120 · Depo herkese açıldı (A9, A10); JOSS'un altı aylık açık geliştirme süresi başladı — 01.11.2026
+
+- **Depo:** G-119 commit edildi; GitHub Actions başarılı (proje sahibi).
+- **Proje sahibinin sorusu:** açtıktan sonra hata fark edilirse ne olur? Claude'un yanıtı: kod ve belge hataları olağan commit'le düzeltilir; depo yeniden gizliye çevrilebilir, ancak açık kaldığı sürede alınan kopyalar ve yıldızlar geri gelmez; geri alınması zor tek durum telifli ya da gizli dosyadır, o da A3 ve A4 taramalarıyla kapatıldı.
+- **Proje sahibi (K):** depoyu herkese açtı (A9; GitHub > Settings > Danger Zone > Change visibility > Public), About açıklamasını ve konu etiketlerini girdi (A10): "Reproducible platform for pharmaceutical statistics (in vitro PBE, f2, MSD) in education and research. R + webR. Not GxP-validated."; bioequivalence, pharmaceutical-statistics, dissolution, r, webr, simulation, biostatistics, reproducible-research. Issues açık.
+- **A11 · Açılış tarihi: 01.11.2026.** JOSS'un istediği en az altı aylık açık geliştirme geçmişi bu tarihten sayılır; başvuru en erken Mayıs 2027 başı (yaklaşık 01.05.2027).
+- **Doğrulama sınırı:** Claude'un ortamı github.com'a erişemediği için açık hâl Claude tarafından görülmedi; kayıt proje sahibinin bildirimine dayanır.
+- **Sıradaki iş:** B aşaması (altı aylık açık geliştirme): ara sürüm etiketleri (B1), BEBAC duyurusu (B2), issue'lar (B3), A-9 dışa açılan fonksiyonlar (B4), GitHub Pages (B5), JOSS makalesi `paper.md` (B6).
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -2257,7 +2266,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-5 | GitHub deposu (CNK-FarmaStatR) ve bağlantı | Tamam: dosyalar GitHub'da, commit `80556e5` (G-10, G-11) |
 | A-8 | Otomatik doğrulama (GitHub Actions): her push'ta SHA-256 + 491 kontrol | Tamam: ilk koşu Linux + Windows GEÇTİ (G-12) |
 | A-6 | Lisans kararı (MIT / GPL-3 / diğer) | **Tamam:** kod MIT, belgeler CC BY 4.0 (KK-69, G-118); dosyalar yazıldı |
-| A-18 | Açık geliştirme ve JOSS (KK-69) | Hazırlık tamam (G-118); A4–A8 kapandı (KK-70, G-119); depoyu açma (A9, A10) proje sahibinde; kontrol listesi `belgeler/yayin/YAYIN_KONTROL_LISTESI.md` |
+| A-18 | Açık geliştirme ve JOSS (KK-69) | Hazırlık tamam (G-118); A4–A8 kapandı (KK-70, G-119); **depo 01.11.2026'da açıldı** (G-120); B aşaması (altı ay, JOSS en erken Mayıs 2027); kontrol listesi `belgeler/yayin/YAYIN_KONTROL_LISTESI.md` |
 | A-7 | Fonksiyon belgeleri (İngilizce) ve PBE köprüsünün pakete alınması | Tamam: PBE köprüsü (G-13), belgeler (G-14) |
 | A-10 | Simülasyon altyapısı: validasyon belgesi FSR-VAL-SIM-1 ve SHA-256 sabitleme; ilk yayın senaryosu | Altyapı v0.1.0 tamam (G-15); ilk senaryo PBE güç / seri başına kap sayısı; teknik not v0.4 (G-31); hızlı motor `invitro_fast.R` (G-32); Aşama 1 koşuldu (G-33) ve nota işlendi (G-34); SAS kontrolü (G-36); sırada Aşama 2; Aşama 2 listesi sabitlendi, 725 senaryo (G-38); motor 0.2.0, Aşama 2 koşuldu (G-40); FSR-VAL-SIM-1 v0.1 taslak (G-44); FSR-VAL-SIM-1 1.0 ve sabitleme tamam (G-47) |
 | A-12 | `invitro_fast.R` ve `invitro_grid.R` için validasyon belgesi (FSR-VAL-SIM-1 kapsamında) ve SHA-256 sabitleme; EMS testi (teknik not 8.5) pakete | Tamam: FSR-VAL-SIM-1 1.0 onaylandı, beş dosya SHA-256 ile sabitlendi (G-47) |
@@ -2274,7 +2283,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 2.16 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 2.17 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.1 | 1.0 onaylı; beş dosya sabitlendi (G-47). 1.1: TC-S11 (dışa aktarılan betik), onaylandı (KK-53, G-76) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.7 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68); v0.7: Tablo 8.1 ve 10.1 (KK-56, KK-57, KK-59; G-94), onay P6 kapanışında |
