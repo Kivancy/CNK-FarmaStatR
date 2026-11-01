@@ -364,7 +364,7 @@ function common(kind, D) {
     identity: [[t('an_data'), D.data.src], [t('rp_started'), D.started]],
     versions: [[t('rp_pkg'), pkgVersion], ['webR', WEBR_VERSION], ['R', D.r_version]],
     files: D.files.map((e) => [e.file, e.pinned ? t('an_yes') : t('recorded'), e.sha256 || '', e.status === 'ok' ? '✓' : '✗']),
-    link: location.href.split('?')[0] + `?tab=${kind}&lang=${lang}`,
+    link: null,   // no Section 9 in analysis reports (KK-71)
     sources: [[t('rp_src_' + kind + '_k1'), t('rp_src_' + kind + '_1')], [t('rp_src_' + kind + '_k2'), t('rp_src_' + kind + '_2')], [t('rp_src_' + kind + '_k3'), t('rp_src_' + kind + '_3')]] };
 }
 function reportPbe() {
@@ -378,7 +378,6 @@ function reportPbe() {
 }
 function reportEma() {
   const D = st.pbe, V = eview(D), R = common('ema', D);
-  R.link = location.href.split('?')[0] + `?tab=pbe&lang=${lang}`;
   R.params = [[t('an_method'), t('an_ema_method')], [t('an_test'), D.form.test], [t('an_ref'), D.form.ref], [t('an_log'), D.form.log_d ? t('an_yes') : t('an_no')]];
   R.source = V.source;
   R.result = [P(V.verdict, { b: true }), TABLE([[t('rp_field'), t('rp_value')], ...V.main]), H2(t('an_ema_paths')), TABLE([V.pathsHead, ...V.paths], [1, 2, 3, 4, 5]),

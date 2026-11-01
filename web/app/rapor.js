@@ -91,7 +91,7 @@ function docx(body, headerText, footerText) {
 // ---------------------------------------------------------------- the report (Table 4.1 of FSR-TN-PLT-05)
 // R: { kind: 'tek' | 'tasarim', t, lang, created, header, disclaimer_tr, disclaimer_en,
 //      identity: [[label, value]], versions: [[label, value]], files: [[file, pinned, sha, status]] | null,
-//      params: [[label, value]], source, result: [xml ...], warnings: [text], link, sources? }
+//      params: [[label, value]], source, result: [xml ...], warnings: [text], link (null: no Section 9), sources? }
 export function buildReport(R) {
   const t = R.t;
   const b = [];
@@ -108,7 +108,9 @@ export function buildReport(R) {
   const src = R.sources || ['fda', 'ema', 'sim'].map((k) => [t('rp_src_' + k + '_k'), t('rp_src_' + k)]);   // P6: own list for analyses
   b.push(H1('7. ' + t('rp_s_sources')), TABLE([[t('rp_topic'), t('rp_ref')], ...src]));
   b.push(H1('8. ' + t('rp_s_validation')), P(t('rp_validation_' + R.kind)));
-  b.push(H1('9. ' + t('rp_s_link')), P(t('rp_link_note')), P(R.link, { sz: 16 }));
+  // Section 9 only where the link reproduces the result (simulation); analysis reports carry no
+  // link, because the user's data never leave the browser (owner decision KK-71, FSR-LOG-01 G-122).
+  if (R.link) b.push(H1('9. ' + t('rp_s_link')), P(t('rp_link_note')), P(R.link, { sz: 16 }));
   return docx(b.join(''), R.header, R.disclaimer_tr + ' · ' + R.disclaimer_en);
 }
 

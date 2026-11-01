@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 2.18 · Son güncelleme: 01.11.2026"
+subtitle: "FSR-LOG-01 · Sürüm 2.19 · Son güncelleme: 01.11.2026"
 ---
 
 # Bu belge hakkında
@@ -2268,6 +2268,18 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Kontrol listesi:** B5 tamam.
 - **Sıradaki iş:** B aşaması: ara sürüm etiketi (B1; site etiketle güncellenir), BEBAC duyurusu (B2), A-9 dışa açılan fonksiyonlar (B4), JOSS makalesi (B6).
 
+## G-122 · Analiz raporlarından Bölüm 9 (Bağlantı) çıkarıldı (KK-71) — 01.11.2026
+
+- **Depo:** G-121 commit edildi (proje sahibi).
+- **Çalışma düzeni:** proje sahibi uygulamada karşılaştığı sorun, hata ve önerileri bildirecek. Claude her bildirimde sorunu kodda bulur, hata / tasarım kararı / öneri olarak sınıflar; çekirdeğe ya da sabitli dosyalara dokunan değişiklikte önce kabul ölçütü yazar. Öneri: her bildirim GitHub'da issue olarak da açılabilir (JOSS'un açık geliştirme geçmişi); Claude metni hazırlar.
+- **Bildirim 1 (proje sahibi, ekran görüntüsü):** PBE analiz raporu, Bölüm 9 "Bağlantı".
+- **Claude'un incelemesi:** (1) bağlantı satırı başlık ve açıklamadan ayrılıp sonraki sayfaya düşüyor (açıklama paragrafında "sonrakiyle birlikte tut" yok); (2) açıklama metni ("Bu bağlantı aynı parametrelerle ekranı açar; sonuç aynı seed ile yeniden üretilir") simülasyon raporundan geliyor ve analiz raporu için doğru değil: analiz bağlantısı yalnız sekme ve dili taşır (`?tab=pbe&lang=tr`), veri ve ayarları taşımaz (veri tasarım gereği tarayıcıdan çıkmaz). Öneri: (a) analiz raporlarına ayrı açıklama ya da (b) ayarları bağlantıya koymak.
+- **Karar (K, proje sahibi): KK-71.** "9 başlığını simülasyon dışındaki bütün raporlardan tamamen çıkarmak."
+- **Uygulama (Claude):** `web/app/rapor.js`: Bölüm 9 yalnız `R.link` varsa yazılır; `web/analiz/analiz.js`: analiz raporlarında `link: null` (PBE, EMA, f2, MSD, Weibull MSD). Simülasyon raporları (tek senaryo, tasarım seçimi) değişmedi. Sabitli çekirdek dosyalara dokunulmadı.
+- **Kabul ölçütleri (Claude; çekirdeğe dokunmayan rapor değişikliği, mevcut donmuş P6 ve P8 ölçütleri geçerli):** analiz raporlarında 8 bölüm ve bağlantı yok; P6 ve P8 rapor ölçütleri (ekrandaki metinlerin raporda olması, beyan, belirlenimcilik) geçer; simülasyon raporu değişmez (P6 F-10).
+- **Kuru koşular (Claude, yalıtılmış kök):** P6 80/80 GECTI (F-7 sekiz rapor, eksik metin 0; F-10 "P5 raporu değişmedi" GECTI; paket testleri ve devralınan validasyon dahil); P8 44/44 GECTI. Üretilen raporların başlıkları: analiz raporlarının hepsi 8 bölüm ("8. Doğrulama / Validation") ve `tab=` yok; P5 simülasyon raporu 9 bölüm. ("ortam" satırı bilgi amaçlı EKSIK, önceki koşularla aynı.)
+- **Not:** Siteye yansıması için sürüm etiketi ya da elle tetikleme gerekir (G-121); düzeltmeler biriktirilip toplu yayımlanacak.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -2295,7 +2307,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 2.18 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 2.19 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.1 | 1.0 onaylı; beş dosya sabitlendi (G-47). 1.1: TC-S11 (dışa aktarılan betik), onaylandı (KK-53, G-76) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.7 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68); v0.7: Tablo 8.1 ve 10.1 (KK-56, KK-57, KK-59; G-94), onay P6 kapanışında |
@@ -2385,3 +2397,4 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | KK-68 | FSR-TN-PLT-09 v0.2 ve FSR-VAL-PLT-1 1.5 onaylandı; A-16 kapandı | G-117 |
 | KK-69 | Hedef dergi JOSS; lisans kod MIT, belgeler CC BY 4.0; depo JOSS için v1.0.0 öncesi açılır; uzun vadeli hedef biyoeşdeğerlik portalı | G-118 |
 | KK-70 | `chow1452.csv` kalır; G-98 zip silindi; e-posta açık, `CITATION.cff`'te kurumsal adres; kurum ve ORCID künyede | G-119 |
+| KK-71 | Bölüm 9 (Bağlantı) simülasyon dışındaki bütün raporlardan çıkarılır | G-122 |
