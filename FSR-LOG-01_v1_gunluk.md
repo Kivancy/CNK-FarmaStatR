@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 2.15 · Son güncelleme: 31.10.2026"
+subtitle: "FSR-LOG-01 · Sürüm 2.16 · Son güncelleme: 01.11.2026"
 ---
 
 # Bu belge hakkında
@@ -2223,6 +2223,30 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
   - Proje sahibinin kararına bırakılanlar: `chow1452.csv` (kitaptan aktarılmış 1080 değer; düşük risk, karar sahibinde; G-28'de depoya alınmıştı), `G-98_yardim_dosyalari.zip` (eski kopyalar; silinmesi önerildi), commit e-postasının görünür olması.
 - **Sıradaki iş (proje sahibi):** commit; git geçmişi listesi için tek komut; A5, A6 kararları; ORCID; ardından depoyu açma.
 
+## G-119 · Depoyu açma hazırlığı: A4–A8 kapandı (KK-70); Tsong 1996 hatası DDSolver ile bağımsız doğrulandı — 31.10–01.11.2026
+
+- **Depo:** G-118 ve ekleri commit edildi (lisans dosyaları; G-98 zip'inin silinmesi; kurumsal e-posta; `CITATION.cff` e-postası; kurum bilgisi; ORCID); her birinde GitHub Actions başarılı (proje sahibi).
+- **A4, git geçmişi taraması (Claude):** Bilgisayarda ayrı Git kurulu olmadığından komut GitHub Desktop'ın içindeki Git ile çalıştırıldı (`for /d %d in ("%LOCALAPPDATA%\GitHubDesktop\app-*") do "%d\resources\app\git\cmd\git.exe" log --all --name-only --format="" > kaynaklar\gecmis_dosyalar.txt`). Geçmişte 403 ayrı dosya adı var; PDF, e-kitap ya da `kaynaklar/` dosyası hiç girmemiş. Geçmişteki 17 zip açıldı (iç içe zip dahil): yalnız projenin kendi docx, csv, R, html dosyaları. JPG'ler eski PBE validasyon belgesinin sayfa görüntüleri (`pv_mont.jpg` incelendi). Üç xlsx Tsong 1996, Noce 2020 ve Ma 2000 test verileri (üçüncü taraf verisi olarak `LICENSE-belgeler.md`'de). Sonuç: geçmiş temiz.
+- **Kararlar (K, proje sahibi): KK-70.**
+  - A5: `chow1452.csv` depoda kalır ("kitap public zaten. biz de ticari bir iş yapmıyoruz"). Claude notu: kitap yayımlanmış olsa da telifli; kalmasının dayanağı yalnız iki tablonun sayısal değerleri olması, açık atıf ve ticari olmayan akademik kullanım (hukuki görüş değil). Dosya geçmişte de olduğundan çıkarmak geçmişin yeniden yazılmasını gerektirirdi.
+  - A6: `G-98_yardim_dosyalari.zip` proje sahibi tarafından silindi (içerik: eski yardım dosyası kopyaları).
+  - A7: commit e-postası (kivancyuksel@gmail.com) açık kalır. Kurumsal adres (kivanc.yuksel@ege.edu.tr) `CONTRIBUTING.md`, `README.md`, `OKUBENI.md` iletişim satırlarına eklendi; `CITATION.cff` e-postası kurumsal adres oldu; `DESCRIPTION` (R paketi sorumlusu) Gmail'de kaldı.
+  - A8: Kurum (proje sahibinin verdiği): Öğr. Gör. Dr., Ege Üniversitesi Tıp Fakültesi Temel Tıp Bilimleri Bölümü Biyoistatistik ve Tıbbi Bilişim Anabilim Dalı. Künye dosyalarına (`CITATION.cff`, `.zenodo.json`) "Department of Biostatistics and Medical Informatics, Faculty of Medicine, Ege University, İzmir, Türkiye" yazıldı (bölüm katmanı ve ünvan atıf biçiminde yer almaz; şehir ve ülke Claude ekledi). ORCID 0000-0003-3491-0099 (kontrol hanesi doğrulandı) `CITATION.cff`, `.zenodo.json` ve `DESCRIPTION`'a (`comment = c(ORCID = ...)`) eklendi.
+- **A9, A10 hazırlığı (Claude):** depoyu açma adımları, About açıklaması ve konu etiketleri proje sahibine verildi. Proje sahibi açmadan önce mevcut hâli görmek istedi; açılış tarihi (A11) henüz yok.
+- **Tsong 1996 bağımsız doğrulaması:** Proje sahibinin sorusu üzerine G-01'deki "Literatürde bulunan hatalar" tablosunun ilk satırı (Tsong 1996 Tablo 1, REF tablet 4, 30 dk: 78.54 → 78.45) DDSolver ile denetlendi. Claude iki veri setini (basılı ve düzeltilmiş) ve beklenen sonuçları hazırladı; proje sahibi DDSolver'da (Dissolution Profile Comparison > Multivariate Confidence Region) koştu.
+
+| Veri | Araç | T² | D_M | %90 GB |
+|---|---|---|---|---|
+| Basılı (78.54) | DDSolver | 2195.8049 | 27.0543 | 20.2219 – 33.8867 |
+| Basılı (78.54) | CNK-FarmaStatR | 2195.80 | 27.0543 | 20.2219 – 33.8867 |
+| Düzeltilmiş (78.45) | DDSolver | 2104.4637 | 26.4856 | 19.6532 – 33.3180 |
+| Düzeltilmiş (78.45) | CNK-FarmaStatR | 2104.46 | 26.4856 | 19.6532 – 33.3180 |
+| — | Tsong 1996 (yayımlanan) | 2104.46 | 26.49 | 19.65 – 33.32 |
+
+  - Sonuç: iki bağımsız araç dört ondalığa kadar aynı; makalenin yayımlanan sonuçları yalnız 78.45 ile elde edilir. Bulgunun kanıt düzeyi "kanıtlı"dan "iki bağımsız araçla kanıtlı"ya çıktı. Aynı zamanda MSD çekirdeği için DDSolver çapraz kontrolü (yeniden validasyon değil). DDSolver'ın benzerlik sınırı (Max_MSD) iki veri setinde farklı (19.4272, 19.7076), çünkü referans verisinden türetiliyor; karşılaştırmaya alınmadı.
+  - Kanıt: `belgeler/literatur_hatalari/tsong1996/` (OKUBENI.md, veri ve beklenen sonuç dosyası, iki DDSolver ekranı). Platform makalesinin malzemesi.
+- **Sıradaki iş (proje sahibi):** mevcut hâlin incelenmesi; depoyu açma (A9), About (A10); açılış tarihinin bildirilmesi (A11).
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -2233,7 +2257,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-5 | GitHub deposu (CNK-FarmaStatR) ve bağlantı | Tamam: dosyalar GitHub'da, commit `80556e5` (G-10, G-11) |
 | A-8 | Otomatik doğrulama (GitHub Actions): her push'ta SHA-256 + 491 kontrol | Tamam: ilk koşu Linux + Windows GEÇTİ (G-12) |
 | A-6 | Lisans kararı (MIT / GPL-3 / diğer) | **Tamam:** kod MIT, belgeler CC BY 4.0 (KK-69, G-118); dosyalar yazıldı |
-| A-18 | Açık geliştirme ve JOSS (KK-69) | Hazırlık tamam (G-118); git geçmişi taraması, A5–A8 kararları ve depoyu açma proje sahibinde; kontrol listesi `belgeler/yayin/YAYIN_KONTROL_LISTESI.md` |
+| A-18 | Açık geliştirme ve JOSS (KK-69) | Hazırlık tamam (G-118); A4–A8 kapandı (KK-70, G-119); depoyu açma (A9, A10) proje sahibinde; kontrol listesi `belgeler/yayin/YAYIN_KONTROL_LISTESI.md` |
 | A-7 | Fonksiyon belgeleri (İngilizce) ve PBE köprüsünün pakete alınması | Tamam: PBE köprüsü (G-13), belgeler (G-14) |
 | A-10 | Simülasyon altyapısı: validasyon belgesi FSR-VAL-SIM-1 ve SHA-256 sabitleme; ilk yayın senaryosu | Altyapı v0.1.0 tamam (G-15); ilk senaryo PBE güç / seri başına kap sayısı; teknik not v0.4 (G-31); hızlı motor `invitro_fast.R` (G-32); Aşama 1 koşuldu (G-33) ve nota işlendi (G-34); SAS kontrolü (G-36); sırada Aşama 2; Aşama 2 listesi sabitlendi, 725 senaryo (G-38); motor 0.2.0, Aşama 2 koşuldu (G-40); FSR-VAL-SIM-1 v0.1 taslak (G-44); FSR-VAL-SIM-1 1.0 ve sabitleme tamam (G-47) |
 | A-12 | `invitro_fast.R` ve `invitro_grid.R` için validasyon belgesi (FSR-VAL-SIM-1 kapsamında) ve SHA-256 sabitleme; EMS testi (teknik not 8.5) pakete | Tamam: FSR-VAL-SIM-1 1.0 onaylandı, beş dosya SHA-256 ile sabitlendi (G-47) |
@@ -2250,7 +2274,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 2.15 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 2.16 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.1 | 1.0 onaylı; beş dosya sabitlendi (G-47). 1.1: TC-S11 (dışa aktarılan betik), onaylandı (KK-53, G-76) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.7 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68); v0.7: Tablo 8.1 ve 10.1 (KK-56, KK-57, KK-59; G-94), onay P6 kapanışında |
@@ -2339,3 +2363,4 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | KK-67 | FSR-TN-PLT-09 v0.1 onaylandı; G-1 … G-9 donduruldu; P9-K1 için önerilen (a) uygulandı | G-115 |
 | KK-68 | FSR-TN-PLT-09 v0.2 ve FSR-VAL-PLT-1 1.5 onaylandı; A-16 kapandı | G-117 |
 | KK-69 | Hedef dergi JOSS; lisans kod MIT, belgeler CC BY 4.0; depo JOSS için v1.0.0 öncesi açılır; uzun vadeli hedef biyoeşdeğerlik portalı | G-118 |
+| KK-70 | `chow1452.csv` kalır; G-98 zip silindi; e-posta açık, `CITATION.cff`'te kurumsal adres; kurum ve ORCID künyede | G-119 |

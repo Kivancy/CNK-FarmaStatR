@@ -14,11 +14,11 @@ sahibindedir (geri döndürülemez ya da proje sahibine ait). Bir aşama önceki
 | A1 | Lisans: kod MIT (`LICENSE`, `CNKfarmastatr/LICENSE`, `DESCRIPTION`), belgeler CC BY 4.0 (`LICENSE-belgeler.md`); `CITATION.cff`, `.zenodo.json` | Proje sahibi karar verdi (KK-69); Claude yazdı | Tamam (G-118) |
 | A2 | `CONTRIBUTING.md` (sorun bildirme, katkı, destek); README ve OKUBENI güncellendi | Claude | Tamam (G-118) |
 | A3 | Telif ve gizlilik taraması, bugünkü dosyalar: izlenen 400 dosyada PDF yok, `kaynaklar/` izlenmiyor, parola ya da anahtar yok | Claude | Tamam (G-118) |
-| A4 | Telif taraması, **git geçmişi**: geçmişte depoya girmiş bütün dosya adlarının listesi | Proje sahibi tek komut çalıştırır; Claude inceler | Bekliyor |
-| A5 | Karar: `belgeler/teknik_notlar/FSR-TN-PBE-01_ek/chow1452.csv` (Chow ve Liu 2008 kitabının iki tablosundan elle aktarılmış 1080 değer) depoda kalsın mı | Proje sahibi | Bekliyor |
-| A6 | Karar: kökteki `G-98_yardim_dosyalari.zip` (21.10.2026 tarihli eski dosya kopyaları) silinsin mi; Claude önerisi: silinsin | Proje sahibi | Bekliyor |
-| A7 | Bilgi: açılınca commit'lerdeki e-posta adresi görünür olur (adres zaten `DESCRIPTION` ve `CITATION.cff`'te iletişim adresi) | Proje sahibi | Bilgi |
-| A8 | ORCID ve kurum bilgisi (`CITATION.cff`, `.zenodo.json`, `DESCRIPTION`); JOSS'ta ORCID beklenir | Proje sahibi bilgileri verir | Bekliyor |
+| A4 | Telif taraması, **git geçmişi**: geçmişte depoya girmiş bütün dosya adlarının listesi | Proje sahibi tek komut çalıştırır; Claude inceler | Tamam: geçmiş temiz (G-119) |
+| A5 | Karar: `belgeler/teknik_notlar/FSR-TN-PBE-01_ek/chow1452.csv` (Chow ve Liu 2008 kitabının iki tablosundan elle aktarılmış 1080 değer) depoda kalsın mı | Proje sahibi | Tamam: kalır (KK-70, G-119) |
+| A6 | Karar: kökteki `G-98_yardim_dosyalari.zip` (21.10.2026 tarihli eski dosya kopyaları) silinsin mi; Claude önerisi: silinsin | Proje sahibi | Tamam: silindi (G-119) |
+| A7 | Bilgi: açılınca commit'lerdeki e-posta adresi görünür olur (adres zaten `DESCRIPTION` ve `CITATION.cff`'te iletişim adresi) | Proje sahibi | Tamam: açık kalır; `CITATION.cff`'te kurumsal adres (KK-70, G-119) |
+| A8 | ORCID ve kurum bilgisi (`CITATION.cff`, `.zenodo.json`, `DESCRIPTION`); JOSS'ta ORCID beklenir | Proje sahibi bilgileri verir | Tamam: Ege Üniversitesi; ORCID 0000-0003-3491-0099 (G-119) |
 | A9 | **Deponun açılması**: GitHub > Settings > General > Danger Zone > Change visibility > Public | Proje sahibi | Bekliyor |
 | A10 | GitHub > About: kısa açıklama, konu etiketleri (bioequivalence, dissolution, r, webr); Issues açık | Proje sahibi (Claude metni hazırlar) | Bekliyor |
 | A11 | Günlük: açılış tarihi (JOSS'un altı aylık süresi bu tarihten başlar) | Claude | Bekliyor |
