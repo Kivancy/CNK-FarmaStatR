@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 2.17 · Son güncelleme: 01.11.2026"
+subtitle: "FSR-LOG-01 · Sürüm 2.18 · Son güncelleme: 01.11.2026"
 ---
 
 # Bu belge hakkında
@@ -2256,6 +2256,18 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Doğrulama sınırı:** Claude'un ortamı github.com'a erişemediği için açık hâl Claude tarafından görülmedi; kayıt proje sahibinin bildirimine dayanır.
 - **Sıradaki iş:** B aşaması (altı aylık açık geliştirme): ara sürüm etiketleri (B1), BEBAC duyurusu (B2), issue'lar (B3), A-9 dışa açılan fonksiyonlar (B4), GitHub Pages (B5), JOSS makalesi `paper.md` (B6).
 
+## G-121 · GitHub Pages yayında (B5): https://kivancy.github.io/CNK-FarmaStatR/; yayındaki sitede doğrulama 516/516 ve 2328/2328 — 01.11.2026
+
+- **Depo:** G-120 commit edildi; GitHub Actions başarılı (proje sahibi).
+- **Proje sahibinin sorusu:** kullanmak isteyenler nasıl kullanacak? Claude üç yolu açıkladı: R paketi (`remotes::install_github`), depoyu indirip yerel sunucu, GitHub Pages (kurulumsuz bağlantı; hesap kullanıcının tarayıcısında webR ile, sunucu yok). Proje sahibi: "açalım".
+- **Ön deneme (Claude):** site klasörü iş akışındaki komutların aynısıyla kuruldu ve Pages adresini taklit eden alt yoldan (`/CNK-FarmaStatR/`) Playwright ile açıldı (webR yerel kopyadan). Giriş sayfası, simülasyon, veri analizi, yöntem notları (TR, EN): sayfa hatası 0, HTTP ≥ 400 yanıtı 0. Tarayıcıda doğrulama: devralınan kontroller geçti; paket testleri 61 test bloğu, 2328 beklenti, 0 hata.
+- **İş akışı:** `belgeler/yayin/pages.yml.taslak` başlık yorumu güncellenerek `.github/workflows/pages.yml` olarak hazırlandı (içerik aynı: yalnız `v*` etiketlerinde ya da elle tetiklenince yayımlar). Korumalı dosya; proje sahibi yerleştirdi, Claude cihazdaki kopyayı gönderilen dosyayla bayt bayt karşılaştırdı (aynı).
+- **Proje sahibi (K):** Settings > Pages > Source: GitHub Actions; Actions > pages > Run workflow (pages #1, workflow_dispatch, commit `3a3d695`): başarılı. Site açıldı; giriş sayfası beyanla birlikte görüntülendi.
+- **Yayındaki sitede doğrulama (proje sahibi, Windows, Chrome 156; webR 0.5.4 resmî adresinden, R 4.5.1):** `web/analiz/dogrula.html`. Dosya listesi 52/52, sabitli çekirdekler 13/13 SHA-256 eşleşti, devralınan validasyon 516/516 (MSD 60, Weibull MSD 98, f2 120, PBE 213, PBE köprüsü 25), paket testleri 61 blok, 2328 beklenti, 0 hata, 0 atlanan. Kanıt: `belgeler/yayin/pages_ilk_dogrulama/` (iki CSV: 17-38-15 paket testleri; 17-41-30 devralınan ve paket testleri birlikte).
+- **README, OKUBENI:** "Kullanım / Use" bölümüne site adresi eklendi; OKUBENI'deki yerel klasör yolu (`setwd("C:/cloud/...")`) kaldırıldı (açık depoda kişisel yol).
+- **Kontrol listesi:** B5 tamam.
+- **Sıradaki iş:** B aşaması: ara sürüm etiketi (B1; site etiketle güncellenir), BEBAC duyurusu (B2), A-9 dışa açılan fonksiyonlar (B4), JOSS makalesi (B6).
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -2266,7 +2278,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | A-5 | GitHub deposu (CNK-FarmaStatR) ve bağlantı | Tamam: dosyalar GitHub'da, commit `80556e5` (G-10, G-11) |
 | A-8 | Otomatik doğrulama (GitHub Actions): her push'ta SHA-256 + 491 kontrol | Tamam: ilk koşu Linux + Windows GEÇTİ (G-12) |
 | A-6 | Lisans kararı (MIT / GPL-3 / diğer) | **Tamam:** kod MIT, belgeler CC BY 4.0 (KK-69, G-118); dosyalar yazıldı |
-| A-18 | Açık geliştirme ve JOSS (KK-69) | Hazırlık tamam (G-118); A4–A8 kapandı (KK-70, G-119); **depo 01.11.2026'da açıldı** (G-120); B aşaması (altı ay, JOSS en erken Mayıs 2027); kontrol listesi `belgeler/yayin/YAYIN_KONTROL_LISTESI.md` |
+| A-18 | Açık geliştirme ve JOSS (KK-69) | Hazırlık tamam (G-118); A4–A8 kapandı (KK-70, G-119); **depo 01.11.2026'da açıldı** (G-120); GitHub Pages yayında (G-121); B aşaması (altı ay, JOSS en erken Mayıs 2027); kontrol listesi `belgeler/yayin/YAYIN_KONTROL_LISTESI.md` |
 | A-7 | Fonksiyon belgeleri (İngilizce) ve PBE köprüsünün pakete alınması | Tamam: PBE köprüsü (G-13), belgeler (G-14) |
 | A-10 | Simülasyon altyapısı: validasyon belgesi FSR-VAL-SIM-1 ve SHA-256 sabitleme; ilk yayın senaryosu | Altyapı v0.1.0 tamam (G-15); ilk senaryo PBE güç / seri başına kap sayısı; teknik not v0.4 (G-31); hızlı motor `invitro_fast.R` (G-32); Aşama 1 koşuldu (G-33) ve nota işlendi (G-34); SAS kontrolü (G-36); sırada Aşama 2; Aşama 2 listesi sabitlendi, 725 senaryo (G-38); motor 0.2.0, Aşama 2 koşuldu (G-40); FSR-VAL-SIM-1 v0.1 taslak (G-44); FSR-VAL-SIM-1 1.0 ve sabitleme tamam (G-47) |
 | A-12 | `invitro_fast.R` ve `invitro_grid.R` için validasyon belgesi (FSR-VAL-SIM-1 kapsamında) ve SHA-256 sabitleme; EMS testi (teknik not 8.5) pakete | Tamam: FSR-VAL-SIM-1 1.0 onaylandı, beş dosya SHA-256 ile sabitlendi (G-47) |
@@ -2283,7 +2295,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 2.17 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 2.18 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.1 | 1.0 onaylı; beş dosya sabitlendi (G-47). 1.1: TC-S11 (dışa aktarılan betik), onaylandı (KK-53, G-76) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.7 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68); v0.7: Tablo 8.1 ve 10.1 (KK-56, KK-57, KK-59; G-94), onay P6 kapanışında |

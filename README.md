@@ -9,7 +9,10 @@ Türkçe: [OKUBENI.md](OKUBENI.md)
 
 ## Use
 
-Serve the repository root locally (R):
+**Online, no installation:** https://kivancy.github.io/CNK-FarmaStatR/ (the released version; R runs in
+your browser through webR, your data never leave it; the first start takes a minute or two).
+
+**Locally:** download the repository and serve its root (R):
 
 ```r
 httpuv::runStaticServer(".", port = 8000)

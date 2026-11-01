@@ -31,7 +31,7 @@ sahibindedir (geri döndürülemez ya da proje sahibine ait). Bir aşama önceki
 | B2 | Duyuru ve geri bildirim: BEBAC forumu (https://forum.bebac.at/) | Proje sahibi | Bekliyor |
 | B3 | Gelen issue'ların yanıtlanması; değişiklikler teknik not ve kabul ölçütleriyle | Proje sahibi karar verir; Claude yazar | Sürekli |
 | B4 | A-9: dışa açılan fonksiyonların ayıklanması ve belgeleri | Claude, proje sahibi onaylar | Bekliyor |
-| B5 | **GitHub Pages**: `belgeler/yayin/pages.yml.taslak` → `.github/workflows/pages.yml`; Settings > Pages > Source: GitHub Actions | Proje sahibi (iş akışı dosyası korumalı) | Taslak hazır |
+| B5 | **GitHub Pages**: `belgeler/yayin/pages.yml.taslak` → `.github/workflows/pages.yml`; Settings > Pages > Source: GitHub Actions | Proje sahibi (iş akışı dosyası korumalı) | Tamam: https://kivancy.github.io/CNK-FarmaStatR/ yayında; ilk doğrulama 516/516 ve 2328 test (G-121) |
 | B6 | JOSS makalesi: `paper.md` ve `paper.bib` (Summary, Statement of need, State of the field, AI beyanı, kaynaklar) | Claude yazar, proje sahibi düzeltir ve onaylar | Bekliyor |
 
 ## C · JOSS başvurusu ve v1.0.0

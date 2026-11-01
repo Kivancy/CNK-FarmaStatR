@@ -8,10 +8,12 @@ English: [README.md](README.md)
 
 ## Kullanım
 
-Depo kökünden yerel sunucu (R):
+**Çevrim içi, kurulum gerektirmez:** https://kivancy.github.io/CNK-FarmaStatR/ (yayımlanmış sürüm; R,
+webR ile tarayıcınızda çalışır, verileriniz tarayıcıdan çıkmaz; ilk açılış bir iki dakika sürer).
+
+**Yerel:** depoyu indirin ve R'de depo klasöründe yerel sunucuyu başlatın:
 
 ```r
-setwd("C:/cloud/CNK-FarmaStatR/CNK-FarmaStatR")
 httpuv::runStaticServer(".", port = 8000)
 ```
 
