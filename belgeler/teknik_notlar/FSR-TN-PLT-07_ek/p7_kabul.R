@@ -147,6 +147,42 @@ put("Y-11 PBE karar metni", grepl("Hη ≤ 0", v1("Y-11", "pbe", "tr", "karar_me
       identical(jsonlite::fromJSON(v1("Y-11", "pbe", "en", "rapor_gorunum")), v1("Y-11", "pbe", "en", "karar_metni")),
     paste(v1("Y-11", "pbe", "tr", "karar_metni"), "|", v1("Y-11", "pbe", "en", "karar_metni")))
 
+# ---------------------------------------------------------------- B-1 ... B-5 plain-words pages (FSR-TN-PLT-10, KK-72)
+tr_dis <- "Araştırma ve eğitim amaçlıdır; GxP ortamında valide edilmiş sistem değildir."
+en_dis <- "For research and education; not a system validated for GxP environments."
+bh <- c(tr = "İstatistiği Anlamaya Meraklılar İçin Notlar", en = "Notes for the statistically curious")
+bs <- lapply(c(tr = "tr", en = "en"), function(l) jsonlite::fromJSON(v1("B-3", "index", l, "sayfalar")))
+put("B-3 dizin", all(vapply(c("tr", "en"), function(l) bh[[l]] %in% jsonlite::fromJSON(v1("B-3", "index", l, "baslik")) && length(bs[[l]]) > 0, NA)) &&
+      identical(bs$tr, bs$en), sprintf("%d sayfa: %s", length(bs$tr), paste(bs$tr, collapse = ", ")))
+bn <- sub("\\.html$", "", sub("^basit_", "", bs$tr))
+lt <- c(tr = "Meraklısı için bu notun basit anlatımı →", en = "For the curious: this note in plain words →")
+for (n in bn) for (l in c("tr", "en")) {
+  put(paste("B-1", n, l), identical(v1("B-1", n, l, "gorunur"), "true") && identical(v1("B-1", n, l, "beyan"), if (l == "tr") tr_dis else en_dis) &&
+        identical(v1("B-1", n, l, "yatay_kaydirma"), "false"), v1("B-1", n, l, "baslik"))
+  put(paste("B-2", n, l), identical(v1("B-2", n, l, "teknikten_basite"), paste0("basit_", n, ".html|", lt[[l]])) && identical(v1("B-2", n, l, "basitten_teknige"), "true"),
+      "teknik not ↔ basit anlatım")
+  put(paste("B-5", n, l), identical(v1("B-5", n, l, "denklem"), "0") && identical(v1("B-5", n, l, "dis_istek"), "0"), "denklem 0; dış istek 0")
+}
+psg <- utils::read.csv(file.path("CNKfarmastatr", "inst", "validasyon", "pbe", "test_verisi", "P1_psg020929.csv"))
+rp <- psg[psg$Product == "REF", ]
+ch <- utils::read.csv(file.path("belgeler", "teknik_notlar", "FSR-TN-PBE-01_ek", "chow1452.csv"))   # Chow and Liu 2008 Tables 14.5.2-14.5.3
+ref_b <- c(ref, list(basit_psg_l = c(length(unique(rp$Batches)), 0),
+                     basit_psg_n = c(length(unique(rp$Container)) / length(unique(rp$Batches)), 0),
+                     basit_psg_m = c(length(unique(rp$Stage)), 0),
+                     basit_cv012 = c(100 * sqrt(exp(0.12^2) - 1), 1),
+                     basit_chow_l = c(length(unique(ch$lot[ch$prod == "Reference"])), 0),
+                     basit_chow_n = c(length(unique(ch$bottle)), 0),
+                     basit_chow_m = c(length(unique(ch$stage)), 0)))
+db <- g("B-4"); badb <- character(0)
+for (i in seq_len(nrow(db))) {
+  id <- db$ad[i]; r <- ref_b[[id]]
+  if (is.null(r)) { badb <- c(badb, paste(id, "(R karşılığı yok)")); next }
+  w <- yz(r[1], r[2], db$ayar[i])
+  if (!identical(db$deger[i], w)) badb <- c(badb, sprintf("%s/%s/%s: sayfa %s, R %s", db$durum[i], id, db$ayar[i], db$deger[i], w))
+}
+put("B-4 sayılar = R", nrow(db) > 0 && !length(badb), sprintf("%d sayı (TR ve EN); farklı %d%s", nrow(db), length(badb),
+    if (length(badb)) paste0(": ", paste(head(badb, 4), collapse = "; ")) else ""))
+
 # ---------------------------------------------------------------- Y-12
 docs <- c(file.path("belgeler", "teknik_notlar", "FSR-TN-PLT-07_v0.2.docx"), file.path("belgeler", "validasyon", "FSR-VAL-PLT-1_v1.3.docx"),
           file.path("web", "yardim", "README.md"), "FSR-LOG-01_v1_gunluk.md")

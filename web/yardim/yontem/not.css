@@ -13,3 +13,5 @@ main.notmain { display: block; max-width: 860px; margin: 0 auto; }
 .eq-m math { font-size: 1.08em; }
 .eq-k { margin: 4px 0 0; font-size: .82rem; color: var(--muted); }
 .deger { font-variant-numeric: tabular-nums; }
+/* FSR-TN-PLT-10 (KK-72): link between a technical note and its plain-words page */
+.not .basit-bag { margin: 4px 0 12px; padding: 6px 10px; border-left: 3px solid var(--accent); background: var(--bg); border-radius: 0 6px 6px 0; font-weight: 600; }

@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 2.20 · Son güncelleme: 01.11.2026"
+subtitle: "FSR-LOG-01 · Sürüm 2.22 · Son güncelleme: 02.11.2026"
 ---
 
 # Bu belge hakkında
@@ -2291,6 +2291,34 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Dosyalar:** `belgeler/literatur_hatalari/chow2003/` (OKUBENI.md, `csw2003.R`, `csw2003_ornek.R/.csv`, `csw2003_tablo1.R/.csv`). Platform makalesinin malzemesi (Tsong 1996 ile birlikte, G-119).
 - **Açık:** Tablo II (güç ve örneklem büyüklüğü adımları) ve Şekil 1 karşılaştırılmadı; istenirse aynı betiklerle yapılabilir.
 
+## G-124 · Meraklısı için basit anlatımlar (FSR-TN-PLT-10, KK-72): tasarım onaylandı, simülasyon sayfası — 02.11.2026
+
+- **Depo:** G-123 commit edildi; GitHub Actions başarılı (proje sahibi).
+- **Proje sahibinin soruları (01.11):** (1) Chow doğrulaması programda değişiklik yaptı mı? Claude: hayır; yalnız `belgeler/literatur_hatalari/chow2003/` eklendi, platform kodu ve site değişmedi, değişiklik gerektiren bulgu yok. (2) Tasarım seçimi raporundaki parametrelerin (σR, ρ, pB, pL, q, GMR, hedef güç, ℓ, n, m, nsim, seed, RNG) Budesonid PSG 020929 örneğiyle ilkokul düzeyinde anlatımı istendi; Claude sohbette anlattı.
+- **Öneri (proje sahibi, 02.11):** bu tür basit anlatımlar “İstatistiği Anlamaya Meraklılar İçin Notlar” başlığıyla yöntem notlarının altında yer alsın (istatistik okuryazarlığına destek). Claude üç yerleşim önerdi: (a) ayrı sayfalar ve iki yönlü bağlantı, (b) teknik not içinde katlanır kutu, (c) tek sözlük sayfası; öneri (a).
+- **Karar (K, proje sahibi): KK-72.** Seçenek (a); bağlantı metni “Meraklısı için bu notun basit anlatımı” (“biraz espri katmış oluruz bilime”); tasarım ve kabul ölçütleri B-1 … B-7 onaylandı (“onaylıyorum”). Ölçütler koddan önce donduruldu (KK-45).
+- **Belge:** FSR-TN-PLT-10 v0.1 (tasarım, içerik kuralları, P10-K1 … K3, Tablo 4.1 B-1 … B-7).
+- **Uygulama (Claude):**
+  - `araclar/yardim_derle.py`: `kaynak/basit_<not>.txt` varsa `yontem/basit_<not>.html` üretilir; teknik notun beyanının altına TR “Meraklısı için bu notun basit anlatımı →”, EN “For the curious: this note in plain words →” bağlantısı; basit sayfada “Yöntem notları · Teknik not →”; dizinde “İstatistiği Anlamaya Meraklılar İçin Notlar” / “Notes for the statistically curious” bölümü; basit sayfada denklem varsa derleme durur (B-5). Basit sayfası olmayan notların HTML'i bayt bayt değişmedi (pbe, ema, f2, msd, weibull).
+  - `web/yardim/kaynak/basit_simulasyon.txt` (TR, EN): Budesonid hikâyesi, ayarlar tek tek, ekranın söyledikleri, sınırlar. Sayılar: PSG örneğinin 3 seri × 10 ampul × 3 ölçüm yapısı, σR 0,4046, GMR 1,1603, CV %12,0, MCSE 0,40, FDA sınırı GMR 1,1894 R'de denetlenir (`[[id|değer]]`); payların kaynağı G-27 (Budesonid örneğinde seri payı %3–5, evre payı ≈ 0), varsayılanlar KK-32 (Chow ve Liu 2008).
+  - `web/yardim/yontem/not.css`: bağlantı satırı stili. `web/yardim/kabul7.js` ve `FSR-TN-PLT-07_ek/p7_kabul.R`: B-1 … B-5 satırları (basit sayfa listesi dizinden okunur); mevcut 51 satır değişmedi.
+- **Sohbetteki anlatımın düzeltmeleri (Claude):** sayfa yazılırken G-27 verisiyle karşılaştırıldı: Budesonid örneğinde evre payı (pL) neredeyse sıfırdır, seri payı %3–5; “GMR 1,05 = ilaç %5 fazla” yerine “ölçülen özellik %5 farklı”; “σ = 0,12 ≈ ±%12” yerine “değişkenlik katsayısı yaklaşık %12”; ℓ 2–3, n 5–15 kullanıcının girdisidir, ekranın varsayılanı ℓ 2–6, n 5–30.
+- **Kuru koşu (Claude, yalıtılmış kök):** P7 59/59 GEÇTİ (mevcut 51 + B-1 … B-5 için 8 satır; B-4 16 sayı = R). GitHub Pages alt yolunu taklit eden sunucuda (`/CNK-FarmaStatR/`) dizin, basit sayfa ve teknik notun 19 bağlantısı açıldı, HTTP ≥ 400 yanıtı 0 (B-2). Kanıt: `belgeler/teknik_notlar/FSR-TN-PLT-10_ek/kuru/p7_kabul_kuru_p10.zip`, `.csv`.
+- **Bekleyen:** B-7, simülasyon sayfasının proje sahibince incelenmesi ve onayı; sonra PBE, EMA, f2, MSD, Weibull sayfaları.
+
+## G-125 · Simülasyon basit anlatımı, proje sahibinin incelemesiyle revize edildi (B-7 sürüyor) — 02.11.2026
+
+- **Proje sahibinin incelemesi (iki majör, üç minör öneri):**
+  1. *Dozaj formu ve yaşam evresi:* Budesonid inhalasyon süspansiyonu tek dozluk ampullerdedir; başta–ortada–sonda ölçümü çok dozlu cihazların (MDI, nazal sprey) FDA in vitro kavramıdır; hikâye çok dozlu nazal spreye çevrilmeli.
+  2. *Tip I hatada “sınır”:* sınırın “FDA’nın standart %80–125 biyoeşdeğerlik limiti” olarak somutlaştırılması önerildi.
+  3. GMR bir oran (T/R) olarak anlatılmalı (“1,05 katı”); 4. “değişkenlik katsayısı”na (CV) eklenmeli; 5. sistematik kaymaya fiziksel örnek (valf performansı, tıkanma).
+- **Claude'un değerlendirmesi ve uygulama:**
+  - (1) Kabul edildi; kayıtlarla uyumlu (KK-36, G-38: PSG 020929 ana metni ampul başına bir ölçüm ister, yaşam evresi tanımlamaz; B/M/E yalnız Ek'teki simüle veride; evreler çok dozlu cihaz PSG'lerinde, ör. 021433). Hikâye Chow ve Liu 2008 §14.5.1 butorfanol burun spreyi verisine çevrildi (3 seri × 10 şişe × 3 evre, damlacık boyutu; `chow1452.csv`'den R ile denetlenir); ekranın varsayılanları zaten bu veriden (KK-32). Budesonid örneği yapı ve sayılar için korundu, tek doz uyarısıyla.
+  - (2) Farklı biçimde uygulandı: in vitro PBE'nin sınırı %80–125 değildir. FDA PBE ölçütü referansın dağınıklığına göre ölçeklenir (σR = 0,12, ρ = 1 iken T/R ≈ 1,1894; σR > σ_T0 = 0,1 iken σR büyüdükçe genişler; PSG 020929 Ek, teknik not Bölüm 3, 6); EMA OIP in vitro sınırı 0,85–1,18'dir (CPMP/EWP/4151/00 Rev. 2 §5.1 ölçüt 8). Tanıma somut örnek eklendi ve %80–125 ile farkı açıkça yazıldı (farmakologun bildiği kurala bağlanarak).
+  - (3)–(5) Kabul edildi ve uygulandı (TR, EN).
+- **Kuru koşu:** P7 59/59 GEÇTİ (B-4: 22 sayı = R; Chow yapısı eklendi). Kanıt dosyaları güncellendi (`FSR-TN-PLT-10_ek/kuru/`).
+- **Bekleyen:** B-7, revize sayfanın proje sahibince onayı.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -2318,7 +2346,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 2.20 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 2.22 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.1 | 1.0 onaylı; beş dosya sabitlendi (G-47). 1.1: TC-S11 (dışa aktarılan betik), onaylandı (KK-53, G-76) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.7 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68); v0.7: Tablo 8.1 ve 10.1 (KK-56, KK-57, KK-59; G-94), onay P6 kapanışında |
@@ -2329,6 +2357,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | FSR-TN-PLT-06 · P6 tasarımı, kabul ölçütleri ve sonuçları (devralınan modellerin arayüzü, platform validasyonu, yayın hazırlığı) | 0.2 | v0.1 yetki devriyle (KK-60), F-1…F-12 donduruldu (G-94); v0.2: resmî kabul 78/78 GEÇTİ (G-95); onaylandı, P6 kapandı (KK-62, G-97) |
 | FSR-TN-PLT-07 · Yardım sistemi: tasarım ve kabul ölçütleri | 0.2 | KK-63 yetkisiyle; Y-1…Y-12 donduruldu; kuru koşu 48/48 (G-98); resmî kabul 48/48 (G-99); v0.2: altı not (KK-64), kuru 51/51 (G-100), resmî 51/51 (G-102); onaylandı (KK-65, G-109); içerik incelemesi bekliyor |
 | FSR-TN-PLT-09 · Yardım içeriği kararları (KK-66): tasarım ve kabul ölçütleri | 0.2 | v0.1 onaylandı, G-1 … G-9 donduruldu (KK-67, G-115); v0.2: resmî kabul P6 80/80, EMA 44/44, yardım 51/51 (G-116); onaylandı (KK-68, G-117) |
+| FSR-TN-PLT-10 · Meraklısı için basit anlatımlar: tasarım ve kabul ölçütleri | 0.1 | Onaylı tasarım, B-1 … B-7 donduruldu (KK-72, G-124); simülasyon sayfası yazıldı, içerik onayı bekliyor |
 | FSR-TN-PLT-08 · EMA %90 GA analizi: tasarım ve kabul ölçütleri | 0.4 | E-1…E-10 koddan önce donduruldu (KK-64, G-100); kuru koşu 44/44; v0.2: resmî kabul 44/44 (G-102); v0.3: kaynak eşlemesi ve SAS kontrolleri (G-106); v0.4: literatür eşlemesi (G-108); onaylandı (KK-65, G-109) |
 | FSR-VAL-PLT-1 · Platform katmanı validasyon belgesi | 1.5 | 1.0: P1–P6 kanıtları (G-94); 1.1: P6 resmî kabulü, onaylandı (KK-62, G-97); 1.2: yardım sistemi, PBE metin bulgusu, gerileme (G-98); 1.3: EMA %90 GA analizi (G-100); 1.4: EMA ve yardım resmî kabulleri (G-102); 1.2–1.4 onaylandı (KK-65, G-109); 1.5: FSR-TN-PLT-09 (G-116), onaylandı (KK-68, G-117) |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
@@ -2409,3 +2438,4 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | KK-69 | Hedef dergi JOSS; lisans kod MIT, belgeler CC BY 4.0; depo JOSS için v1.0.0 öncesi açılır; uzun vadeli hedef biyoeşdeğerlik portalı | G-118 |
 | KK-70 | `chow1452.csv` kalır; G-98 zip silindi; e-posta açık, `CITATION.cff`'te kurumsal adres; kurum ve ORCID künyede | G-119 |
 | KK-71 | Bölüm 9 (Bağlantı) simülasyon dışındaki bütün raporlardan çıkarılır | G-122 |
+| KK-72 | Yöntem notlarına “Meraklısı için” basit anlatım sayfaları: ayrı sayfa ve iki yönlü bağlantı; FSR-TN-PLT-10 B-1 … B-7 donduruldu | G-124 |

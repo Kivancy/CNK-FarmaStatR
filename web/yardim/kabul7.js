@@ -1,5 +1,6 @@
 // CNK-FarmaStatR - help acceptance tool (FSR-TN-PLT-07 v0.1, Table 6.1: Y-1 ... Y-9, Y-11; v0.2: six notes).
 // FSR-TN-PLT-09 v0.1 (KK-66): the Y-3 counter counts the label “Tasarım gereği” / “By design”.
+// FSR-TN-PLT-10 v0.1 (KK-72): B-1 ... B-5 for the plain-words pages basit_<note>.html (rows 'B-*').
 // Drives the simulation screen, the analysis screen and the method notes in a same-origin frame,
 // records what they show and hold, and packs the record into one stored ZIP (p7_kabul.zip).
 // The comparison with local R (numbers of the worked examples, templates) and the verdicts are
@@ -180,6 +181,41 @@ async function main() {
     }
   }
   log('yöntem notları');
+
+  // ---- B-1 ... B-5 plain-words pages (FSR-TN-PLT-10): the list comes from the index
+  for (const lg of ['tr', 'en']) {
+    await load(`yontem/index.html?lang=${lg}`); await waitFor(() => W().__not && W().__not.ready);
+    const s = Dc().querySelector(`section.not[data-lang="${lg}"]`);
+    const h = [...s.querySelectorAll('h2')].map((x) => x.textContent);
+    const bl = [...s.querySelectorAll('a[href]')].map((a) => a.getAttribute('href').split('?')[0]).filter((u) => /^basit_/.test(u));
+    put('B-3', 'index', lg, 'baslik', JSON.stringify(h)); put('B-3', 'index', lg, 'sayfalar', JSON.stringify(bl));
+  }
+  const basit = [...new Set(out.filter((r) => r[0] === 'B-3' && r[3] === 'sayfalar').flatMap((r) => JSON.parse(r[4])))]
+    .map((u) => u.replace(/^basit_/, '').replace(/\.html$/, ''));
+  for (const n of basit) {
+    for (const lg of ['tr', 'en']) {
+      await load(`yontem/${n}.html?lang=${lg}`); await waitFor(() => W().__not && W().__not.ready);
+      const t = Dc().querySelector(`section.not[data-lang="${lg}"] .basit-bag a`);
+      put('B-2', n, lg, 'teknikten_basite', t ? t.getAttribute('href').split('?')[0] + '|' + t.textContent : '');
+      await load(`yontem/basit_${n}.html?lang=${lg}`); await waitFor(() => W().__not && W().__not.ready);
+      const r0 = reqs().length;
+      const s = Dc().querySelector(`section.not[data-lang="${lg}"]`);
+      put('B-1', n, lg, 'gorunur', !s.hidden && Dc().documentElement.lang === lg);
+      put('B-1', n, lg, 'baslik', s.querySelector('h1').textContent);
+      put('B-1', n, lg, 'beyan', (s.querySelector('.disclaimer') || {}).textContent || '');
+      const back = [...s.querySelectorAll('.ust a')].map((a) => a.getAttribute('href').split('?')[0]);
+      put('B-2', n, lg, 'basitten_teknige', back.includes(`${n}.html`));
+      put('B-5', n, lg, 'denklem', s.querySelectorAll('.eq, math').length);
+      for (const d of s.querySelectorAll('[data-deger]')) put('B-4', n, lg, d.dataset.deger, d.textContent);
+      for (const a of s.querySelectorAll('a[href]')) links.add(a.href.split('#')[0]);
+      const de = Dc().documentElement;
+      fr.style.width = '390px'; await sleep(200);
+      put('B-1', n, lg, 'yatay_kaydirma', de.scrollWidth > de.clientWidth + 1);
+      fr.style.width = '';
+      put('B-5', n, lg, 'dis_istek', ext(reqs().slice(r0)) + ext(reqs().filter((u) => !u.startsWith(location.origin))));
+    }
+  }
+  log(`basit anlatımlar: ${basit.length}`);
 
   // ---- Y-6 links (same site): every link opens
   for (const u of [...links].sort()) {

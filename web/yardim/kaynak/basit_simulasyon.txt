@@ -1,0 +1,101 @@
+@@tr
+# Simülasyon ve tasarım seçimi: meraklısı için
+
+Bu sayfa, [simülasyon teknik notunun](simulasyon.html) günlük dille anlatımıdır. Yeni bir yöntem içermez; sayıların kaynağı parantez içinde yazılıdır.
+
+## Hikâye: burun spreyi şişeleri
+Bir firma, bir burun spreyinin jenerik sürümünü yapıyor. Düzenleyici kurum soruyor: “Seninki orijinaliyle aynı mı?” Orijinal ilaca **referans (R)**, jeneriğe **test (T)** denir.
+
+Sprey **çok dozlu şişelerde** gelir. Şişe kullanıldıkça başta, ortada ve sonda püskürtülen dozlar ayrı ayrı ölçülür; bunlara **yaşam evreleri** denir. Şişeler fabrikada **seri** (parti) hâlinde üretilir; her seri, bir fırın dolusu kurabiye gibidir.
+
+Chow ve Liu (2008, Bölüm 14.5.1) gerçek bir örnek verir: bir butorfanol burun spreyinde her üründen [[basit_chow_l|3]] seri, her seriden [[basit_chow_n|10]] şişe alınmış ve her şişede [[basit_chow_m|3]] evrede (başlangıç, orta, son) damlacık boyutu ölçülmüştür. Ekrandaki varsayılan değerler bu veriden alınmıştır (FSR-LOG-01 G-27, KK-32).
+
+FDA’nın Budesonid kılavuzu da (PSG 020929, Ek) aynı yapıda bir sayısal örnek verir: [[basit_psg_l|3]] seri × [[basit_psg_n|10]] birim × [[basit_psg_m|3]] evre. Ancak Budesonid inhalasyon süspansiyonu tek dozluk ampullerdedir; kılavuzun ana metni ampul başına bir ölçüm ister ve yaşam evresi tanımlamaz. Ek’teki başlangıç, orta ve son evreler yalnız simüle edilmiş örnek veride geçer (FSR-LOG-01 G-38, KK-36). Yaşam evreleri çok dozlu cihazların kavramıdır (ör. ölçülü doz inhalerleri için FDA PSG 021433).
+
+Ölçümler hiçbir zaman tıpatıp aynı çıkmaz. Ekrandaki ayarların çoğu bu “farklı çıkma” hâlini anlatır.
+
+## Neden simülasyon?
+Kılavuzlar en az 3 seri ve seri başına en az 10 birim ister, ama “bu yeter mi?” sorusuna bir kural vermez (teknik not, Bölüm 1). Deney pahalıdır ve bir kez yapılır. Bilgisayar ise aynı deneyi, verdiğimiz varsayımlarla, binlerce kez “oynayabilir” ve hangi planın işe yarayacağını önceden gösterir.
+
+## Ayarlar tek tek
+- **σR = 0,12 (referansın dağınıklığı):** Orijinal ilacın ölçümleri ne kadar oynuyor? Logaritma ölçeğinde 0,12, değişkenlik katsayısı (CV) olarak yaklaşık %[[basit_cv012|12,0]] demektir. Bu varsayılan, yukarıdaki burun spreyi verisinden alınmıştır (Chow ve Liu 2008, Tablo 14.5.2–14.5.3; FSR-LOG-01 G-27, KK-32). FDA’nın Budesonid örnek verisi çok daha dağınıktır: σR yaklaşık [[pbe_sigma_r|0,4046]] ([PBE notu](pbe.html), Bölüm 6).
+- **ρ = σT / σR = 1:** Jenerik, orijinal kadar mı dağınık? 1, “aynı dağınıklıkta” demektir.
+- **pB = 0,1 (seri payı):** Dağınıklığın ne kadarı seriden seriye farktan geliyor? Kurabiyede: “bu fırın biraz fazla pişirmiş.” 0,1, yüzde 10 demektir. Budesonid örnek verisinde bu pay küçüktür, yaklaşık %3–5 (FSR-LOG-01 G-27).
+- **pL = 0,15 (yaşam evresi payı):** Dağınıklığın ne kadarı aynı şişenin başta, ortada ve sonda verdiği dozlar arasındaki farktan geliyor? Budesonid örnek verisinde bu pay neredeyse sıfırdır (FSR-LOG-01 G-27).
+- **Kalan pay:** Tabloda yazmaz ama kendiliğinden hesaplanır: 1 − 0,1 − 0,15 = 0,75. Bu, şişeden şişeye farktır. Budesonid örnek verisinde de dağınıklığın çoğu buradan gelir.
+- **q = 0 (sistematik kayma):** Dozlar şişenin başından sonuna hep aynı yöne mi kayıyor? Örneğin cihaz kullanıldıkça pompanın ya da valfin performansı değişebilir veya ağız kısmı kısmen tıkanabilir. 0, “hayır, yalnız rastgele oynama var” demektir.
+- **Güç için gerçek fark, GMR 1,05:** GMR (geometrik ortalama oranı) bir fark değil, bir orandır: test bölü referans, tıpkı farmakokinetikteki EAA ve Cmax oranları gibi. 1,05, jenerikte ölçülen özelliğin (ör. damlacık boyutu) orijinalin 1,05 katı, yani oransal olarak %5 farklı olması demektir. Küçük, kabul edilebilir bir fark. Varsayılan, burun spreyi verisindeki aralığa yakındır (Chow ve Liu 2008, Tablo 14.5.7: 0,99–1,04; KK-32). Budesonid örnek verisinde bu oran yaklaşık [[ema_gmr|1,1603]]’tür ([EMA notu](ema.html), Bölüm 6).
+- **Hedef güç %80:** İlaçlar gerçekten eşdeğerse, deneyin bunu 10 denemenin 8’inde göstermesini istiyoruz. Kalan 2’sinde, şanssız bir örneklem yüzünden “eşdeğer değil” denebilir. Chow, Shao ve Wang (2003, Bölüm 4) de örneklem büyüklüğünü %80 güç için hesaplar.
+- **ℓ, n, m:** Kaç seri, her seriden kaç şişe, her şişede kaç evre? Örneğin ℓ için 2 seçenek (2, 3), n için 4 seçenek (5, 8, 10, 15) ve m için 1 seçenek (3) girilirse 2 × 4 × 1 = 8 aday plan karşılaştırılır. Tasarım seçimi ekranının varsayılan listesi daha geniştir (ℓ 2–6, n 5–30).
+- **nsim = 10.000 (tekrar sayısı):** Bilgisayar her planı 10.000 kez oynar. Ne kadar çok oynarsa sonuç o kadar sağlam olur. Bu kadar tekrarda, güç %80 civarındayken tahminin kendi payı yaklaşık ±[[sim_mcse80|0,40]] yüzde puanıdır (teknik not, Bölüm 6).
+- **seed (tohum):** Zarın “başlangıç numarası”. Aynı numarayla herkes aynı zar atışlarını, yani aynı sonucu alır; sonuç bu sayede yeniden üretilebilir. 20261015 platformun ortak tohumudur (teknik not, Bölüm 5).
+- **RNG:** Zarı atan “makinenin” adı. R’nin standart yöntemi kullanılır (Mersenne-Twister).
+
+## Ekran ne söyler?
+Her aday plan için iki şey hesaplanır:
+
+- **Güç:** İlaçlar gerçekten eşdeğerken (GMR 1,05) planın “eşdeğer” deme oranı. Yüksek olmalı.
+- **Tip I hata:** İlaçlar tam sınırdayken, yani eşdeğer sayılmamaları gerekirken planın yine de “eşdeğer” deme oranı. Örneğin σR = 0,12 ve ρ = 1 iken FDA ölçütünün sınırı, gerçek test/referans oranının yaklaşık [[sim_gmr0|1,1894]] olduğu yerdir (teknik not, Bölüm 6). Bu oran hastayı korur ve %5’i geçmemelidir.
+
+Bu sınır, farmakokinetik biyoeşdeğerlikten bilinen %80–125 aralığı değildir. FDA’nın in vitro popülasyon biyoeşdeğerliği ölçütünde sınır sabit değildir; referansın dağınıklığına göre ölçeklenir: σR 0,1’in üzerindeyken referans ne kadar dağınıksa kabul edilen oran o kadar genişler (PSG 020929, Ek; teknik not, Bölüm 3). EMA’nın inhalasyon ürünleri kılavuzu ise in vitro karşılaştırmada sabit 0,85–1,18 aralığını kullanır (CPMP/EWP/4151/00 Rev. 2, Bölüm 5.1, ölçüt 8).
+
+Ekran, hedef gücü sağlayan planlar içinde en az birim gerektireni önerir. İkinci bir kural, buna ek olarak kılavuzların istediği en az 3 seri ve seri başına 10 birimi ve tip I hatanın %5’i aşmamasını arar (teknik not, Bölüm 4). Chow ve Liu verisindeki 3 seri × 10 şişe × 3 evre, bu planlardan yalnızca biridir; ekran onun sizin ürününüz için yeterli olup olmadığını önceden gösterir.
+
+## Unutmayın
+- Sonuç, varsayımlar kadar iyidir. σR’yi gerçekte bilmeyiz; önceki çalışmalardan tahmin ederiz.
+- Önerilen plan düzenleyici bir kural değil, araştırma amaçlı bir öneridir.
+
+## Daha fazlası
+- [Teknik not: In vitro eşdeğerlik simülasyonu ve tasarım seçimi](simulasyon.html)
+- [PBE notu](pbe.html) · [EMA %90 GA notu](ema.html)
+
+@@en
+# Simulation and design selection: for the curious
+
+This page explains the [simulation technical note](simulasyon.html) in everyday words. It contains no new method; the source of every number is given in brackets.
+
+## The story: nasal spray bottles
+A company makes a generic version of a nasal spray. The regulator asks: “Is yours the same as the original?” The original is called the **reference (R)**, the generic the **test (T)**.
+
+The spray comes in **multiple-dose bottles**. As a bottle is used, the doses sprayed at the beginning, middle and end are measured separately; these are the **life stages**. The factory makes bottles in **batches**; each batch is like one oven of cookies.
+
+Chow and Liu (2008, Section 14.5.1) give a real example: for a butorphanol nasal spray, [[basit_chow_l|3]] batches of each product were taken, [[basit_chow_n|10]] bottles from each batch, and the droplet size was measured at [[basit_chow_m|3]] stages of each bottle (beginning, middle, end). The default values on the screen come from these data (FSR-LOG-01 G-27, KK-32).
+
+The FDA budesonide guidance (PSG 020929, Appendix) gives a numerical example with the same layout: [[basit_psg_l|3]] batches × [[basit_psg_n|10]] units × [[basit_psg_m|3]] stages. Budesonide inhalation suspension, however, comes in single-dose ampoules; the main text of the guidance asks for one ampoule per determination and defines no life stages. The beginning, middle and end stages of the appendix appear only in its simulated example data (FSR-LOG-01 G-38, KK-36). Life stages belong to multiple-dose devices (e.g. FDA PSG 021433 for a metered dose inhaler).
+
+Measurements never come out exactly the same. Most settings on the screen describe this “coming out differently”.
+
+## Why simulation?
+The guidances ask for at least 3 batches and at least 10 units per batch, but give no rule for “is this enough?” (technical note, Section 1). A study is expensive and is done once. A computer can “play” the same study thousands of times under the assumptions we give and show in advance which plan will work.
+
+## The settings one by one
+- **σR = 0.12 (spread of the reference):** How much do the measurements of the original vary? On the log scale, 0.12 means a coefficient of variation (CV) of about [[basit_cv012|12.0]]%. This default comes from the nasal spray data above (Chow and Liu 2008, Tables 14.5.2–14.5.3; FSR-LOG-01 G-27, KK-32). The FDA budesonide example data vary much more: σR is about [[pbe_sigma_r|0.4046]] ([PBE note](pbe.html), Section 6).
+- **ρ = σT / σR = 1:** Does the generic vary as much as the original? 1 means “the same spread”.
+- **pB = 0.1 (batch share):** How much of the spread comes from differences between batches? With cookies: “this oven baked a little longer.” 0.1 means 10 per cent. In the budesonide example data this share is small, about 3–5% (FSR-LOG-01 G-27).
+- **pL = 0.15 (life-stage share):** How much of the spread comes from differences between the doses a bottle gives at the beginning, middle and end? In the budesonide example data this share is almost zero (FSR-LOG-01 G-27).
+- **The rest:** Not shown in the table but follows by itself: 1 − 0.1 − 0.15 = 0.75. This is the difference from bottle to bottle. In the budesonide example data most of the spread comes from here too.
+- **q = 0 (systematic drift):** Do the doses always drift the same way from the beginning to the end of the bottle? For example, the performance of the pump or valve may change as the device is used, or the tip may partly clog. 0 means “no, only random variation”.
+- **True difference for power, GMR 1.05:** The GMR (geometric mean ratio) is not a difference but a ratio: test over reference, just like the AUC and Cmax ratios of pharmacokinetics. 1.05 means that the measured property of the generic (e.g. droplet size) is 1.05 times that of the original, i.e. 5% different in relative terms. A small, acceptable difference. The default is close to the range in the nasal spray data (Chow and Liu 2008, Table 14.5.7: 0.99–1.04; KK-32). In the budesonide example data this ratio is about [[ema_gmr|1.1603]] ([EMA note](ema.html), Section 6).
+- **Target power 80%:** If the products really are equivalent, we want the study to show it 8 times out of 10. In the other 2, an unlucky sample may lead to “not equivalent”. Chow, Shao and Wang (2003, Section 4) also size studies for 80% power.
+- **ℓ, n, m:** How many batches, how many bottles per batch, how many stages per bottle? For example, with 2 choices for ℓ (2, 3), 4 for n (5, 8, 10, 15) and 1 for m (3), 2 × 4 × 1 = 8 candidate plans are compared. The default lists of the design-selection screen are wider (ℓ 2–6, n 5–30).
+- **nsim = 10,000 (number of repetitions):** The computer plays each plan 10,000 times. The more it plays, the firmer the result. With this many repetitions and a power near 80%, the estimate itself is uncertain by about ±[[sim_mcse80|0.40]] percentage points (technical note, Section 6).
+- **seed:** The “starting number” of the dice. With the same number everyone gets the same throws and so the same result; this makes the result reproducible. 20261015 is the platform’s common seed (technical note, Section 5).
+- **RNG:** The name of the “machine” that throws the dice. R’s standard method is used (Mersenne-Twister).
+
+## What does the screen tell you?
+Two things are computed for every candidate plan:
+
+- **Power:** How often the plan says “equivalent” when the products really are equivalent (GMR 1.05). It should be high.
+- **Type I error:** How often the plan still says “equivalent” when the products are exactly at the limit, i.e. should not count as equivalent. For example, with σR = 0.12 and ρ = 1 the limit of the FDA criterion lies where the true test/reference ratio is about [[sim_gmr0|1.1894]] (technical note, Section 6). This rate protects the patient and should not exceed 5%.
+
+This limit is not the 80–125% range known from pharmacokinetic bioequivalence. In the FDA in vitro population bioequivalence criterion the limit is not fixed; it is scaled to the spread of the reference: with σR above 0.1, the more the reference varies, the wider the accepted ratio (PSG 020929, Appendix; technical note, Section 3). The EMA guideline on inhaled products instead uses the fixed range 0.85–1.18 for in vitro comparisons (CPMP/EWP/4151/00 Rev. 2, Section 5.1, criterion 8).
+
+The screen recommends, among the plans that reach the target power, the one that needs the fewest units. A second rule also asks for the guidances’ minimum of 3 batches and 10 units per batch and for a type I error not above 5% (technical note, Section 4). The 3 batches × 10 bottles × 3 stages of the Chow and Liu data is only one of these plans; the screen shows in advance whether it is enough for your product.
+
+## Remember
+- The result is only as good as the assumptions. We never know σR exactly; we estimate it from earlier studies.
+- The recommended plan is not a regulatory rule but a research suggestion.
+
+## More
+- [Technical note: In vitro equivalence simulation and design selection](simulasyon.html)
+- [PBE note](pbe.html) · [EMA 90% CI note](ema.html)
