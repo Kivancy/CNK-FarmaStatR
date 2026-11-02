@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CNK-FarmaStatR · Çok değişkenli istatistiksel uzaklık (MSD): meraklısı için</title>
+<!-- Built by araclar/yardim_derle.py from web/yardim/kaynak/basit_msd.txt (FSR-TN-PLT-10). Do not edit by hand.
+     Research and education only; not a system validated for GxP environments. -->
+<link rel="stylesheet" href="../../app/stil.css">
+<link rel="stylesheet" href="not.css">
+</head>
+<body data-not="basit_msd">
+<header><div><p class="sub">CNK-FarmaStatR</p></div><button id="lang" type="button" class="ghost"></button></header>
+<main class="notmain">
+<section class="not" lang="tr" data-lang="tr">
+<p class="ust"><a href="index.html?lang=tr">Yöntem notları</a> · <a href="msd.html?lang=tr">Teknik not →</a></p>
+<h1>Çok değişkenli istatistiksel uzaklık (MSD): meraklısı için</h1>
+<p class="disclaimer">Araştırma ve eğitim amaçlıdır; GxP ortamında valide edilmiş sistem değildir.</p>
+<p>Bu sayfa, <a href="msd.html">MSD teknik notunun</a> günlük dille anlatımıdır. Yeni bir yöntem içermez; sayıların kaynağı parantez içinde yazılıdır.</p>
+<h2>Soru: aynı soru, daha akıllı bir cetvelle</h2>
+<p>MSD de f2 gibi iki çözünme profilinin benzer olup olmadığını sorar (<a href="basit_f2.html">f2’nin basit anlatımı</a>). Fark, uzaklığı ölçen “cetvelde”dir. f2 her zaman noktasındaki farkları aynı ağırlıkla toplar. MSD (Mahalanobis uzaklığı) iki şeyi daha hesaba katar (FDA 1997, Bölüm V.B; Tsong ve ark. 1996):</p>
+<ul><li><b>Her noktanın kendi dağınıklığı:</b> Erken dakikalarda tabletler birbirinden çok farklı çözünebilir, geç dakikalarda hepsi birbirine yakındır. Dağınık bir noktadaki 5 puanlık fark sıradandır; sıkı bir noktadaki 5 puanlık fark dikkat çekicidir.</li><li><b>Noktalar arasındaki bağ:</b> 10. dakikada hızlı çözünen bir tablet, 20. dakikada da büyük olasılıkla hızlıdır. Bu noktalar bağımsız bilgi değildir; aynı bilgiyi iki kez saymamak gerekir.</li></ul>
+<p>Bir benzetme: Bir insanın boyu ve kilosu birlikte ele alınır. 1,90 m boyunda 90 kg birisi olağandır; 1,60 m boyunda 90 kg birisi daha sıra dışıdır. Çünkü boy ve kilo birlikte değişir. MSD, iki ilacın ortalama profilleri arasındaki uzaklığı bu tür bir “olağanlık” ölçüsüyle verir.</p>
+<h2>Karar: uzaklık, izin verilen sınırı aşıyor mu?</h2>
+<p>İki şey hesaplanır:</p>
+<ul><li><b>Uzaklık (D_M) ve güven aralığı:</b> Test ve referansın ortalama profilleri arasındaki MSD ve onun %90 güven aralığı. Farmakokinetikteki gibi, karar nokta tahminiyle değil aralığın üst sınırıyla verilir.</li><li><b>Benzerlik sınırı (R_D):</b> Ne kadar uzaklığa izin verilir?</li></ul>
+<p>Platform benzerlik sınırını iki yolla kurar:</p>
+<ul><li><b>L1:</b> Her zaman noktasında 10 yüzde puanı fark kabul edilebilir varsayılır ve bu, aynı “akıllı cetvelle” bir uzaklığa çevrilir (EMA; teknik not, Bölüm 3).</li><li><b>L2a:</b> İzin verilen fark, referansın kendi serileri arasındaki en büyük farktan alınır: “Orijinal ilacın iki serisi bu kadar farklı olabiliyorsa, jeneriğe de bu kadarı tanınır” (Tsong ve ark. 1996, s. 1106 ve 1109).</li></ul>
+<p>Güven aralığının üst sınırı R_D’nin altındaysa profiller benzerdir (teknik not, Bölüm 4).</p>
+<p>EMA, MSD’yi destekleyici bir yöntem sayar; öncelikli yöntemi bootstrap f2’dir (EMA PKWP/BSWP Soru-Cevap 3.9).</p>
+<h2>Örnek: Tsong ve ark. 1996</h2>
+<p>Tsong ve ark. (1996) verisi (test ve referans 6’şar tablet, 8 zaman noktası; referansın iki ek serisi) (<a href="msd.html">teknik not</a>, Bölüm 6):</p>
+<ul><li>Uzaklık D_M = <span class="deger" data-deger="msd_dm">26,4856</span>; %90 güven aralığı <span class="deger" data-deger="msd_dml">19,6532</span> – <span class="deger" data-deger="msd_dmu">33,3180</span>.</li><li>L1 sınırı R_D = <span class="deger" data-deger="msd_rd_l1">19,4272</span>; L2a sınırı (referans serileri arasındaki en büyük fark <span class="deger" data-deger="msd_dg_l2a">10,54</span> puan) R_D = <span class="deger" data-deger="msd_rd_l2a">20,4763</span>.</li><li>Aralığın üst sınırı iki sınırın da çok üstünde: <b>benzer değil</b>.</li></ul>
+<p><b>Küçük bir dedektiflik hikâyesi:</b> Makalenin Tablo 1’indeki bir değer (referans tablet 4, 30. dakika) 78,54 basılmıştır; makalenin kendi sonuçları yalnız 78,45 ile elde edilir, yani rakamlar yer değiştirmiştir. Bu bulgu, bağımsız bir program olan DDSolver ile de doğrulandı; DDSolver’ın sınırı da L1 ile aynı çıktı (FSR-LOG-01 G-119). Platform düzeltilmiş değeri kullanır.</p>
+<h2>Unutmayın</h2>
+<ul><li>Dağınıklığı ve bağları tahmin etmek için yeterli tablet gerekir: zaman noktası sayısı, iki üründeki toplam tablet sayısından 2 eksiğini geçemez (teknik not, Bölüm 5). Az tabletle tahmin kararsızdır.</li><li>Sınırın nasıl kurulduğu (L1 ya da L2a) kararı değiştirebilir; raporda hangisinin kullanıldığı yazılır.</li><li>Profilin şeklini bir eğri modeliyle özetleyen bir türü de vardır: <a href="weibull.html">Weibull MSD notu</a>.</li></ul>
+<h2>Daha fazlası</h2>
+<ul><li><a href="msd.html">Teknik not: Model bağımsız çok değişkenli istatistiksel uzaklık (MSD)</a></li><li><a href="basit_f2.html">f2: meraklısı için</a></li></ul>
+</section>
+<section class="not" lang="en" data-lang="en" hidden>
+<p class="ust"><a href="index.html?lang=en">Method notes</a> · <a href="msd.html?lang=en">Technical note →</a></p>
+<h1>Multivariate statistical distance (MSD): for the curious</h1>
+<p class="disclaimer">For research and education; not a system validated for GxP environments.</p>
+<p>This page explains the <a href="msd.html">MSD technical note</a> in everyday words. It contains no new method; the source of every number is given in brackets.</p>
+<h2>The question: the same question, with a smarter ruler</h2>
+<p>Like f2, MSD asks whether two dissolution profiles are similar (<a href="basit_f2.html">f2 for the curious</a>). The difference is in the “ruler” that measures the distance. f2 adds up the differences at each time point with equal weight. MSD (the Mahalanobis distance) takes two more things into account (FDA 1997, Section V.B; Tsong et al. 1996):</p>
+<ul><li><b>The spread at each point:</b> in the early minutes tablets may dissolve very differently, in the late minutes they are all close. A 5-point difference at a scattered point is ordinary; the same difference at a tight point is remarkable.</li><li><b>The link between points:</b> a tablet that dissolves fast at minute 10 is probably fast at minute 20 too. These points are not independent information; the same information should not be counted twice.</li></ul>
+<p>An analogy: a person’s height and weight are taken together. Someone 1.90 m tall weighing 90 kg is ordinary; someone 1.60 m tall weighing 90 kg is more unusual, because height and weight vary together. MSD gives the distance between the mean profiles of two products with this kind of “unusualness” measure.</p>
+<h2>Decision: does the distance exceed the allowed limit?</h2>
+<p>Two things are computed:</p>
+<ul><li><b>The distance (D_M) and its confidence interval:</b> the MSD between the mean profiles of test and reference and its 90% confidence interval. As in pharmacokinetics, the decision uses the upper limit of the interval, not the point estimate.</li><li><b>The similarity limit (R_D):</b> how much distance is allowed?</li></ul>
+<p>The platform builds the similarity limit in two ways:</p>
+<ul><li><b>L1:</b> a difference of 10 percentage points at every time point is taken as acceptable and turned into a distance with the same “smart ruler” (EMA; technical note, Section 3).</li><li><b>L2a:</b> the allowed difference is taken from the largest difference between the reference’s own batches: “if two batches of the original can differ this much, the generic is allowed as much” (Tsong et al. 1996, pp. 1106 and 1109).</li></ul>
+<p>If the upper limit of the confidence interval is below R_D, the profiles are similar (technical note, Section 4).</p>
+<p>The EMA regards MSD as a supportive method; its preferred method is the bootstrap f2 (EMA PKWP/BSWP Q&amp;A 3.9).</p>
+<h2>Example: Tsong et al. 1996</h2>
+<p>The data of Tsong et al. (1996) (6 tablets each of test and reference, 8 time points; two further reference batches) (<a href="msd.html">technical note</a>, Section 6):</p>
+<ul><li>Distance D_M = <span class="deger" data-deger="msd_dm">26.4856</span>; 90% confidence interval <span class="deger" data-deger="msd_dml">19.6532</span> – <span class="deger" data-deger="msd_dmu">33.3180</span>.</li><li>L1 limit R_D = <span class="deger" data-deger="msd_rd_l1">19.4272</span>; L2a limit (largest difference between the reference batches <span class="deger" data-deger="msd_dg_l2a">10.54</span> points) R_D = <span class="deger" data-deger="msd_rd_l2a">20.4763</span>.</li><li>The upper limit of the interval lies far above both limits: <b>not similar</b>.</li></ul>
+<p><b>A small detective story:</b> one value in Table 1 of the paper (reference tablet 4, minute 30) is printed as 78.54; the paper’s own results are obtained only with 78.45, i.e. the digits were swapped. This finding was also confirmed with an independent program, DDSolver; DDSolver’s limit also came out the same as L1 (FSR-LOG-01 G-119). The platform uses the corrected value.</p>
+<h2>Remember</h2>
+<ul><li>Enough tablets are needed to estimate the spreads and links: the number of time points cannot exceed the total number of tablets of the two products minus 2 (technical note, Section 5). With few tablets the estimate is unstable.</li><li>How the limit is built (L1 or L2a) can change the decision; the report states which was used.</li><li>There is also a version that summarises the shape of the profile with a curve model: <a href="weibull.html">Weibull MSD note</a>.</li></ul>
+<h2>More</h2>
+<ul><li><a href="msd.html">Technical note: Model-independent multivariate statistical distance (MSD)</a></li><li><a href="basit_f2.html">f2: for the curious</a></li></ul>
+</section>
+</main>
+<script src="not.js"></script>
+</body>
+</html>

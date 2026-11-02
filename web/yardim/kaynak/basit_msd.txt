@@ -1,0 +1,91 @@
+@@tr
+# Çok değişkenli istatistiksel uzaklık (MSD): meraklısı için
+
+Bu sayfa, [MSD teknik notunun](msd.html) günlük dille anlatımıdır. Yeni bir yöntem içermez; sayıların kaynağı parantez içinde yazılıdır.
+
+## Soru: aynı soru, daha akıllı bir cetvelle
+MSD de f2 gibi iki çözünme profilinin benzer olup olmadığını sorar ([f2’nin basit anlatımı](basit_f2.html)). Fark, uzaklığı ölçen “cetvelde”dir. f2 her zaman noktasındaki farkları aynı ağırlıkla toplar. MSD (Mahalanobis uzaklığı) iki şeyi daha hesaba katar (FDA 1997, Bölüm V.B; Tsong ve ark. 1996):
+
+- **Her noktanın kendi dağınıklığı:** Erken dakikalarda tabletler birbirinden çok farklı çözünebilir, geç dakikalarda hepsi birbirine yakındır. Dağınık bir noktadaki 5 puanlık fark sıradandır; sıkı bir noktadaki 5 puanlık fark dikkat çekicidir.
+- **Noktalar arasındaki bağ:** 10. dakikada hızlı çözünen bir tablet, 20. dakikada da büyük olasılıkla hızlıdır. Bu noktalar bağımsız bilgi değildir; aynı bilgiyi iki kez saymamak gerekir.
+
+Bir benzetme: Bir insanın boyu ve kilosu birlikte ele alınır. 1,90 m boyunda 90 kg birisi olağandır; 1,60 m boyunda 90 kg birisi daha sıra dışıdır. Çünkü boy ve kilo birlikte değişir. MSD, iki ilacın ortalama profilleri arasındaki uzaklığı bu tür bir “olağanlık” ölçüsüyle verir.
+
+## Karar: uzaklık, izin verilen sınırı aşıyor mu?
+İki şey hesaplanır:
+
+- **Uzaklık (D_M) ve güven aralığı:** Test ve referansın ortalama profilleri arasındaki MSD ve onun %90 güven aralığı. Farmakokinetikteki gibi, karar nokta tahminiyle değil aralığın üst sınırıyla verilir.
+- **Benzerlik sınırı (R_D):** Ne kadar uzaklığa izin verilir?
+
+Platform benzerlik sınırını iki yolla kurar:
+
+- **L1:** Her zaman noktasında 10 yüzde puanı fark kabul edilebilir varsayılır ve bu, aynı “akıllı cetvelle” bir uzaklığa çevrilir (EMA; teknik not, Bölüm 3).
+- **L2a:** İzin verilen fark, referansın kendi serileri arasındaki en büyük farktan alınır: “Orijinal ilacın iki serisi bu kadar farklı olabiliyorsa, jeneriğe de bu kadarı tanınır” (Tsong ve ark. 1996, s. 1106 ve 1109).
+
+Güven aralığının üst sınırı R_D’nin altındaysa profiller benzerdir (teknik not, Bölüm 4).
+
+EMA, MSD’yi destekleyici bir yöntem sayar; öncelikli yöntemi bootstrap f2’dir (EMA PKWP/BSWP Soru-Cevap 3.9).
+
+## Örnek: Tsong ve ark. 1996
+Tsong ve ark. (1996) verisi (test ve referans 6’şar tablet, 8 zaman noktası; referansın iki ek serisi) ([teknik not](msd.html), Bölüm 6):
+
+- Uzaklık D_M = [[msd_dm|26,4856]]; %90 güven aralığı [[msd_dml|19,6532]] – [[msd_dmu|33,3180]].
+- L1 sınırı R_D = [[msd_rd_l1|19,4272]]; L2a sınırı (referans serileri arasındaki en büyük fark [[msd_dg_l2a|10,54]] puan) R_D = [[msd_rd_l2a|20,4763]].
+- Aralığın üst sınırı iki sınırın da çok üstünde: **benzer değil**.
+
+**Küçük bir dedektiflik hikâyesi:** Makalenin Tablo 1’indeki bir değer (referans tablet 4, 30. dakika) 78,54 basılmıştır; makalenin kendi sonuçları yalnız 78,45 ile elde edilir, yani rakamlar yer değiştirmiştir. Bu bulgu, bağımsız bir program olan DDSolver ile de doğrulandı; DDSolver’ın sınırı da L1 ile aynı çıktı (FSR-LOG-01 G-119). Platform düzeltilmiş değeri kullanır.
+
+## Unutmayın
+- Dağınıklığı ve bağları tahmin etmek için yeterli tablet gerekir: zaman noktası sayısı, iki üründeki toplam tablet sayısından 2 eksiğini geçemez (teknik not, Bölüm 5). Az tabletle tahmin kararsızdır.
+- Sınırın nasıl kurulduğu (L1 ya da L2a) kararı değiştirebilir; raporda hangisinin kullanıldığı yazılır.
+- Profilin şeklini bir eğri modeliyle özetleyen bir türü de vardır: [Weibull MSD notu](weibull.html).
+
+## Daha fazlası
+- [Teknik not: Model bağımsız çok değişkenli istatistiksel uzaklık (MSD)](msd.html)
+- [f2: meraklısı için](basit_f2.html)
+
+@@en
+# Multivariate statistical distance (MSD): for the curious
+
+This page explains the [MSD technical note](msd.html) in everyday words. It contains no new method; the source of every number is given in brackets.
+
+## The question: the same question, with a smarter ruler
+Like f2, MSD asks whether two dissolution profiles are similar ([f2 for the curious](basit_f2.html)). The difference is in the “ruler” that measures the distance. f2 adds up the differences at each time point with equal weight. MSD (the Mahalanobis distance) takes two more things into account (FDA 1997, Section V.B; Tsong et al. 1996):
+
+- **The spread at each point:** in the early minutes tablets may dissolve very differently, in the late minutes they are all close. A 5-point difference at a scattered point is ordinary; the same difference at a tight point is remarkable.
+- **The link between points:** a tablet that dissolves fast at minute 10 is probably fast at minute 20 too. These points are not independent information; the same information should not be counted twice.
+
+An analogy: a person’s height and weight are taken together. Someone 1.90 m tall weighing 90 kg is ordinary; someone 1.60 m tall weighing 90 kg is more unusual, because height and weight vary together. MSD gives the distance between the mean profiles of two products with this kind of “unusualness” measure.
+
+## Decision: does the distance exceed the allowed limit?
+Two things are computed:
+
+- **The distance (D_M) and its confidence interval:** the MSD between the mean profiles of test and reference and its 90% confidence interval. As in pharmacokinetics, the decision uses the upper limit of the interval, not the point estimate.
+- **The similarity limit (R_D):** how much distance is allowed?
+
+The platform builds the similarity limit in two ways:
+
+- **L1:** a difference of 10 percentage points at every time point is taken as acceptable and turned into a distance with the same “smart ruler” (EMA; technical note, Section 3).
+- **L2a:** the allowed difference is taken from the largest difference between the reference’s own batches: “if two batches of the original can differ this much, the generic is allowed as much” (Tsong et al. 1996, pp. 1106 and 1109).
+
+If the upper limit of the confidence interval is below R_D, the profiles are similar (technical note, Section 4).
+
+The EMA regards MSD as a supportive method; its preferred method is the bootstrap f2 (EMA PKWP/BSWP Q&A 3.9).
+
+## Example: Tsong et al. 1996
+The data of Tsong et al. (1996) (6 tablets each of test and reference, 8 time points; two further reference batches) ([technical note](msd.html), Section 6):
+
+- Distance D_M = [[msd_dm|26.4856]]; 90% confidence interval [[msd_dml|19.6532]] – [[msd_dmu|33.3180]].
+- L1 limit R_D = [[msd_rd_l1|19.4272]]; L2a limit (largest difference between the reference batches [[msd_dg_l2a|10.54]] points) R_D = [[msd_rd_l2a|20.4763]].
+- The upper limit of the interval lies far above both limits: **not similar**.
+
+**A small detective story:** one value in Table 1 of the paper (reference tablet 4, minute 30) is printed as 78.54; the paper’s own results are obtained only with 78.45, i.e. the digits were swapped. This finding was also confirmed with an independent program, DDSolver; DDSolver’s limit also came out the same as L1 (FSR-LOG-01 G-119). The platform uses the corrected value.
+
+## Remember
+- Enough tablets are needed to estimate the spreads and links: the number of time points cannot exceed the total number of tablets of the two products minus 2 (technical note, Section 5). With few tablets the estimate is unstable.
+- How the limit is built (L1 or L2a) can change the decision; the report states which was used.
+- There is also a version that summarises the shape of the profile with a curve model: [Weibull MSD note](weibull.html).
+
+## More
+- [Technical note: Model-independent multivariate statistical distance (MSD)](msd.html)
+- [f2: for the curious](basit_f2.html)

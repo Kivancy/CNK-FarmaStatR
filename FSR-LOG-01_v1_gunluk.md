@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 2.25 · Son güncelleme: 02.11.2026"
+subtitle: "FSR-LOG-01 · Sürüm 2.26 · Son güncelleme: 02.11.2026"
 ---
 
 # Bu belge hakkında
@@ -2343,6 +2343,15 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Kuru koşu:** P7 77/77 GEÇTİ (B-3 dört sayfa; B-4 56 sayı = R). MSD ve Weibull teknik notları bayt bayt aynı.
 - **Bekleyen:** B-7, f2 sayfasının onayı; sonra MSD, Weibull. Son sayfalarla birlikte f2 sayfasındaki MSD/Weibull bağlantıları basit sayfalara da yönlendirilecek.
 
+## G-129 · f2 basit anlatımı onaylandı (B-7); MSD basit anlatımı yazıldı — 02.11.2026
+
+- **Depo:** G-128 commit ve push edildi (proje sahibi); Actions sonucu bekleniyor (G-127'ninki de bildirilmedi).
+- **B-7, f2 (K, proje sahibi):** sayfa onaylandı (“onaylıyorum”).
+- **MSD sayfası (Claude):** `basit_msd.txt` (TR, EN) → `basit_msd.html`; `msd.html`'e yalnız bağlantı satırı. İçerik: f2 ile aynı soru, “daha akıllı cetvel”: her noktanın dağınıklığı ve noktalar arası bağ (boy–kilo benzetmesi; FDA 1997 V.B; Tsong ve ark. 1996); D_M ve %90 GA üst sınırıyla karar; benzerlik sınırı L1 (her noktada 10 puan) ve L2a (referans serileri arasındaki en büyük fark; Tsong 1996 s. 1106, 1109); EMA'da MSD'nin destekleyici olduğu (Q&A 3.9); Tsong 1996 örneği (D_M 26,4856; %90 GA 19,6532–33,3180; R_D L1 19,4272, L2a 20,4763; benzer değil) ve 78,54 → 78,45 “dedektiflik hikâyesi” (G-119; DDSolver sınırı L1 ile aynı).
+- **Düzeltme (Claude):** ilk taslakta “aralığın tamamı iki sınırın da üstünde” yazılmıştı; alt sınır 19,6532 L2a sınırının (20,4763) altında olduğundan “üst sınır iki sınırın da çok üstünde” olarak düzeltildi. Derleyici iç içe listeyi desteklemediği için L1/L2a ayrı liste yapıldı.
+- **Kuru koşu:** P7 83/83 GEÇTİ (B-3 beş sayfa; B-4 68 sayı = R). Weibull teknik notu bayt bayt aynı.
+- **Bekleyen:** B-7, MSD sayfasının onayı; sonra Weibull ve f2/MSD sayfalarındaki Weibull/MSD bağlantılarının basit sayfalara yönlendirilmesi.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -2370,7 +2379,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 2.25 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 2.26 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.1 | 1.0 onaylı; beş dosya sabitlendi (G-47). 1.1: TC-S11 (dışa aktarılan betik), onaylandı (KK-53, G-76) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.7 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68); v0.7: Tablo 8.1 ve 10.1 (KK-56, KK-57, KK-59; G-94), onay P6 kapanışında |
@@ -2381,7 +2390,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | FSR-TN-PLT-06 · P6 tasarımı, kabul ölçütleri ve sonuçları (devralınan modellerin arayüzü, platform validasyonu, yayın hazırlığı) | 0.2 | v0.1 yetki devriyle (KK-60), F-1…F-12 donduruldu (G-94); v0.2: resmî kabul 78/78 GEÇTİ (G-95); onaylandı, P6 kapandı (KK-62, G-97) |
 | FSR-TN-PLT-07 · Yardım sistemi: tasarım ve kabul ölçütleri | 0.2 | KK-63 yetkisiyle; Y-1…Y-12 donduruldu; kuru koşu 48/48 (G-98); resmî kabul 48/48 (G-99); v0.2: altı not (KK-64), kuru 51/51 (G-100), resmî 51/51 (G-102); onaylandı (KK-65, G-109); içerik incelemesi bekliyor |
 | FSR-TN-PLT-09 · Yardım içeriği kararları (KK-66): tasarım ve kabul ölçütleri | 0.2 | v0.1 onaylandı, G-1 … G-9 donduruldu (KK-67, G-115); v0.2: resmî kabul P6 80/80, EMA 44/44, yardım 51/51 (G-116); onaylandı (KK-68, G-117) |
-| FSR-TN-PLT-10 · Meraklısı için basit anlatımlar: tasarım ve kabul ölçütleri | 0.1 | Onaylı tasarım, B-1 … B-7 donduruldu (KK-72, G-124); simülasyon, PBE, EMA sayfaları onaylandı (G-126 … G-128); f2 sayfası onay bekliyor |
+| FSR-TN-PLT-10 · Meraklısı için basit anlatımlar: tasarım ve kabul ölçütleri | 0.1 | Onaylı tasarım, B-1 … B-7 donduruldu (KK-72, G-124); simülasyon, PBE, EMA, f2 sayfaları onaylandı (G-126 … G-129); MSD sayfası onay bekliyor |
 | FSR-TN-PLT-08 · EMA %90 GA analizi: tasarım ve kabul ölçütleri | 0.4 | E-1…E-10 koddan önce donduruldu (KK-64, G-100); kuru koşu 44/44; v0.2: resmî kabul 44/44 (G-102); v0.3: kaynak eşlemesi ve SAS kontrolleri (G-106); v0.4: literatür eşlemesi (G-108); onaylandı (KK-65, G-109) |
 | FSR-VAL-PLT-1 · Platform katmanı validasyon belgesi | 1.5 | 1.0: P1–P6 kanıtları (G-94); 1.1: P6 resmî kabulü, onaylandı (KK-62, G-97); 1.2: yardım sistemi, PBE metin bulgusu, gerileme (G-98); 1.3: EMA %90 GA analizi (G-100); 1.4: EMA ve yardım resmî kabulleri (G-102); 1.2–1.4 onaylandı (KK-65, G-109); 1.5: FSR-TN-PLT-09 (G-116), onaylandı (KK-68, G-117) |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
