@@ -1,0 +1,83 @@
+@@tr
+# EMA %90 güven aralığı: meraklısı için
+
+Bu sayfa, [EMA %90 GA teknik notunun](ema.html) günlük dille anlatımıdır. Yeni bir yöntem içermez; sayıların kaynağı parantez içinde yazılıdır.
+
+## Soru: farmakokinetikten tanıdık bir kural
+EMA’nın inhalasyon ürünleri kılavuzu, in vitro karşılaştırmada farmakologlara tanıdık bir yol izler: test ve referansın geometrik ortalamaları oranının (GMR) **%90 güven aralığı** belirli sınırların içinde kalmalıdır. Farmakokinetikteki EAA ve Cmax için %80–125 aralığı gibi; ancak buradaki sınırlar daha dardır: **0,85–1,18** (CPMP/EWP/4151/00 Rev. 2, Bölüm 5.1, ölçüt 8).
+
+Ölçülen şey örneğin impaktörde bir basamak grubunda biriken ilaç kütlesidir. Bu kurala göre her basamak grubu ayrı ayrı karşılaştırılır ve hepsinin geçmesi beklenir (teknik not, Bölüm 7).
+
+## Asıl zorluk: elimizde kaç bağımsız bilgi var?
+Kılavuz sınırları söyler, ama güven aralığının seriler ve yaşam evreleriyle nasıl hesaplanacağını söylemez (teknik not, Bölüm 1). Bu, şu soruya dayanır:
+
+Bir okulun başarısını ölçmek için **3 sınıftan** 10’ar öğrenci seçtiğinizi düşünün. Sınıfların öğretmenleri farklıysa, aynı sınıftaki öğrenciler birbirine benzer. O zaman elinizde gerçekte 30 bağımsız öğrenci değil, büyük ölçüde **3 sınıflık** bilgi vardır. Sınıfları yok sayarsanız sonuçtan olduğunuzdan daha emin görünürsünüz.
+
+İnhaler ya da sprey şişeleri de seriler (sınıflar) içinde üretilir. Platform üç yolu yan yana gösterir:
+
+- **(a) Birimleri say:** 30 şişeyi 30 bağımsız bilgi sayar. Seriler birbirinden farklıysa güven aralığı gereğinden dar çıkar; 3 seri × 10 şişede seri farkının yalnız 2/29’u hesaba girer (teknik not, Bölüm 3).
+- **(b) Serileri say:** Her serinin ortalamasını bir bilgi sayar; 3 seri, 3 bilgi. Aralık daha geniş ama dürüsttür.
+- **(c) Modele bırak:** İstatistiksel bir model (karma model), seriler gerçekten farklı mı, veriden karar verir. Veri seriler arasında fark gösteriyorsa sonucu (b) ile aynıdır; göstermiyorsa seri ve şişe bilgisini birleştirir (teknik not, Bölüm 3).
+
+(a) ve (b) yayımlanmış çalışmalarda kullanılmıştır (Chen ve ark. 2019; Kurumaddali ve ark. 2019). Ekrandaki karar **(b)** yoluyla verilir. Nedeni: simülasyonlarımızda seriler farklıyken (a), “eşdeğer değil”i “eşdeğer” sanma oranını %5’in üstüne çıkarırken (b) ve (c) %5’in altında kaldı. Chen ve ark. (2019) de bağımsız bir simülasyonla aynı sonuca ulaşır (teknik not, Bölüm 4).
+
+## Örnek: FDA’nın Budesonid verisi
+FDA’nın Budesonid kılavuzundaki simüle veri (PSG 020929, Ek B: 3 seri × 10 kap × 3 evre; tek dozluk ampul ve simüle evre uyarısı için [PBE’nin basit anlatımına](basit_pbe.html) bakın) bu yöntemle şöyle çıkar ([teknik not](ema.html), Bölüm 6):
+
+- Test/referans oranı GMR = [[ema_gmr|1,1603]]. Bu, 0,85–1,18 aralığının içindedir.
+- (a) yolu: %90 güven aralığı [[ema_a_lo|0,9604]] – [[ema_a_hi|1,4017]]. Üst sınır 1,18’i aşar: **sağlanamadı**.
+- (b) yolu: %90 güven aralığı [[ema_b_lo|0,8772]] – [[ema_b_hi|1,5347]]. Yalnız 3 seri bağımsız bilgi sayıldığı için aralık çok geniştir: **sağlanamadı**.
+- (c) yolu bu veride (b) ile aynıdır.
+
+Aynı veride FDA’nın PBE ölçütü **sağlanır** ([PBE’nin basit anlatımı](basit_pbe.html)). Çelişki gibi görünür ama değildir: iki kurum farklı soru sorar. PBE, ortalama farkını referansın dağınıklığıyla ölçeklenen bir payla tartar; EMA yalnız ortalamalar oranına ve onun belirsizliğine bakar, sınırları da sabittir.
+
+## Unutmayın
+- Nokta tahmini (1,16) sınırların içinde olsa bile karar güven aralığıyla verilir; az bilgiyle aralık geniş olur.
+- Seri sayısı, bu yöntemde şişe sayısından çok daha önemlidir. Kaç seri gerektiğini simülasyon ekranında inceleyebilirsiniz ([simülasyonun basit anlatımı](basit_simulasyon.html)).
+- Kılavuz hesap yolunu tanımlamadığı için platform üç yolu birlikte gösterir; seçilen yol araştırma amaçlı bir öneridir.
+
+## Daha fazlası
+- [Teknik not: EMA %90 güven aralığı](ema.html)
+- [PBE: meraklısı için](basit_pbe.html) · [Simülasyon: meraklısı için](basit_simulasyon.html)
+
+@@en
+# EMA 90% confidence interval: for the curious
+
+This page explains the [EMA 90% CI technical note](ema.html) in everyday words. It contains no new method; the source of every number is given in brackets.
+
+## The question: a rule familiar from pharmacokinetics
+For in vitro comparisons, the EMA guideline on inhaled products follows a path familiar to pharmacologists: the **90% confidence interval** of the ratio of the geometric means of test and reference (GMR) must lie within given limits. Like the 80–125% range for AUC and Cmax in pharmacokinetics; here, however, the limits are narrower: **0.85–1.18** (CPMP/EWP/4151/00 Rev. 2, Section 5.1, criterion 8).
+
+What is measured is, for example, the drug mass collected in a stage group of an impactor. Under this rule each stage group is compared separately and all are expected to pass (technical note, Section 7).
+
+## The real difficulty: how much independent information do we have?
+The guideline gives the limits but does not say how the confidence interval is computed with batches and life stages (technical note, Section 1). This comes down to one question:
+
+Imagine choosing 10 pupils from each of **3 classrooms** to measure how a school performs. If the classrooms have different teachers, pupils of the same classroom resemble each other. Then you do not really have 30 independent pupils but largely **3 classrooms’** worth of information. Ignore the classrooms and you look more certain than you are.
+
+Inhalers and spray bottles are also made in batches (classrooms). The platform shows three paths side by side:
+
+- **(a) Count the units:** counts 30 bottles as 30 independent pieces of information. If the batches differ, the confidence interval comes out too narrow; with 3 batches × 10 bottles only 2/29 of the batch difference enters the computation (technical note, Section 3).
+- **(b) Count the batches:** counts the mean of each batch as one piece of information; 3 batches, 3 pieces. The interval is wider but honest.
+- **(c) Let the model decide:** a statistical model (a mixed model) decides from the data whether the batches really differ. If the data show a batch difference, its result equals (b); if not, it combines the batch and bottle information (technical note, Section 3).
+
+Paths (a) and (b) have been used in published work (Chen et al. 2019; Kurumaddali et al. 2019). The decision on the screen is made with path **(b)**. The reason: in our simulations, when batches differ, (a) raises the rate of taking “not equivalent” for “equivalent” above 5%, while (b) and (c) stay below 5%. Chen et al. (2019) reach the same conclusion in an independent simulation (technical note, Section 4).
+
+## Example: the FDA budesonide data
+The simulated data of the FDA budesonide guidance (PSG 020929, Appendix B: 3 batches × 10 containers × 3 stages; for the single-dose ampoule and simulated stages, see [PBE for the curious](basit_pbe.html)) come out as follows ([technical note](ema.html), Section 6):
+
+- The test/reference ratio is GMR = [[ema_gmr|1.1603]]. This lies inside 0.85–1.18.
+- Path (a): 90% confidence interval [[ema_a_lo|0.9604]] – [[ema_a_hi|1.4017]]. The upper limit exceeds 1.18: **not met**.
+- Path (b): 90% confidence interval [[ema_b_lo|0.8772]] – [[ema_b_hi|1.5347]]. Because only 3 batches count as independent information, the interval is very wide: **not met**.
+- Path (c) equals (b) on these data.
+
+On the same data the FDA PBE criterion **is met** ([PBE for the curious](basit_pbe.html)). It looks like a contradiction but is not: the two agencies ask different questions. PBE weighs the difference in means against an allowance scaled to the spread of the reference; the EMA looks only at the ratio of means and its uncertainty, with fixed limits.
+
+## Remember
+- Even if the point estimate (1.16) is inside the limits, the decision is made with the confidence interval; with little information the interval is wide.
+- In this method the number of batches matters much more than the number of bottles. You can study how many batches are needed on the simulation screen ([simulation for the curious](basit_simulasyon.html)).
+- Because the guideline does not define the computation, the platform shows all three paths; the chosen path is a research suggestion.
+
+## More
+- [Technical note: EMA 90% confidence interval](ema.html)
+- [PBE: for the curious](basit_pbe.html) · [Simulation: for the curious](basit_simulasyon.html)
