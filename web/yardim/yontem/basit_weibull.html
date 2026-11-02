@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CNK-FarmaStatR · Weibull modeline dayalı MSD: meraklısı için</title>
+<!-- Built by araclar/yardim_derle.py from web/yardim/kaynak/basit_weibull.txt (FSR-TN-PLT-10). Do not edit by hand.
+     Research and education only; not a system validated for GxP environments. -->
+<link rel="stylesheet" href="../../app/stil.css">
+<link rel="stylesheet" href="not.css">
+</head>
+<body data-not="basit_weibull">
+<header><div><p class="sub">CNK-FarmaStatR</p></div><button id="lang" type="button" class="ghost"></button></header>
+<main class="notmain">
+<section class="not" lang="tr" data-lang="tr">
+<p class="ust"><a href="index.html?lang=tr">Yöntem notları</a> · <a href="weibull.html?lang=tr">Teknik not →</a></p>
+<h1>Weibull modeline dayalı MSD: meraklısı için</h1>
+<p class="disclaimer">Araştırma ve eğitim amaçlıdır; GxP ortamında valide edilmiş sistem değildir.</p>
+<p>Bu sayfa, <a href="weibull.html">Weibull MSD teknik notunun</a> günlük dille anlatımıdır. Yeni bir yöntem içermez; sayıların kaynağı parantez içinde yazılıdır.</p>
+<h2>Fikir: bütün eğriyi iki sayıyla özetlemek</h2>
+<p><a href="basit_f2.html">f2</a> ve <a href="basit_msd.html">model bağımsız MSD</a> çözünme eğrisini zaman noktası zaman noktası karşılaştırır. Weibull yaklaşımı önce her tabletin eğrisini <b>iki sayıyla</b> özetler, sonra bu iki sayıyı karşılaştırır (FDA 1997, Bölüm V.C; Sathe ve ark. 1996).</p>
+<p>Bir benzetme: Bir koşuyu her kontrol noktasındaki süreyle anlatmak yerine iki bilgiyle anlatabilirsiniz: “ne kadar hızlı” ve “nasıl bir tempoyla” (yavaş başlayıp hızlanarak mı, hızlı başlayıp yavaşlayarak mı). Weibull eğrisinin iki parametresi buna benzer:</p>
+<ul><li><b>T_d (zaman ölçeği):</b> İlacın yaklaşık %63’ünün çözündüğü süre; eğrinin ne kadar hızlı yükseldiğini söyler (Langenbucher 1972, s. 979).</li><li><b>β (şekil):</b> Eğrinin biçimini söyler: S şeklinde mi, yoksa baştan dik mi yükseliyor.</li></ul>
+<p>Her tablete bu model ayrı ayrı uydurulur. Sonra test ve referans tabletlerinin (T_d, β) çiftleri, MSD’nin “akıllı cetveliyle” karşılaştırılır (<a href="basit_msd.html">MSD’nin basit anlatımı</a>). Sekiz zaman noktası yerine iki sayı olduğu için dağınıklıkları ve bağları tahmin etmek daha kolaydır.</p>
+<p>Platform, zamanı dakika ya da saat olarak girmenizden etkilenmeyen bir biçim kullanır: birim değişince T_d bütün tabletlerde aynı oranda değişir, β değişmez; sonuç aynı kalır (teknik not, Bölüm 2).</p>
+<h2>Karar: fark “benzerlik bölgesi” içinde mi?</h2>
+<p>İki sayıyı karşılaştırdığımız için izin verilen alan bir çizgi değil, bir bölgedir. Platform iki bölge sunar (teknik not, Bölüm 3):</p>
+<ul><li><b>B-L2a:</b> İzin verilen fark, referansın kendi serileri arasındaki farktan kurulan bir “kutu”dur. Test–referans farkının güven bölgesi bu kutunun içinde kalmalıdır.</li><li><b>B-L3:</b> Parametre farkı yeniden çözünme yüzdesine çevrilir: “Bu farkla, herhangi bir zaman noktasında iki eğri en fazla kaç puan ayrılabilir?” Bu değer 10 puanı aşmamalıdır. Referans serisi gerektirmez; ekranın varsayılanıdır.</li></ul>
+<p>Makalede yer alan üçüncü bir bölge biçimi (B-L2b) ekranda sunulmaz: yayımlanmış hâliyle, makalenin kendi modelinde amaçlanan %99 kapsamaya ulaşmadığı simülasyonla gösterildi (FSR-LOG-01 G-111, G-112).</p>
+<h2>Örnek: Tsong ve ark. 1996 verisi</h2>
+<p>MSD sayfasındaki aynı veri, bu kez Weibull modeliyle (<a href="weibull.html">teknik not</a>, Bölüm 6):</p>
+<ul><li>B-L2a bölgesiyle: uzaklık D_M = <span class="deger" data-deger="wb_dm_l2a">10,8123</span>; %90 aralık <span class="deger" data-deger="wb_dml_l2a">9,3200</span> – <span class="deger" data-deger="wb_dmu_l2a">12,3046</span>. Güven bölgesi kutunun dışına taşıyor: <b>benzer değil</b>.</li><li>B-L3 bölgesiyle: uzaklık D_M = <span class="deger" data-deger="wb_dm_l3">8,5589</span>. Bu farkla 5. dakikada iki eğri <span class="deger" data-deger="wb_l3_max">30,07</span> puana kadar ayrılabiliyor; 10 puanı çok aşıyor: <b>benzer değil</b>.</li><li>Model eğrilere iyi uyuyor: en küçük R² testte <span class="deger" data-deger="wb_r2t">0,9934</span>, referansta <span class="deger" data-deger="wb_r2r">0,9768</span> (1’e ne kadar yakınsa uyum o kadar iyi).</li></ul>
+<p>Model bağımsız MSD ile aynı sonuç: iki yol da bu ürünleri benzer bulmaz.</p>
+<h2>Unutmayın</h2>
+<ul><li>Model iyi uymuyorsa (R² düşükse) iki sayılık özet eğriyi yansıtmaz ve karşılaştırma yanıltıcı olur (teknik not, Bölüm 7).</li><li>Hiç çözünmenin olmadığı ya da %100’e ulaşılan noktalar modele girmez; tablet başına en az 3 nokta gerekir (teknik not, Bölüm 2).</li><li>EMA bu yöntemi de destekleyici sayar; öncelikli yöntem bootstrap f2’dir (EMA PKWP/BSWP Soru-Cevap 3.9).</li></ul>
+<h2>Daha fazlası</h2>
+<ul><li><a href="weibull.html">Teknik not: Weibull modeline dayalı MSD</a></li><li><a href="basit_msd.html">MSD: meraklısı için</a> · <a href="basit_f2.html">f2: meraklısı için</a></li></ul>
+</section>
+<section class="not" lang="en" data-lang="en" hidden>
+<p class="ust"><a href="index.html?lang=en">Method notes</a> · <a href="weibull.html?lang=en">Technical note →</a></p>
+<h1>Weibull model-based MSD: for the curious</h1>
+<p class="disclaimer">For research and education; not a system validated for GxP environments.</p>
+<p>This page explains the <a href="weibull.html">Weibull MSD technical note</a> in everyday words. It contains no new method; the source of every number is given in brackets.</p>
+<h2>The idea: summing up the whole curve with two numbers</h2>
+<p><a href="basit_f2.html">f2</a> and the <a href="basit_msd.html">model-independent MSD</a> compare the dissolution curve time point by time point. The Weibull approach first summarises the curve of each tablet with <b>two numbers</b>, then compares these two numbers (FDA 1997, Section V.C; Sathe et al. 1996).</p>
+<p>An analogy: instead of describing a run by the time at every checkpoint, you can describe it with two facts: “how fast” and “with what pace” (starting slowly and speeding up, or starting fast and slowing down). The two parameters of the Weibull curve are like that:</p>
+<ul><li><b>T_d (time scale):</b> the time by which about 63% of the drug has dissolved; it tells how fast the curve rises (Langenbucher 1972, p. 979).</li><li><b>β (shape):</b> tells the form of the curve: S-shaped, or steep from the start.</li></ul>
+<p>The model is fitted to each tablet separately. Then the (T_d, β) pairs of the test and reference tablets are compared with the “smart ruler” of the MSD (<a href="basit_msd.html">MSD for the curious</a>). With two numbers instead of eight time points, the spreads and links are easier to estimate.</p>
+<p>The platform uses a form that is not affected by whether you enter time in minutes or hours: when the unit changes, T_d changes by the same factor in all tablets and β does not change; the result stays the same (technical note, Section 2).</p>
+<h2>Decision: is the difference inside the “similarity region”?</h2>
+<p>Because two numbers are compared, the allowed area is not a line but a region. The platform offers two regions (technical note, Section 3):</p>
+<ul><li><b>B-L2a:</b> the allowed difference is a “box” built from the differences between the reference’s own batches. The confidence region of the test–reference difference must lie inside this box.</li><li><b>B-L3:</b> the difference in parameters is turned back into percentage dissolved: “with this difference, by how many points at most can the two curves separate at any time point?” This must not exceed 10 points. It needs no reference batches and is the screen’s default.</li></ul>
+<p>A third form of region in the paper (B-L2b) is not offered on the screen: in its published form it was shown by simulation not to reach the intended 99% coverage under the paper’s own model (FSR-LOG-01 G-111, G-112).</p>
+<h2>Example: the data of Tsong et al. 1996</h2>
+<p>The same data as on the MSD page, this time with the Weibull model (<a href="weibull.html">technical note</a>, Section 6):</p>
+<ul><li>With the B-L2a region: distance D_M = <span class="deger" data-deger="wb_dm_l2a">10.8123</span>; 90% interval <span class="deger" data-deger="wb_dml_l2a">9.3200</span> – <span class="deger" data-deger="wb_dmu_l2a">12.3046</span>. The confidence region extends outside the box: <b>not similar</b>.</li><li>With the B-L3 region: distance D_M = <span class="deger" data-deger="wb_dm_l3">8.5589</span>. With this difference the two curves can separate by up to <span class="deger" data-deger="wb_l3_max">30.07</span> points at minute 5; far more than 10 points: <b>not similar</b>.</li><li>The model fits the curves well: the smallest R² is <span class="deger" data-deger="wb_r2t">0.9934</span> for test and <span class="deger" data-deger="wb_r2r">0.9768</span> for reference (the closer to 1, the better the fit).</li></ul>
+<p>The same result as the model-independent MSD: neither path finds these products similar.</p>
+<h2>Remember</h2>
+<ul><li>If the model fits poorly (low R²), the two-number summary does not reflect the curve and the comparison misleads (technical note, Section 7).</li><li>Points with no dissolution or with 100% dissolved do not enter the model; at least 3 points per tablet are needed (technical note, Section 2).</li><li>The EMA also regards this method as supportive; its preferred method is the bootstrap f2 (EMA PKWP/BSWP Q&amp;A 3.9).</li></ul>
+<h2>More</h2>
+<ul><li><a href="weibull.html">Technical note: Weibull model-based MSD</a></li><li><a href="basit_msd.html">MSD: for the curious</a> · <a href="basit_f2.html">f2: for the curious</a></li></ul>
+</section>
+</main>
+<script src="not.js"></script>
+</body>
+</html>

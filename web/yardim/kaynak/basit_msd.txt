@@ -38,7 +38,7 @@ Tsong ve ark. (1996) verisi (test ve referans 6’şar tablet, 8 zaman noktası;
 ## Unutmayın
 - Dağınıklığı ve bağları tahmin etmek için yeterli tablet gerekir: zaman noktası sayısı, iki üründeki toplam tablet sayısından 2 eksiğini geçemez (teknik not, Bölüm 5). Az tabletle tahmin kararsızdır.
 - Sınırın nasıl kurulduğu (L1 ya da L2a) kararı değiştirebilir; raporda hangisinin kullanıldığı yazılır.
-- Profilin şeklini bir eğri modeliyle özetleyen bir türü de vardır: [Weibull MSD notu](weibull.html).
+- Profilin şeklini bir eğri modeliyle özetleyen bir türü de vardır: [Weibull MSD: meraklısı için](basit_weibull.html).
 
 ## Daha fazlası
 - [Teknik not: Model bağımsız çok değişkenli istatistiksel uzaklık (MSD)](msd.html)
@@ -84,7 +84,7 @@ The data of Tsong et al. (1996) (6 tablets each of test and reference, 8 time po
 ## Remember
 - Enough tablets are needed to estimate the spreads and links: the number of time points cannot exceed the total number of tablets of the two products minus 2 (technical note, Section 5). With few tablets the estimate is unstable.
 - How the limit is built (L1 or L2a) can change the decision; the report states which was used.
-- There is also a version that summarises the shape of the profile with a curve model: [Weibull MSD note](weibull.html).
+- There is also a version that summarises the shape of the profile with a curve model: [Weibull MSD for the curious](basit_weibull.html).
 
 ## More
 - [Technical note: Model-independent multivariate statistical distance (MSD)](msd.html)

@@ -39,7 +39,7 @@ Noce ve ark. (2020) yayınındaki iki ürünün verisi (her biri 12 tablet; Ür�
 ## Unutmayın
 - f2 eğrilerin şeklini karşılaştırır; tek bir zaman noktasında büyük bir fark, diğer noktalardaki benzerlikle örtülebilir.
 - Bootstrap sonucu seed’e bağlıdır; raporda seed ve B yazılır, böylece herkes aynı sonucu yeniden üretebilir.
-- Aynı soruyu çok değişkenli yollarla soran yöntemler de vardır: [MSD notu](msd.html) ve [Weibull MSD notu](weibull.html).
+- Aynı soruyu çok değişkenli yollarla soran yöntemler de vardır: [MSD: meraklısı için](basit_msd.html) ve [Weibull MSD: meraklısı için](basit_weibull.html).
 
 ## Daha fazlası
 - [Teknik not: f2 benzerlik faktörü ve bootstrap f2](f2.html)
@@ -85,7 +85,7 @@ The data of two products in Noce et al. (2020) (12 tablets each; Product 1 test,
 ## Remember
 - f2 compares the shapes of curves; a large difference at one time point can be hidden by similarity at the others.
 - The bootstrap result depends on the seed; the report states the seed and B, so anyone can reproduce the same result.
-- There are methods that ask the same question in a multivariate way: [MSD note](msd.html) and [Weibull MSD note](weibull.html).
+- There are methods that ask the same question in a multivariate way: [MSD for the curious](basit_msd.html) and [Weibull MSD for the curious](basit_weibull.html).
 
 ## More
 - [Technical note: f2 similarity factor and bootstrap f2](f2.html)
