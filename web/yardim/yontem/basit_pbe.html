@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CNK-FarmaStatR · Popülasyon biyoeşdeğerliği (PBE): meraklısı için</title>
+<!-- Built by araclar/yardim_derle.py from web/yardim/kaynak/basit_pbe.txt (FSR-TN-PLT-10). Do not edit by hand.
+     Research and education only; not a system validated for GxP environments. -->
+<link rel="stylesheet" href="../../app/stil.css">
+<link rel="stylesheet" href="not.css">
+</head>
+<body data-not="basit_pbe">
+<header><div><p class="sub">CNK-FarmaStatR</p></div><button id="lang" type="button" class="ghost"></button></header>
+<main class="notmain">
+<section class="not" lang="tr" data-lang="tr">
+<p class="ust"><a href="index.html?lang=tr">Yöntem notları</a> · <a href="pbe.html?lang=tr">Teknik not →</a></p>
+<h1>Popülasyon biyoeşdeğerliği (PBE): meraklısı için</h1>
+<p class="disclaimer">Araştırma ve eğitim amaçlıdır; GxP ortamında valide edilmiş sistem değildir.</p>
+<p>Bu sayfa, <a href="pbe.html">PBE teknik notunun</a> günlük dille anlatımıdır. Yeni bir yöntem içermez; sayıların kaynağı parantez içinde yazılıdır.</p>
+<h2>Soru: “Seninki benimkinden, benimkilerin birbirinden farklı olduğundan daha farklı mı?”</h2>
+<p>Farmakokinetikte iki ilacı EAA ve Cmax ortalamalarının oranıyla karşılaştırırız. İnhalasyon ve nazal ürünlerin bazı in vitro testlerinde FDA farklı bir soru sorar: Test (T) ile referans (R) arasındaki fark, referansın <b>kendi içindeki</b> farktan büyük mü?</p>
+<p>Bir benzetme: İki fırın aynı kurabiyeyi yapıyor. Orijinal fırından iki kurabiye alıp aradaki farka bakın; sonra biri orijinal, biri yeni fırından iki kurabiyeye bakın. Yeni fırının kurabiyesi, orijinal fırının kendi kurabiyelerinin birbirinden farklı olduğundan çok daha farklı değilse, iki fırın “popülasyon olarak eşdeğer” sayılır. Kriterin tanımı tam olarak budur (Chow, Shao ve Wang 2003, Denk. 1).</p>
+<h2>İki şey birlikte karşılaştırılır</h2>
+<p>PBE, %80–125 kuralından farklı olarak ortalamaya ek olarak dağınıklığa da bakar:</p>
+<ul><li><b>Ortalama farkı:</b> Jeneriğin ortalaması orijinalden ne kadar uzak? (Hesapta logaritma ölçeğindeki farkın karesi; logaritma, oranları farka çevirir.)</li><li><b>Dağınıklık farkı:</b> Jenerik, orijinalden daha mı dağınık? (Test varyansı eksi referans varyansı.)</li></ul>
+<p>Bu ikisinin toplamı, referansın kendi dağınıklığıyla orantılı bir <b>hoşgörü payını</b> aşmamalıdır. Orantı katsayısı FDA'nın belirlediği θp = <span class="deger" data-deger="sim_thetap">2,0891</span> sabitidir (PSG 020929, Ek A, Adım 1). Yani orijinal ilaç doğası gereği dağınıksa, jeneriğe de o oranda pay tanınır.</p>
+<p>Bir istisna var: Referans çok az dağınıksa (σR ≤ 0,1), pay referansa göre değil, sabit bir değere göre hesaplanır. Aksi hâlde payın kendisi çok küçülür ve çok tutarlı bir orijinal ilaç, jenerik için aşılması çok zor bir hedefe dönüşürdü (PSG 020929, Ek A, Adım 1 ve 3).</p>
+<h2>“En kötü olasılık” ile karar</h2>
+<p>Gerçek ortalamaları ve dağınıklıkları bilmeyiz; yalnız ölçtüğümüz birkaç düzine birimden tahmin ederiz. Bu yüzden karar tahminle değil, ona eklenen bir <b>belirsizlik payıyla</b> verilir: kriterin %95 üst güven sınırı (Hη) hesaplanır. Bu, “verilerimizle bağdaşan en kötü durum” gibidir. Hη ≤ 0 ise, en kötü durumda bile fark hoşgörü payını aşmıyor demektir ve PBE sağlanır (PSG 020929, Ek A, Adım 4–5).</p>
+<p>Farmakokinetikteki mantıkla aynıdır: Orada da nokta tahmini değil, %90 güven aralığının sınırlar içinde kalması aranır.</p>
+<h2>Örnek: FDA'nın Budesonid verisi</h2>
+<p>FDA'nın Budesonid kılavuzu (PSG 020929, Ek B) her ürün için 3 seri × 10 kap × 3 evre içeren bir örnek verir. Bu veri gerçek değildir, kılavuz onu simüle edilmiş olarak verir. Ayrıca Budesonid inhalasyon süspansiyonu tek dozluk ampullerdedir; başta–ortada–sonda evreleri yalnız bu simüle örnekte geçer (FSR-LOG-01 G-38). Platform bu örneği şöyle hesaplar (<a href="pbe.html">teknik not</a>, Bölüm 6):</p>
+<ul><li>Referansın dağınıklığı σR ≈ <span class="deger" data-deger="pbe_sigma_r">0,4046</span>. 0,1'den büyük olduğu için pay referansa göre ölçeklenir.</li><li>Ortalama farkının katkısı <span class="deger" data-deger="pbe_ed">0,022094</span>. Bu, test/referans oranının yaklaşık <span class="deger" data-deger="ema_gmr">1,1603</span> olmasından gelir.</li><li>Kriterin nokta tahmini <span class="deger" data-deger="pbe_eq">−0,263896</span>: rahatça sıfırın altında.</li><li>Belirsizlik payı eklenince üst sınır Hη = <span class="deger" data-deger="pbe_heta">−0,031499</span>: hâlâ sıfırın altında, ama sıfıra çok yakın. <b>PBE sağlanır</b>, fakat ince bir farkla. Az sayıda ölçümle verilen kararların ne kadar hassas olabileceğini gösteren iyi bir örnek.</li></ul>
+<p>Sonuç, FDA'nın kendi tablosundaki değerle aynıdır (teknik not, Bölüm 6). Analiz ekranında “Örnek: FDA PSG 020929” seçilip çalıştırılarak yeniden üretilebilir.</p>
+<h2>Unutmayın</h2>
+<ul><li>PBE tek bir ölçüm büyüklüğü (ör. verilen doz) içindir; her büyüklük ayrı analiz edilir (teknik not, Bölüm 7).</li><li>Seriler havuzlanır; seriden seriye büyük fark varsa bu yöntemin özellikleri değişir. Bunu simülasyon ekranında inceleyebilirsiniz (<a href="basit_simulasyon.html">simülasyonun basit anlatımı</a>).</li><li>EMA aynı soruyu farklı sorar: sabit 0,85–1,18 sınırlarıyla %90 güven aralığı (<a href="ema.html">EMA %90 GA notu</a>).</li></ul>
+<h2>Daha fazlası</h2>
+<ul><li><a href="pbe.html">Teknik not: Popülasyon biyoeşdeğerliği (PBE)</a></li><li><a href="basit_simulasyon.html">Simülasyon ve tasarım seçimi: meraklısı için</a></li></ul>
+</section>
+<section class="not" lang="en" data-lang="en" hidden>
+<p class="ust"><a href="index.html?lang=en">Method notes</a> · <a href="pbe.html?lang=en">Technical note →</a></p>
+<h1>Population bioequivalence (PBE): for the curious</h1>
+<p class="disclaimer">For research and education; not a system validated for GxP environments.</p>
+<p>This page explains the <a href="pbe.html">PBE technical note</a> in everyday words. It contains no new method; the source of every number is given in brackets.</p>
+<h2>The question: “Is yours more different from mine than mine are from each other?”</h2>
+<p>In pharmacokinetics we compare two products by the ratio of their mean AUC and Cmax. For some in vitro tests of inhaled and nasal products the FDA asks a different question: is the difference between test (T) and reference (R) larger than the difference <b>within</b> the reference itself?</p>
+<p>An analogy: two bakeries make the same cookie. Take two cookies from the original bakery and look at how much they differ; then take one cookie from each bakery. If the new bakery’s cookie is not much more different than the original bakery’s cookies are from each other, the two bakeries count as “equivalent as populations”. This is exactly how the criterion is defined (Chow, Shao and Wang 2003, Eq. 1).</p>
+<h2>Two things are compared together</h2>
+<p>Unlike the 80–125% rule, PBE looks at the spread as well as the mean:</p>
+<ul><li><b>Difference in means:</b> How far is the mean of the generic from the original? (In the computation, the square of the difference on the log scale; the logarithm turns ratios into differences.)</li><li><b>Difference in spread:</b> Is the generic more variable than the original? (Test variance minus reference variance.)</li></ul>
+<p>The sum of the two must not exceed an <b>allowance</b> proportional to the reference’s own spread. The proportionality constant is set by the FDA: θp = <span class="deger" data-deger="sim_thetap">2.0891</span> (PSG 020929, Appendix A, Step 1). So if the original product is naturally variable, the generic is given a proportional allowance.</p>
+<p>There is one exception: if the reference varies very little (σR ≤ 0.1), the allowance is computed from a fixed value instead of the reference. Otherwise the allowance itself would become very small, and a very consistent original would become a very hard target for the generic (PSG 020929, Appendix A, Steps 1 and 3).</p>
+<h2>Deciding with the “worst plausible case”</h2>
+<p>We do not know the true means and spreads; we estimate them from a few dozen units. So the decision is made not with the estimate but with an added <b>margin of uncertainty</b>: the 95% upper confidence bound of the criterion (Hη). It is like “the worst case compatible with our data”. If Hη ≤ 0, even in the worst case the difference does not exceed the allowance, and PBE is met (PSG 020929, Appendix A, Steps 4–5).</p>
+<p>The logic is the same as in pharmacokinetics: there too it is not the point estimate but the 90% confidence interval that must lie within the limits.</p>
+<h2>Example: the FDA budesonide data</h2>
+<p>The FDA budesonide guidance (PSG 020929, Appendix B) gives an example with 3 batches × 10 containers × 3 stages for each product. These data are not real; the guidance gives them as simulated. Budesonide inhalation suspension also comes in single-dose ampoules; the beginning, middle and end stages appear only in this simulated example (FSR-LOG-01 G-38). The platform computes the example as follows (<a href="pbe.html">technical note</a>, Section 6):</p>
+<ul><li>The spread of the reference is σR ≈ <span class="deger" data-deger="pbe_sigma_r">0.4046</span>. Because it is above 0.1, the allowance is scaled to the reference.</li><li>The contribution of the difference in means is <span class="deger" data-deger="pbe_ed">0.022094</span>. It comes from a test/reference ratio of about <span class="deger" data-deger="ema_gmr">1.1603</span>.</li><li>The point estimate of the criterion is <span class="deger" data-deger="pbe_eq">−0.263896</span>: comfortably below zero.</li><li>With the margin of uncertainty added, the upper bound is Hη = <span class="deger" data-deger="pbe_heta">−0.031499</span>: still below zero, but very close to it. <b>PBE is met</b>, but narrowly. A good example of how delicate decisions based on few measurements can be.</li></ul>
+<p>The result equals the value in the FDA’s own table (technical note, Section 6). It can be reproduced on the analysis screen by choosing “Example: FDA PSG 020929” and running the analysis.</p>
+<h2>Remember</h2>
+<ul><li>PBE is for one measured quantity at a time (e.g. delivered dose); each quantity is analysed separately (technical note, Section 7).</li><li>Batches are pooled; if batches differ a lot, the properties of this method change. You can study this on the simulation screen (<a href="basit_simulasyon.html">simulation for the curious</a>).</li><li>The EMA asks the same question differently: a 90% confidence interval within the fixed limits 0.85–1.18 (<a href="ema.html">EMA 90% CI note</a>).</li></ul>
+<h2>More</h2>
+<ul><li><a href="pbe.html">Technical note: Population bioequivalence (PBE)</a></li><li><a href="basit_simulasyon.html">Simulation and design selection: for the curious</a></li></ul>
+</section>
+</main>
+<script src="not.js"></script>
+</body>
+</html>
