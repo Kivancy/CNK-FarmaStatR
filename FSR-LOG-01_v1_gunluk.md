@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 2.27 · Son güncelleme: 02.11.2026"
+subtitle: "FSR-LOG-01 · Sürüm 2.28 · Son güncelleme: 02.11.2026"
 ---
 
 # Bu belge hakkında
@@ -2361,6 +2361,16 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Kuru koşu (altı sayfa):** P7 89/89 GEÇTİ (mevcut 51 + B satırları 38; B-3 altı sayfa; B-4 82 sayı = R; Y-6 41 bağlantı). Altı teknik notun her birinde yalnız iki bağlantı satırı (TR, EN) farkı. GitHub Pages alt yolunu taklit eden sunucuda dizin, altı teknik not ve altı basit sayfanın 37 bağlantısı açıldı, HTTP ≥ 400 = 0 (B-2).
 - **Bekleyen:** B-7, Weibull sayfasının onayı; ardından FSR-TN-PLT-10 v0.2 (sonuçlar), FSR-VAL-PLT-1 revizyonu, resmî P7 kabulü (proje sahibi) ve sitenin güncellenmesi (Actions > pages > Run workflow).
 
+## G-131 · PSG örneğinde “log dönüşümü yok” ifadesi düzeltildi (KK-73) — 02.11.2026
+
+- **Depo:** G-130 commit edildi; GitHub Actions başarılı (proje sahibi).
+- **Tespit (proje sahibi):** PBE yöntem notu Bölüm 6'daki “Platformun sonucu (log dönüşümü yok)” ifadesi ham verinin kullanıldığı izlenimini veriyor. PBE her zaman log ölçeğinde yapılır; PSG'deki veriler log dönüştürülmüş olarak verildiği için ikinci kez log alınmaz.
+- **Claude'un kontrolü:** PSG 020929 Ek B değerleri (≈ 4,9–6,9) üzerinde PSG hesabı doğrudan yapılır (σR = √0,163727878 = 0,4046; Hη −0,031498721); yöntem notu Bölüm 2 “hesap log ölçeğindedir” der. Aynı belirsizlik EMA notu Bölüm 6'da (“log ölçeğinde kabul edilir”) ve yardım ipuçlarında (`pbe.log_d`: “log alınmadan”, panel: “verilen değerlerle hesaplanır”) da vardı.
+- **Karar (K, proje sahibi): KK-73.** İfade düzeltilir.
+- **Uygulama (Claude):** `pbe.txt` Bölüm 6 (TR, EN): “Değerler log ölçeğinde verilmiştir ve PSG hesabı bunlar üzerinde doğrudan yapılır; bu yüzden ikinci bir log dönüşümü uygulanmaz (ekrandaki ‘Verinin logaritmasını al’ kutusu işaretsiz).” `ema.txt` Bölüm 6 (TR, EN) aynı anlamda. `yardim.json`: `pbe.log_d` ipucu ve PBE paneli (TR, EN) aynı anlamda. Hesap, sayılar ve ekran değişmedi.
+- **Kuru koşu:** P7 89/89 GEÇTİ.
+- **Not:** Weibull basit anlatımının onayı (B-7) bekleniyor.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -2388,7 +2398,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 2.27 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 2.28 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.1 | 1.0 onaylı; beş dosya sabitlendi (G-47). 1.1: TC-S11 (dışa aktarılan betik), onaylandı (KK-53, G-76) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.7 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68); v0.7: Tablo 8.1 ve 10.1 (KK-56, KK-57, KK-59; G-94), onay P6 kapanışında |
@@ -2481,3 +2491,4 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | KK-70 | `chow1452.csv` kalır; G-98 zip silindi; e-posta açık, `CITATION.cff`'te kurumsal adres; kurum ve ORCID künyede | G-119 |
 | KK-71 | Bölüm 9 (Bağlantı) simülasyon dışındaki bütün raporlardan çıkarılır | G-122 |
 | KK-72 | Yöntem notlarına “Meraklısı için” basit anlatım sayfaları: ayrı sayfa ve iki yönlü bağlantı; FSR-TN-PLT-10 B-1 … B-7 donduruldu | G-124 |
+| KK-73 | PSG örneği: “log dönüşümü yok” yerine “değerler log ölçeğinde, ikinci log uygulanmaz” (PBE ve EMA notları, ipuçları) | G-131 |

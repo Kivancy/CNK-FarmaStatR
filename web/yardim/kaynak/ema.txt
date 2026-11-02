@@ -50,7 +50,7 @@ Ekrandaki karar satırı (b) yoludur (FSR-TN-PLT-08 E-K3): Aşama 1 simülasyonu
 - Literatür karşılaştırması: Chen ve ark. (2019) “Log-Can” ve “Log-Batch” ABE formülleri, PSG verisinde (3 evre ve yalnız B evresi) (a) ve (b) ile 11 basamakta aynı (FSR-LOG-01 G-107).
 
 ## 6. Çalışılmış örnek
-PSG 020929 Ek B’deki simüle veri (3 seri × 10 kap × 3 evre, verilen değerler log ölçeğinde kabul edilir):
+PSG 020929 Ek B’deki simüle veri (3 seri × 10 kap × 3 evre; değerler log ölçeğinde verilmiştir, ikinci bir log dönüşümü uygulanmaz):
 
 - GMR = [[ema_gmr|1,1603]].
 - (a): %90 GA [[ema_a_lo|0,9604]] – [[ema_a_hi|1,4017]], ν = [[ema_a_df|56,78]] → sağlanamadı.
@@ -131,7 +131,7 @@ The decision line on the screen is path (b) (FSR-TN-PLT-08 E-K3): in the Stage 1
 - Literature comparison: the “Log-Can” and “Log-Batch” ABE formulas of Chen et al. (2019) equal (a) and (b) to 11 digits on the PSG data (3 stages and stage B alone) (FSR-LOG-01 G-107).
 
 ## 6. Worked example
-The simulated data of PSG 020929 Appendix B (3 batches × 10 containers × 3 stages; the values given are taken as log scale):
+The simulated data of PSG 020929 Appendix B (3 batches × 10 containers × 3 stages; the values are given on the log scale, no second log transformation is applied):
 
 - GMR = [[ema_gmr|1.1603]].
 - (a): 90% CI [[ema_a_lo|0.9604]] – [[ema_a_hi|1.4017]], ν = [[ema_a_df|56.78]] → not met.

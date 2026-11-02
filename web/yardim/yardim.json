@@ -44,7 +44,7 @@
       "dis.yontem": "f2 ve bootstrap f2 (EMA’nın öncelikli yöntemi), model bağımsız MSD (FDA 1997 V.B) ya da Weibull MSD (FDA 1997 V.C).",
       "pbe.dosya": "CSV: parti, kap, asama, urun, olcum (ya da batch, container, stage, product, score). Her satır bir ölçüm. Ayraç ; , ya da sekme; ondalık virgül olabilir.",
       "pbe.kaynak": "FDA PSG 020929 Ek’teki simüle örnek veri ya da kendi CSV dosyanız.",
-      "pbe.log_d": "İşaretliyse analiz ln(ölçüm) üzerinde yapılır; tüm değerler pozitif olmalı. PSG Ek’teki örnek, verilen değerler üzerinde (log alınmadan) hesaplanır; ham ölçümler için işaretleyin.",
+      "pbe.log_d": "İşaretliyse analiz ln(ölçüm) üzerinde yapılır; tüm değerler pozitif olmalı. PSG Ek’teki örnek değerler zaten log ölçeğindedir, bu yüzden kutu işaretsiz bırakılır (ikinci bir log alınmaz); ham ölçümler için işaretleyin.",
       "pbe.ref": "Ürün sütunundaki etiketlerden referans ürün.",
       "pbe.tek": "Değiştirilmiş tek yönlü PBE (FDA PSG 020121 Ek): test ortalaması referanstan küçükse ortalama farkı terimi kritere girmez. Yalnız ilgili ürün kılavuzu öngörüyorsa kullanın.",
       "pbe.test": "Ürün sütunundaki etiketlerden test ürünü. Başka ürünler varsa yok sayılır.",
@@ -142,7 +142,7 @@
         },
         {
           "id": "ayar",
-          "html": "<ul><li><b>Log dönüşümü:</b> PSG kriteri log ölçeğindedir. PSG örneği verilen değerlerle hesaplanır; ham ölçümler için işaretleyin.</li><li><b>Tek yönlü test:</b> değiştirilmiş tek yönlü PBE (PSG 020121 Ek); yalnız ürün kılavuzu öngörüyorsa.</li><li>σT0 = 0,1 ve θp = 2,0891 PSG’nin düzenleyici sabitleridir; değiştirilemez.</li></ul><ul><li><b>Yöntem:</b> FDA PBE ya da EMA %90 GA. EMA’da log kutusu aynı anlamdadır; tek yönlü test EMA’da yoktur (kutu gizlenir).</li></ul>"
+          "html": "<ul><li><b>Log dönüşümü:</b> PSG kriteri log ölçeğindedir. PSG örneğindeki değerler zaten log ölçeğindedir (kutu işaretsiz); ham ölçümler için işaretleyin.</li><li><b>Tek yönlü test:</b> değiştirilmiş tek yönlü PBE (PSG 020121 Ek); yalnız ürün kılavuzu öngörüyorsa.</li><li>σT0 = 0,1 ve θp = 2,0891 PSG’nin düzenleyici sabitleridir; değiştirilemez.</li></ul><ul><li><b>Yöntem:</b> FDA PBE ya da EMA %90 GA. EMA’da log kutusu aynı anlamdadır; tek yönlü test EMA’da yoktur (kutu gizlenir).</li></ul>"
         },
         {
           "id": "okuma",
@@ -229,7 +229,7 @@
       "dis.yontem": "f2 and bootstrap f2 (EMA's preferred method), model-independent MSD (FDA 1997 V.B) or Weibull MSD (FDA 1997 V.C).",
       "pbe.dosya": "CSV: batch, container, stage, product, score (or parti, kap, asama, urun, olcum). One row per measurement. Separator ; , or tab; a decimal comma is accepted.",
       "pbe.kaynak": "The simulated example in the appendix of FDA PSG 020929, or your own CSV file.",
-      "pbe.log_d": "If ticked, the analysis uses ln(measurement); all values must be positive. The example in the PSG appendix is computed on the values as given (no log); tick this for raw measurements.",
+      "pbe.log_d": "If ticked, the analysis uses ln(measurement); all values must be positive. The values of the example in the PSG appendix are already on the log scale, so the box is left unticked (no second log); tick this for raw measurements.",
       "pbe.ref": "Reference product, from the labels in the product column.",
       "pbe.tek": "Modified one-sided PBE (FDA PSG 020121 appendix): if the test mean is below the reference mean, the mean-difference term is left out of the criterion. Use only if the product guidance calls for it.",
       "pbe.test": "Test product, from the labels in the product column. Other products are ignored.",
@@ -327,7 +327,7 @@
         },
         {
           "id": "ayar",
-          "html": "<ul><li><b>Log transform:</b> the PSG criterion is on the log scale. The PSG example is computed on the values as given; tick it for raw measurements.</li><li><b>One-sided test:</b> modified one-sided PBE (PSG 020121 appendix); only if the product guidance calls for it.</li><li>σT0 = 0.1 and θp = 2.0891 are regulatory constants of the PSG; they cannot be changed.</li></ul><ul><li><b>Method:</b> FDA PBE or EMA 90% CI. The log box has the same meaning in EMA; there is no one-sided test in EMA (the box is hidden).</li></ul>"
+          "html": "<ul><li><b>Log transform:</b> the PSG criterion is on the log scale. The values of the PSG example are already on the log scale (box unticked); tick it for raw measurements.</li><li><b>One-sided test:</b> modified one-sided PBE (PSG 020121 appendix); only if the product guidance calls for it.</li><li>σT0 = 0.1 and θp = 2.0891 are regulatory constants of the PSG; they cannot be changed.</li></ul><ul><li><b>Method:</b> FDA PBE or EMA 90% CI. The log box has the same meaning in EMA; there is no one-sided test in EMA (the box is hidden).</li></ul>"
         },
         {
           "id": "okuma",
