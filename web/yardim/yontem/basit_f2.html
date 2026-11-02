@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CNK-FarmaStatR · f2 benzerlik faktörü ve bootstrap f2: meraklısı için</title>
+<!-- Built by araclar/yardim_derle.py from web/yardim/kaynak/basit_f2.txt (FSR-TN-PLT-10). Do not edit by hand.
+     Research and education only; not a system validated for GxP environments. -->
+<link rel="stylesheet" href="../../app/stil.css">
+<link rel="stylesheet" href="not.css">
+</head>
+<body data-not="basit_f2">
+<header><div><p class="sub">CNK-FarmaStatR</p></div><button id="lang" type="button" class="ghost"></button></header>
+<main class="notmain">
+<section class="not" lang="tr" data-lang="tr">
+<p class="ust"><a href="index.html?lang=tr">Yöntem notları</a> · <a href="f2.html?lang=tr">Teknik not →</a></p>
+<h1>f2 benzerlik faktörü ve bootstrap f2: meraklısı için</h1>
+<p class="disclaimer">Araştırma ve eğitim amaçlıdır; GxP ortamında valide edilmiş sistem değildir.</p>
+<p>Bu sayfa, <a href="f2.html">f2 teknik notunun</a> günlük dille anlatımıdır. Yeni bir yöntem içermez; sayıların kaynağı parantez içinde yazılıdır.</p>
+<h2>Hikâye: iki tabletin çözünme yarışı</h2>
+<p>Bir tablet, vücut sıvısını taklit eden bir kapta çözündürülür ve belirli zamanlarda (ör. 15, 30, 45 dakika) ilacın yüzde kaçının çözündüğü ölçülür. Ortaya bir <b>çözünme profili</b>, yani zamanla yükselen bir eğri çıkar. Soru şudur: Jenerik tabletin (test) eğrisi, orijinalinkine (referans) benziyor mu?</p>
+<p>Bir benzetme: İki koşucu aynı parkurda koşuyor ve her kontrol noktasında ne kadar yol aldıklarına bakıyoruz. Her noktada birbirlerine yakınlarsa “aynı tempoda” koşmuşlardır. f2, iki eğri arasındaki bu nokta nokta uzaklığı tek bir sayıda toplar.</p>
+<p>Farmakokinetikteki %80–125 gibi bir oran kuralı değildir; iki eğrinin şeklini karşılaştırır.</p>
+<h2>f2’yi okumak</h2>
+<ul><li>f2 <b>100</b> ise iki eğri üst üste biner.</li><li>f2 <b>50 ile 100</b> arasında ise eğriler benzer sayılır (FDA 1997, Bölüm V.A; EMA, Ek I).</li><li>f2 = 50 kabaca, her zaman noktasında ortalama yaklaşık 10 yüzde puanı fark demektir (teknik not, Bölüm 3’teki denklemden).</li></ul>
+<p><b>%85 kuralı:</b> İki tablet de neredeyse tamamen çözündükten sonraki noktalar “ikisi de bitti” dediği için eğrileri yapay olarak benzer gösterir. Bu yüzden ölçüm noktaları, ürünlerden biri %85’i geçene kadar kullanılır (EMA; FDA’nın kuralı biraz farklıdır; teknik not, Bölüm 5).</p>
+<h2>Neden bootstrap?</h2>
+<p>Her üründen genellikle 12 tablet ölçülür (EMA). Tabletler birbirinden çok farklıysa, bu 12 tabletten hesaplanan tek bir f2 şansa bağlı olabilir. EMA bu durumda f2’nin belirsizliğini de görmek ister (teknik not, Bölüm 1).</p>
+<p><b>Bootstrap</b> bunun için bir “torbadan tekrar çekme” oyunudur: 12 tabletin her birini bir bilyeye yazıp torbaya koyun. Torbadan 12 bilye çekin, ama her çektiğinizi geri atın; aynı tablet iki kez gelebilir, biri hiç gelmeyebilir. Bu yeni “sanal deney” için f2’yi hesaplayın. Bunu binlerce kez (ör. B = 5000) tekrarlayın. Elde edilen binlerce f2 değerinin yayılımı, tek f2’nin ne kadar güvenilir olduğunu gösterir (Ma ve ark. 2000).</p>
+<p>Karar: Bu değerlerin ortadaki %90’ının oluşturduğu aralığın <b>alt sınırı 50 ya da üstündeyse</b> profiller benzerdir. Alt sınır kullanılır; çünkü “şanssız durumda bile benzer mi?” diye sorulur (teknik not, Bölüm 4).</p>
+<p>Torbadan çekme rastgele olduğu için sonuç biraz oynar. Aynı <b>seed</b> (başlangıç numarası) ile aynı sonuç alınır. Platform bu oynamanın büyüklüğünü de verir (MCSE); alt sınır 50’ye bu paydan daha yakınsa “seed’e duyarlı” uyarısı çıkar.</p>
+<p>Tabletler az değişkense (değişkenlik katsayısı, CV, belirli eşiklerin altında) EMA tek f2 ile karar vermeye de izin verir; ekrandaki “CV kuralı” satırı bunu gösterir (EMA, Ek I; teknik not, Bölüm 4).</p>
+<h2>Örnek: Noce ve ark. 2020</h2>
+<p>Noce ve ark. (2020) yayınındaki iki ürünün verisi (her biri 12 tablet; Ürün 1 test, Ürün 2 referans), EMA ön ayarı ve B = 5000 ile (<a href="f2.html">teknik not</a>, Bölüm 6):</p>
+<ul><li>%85 kuralından sonra <span class="deger" data-deger="f2_p">6</span> zaman noktası kalır.</li><li>f2 = <span class="deger" data-deger="f2_f2">37,39</span>: tek başına bile 50’nin altında.</li><li>Bootstrap %90 aralığı <span class="deger" data-deger="f2_alt">30,90</span> – <span class="deger" data-deger="f2_ust">43,99</span>; alt sınırın oynama payı (MCSE) yalnız <span class="deger" data-deger="f2_mcse">0,12</span>.</li><li>Alt sınır 50’nin çok altında: <b>benzer değil</b>. EMA’nın istediği tam sayı raporlamasıyla alt sınır <span class="deger" data-deger="f2_tamsayi">31</span>’dir.</li></ul>
+<h2>Unutmayın</h2>
+<ul><li>f2 eğrilerin şeklini karşılaştırır; tek bir zaman noktasında büyük bir fark, diğer noktalardaki benzerlikle örtülebilir.</li><li>Bootstrap sonucu seed’e bağlıdır; raporda seed ve B yazılır, böylece herkes aynı sonucu yeniden üretebilir.</li><li>Aynı soruyu çok değişkenli yollarla soran yöntemler de vardır: <a href="msd.html">MSD notu</a> ve <a href="weibull.html">Weibull MSD notu</a>.</li></ul>
+<h2>Daha fazlası</h2>
+<ul><li><a href="f2.html">Teknik not: f2 benzerlik faktörü ve bootstrap f2</a></li></ul>
+</section>
+<section class="not" lang="en" data-lang="en" hidden>
+<p class="ust"><a href="index.html?lang=en">Method notes</a> · <a href="f2.html?lang=en">Technical note →</a></p>
+<h1>f2 similarity factor and bootstrap f2: for the curious</h1>
+<p class="disclaimer">For research and education; not a system validated for GxP environments.</p>
+<p>This page explains the <a href="f2.html">f2 technical note</a> in everyday words. It contains no new method; the source of every number is given in brackets.</p>
+<h2>The story: a dissolution race of two tablets</h2>
+<p>A tablet is dissolved in a vessel that mimics body fluid, and at set times (e.g. 15, 30, 45 minutes) the percentage of drug dissolved is measured. The result is a <b>dissolution profile</b>, a curve rising over time. The question: does the curve of the generic tablet (test) resemble that of the original (reference)?</p>
+<p>An analogy: two runners run the same course and we check how far each has got at every checkpoint. If they are close at every checkpoint, they ran “at the same pace”. f2 sums up this point-by-point distance between the two curves in a single number.</p>
+<p>It is not a ratio rule like 80–125% in pharmacokinetics; it compares the shapes of two curves.</p>
+<h2>Reading f2</h2>
+<ul><li>f2 = <b>100</b> means the two curves coincide.</li><li>f2 between <b>50 and 100</b> means the curves count as similar (FDA 1997, Section V.A; EMA, Annex I).</li><li>f2 = 50 means roughly an average difference of about 10 percentage points at each time point (from the equation in technical note, Section 3).</li></ul>
+<p><b>The 85% rule:</b> once both tablets have almost completely dissolved, the later points say “both are done” and make the curves look artificially similar. So time points are used until one of the products passes 85% (EMA; the FDA rule is slightly different; technical note, Section 5).</p>
+<h2>Why bootstrap?</h2>
+<p>Usually 12 tablets of each product are measured (EMA). If the tablets differ a lot from each other, a single f2 computed from these 12 may depend on luck. In that case the EMA wants to see the uncertainty of f2 as well (technical note, Section 1).</p>
+<p><b>The bootstrap</b> is a “draw again from the bag” game for this: write each of the 12 tablets on a marble and put them in a bag. Draw 12 marbles, but put each back after drawing it; the same tablet may come twice, another not at all. Compute f2 for this new “virtual study”. Repeat this thousands of times (e.g. B = 5000). The spread of the thousands of f2 values shows how reliable the single f2 is (Ma et al. 2000).</p>
+<p>Decision: if the <b>lower limit</b> of the interval formed by the middle 90% of these values is <b>50 or more</b>, the profiles are similar. The lower limit is used because the question is “similar even in an unlucky case?” (technical note, Section 4).</p>
+<p>Because drawing from the bag is random, the result moves a little. The same <b>seed</b> (starting number) gives the same result. The platform also reports the size of this movement (MCSE); if the lower limit is closer to 50 than this, a “seed-sensitive” warning appears.</p>
+<p>If the tablets vary little (coefficient of variation, CV, below set thresholds), the EMA also allows a decision with a single f2; the “CV rule” line on the screen shows this (EMA, Annex I; technical note, Section 4).</p>
+<h2>Example: Noce et al. 2020</h2>
+<p>The data of two products in Noce et al. (2020) (12 tablets each; Product 1 test, Product 2 reference), with the EMA preset and B = 5000 (<a href="f2.html">technical note</a>, Section 6):</p>
+<ul><li>After the 85% rule, <span class="deger" data-deger="f2_p">6</span> time points remain.</li><li>f2 = <span class="deger" data-deger="f2_f2">37.39</span>: below 50 even on its own.</li><li>Bootstrap 90% interval <span class="deger" data-deger="f2_alt">30.90</span> – <span class="deger" data-deger="f2_ust">43.99</span>; the movement of the lower limit (MCSE) is only <span class="deger" data-deger="f2_mcse">0.12</span>.</li><li>The lower limit is far below 50: <b>not similar</b>. With the whole-number reporting the EMA asks for, the lower limit is <span class="deger" data-deger="f2_tamsayi">31</span>.</li></ul>
+<h2>Remember</h2>
+<ul><li>f2 compares the shapes of curves; a large difference at one time point can be hidden by similarity at the others.</li><li>The bootstrap result depends on the seed; the report states the seed and B, so anyone can reproduce the same result.</li><li>There are methods that ask the same question in a multivariate way: <a href="msd.html">MSD note</a> and <a href="weibull.html">Weibull MSD note</a>.</li></ul>
+<h2>More</h2>
+<ul><li><a href="f2.html">Technical note: f2 similarity factor and bootstrap f2</a></li></ul>
+</section>
+</main>
+<script src="not.js"></script>
+</body>
+</html>
