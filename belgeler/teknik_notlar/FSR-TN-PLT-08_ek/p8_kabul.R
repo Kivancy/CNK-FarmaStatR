@@ -146,6 +146,14 @@ for (i in seq_len(nrow(rp))) {
               if (length(missing)) paste0(" (", paste(head(missing, 3), collapse = " | "), ")") else "", if (ok_dis) "var" else "YOK",
               if (ok_t) "var" else "YOK", v1("R", id, lg, "ms")))
 }
+# FSR-TN-PLT-11 (KK-75) D-1: Section 9 "Analysed data" in the EMA reports
+h9 <- c(tr = "9. Analiz edilen veri", en = "9. Analysed data")
+d1 <- vapply(seq_len(nrow(rp)), function(i) { x <- doc_xml(rp$deger[i])$xml; l <- rp$ayar[i]
+  h <- regexpr("<w:p><w:pPr><w:pStyle w:val=\"Heading1\"/></w:pPr><w:r><w:t[^>]*>9\\. ", x, perl = TRUE)
+  if (h < 0) return(FALSE); y <- substring(x, h)
+  identical(paras(regmatches(y, regexpr("<w:p>.*?</w:p>", y, perl = TRUE))), h9[[l]]) &&
+    all(c(tr_json[[l]]$rp_data_src, tr_json[[l]]$rp_data_sha, tr_json[[l]]$rp_data_products) %in% cells(y)) }, NA)
+put("D-1 bölüm 9 (EMA raporları)", nrow(rp) > 0 && all(d1), sprintf("%d/%d EMA raporu", sum(d1), nrow(rp)))
 put("E-5 rapor sayısı", nrow(rp) == 3, sprintf("%d rapor (örnek TR ve EN; hesaplanamayan yol TR)", nrow(rp)))
 f1 <- v1("R", "ema-ornek-ham", "en", "dosya"); f2 <- v1("R-7", "ema-ornek-ham", "en", "dosya")
 if (!is.na(f1) && !is.na(f2)) {

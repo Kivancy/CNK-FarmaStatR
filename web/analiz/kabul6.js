@@ -6,6 +6,7 @@
 // the screen's own report function and packs everything into one stored ZIP (p6_kabul.zip): the
 // record p6_tarayici.csv and the reports. The comparison with local R is done by
 // belgeler/teknik_notlar/FSR-TN-PLT-06_ek/p6_kabul.R. Turkish only (internal tool).
+// FSR-TN-PLT-11 v0.1 (KK-75): rows 'D', 'D-8' for Section 9 'Analysed data' of the analysis reports.
 // Research and education only; not a system validated for GxP environments.
 
 import { zipStored } from '../app/rapor.js';
@@ -156,6 +157,39 @@ async function main() {
   // F-2 dissolution input error: L2a without reference lots
   for (const i of Dc().querySelectorAll('#dis_form input[name=lot]')) i.checked = false;
   await run('dis', 'dis-l2a-lotsuz');
+
+  // ---- FSR-TN-PLT-11 (KK-75): Section 9 'Analysed data'; D-1 ... D-4, D-8 (rows 'D')
+  const runD = async (sec) => { st().status[sec] = null; Dc().querySelector(`#${sec}_run`).click(); await waitSt(sec, DONE); await sleep(100);
+    put('D', sec, '', 'durum', st().status[sec]); };                  // no 'F' rows: the F-* counts stay as frozen
+  const withData = async (sec, v) => { const e = Dc().querySelector(`#${sec}_with_data`); e.checked = v; await sleep(50); };
+  put('D-8', 'kutu', 'pbe', 'varsayilan_isaretli', Dc().querySelector('#pbe_with_data').checked);
+  put('D-8', 'kutu', 'dis', 'varsayilan_isaretli', Dc().querySelector('#dis_with_data').checked);
+  const dRep = async (sec, id, wd) => {
+    await withData(sec, wd);
+    const lang = Dc().documentElement.lang, r0 = reqs().length, r = st().makeReport(sec), name = `raporlar/d11_${id}_${wd ? 'veri' : 'veri-yok'}_${lang}.docx`;
+    files.push([name, r.bytes]);
+    put('D', `${id}|${wd ? 1 : 0}`, lang, 'dosya', name); put('D', `${id}|${wd ? 1 : 0}`, lang, 'ag_istegi', reqs().length - r0);
+    await withData(sec, false); return r;
+  };
+  // D-dis: Turkish CSV of Tsong 1996 is loaded above (dis-csv-tr); rerun MSD L2a with lots for a report
+  for (const i of Dc().querySelectorAll('#dis_form input[name=lot]')) { i.checked = ['STD1', 'STD2'].includes(i.value); }
+  await runD('dis');
+  put('D', 'dis', '', 'kaynak', 'belgeler/teknik_notlar/FSR-TN-PLT-06_ek/veri/tsong1996_tr.csv');
+  put('D', 'dis', '', 'ekran', Dc().querySelector('#dis_data_info').textContent);
+  put('D', 'dis', '', 'form', JSON.stringify(st().dis.form));
+  await dRep('dis', 'dis', false); await dRep('dis', 'dis', true); await langSwitch(); await dRep('dis', 'dis', true); await langSwitch();
+  // D-pbe: test data file P1 (PSG example as a file)
+  Dc().querySelector('#tab_pbe').click(); await sleep(200);
+  await upload('pbe', 'P1_psg020929.csv', await fetchBytes('CNKfarmastatr/inst/validasyon/pbe/test_verisi/P1_psg020929.csv'));
+  await check('pbe_form', 'log_d', false); await check('pbe_form', 'tek', false);
+  await runD('pbe');
+  put('D', 'pbe', '', 'kaynak', 'CNKfarmastatr/inst/validasyon/pbe/test_verisi/P1_psg020929.csv');
+  put('D', 'pbe', '', 'ekran', Dc().querySelector('#pbe_data_info').textContent);
+  put('D', 'pbe', '', 'form', JSON.stringify(st().pbe.form));
+  await dRep('pbe', 'pbe', false); await dRep('pbe', 'pbe', true);
+  await sleep(1100); await dRep('pbe', 'pbe-tekrar', true);           // D-4 determinism with the data table
+  await langSwitch(); await dRep('pbe', 'pbe', true); await langSwitch();
+  log('FSR-TN-PLT-11: veri bölümü');
 
   // ---- F-11 narrow screen (390 px): no horizontal scrolling on either tab
   fr.style.width = '390px'; await sleep(400);

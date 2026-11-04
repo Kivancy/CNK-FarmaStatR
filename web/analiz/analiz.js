@@ -6,6 +6,8 @@
 // and used by the screen and by the Word report (rapor.js), as in P5 (P5-K1).
 // FSR-TN-PLT-08 v0.1 (KK-64): the PBE tab also runs EMA OIP Rev. 2 Section 5.1 criterion 8 (90% CI)
 // with the validated simulation engine (invitro_array, ema_ci_fast; FSR-VAL-SIM-1).
+// FSR-TN-PLT-11 v0.1 (KK-75): Section 9 'Analysed data' in the analysis reports: source, structure,
+// SHA-256 of the uploaded file and, if the user ticks it, the data table as used in the analysis.
 // Research and education only; not a system validated for GxP environments.
 
 import { WEBR_VERSION, TAMPER, verifyFiles, startWebR, fetchBytes, sha256 } from '../p1/motor.js';
@@ -34,6 +36,13 @@ const R_AN = `
 .an_dis_veri <- function(metin, ornek) tryCatch({
   v <- platform_dis_veri(if (nzchar(metin)) metin else NULL, if (nzchar(ornek)) ornek else NULL)
   .an$dis <- v; list(ok = TRUE, urunler = v$urunler, n = length(v$Diss)) }, error = .an_hata)
+.an_tablo <- function(tur, urunler, enfazla) tryCatch({        # data as used in the analysis (KK-75)
+  u <- strsplit(urunler, "\n", fixed = TRUE)[[1]]
+  if (tur == "pbe") { v <- .an$pbe; i <- v$urun %in% u
+    d <- list(parti = v$parti[i], kap = v$kap[i], asama = v$asama[i], urun = v$urun[i], olcum = v$olcum[i])
+  } else { v <- .an$dis; i <- v$Product %in% u
+    d <- list(Product = v$Product[i], Unit = v$Unit[i], Time = as.character(v$Time[i]), Diss = as.character(v$Diss[i])) }
+  n <- sum(i); list(ok = TRUE, n = n, tablo = if (n <= enfazla) d else NULL) }, error = .an_hata)
 .an_dis <- function(test, ref, lotlar, birim, yontem, ayar_k, ayar_v) tryCatch({
   lotlar <- if (nzchar(lotlar)) strsplit(lotlar, "\n", fixed = TRUE)[[1]] else character(0)
   if (is.null(.an$kp)) .an$kp <- platform_dis_kopru("/home/web_user/dis_kopru.R", globalenv())
@@ -120,7 +129,43 @@ function fillSelect(sel, items, want) {
 async function readFileText(input) {
   const f = input.files && input.files[0];
   if (!f) return null;
-  return { text: await f.text(), name: f.name, size: f.size, modified: f.lastModified };
+  const bytes = new Uint8Array(await f.arrayBuffer());   // SHA-256 of the file as uploaded (KK-75)
+  return { text: new TextDecoder().decode(bytes), name: f.name, size: f.size, modified: f.lastModified, sha256: await sha256(bytes) };
+}
+// Section 9 'Analysed data' (FSR-TN-PLT-11, KK-75)
+const VERI_ENFAZLA = 5000;
+async function dataTable(kind, products) {
+  const r = await callR('.an_tablo(tur, urunler, enfazla)', { tur: kind, urunler: products.join('\n'), enfazla: VERI_ENFAZLA });
+  if (!r.ok) return { n: 0, cols: null, error: r.message };
+  return { n: r.n, cols: r.tablo ? Object.fromEntries(Object.entries(r.tablo).map(([k, v]) => [k, arr(v).map(String)])) : null };
+}
+function dataSection(kind, D, include) {
+  const tb = D.tablo, ex = !D.data.sha256, used = kind === 'pbe' ? [D.form.test, D.form.ref] : [D.form.test, D.form.ref, ...D.form.lotlar];
+  const rows = [[t('rp_data_src'), D.data.src],
+    [t('rp_data_sha'), ex ? t('rp_data_example').replace('{v}', pkgVersion) : D.data.sha256],
+    [t('rp_data_products'), used.join(', ')]];
+  if (tb && tb.cols) {
+    const c = tb.cols, uniq = (a) => new Set(a).size;
+    for (const p of used) {
+      if (kind === 'pbe') { const ix = c.urun.map((u, i) => (u === p ? i : -1)).filter((i) => i >= 0);
+        rows.push([p, t('rp_data_struct_pbe').replace('{s}', uniq(ix.map((i) => c.parti[i]))).replace('{u}', uniq(ix.map((i) => c.parti[i] + '\u0001' + c.kap[i])))
+          .replace('{m}', uniq(ix.map((i) => c.asama[i]))).replace('{n}', fmtInt(ix.length))]);
+      } else { const ix = c.Product.map((u, i) => (u === p ? i : -1)).filter((i) => i >= 0);
+        rows.push([p, t('rp_data_struct_dis').replace('{u}', uniq(ix.map((i) => c.Unit[i]))).replace('{p}', uniq(ix.map((i) => c.Time[i]))).replace('{n}', fmtInt(ix.length))]); }
+    }
+  }
+  rows.push([t('rp_data_rows'), fmtInt(tb ? tb.n : 0)]);
+  const out = [TABLE([[t('rp_field'), t('rp_value')], ...rows])];
+  if (!include) out.push(P(t('rp_data_omitted')));
+  else if (!tb || !tb.cols) out.push(P(t('rp_data_large').replace('{n}', fmtInt(VERI_ENFAZLA))));
+  else {
+    const keys = kind === 'pbe' ? ['parti', 'kap', 'asama', 'urun', 'olcum'] : ['Product', 'Unit', 'Time', 'Diss'];
+    const head = kind === 'pbe' ? ['rp_col_batch', 'rp_col_unit', 'rp_col_stage', 'rp_col_product', 'rp_col_value'].map(t)
+      : ['rp_col_product', 'rp_col_unit', 'rp_col_time', 'rp_col_diss'].map(t);
+    const body = tb.cols[keys[0]].map((_, i) => keys.map((k) => tb.cols[k][i]));
+    out.push(H2(t('rp_data_table')), P(t('rp_data_table_note')), TABLE([head, ...body], kind === 'pbe' ? [4] : [2, 3], true));
+  }
+  return out;
 }
 
 // ---------------------------------------------------------------- PBE
@@ -133,15 +178,15 @@ async function loadPbe() {
   if (k === 'dosya') {
     const f = await readFileText($('#pbe_form [name=dosya]'));
     if (!f) { $('#pbe_run').disabled = true; return; }
-    metin = f.text; src = `${f.name} · ${fmtInt(f.size)} B`;
-  } else { ornek = k; src = t('an_ex_psg'); }
+    metin = f.text; src = `${f.name} · ${fmtInt(f.size)} B`; pbeData.sha256 = f.sha256;
+  } else { ornek = k; src = t('an_ex_psg'); pbeData.sha256 = null; }
   setStatus('pbe', webR ? 'an_st_reading' : 'st_loading');
   const r = await callR('.an_pbe_veri(metin, ornek)', { metin, ornek });
   if (!r.ok) { setStatus('pbe', 'an_st_data_error', 'bad'); showErrors('pbe', [t('an_data_error'), r.message]); $('#pbe_run').disabled = true; return; }
   const u = arr(r.urunler);
   fillSelect('#pbe_form [name=test]', u, 'TEST'); fillSelect('#pbe_form [name=ref]', u, 'REF');
   pbeData.src = src; pbeData.kaynak = k; pbeData.n = r.n;
-  $('#pbe_data_info').textContent = `${src} · ${fmtInt(r.n)} ${t('an_rows')} · ${t('an_products')}: ${u.join(', ')}`;
+  $('#pbe_data_info').textContent = `${src} · ${fmtInt(r.n)} ${t('an_rows')} · ${t('an_products')}: ${u.join(', ')}` + (pbeData.sha256 ? ` · SHA-256 ${pbeData.sha256}` : '');
   if (k === 'psg020929') $('#pbe_form [name=log_d]').checked = false;
   setStatus('pbe', 'an_st_data_ok', 'ok'); $('#pbe_run').disabled = false; reportState('pbe');
 }
@@ -157,8 +202,9 @@ async function runPbe(ev) {
                                 : await callR('.an_pbe(test, ref, log_d, tek)', { test: c.test, ref: c.ref, log_d: c.log_d, tek: c.tek });
   $('#pbe_run').disabled = false;
   if (!r.ok) { setStatus('pbe', 'an_st_error', 'bad'); showErrors('pbe', [t('an_calc_error'), r.message]); clearPbe(); return; }
+  const tablo = await dataTable('pbe', [c.test, c.ref]);
   st.pbe = { form: c, key: JSON.stringify(c), data: { ...pbeData }, hazir: r.hazir, sonuc: r.sonuc, ms: performance.now() - t0,
-             started: new Date().toISOString(), r_version: rInfo.r_version, files: fileRows() };
+             started: new Date().toISOString(), r_version: rInfo.r_version, files: fileRows(), tablo };
   renderPbe(); setStatus('pbe', 'an_st_done', 'ok');
 }
 function pview(D) {
@@ -233,8 +279,8 @@ async function loadDis() {
   if (k === 'dosya') {
     const f = await readFileText($('#dis_form [name=dosya]'));
     if (!f) { $('#dis_run').disabled = true; return; }
-    metin = f.text; src = `${f.name} · ${fmtInt(f.size)} B`;
-  } else { ornek = k; src = t(k === 'tsong1996' ? 'an_ex_tsong' : 'an_ex_noce'); }
+    metin = f.text; src = `${f.name} · ${fmtInt(f.size)} B`; disData.sha256 = f.sha256;
+  } else { ornek = k; src = t(k === 'tsong1996' ? 'an_ex_tsong' : 'an_ex_noce'); disData.sha256 = null; }
   setStatus('dis', webR ? 'an_st_reading' : 'st_loading');
   const r = await callR('.an_dis_veri(metin, ornek)', { metin, ornek });
   if (!r.ok) { setStatus('dis', 'an_st_data_error', 'bad'); showErrors('dis', [t('an_data_error'), r.message]); $('#dis_run').disabled = true; return; }
@@ -243,7 +289,7 @@ async function loadDis() {
   fillSelect('#dis_form [name=ref]', u, k === 'noce2020' ? 'Urun2' : 'REF');
   disData.src = src; disData.kaynak = k; disData.urunler = u; disData.n = r.n;
   lotBoxes(k === 'tsong1996' ? ['STD1', 'STD2'] : []);
-  $('#dis_data_info').textContent = `${src} · ${fmtInt(r.n)} ${t('an_rows')} · ${t('an_products')}: ${u.join(', ')}`;
+  $('#dis_data_info').textContent = `${src} · ${fmtInt(r.n)} ${t('an_rows')} · ${t('an_products')}: ${u.join(', ')}` + (disData.sha256 ? ` · SHA-256 ${disData.sha256}` : '');
   setStatus('dis', 'an_st_data_ok', 'ok'); $('#dis_run').disabled = false; reportState('dis');
 }
 function lotBoxes(checked) {
@@ -277,8 +323,9 @@ async function runDis(ev) {
     lotlar: c.lotlar.join('\n'), ayar_k: ak.join('\n'), ayar_v: ak.map((k) => String(c.ayar[k])).join('\n') });
   $('#dis_run').disabled = false;
   if (!r.ok) { setStatus('dis', 'an_st_error', 'bad'); showErrors('dis', [t('an_calc_error'), r.message]); clearDis(); return; }
+  const tablo = await dataTable('dis', [c.test, c.ref, ...c.lotlar]);
   st.dis = { form: c, key: JSON.stringify(c), data: { ...disData }, hazir: r.hazir, sonuc: r.sonuc, ms: performance.now() - t0,
-             started: new Date().toISOString(), r_version: rInfo.r_version, files: fileRows() };
+             started: new Date().toISOString(), r_version: rInfo.r_version, files: fileRows(), tablo };
   renderDis(); setStatus('dis', 'an_st_done', 'ok');
 }
 const yn = (b) => (b ? t('an_sim_yes') : t('an_sim_no'));
@@ -374,6 +421,7 @@ function reportPbe() {
   R.result = [P(V.verdict, { b: true }), TABLE([[t('rp_field'), t('rp_value')], ...V.main]), H2(t('an_design')), TABLE([[t('rp_field'), t('rp_value')], ...V.des]),
     H2(t('an_pbe_summary')), TABLE([V.sumHead, ...V.sum], [2, 3, 4]), H2(t('an_pbe_comp')), TABLE([V.compHead, ...V.comp], [1, 2, 3])];
   R.warnings = V.warnings;
+  R.veri = dataSection('pbe', D, withData('pbe'));
   return R;
 }
 function reportEma() {
@@ -383,6 +431,7 @@ function reportEma() {
   R.result = [P(V.verdict, { b: true }), TABLE([[t('rp_field'), t('rp_value')], ...V.main]), H2(t('an_ema_paths')), TABLE([V.pathsHead, ...V.paths], [1, 2, 3, 4, 5]),
     P(V.note), H2(t('an_design')), TABLE([[t('rp_field'), t('rp_value')], ...V.des]), H2(t('an_pbe_summary')), TABLE([V.sumHead, ...V.sum], [2, 3, 4])];
   R.warnings = V.warnings;
+  R.veri = dataSection('pbe', D, withData('pbe'));
   return R;
 }
 function reportDis() {
@@ -393,8 +442,10 @@ function reportDis() {
   R.result = [P(V.verdict, { b: true }), TABLE([[t('rp_field'), t('rp_value')], ...V.main])];
   for (const tb of V.tables) R.result.push(H2(tb.title), TABLE([tb.head, ...tb.rows], tb.head.map((_, i) => i).filter((i) => i > 0), true));
   R.warnings = V.warnings;
+  R.veri = dataSection('dis', D, withData('dis'));
   return R;
 }
+const withData = (kind) => !!($(`#${kind}_with_data`) && $(`#${kind}_with_data`).checked);   // default unticked (KK-75)
 function makeReport(kind) {
   if (!st[kind]) return null;
   const t0 = performance.now();
@@ -414,7 +465,7 @@ function downloadJson(kind) {
   const ema = kind === 'pbe' && isEma(D);
   const rec = { platform: 'CNK-FarmaStatR', document: ema ? 'FSR-TN-PLT-08' : 'FSR-TN-PLT-06', kind: ema ? 'ema' : kind, disclaimer_tr: T.tr.disclaimer, disclaimer_en: T.en.disclaimer,
     package_version: pkgVersion, webr_version: WEBR_VERSION, r_version: D.r_version, saved: new Date().toISOString(), started: D.started,
-    data: D.data.src, settings: D.form, files: D.files, design: D.hazir, result: D.sonuc };
+    data: D.data.src, data_sha256: D.data.sha256 || null, settings: D.form, files: D.files, design: D.hazir, result: D.sonuc };
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob([JSON.stringify(rec, null, 1)], { type: 'application/json' }));
   a.download = `farmastatr_${ema ? 'ema' : kind}_${stamp()}.json`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);

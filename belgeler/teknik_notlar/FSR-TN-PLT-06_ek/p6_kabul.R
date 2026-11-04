@@ -249,6 +249,66 @@ put("F-12 belgeler", all(file.exists(docs)), paste(basename(docs)[!file.exists(d
 
 put("ortam", NA, paste(v1("ortam", "", "", "tarayici"), "·", v1("ortam", "", "", "sure_s"), "sn"))
 res <- res[res$olcut != "ortam", ]
+# ---------------------------------------------------------------- FSR-TN-PLT-11 (KK-75): Section 9 "Analysed data"
+sha_f <- function(f) {
+  if (requireNamespace("openssl", quietly = TRUE)) return(as.character(openssl::sha256(file(f))))
+  if (requireNamespace("digest", quietly = TRUE)) return(digest::digest(file = f, algo = "sha256"))
+  NA_character_ }
+sec9 <- function(f) {                       # tables of Section 9 as lists of rows (cell texts)
+  x <- doc_xml(f)$xml
+  h <- regexpr("<w:p><w:pPr><w:pStyle w:val=\"Heading1\"/></w:pPr><w:r><w:t[^>]*>9\\. ", x, perl = TRUE)
+  if (h < 0) return(NULL)
+  y <- substring(x, h)
+  head <- paras(regmatches(y, regexpr("<w:p>.*?</w:p>", y, perl = TRUE)))
+  tbls <- regmatches(y, gregexpr("<w:tbl>.*?</w:tbl>", y, perl = TRUE))[[1]]
+  rows <- lapply(tbls, function(tb) lapply(regmatches(tb, gregexpr("<w:tr>.*?</w:tr>", tb, perl = TRUE))[[1]], cells))
+  list(head = head, tables = rows, paras = paras(y)) }
+h9 <- c(tr = "9. Analiz edilen veri", en = "9. Analysed data")
+TRJ <- tr_json
+# D-1 every analysis report (P6 'R' rows and 'D' rows) has Section 9 in its language
+allrep <- rbind(g("R", a = "dosya"), g("D", a = "dosya"))
+d1 <- vapply(seq_len(nrow(allrep)), function(i) { z <- sec9(allrep$deger[i]); l <- allrep$ayar[i]
+  !is.null(z) && identical(z$head, h9[[l]]) && length(z$tables) >= 1 &&
+    all(c(TRJ[[l]]$rp_data_src, TRJ[[l]]$rp_data_sha, TRJ[[l]]$rp_data_products) %in% vapply(z$tables[[1]], `[`, "", 1)) }, NA)
+put("D-1 bölüm 9 (P6 raporları)", nrow(allrep) > 0 && all(d1), sprintf("%d/%d rapor (PBE, MSD, Weibull, f2; TR ve EN)", sum(d1), nrow(allrep)))
+ex <- g("R", a = "dosya")
+d1e <- vapply(seq_len(nrow(ex)), function(i) { z <- sec9(ex$deger[i]); l <- ex$ayar[i]; if (is.null(z)) return(FALSE)
+  v <- Filter(function(r) identical(r[1], TRJ[[l]]$rp_data_sha), z$tables[[1]])
+  length(v) == 1 && startsWith(v[[1]][2], sub(" \\(.*$", "", TRJ[[l]]$rp_data_example)) }, NA)
+put("D-1 örnek veri etiketi", nrow(ex) > 0 && all(d1e), sprintf("%d/%d örnek veri raporunda “örnek veri, parmak izi yok”", sum(d1e), nrow(ex)))
+# D-2, D-3, D-4, D-6 for the uploaded files
+for (sec in c("pbe", "dis")) {
+  src <- v1("D", sec, "", "kaynak"); fm <- jsonlite::fromJSON(v1("D", sec, "", "form"))
+  if (is.na(src)) { put(paste("D-2", sec), NA, "kayıt yok"); next }
+  hs <- sha_f(src); scr <- v1("D", sec, "", "ekran")
+  dr <- g("D", a = "dosya"); dr <- dr[startsWith(dr$durum, paste0(sec, "|")), ]
+  shas <- vapply(dr$deger, function(f) { z <- sec9(f); l <- dr$ayar[dr$deger == f][1]
+    v <- Filter(function(r) identical(r[1], TRJ[[l]]$rp_data_sha), z$tables[[1]]); if (length(v)) v[[1]][2] else "" }, "")
+  put(paste("D-2", sec), !is.na(hs) && all(shas == hs) && grepl(paste0("SHA-256 ", hs), scr, fixed = TRUE),
+      if (is.na(hs)) "R'de SHA-256 için openssl ya da digest paketi gerekli: install.packages('openssl')" else sprintf("%s · %d rapor ve ekran = yerel R", substr(hs, 1, 16), length(shas)))
+  txt <- paste(readLines(src, encoding = "UTF-8", warn = FALSE), collapse = "\n")
+  v <- if (sec == "pbe") pk$platform_pbe_veri(txt) else pk$platform_dis_veri(txt)
+  used <- c(fm$test, fm$ref, if (sec == "dis") unlist(fm$lotlar))
+  if (sec == "pbe") { i <- v$urun %in% used; exp <- cbind(v$parti[i], v$kap[i], v$asama[i], v$urun[i], v$olcum[i]) }
+  else { i <- v$Product %in% used; exp <- cbind(v$Product[i], v$Unit[i], v$Time[i], v$Diss[i]) }
+  okD3 <- vapply(seq_len(nrow(dr)), function(k) { z <- sec9(dr$deger[k]); l <- dr$ayar[k]; with <- endsWith(dr$durum[k], "|1")
+    if (!with) return(length(z$tables) == 1 && TRJ[[l]]$rp_data_omitted %in% z$paras)
+    if (length(z$tables) != 2) return(FALSE)
+    body <- do.call(rbind, z$tables[[2]][-1]); if (nrow(body) != nrow(exp)) return(FALSE)
+    if (sec == "pbe") identical(unname(body), unname(exp))
+    else identical(body[, 1:2], unname(exp[, 1:2])) && identical(as.numeric(body[, 3]), v$Time[i]) && identical(as.numeric(body[, 4]), v$Diss[i]) }, NA)
+  put(paste("D-3", sec), nrow(dr) > 0 && all(okD3), sprintf("%d rapor; kutu boşken tablo yok, işaretliyken %d satır = yerel R", sum(okD3), nrow(exp)))
+  put(paste("D-6", sec), all(g("D", a = "ag_istegi")$deger[startsWith(g("D", a = "ag_istegi")$durum, paste0(sec, "|"))] == "0"), "rapor üretiminde dış istek 0")
+}
+f1 <- v1("D", "pbe|1", "tr", "dosya"); f2 <- v1("D", "pbe-tekrar|1", "tr", "dosya")
+if (!is.na(f1) && !is.na(f2)) {
+  strip <- function(x) gsub("[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2} UTC", "<zaman>", x)
+  put("D-4 belirlenimcilik", identical(strip(doc_xml(f1)$xml), strip(doc_xml(f2)$xml)), "veri tablosuyla iki rapor oluşturma zamanı dışında aynı")
+} else put("D-4 belirlenimcilik", NA, "")
+put("D-8 kutu varsayılanı", identical(v1("D-8", "kutu", "pbe", "varsayilan_isaretli"), "false") && identical(v1("D-8", "kutu", "dis", "varsayilan_isaretli"), "false"),
+    "“Veriyi rapora ekle” iki sekmede de varsayılan olarak boş")
+put("D-8 çeviri", all(c("an_with_data", "rp_s_data", "rp_data_omitted") %in% names(TRJ$tr)) && identical(sort(names(TRJ$tr)), sort(names(TRJ$en))), "yeni anahtarlar TR ve EN")
+
 utils::write.csv(res, file.path(E, "p6_kabul.csv"), row.names = FALSE, fileEncoding = "UTF-8")
 writeLines(utils::capture.output(utils::sessionInfo()), file.path(E, "p6_yerel_sessionInfo.txt"), useBytes = TRUE)
 cat(sprintf("\nToplam: %d ölçüt satırı; GECTI %d, KALDI %d, EKSIK %d. Ayrıntı: %s\n", nrow(res), sum(res$sonuc == "GECTI"),
