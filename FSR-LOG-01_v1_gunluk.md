@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 2.31 · Son güncelleme: 03.11.2026"
+subtitle: "FSR-LOG-01 · Sürüm 2.32 · Son güncelleme: 04.11.2026"
 ---
 
 # Bu belge hakkında
@@ -2404,6 +2404,14 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Kuru koşular (Claude, yalıtılmış kök):** P6 91/91 GEÇTİ (mevcut 80 + D 11: Bölüm 9 15/15 rapor; örnek veri etiketi 8/8; SHA-256 rapor ve ekran = yerel R; tablo PBE 180, dissolüsyon 192 satır = yerel R; kutu boşken tablo yok; belirlenimcilik; dış istek 0; kutu varsayılan boş; F-10 P5 raporu değişmedi, F-11 dar ekran); P8 45/45 (44 + EMA Bölüm 9 3/3); P7 89/89 (gerileme). Kanıt: `belgeler/teknik_notlar/FSR-TN-PLT-11_ek/kuru/`.
 - **Bekleyen (proje sahibi):** resmî P6 ve P8 kabul koşuları; ardından FSR-TN-PLT-11 v0.2, FSR-VAL-PLT-1 1.7 ve sitenin güncellenmesi.
 
+## G-135 · FSR-TN-PLT-11 resmî P6 kabulü 90/91: F-11 dar ekran KALDI; neden ve düzeltme — 04.11.2026
+
+- **Depo:** G-134 commit edildi (proje sahibi).
+- **Resmî P6 (proje sahibi, Windows, Chrome 156):** “Toplam: 91 ölçüt satırı; GECTI 90, KALDI 1, EKSIK 0.” Kalan satır: **F-11 dar ekran (390 px): pbe true; dis true** (yatay kaydırma var). D-1 … D-8'in tamamı GEÇTİ; ekrandaki SHA-256 değerleri Claude'un kuru koşusuyla aynı.
+- **Neden (Claude):** veri bilgisi satırındaki 64 karakterlik SHA-256 tek bir “sözcük”tür; satırın kırılmasını sağlayan kural `analiz.css`'e eklenmişti. Claude'un ortamında kural silindiğinde aynı sayfa 390 px'te 552 px genişliğe çıktı (kuralla 390), yani belirti kuralın uygulanmamasıyla birebir aynı. En olası açıklama: yerel sunucu (`httpuv`) önbellek başlığı göndermediği için Chrome eski `analiz.css`'i önbellekten kullandı; `index.html` ve JS yeni sürümdü (kutu ve D satırları çalıştı). Kesin kanıt değil, çıkarım.
+- **Düzeltme (Claude):** kural ayrıca `index.html`'de iki veri bilgisi satırına satır içi stil olarak eklendi (`style="overflow-wrap: anywhere"`); böylece eski bir CSS önbellekte kalsa da sayfa genişlemez. Claude'un denemesi: stil sayfasındaki kural silinmiş durumda bile 390 px'te yatay kaydırma yok. Hesap ve rapor değişmedi. Bu bir ölçüt değişikliği değildir; F-11 aynen uygulanır.
+- **Bekleyen (proje sahibi):** P6 kabulünün yeniden koşulması (önce Ctrl+F5 ile tam yenileme önerildi) ve P8 sonucunun bildirilmesi.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -2431,7 +2439,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 2.31 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 2.32 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.1 | 1.0 onaylı; beş dosya sabitlendi (G-47). 1.1: TC-S11 (dışa aktarılan betik), onaylandı (KK-53, G-76) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.7 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68); v0.7: Tablo 8.1 ve 10.1 (KK-56, KK-57, KK-59; G-94), onay P6 kapanışında |
