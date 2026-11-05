@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 2.36 · Son güncelleme: 04.11.2026"
+subtitle: "FSR-LOG-01 · Sürüm 2.38 · Son güncelleme: 05.11.2026"
 ---
 
 # Bu belge hakkında
@@ -2453,6 +2453,42 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Belge:** FSR-TN-PLT-12 v0.1 (tasarım, W-0 … W-12, uygulama, kuru koşular).
 - **Bekleyen (proje sahibi):** iki Türkçe şablonun silinmesi; G-138 + G-139 commit'i; resmî P6, P7, P8 kabul koşuları; ardından FSR-TN-PLT-12 v0.2, FSR-VAL-PLT-1 1.8 (KK-77 Y-5 ve KK-78) ve sitenin güncellenmesi.
 
+## G-140 · Noce 2020 örneğinde referans bulgusu; yöntem tartışmaları; istek 11052026-a — 05.11.2026
+
+- **Depo:** G-138 ve G-139 tek commit'te gönderildi; iki Türkçe şablon proje sahibince silindi (Claude cihazda doğruladı); GitHub Actions başarılı (proje sahibi). Resmî P6 (beklenen 101), P7 (87), P8 (45) koşuları proje sahibinde.
+- **Kaynak kontrolü (proje sahibinin sorusu: “Noce yayınına erişimin var mı?”):** yayın proje dosyalarında (`3-invitro-f2-mylti-noce2020.pdf`); yerel `kaynaklar/` klasöründe yok. Claude yayındaki veri ve sonuçları platformla karşılaştırdı:
+  - Tablo 1 (3 ürün × 12 tablet × 9 zaman) = paketteki `noce_P1`, `noce_P2`, `noce_P3` (`identical`).
+  - Tablo 3: Ürün 1–3 ve Ürün 2–3, üç kesme kuralında f2 ve E(f2) 12/12 aynı (2 ondalık).
+  - Tablo 4 (E(f2) %90 GA alt sınırı, B = 5000, persentil): platform (seed 20260927) 39,98 / 35,62 / 37,77 (Ürün 1–3) ve 49,03 / 48,20 / 48,85 (Ürün 2–3); yayındaki programlarla fark ≤ 0,27 (yayın programlar arası < 0,30 bildirir, s. 7).
+- **Bulgu (Claude):** yayında Ürün 1 (30 mg) ve Ürün 2 (60 mg) test, Ürün 3 referanstır (Bölüm 2.1). Ekranın Noce varsayılanı Urun1 test, **Urun2 referans**: iki test ürünü karşılaştırılıyor; yayında bu karşılaştırma yok ve ekrandaki sayıların (f2 37,39; alt sınır 30,90) yayında karşılığı yok. Aynı ifade f2 teknik notu Bölüm 6'da (“Urun2 referans”) ve “f2: meraklısı için” sayfasında (“Ürün 2 referans”); P7 sayfa değerleri ve testthat A-7 bu seçime göre. Hesap ve devralınan validasyon (`f2_tests.R`, referans Ürün 3) doğru; hata varsayılan seçim ve metinlerde. Proje sahibi: “ben de sonuçlar neden çıkmıyor diye endişelenmiştim default seçimle çalıştırdığımda.”
+- **Karar (K, proje sahibi): düzeltilsin** (“düzelt lütfen”). Claude'un önerdiği ölçütler N-1 … N-6 (ekran varsayılanı Urun3; Tablo 3 eşleşme testi 12/12; f2 teknik notu ve basit sayfa; testthat ve P7 referans değerleri; gerileme) **onay bekliyor; henüz dondurulmadı.**
+- **Yayındaki programlarla karşılaştırma (Claude; yayının Tablo 2'si ve platform kodu):** platform yayının önerileriyle uyumlu (E(f2), %85 kesme kuralları, bütün profil yeniden örnekleme, persentil GA ≥ 500 replika); ek olarak seed denetimi ve MCSE, kesmenin her replikada yeniden uygulanması, CV kuralı, tam sayı raporlama. Eksik: normal yaklaşım ve bootstrap-t GA; bootstrap dağılımı grafiği. Kaynak kontrol edilmedi: Bootf2bca'nın kesmeyi her replikada uygulayıp uygulamadığı (`f2_boot.R` yorumundaki “Bootf2bca ile uyum”).
+- **İstek 11052026-a (proje sahibi; tartışma aşamasında):**
+  1. Profil benzerliği raporlarında grafik. Claude'un önerisi: ortalama profiller (±SD, %85 çizgisi, kesmeyle dışarıda kalan noktalar); f2'de bootstrap dağılımı (GA sınırları, 50 çizgisi); Weibull'da uydurulan eğriler. PNG olarak tarayıcıda.
+  2. İsteğe bağlı bootstrap örnekleri ek dosyası (yalnız f2). Claude'un önerisi: CSV, künyeyle (seed, RNG, B, sürüm, veri SHA-256); içerik (a) replika değerleri ya da (b) değerler ve çekilen tablet indeksleri (SAS'ta birebir yeniden hesap olanağı). **Seçim açık.**
+  3. EMA'nın değişkenlik benzerliği koşulu (aşağıda) — proje sahibi: “yoksa ekle”.
+  - Önerildi, karar bekliyor: sınır seçiminin yanında FDA 1997 yolunun (L2a, B-L2a) belirtilmesi; L2a sınırının seri sayısına duyarlılığı için simülasyon.
+  - Sıra önerisi (Claude): önce Noce düzeltmesi, sonra 11052026-a.
+- **Yöntem tartışması (proje sahibinin soruları; Claude'un yanıtları):**
+  - Weibull MSD model bağımlıdır (FDA 1997 V.C; Sathe ve ark. 1996); model bağımsız MSD V.B'dir (Tsong ve ark. 1996). İkisi aynı Hotelling motorunu kullanır.
+  - D_M ve Hotelling bölgesi test ve referansın birlikte verisinden (havuzlanmış kovaryans; `msd_pooled_cov`) hesaplanır; referansa özgü veri yalnız sınırda (L2a, B-L2a) kullanılır.
+  - FDA 1997 (proje dosyası `6-invitro-f2-mylti-FDA.pdf`) V.B adım 1 ve V.C adım 3: sınır referans serileri arası değişkenlikten → platformda L2a ve B-L2a (en az iki seri). Ekranın varsayılanları (L1, B-L3) FDA 1997 yolu değildir; EMA'nın %10 koşuluna dayanır.
+  - EMA BE kılavuzu (CPMP/EWP/QWP/1401/98 Rev. 1, Ek I): Weibull parametrelerinin çok değişkenli karşılaştırması anılır; sınır “pre-defined and justified and not be greater than a 10% difference” → tek referans serisi sınır için yeterli. Ek koşullar: test ve referansın değişkenliği benzer olmalı (testin daha düşük değişkenliği kabul edilebilir); yöntem geçerli ve gerekçeli; yazılım validasyonu kanıtı. PKWP/BSWP Soru-Cevap 3.9: Mahalanobis uzaklığı tercih edilen yöntem değildir; bootstrap f2 tercih edilir → Weibull MSD EMA'da destekleyici.
+- **Değişkenlik benzerliği kontrolü (Claude, kod incelemesi):** ekran ve rapor her zaman noktasında test ve referansın ortalama, SD ve CV'sini gösterir (betimsel). MSD çekirdeği CV oranı (test/referans) ve Box's M (bilgi amaçlı) hesaplar, ancak köprü bunları ekrana ve rapora taşımaz. Weibull çekirdeğinde değişkenlik karşılaştırması yok. EMA koşulunu değerlendiren ya da uyaran bir adım **yok** → 11052026-a'ya eklendi. EMA sayısal bir ölçüt vermediği için eşik seçimi proje sahibinin kararıdır.
+
+## G-141 · Noce 2020 örneğinde referans Ürün 3 (FSR-TN-PLT-13, KK-79): ölçütler, düzeltme, kuru koşular — 05.11.2026
+
+- **Depo:** G-140 (yalnız günlük) commit edilmedi; proje sahibi: “commitde bekleyen bir dosya var. kalabilir sanırım.” G-140 ve G-141 birlikte gönderilecek.
+- **Karar (K, proje sahibi): KK-79.** Noce örneğinde referans Ürün 3; ölçütler N-1 … N-6 koddan önce donduruldu (“dondurabilirsin.”; KK-45); dosya `belgeler/teknik_notlar/FSR-TN-PLT-13_ek/olcutler.md`.
+- **Uygulama (Claude):**
+  - `analiz.js`: Noce örneğinde varsayılan referans Urun3 (N-1).
+  - `test-platform-analiz.R`: A-7 Urun1–Urun3 (beklenen alt sınır 35,62; Tablo 4: 35,54–35,82); yeni blok N-2 (Tablo 3, 12 değer, 2 ondalık).
+  - `f2.txt` ve `basit_f2.txt` (TR, EN), derlenmiş `f2.html` ve `basit_f2.html`: roller yayına göre; örnek Ürün 1–Ürün 3 (f2 45,85; E(f2) 44,54; bc-f2 47,36; %90 GA 35,62–57,50; MCSE 0,14; tam sayı 36); Tablo 3 ve 4 ile karşılaştırma; basit sayfada aralığın genişliği Ürün 1'in değişkenliğiyle açıklandı (130. dk CV %51; Tablo 1).
+  - `p7_kabul.R`: Y-4 sayfa değerleri Urun1–Urun3 (N-5). P6 aracı değişmedi (ekrandaki seçimle yeniden hesaplar).
+- **Kuru koşular (Claude, yalıtılmış kök):** testthat 2361 beklenti, 0 başarısız; P6 101/101 (Noce F satırları Urun3 ile; F-9 webR 71 blok, 2361 beklenti); P7 87/87 (Y-4 86 sayı); P8 45/45. Kanıt: `FSR-TN-PLT-13_ek/kuru/`.
+- **Belge:** FSR-TN-PLT-13 v0.1 (bulgu, yayınla karşılaştırma Tablo 2.1–2.2, N-1 … N-6, uygulama, kuru koşular).
+- **Bekleyen (proje sahibi):** G-140 + G-141 commit'i; resmî P6, P7, P8 (G-138/G-139 için bekleyen koşular bunlarla birleştirilebilir: beklenen 101, 87, 45); ardından FSR-TN-PLT-12 v0.2, FSR-TN-PLT-13 v0.2, FSR-VAL-PLT-1 1.8 (KK-77, KK-78, KK-79) ve sitenin güncellenmesi. Sonra 11052026-a.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -2480,7 +2516,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 2.36 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 2.38 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.1 | 1.0 onaylı; beş dosya sabitlendi (G-47). 1.1: TC-S11 (dışa aktarılan betik), onaylandı (KK-53, G-76) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.7 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68); v0.7: Tablo 8.1 ve 10.1 (KK-56, KK-57, KK-59; G-94), onay P6 kapanışında |
@@ -2491,6 +2527,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | FSR-TN-PLT-06 · P6 tasarımı, kabul ölçütleri ve sonuçları (devralınan modellerin arayüzü, platform validasyonu, yayın hazırlığı) | 0.2 | v0.1 yetki devriyle (KK-60), F-1…F-12 donduruldu (G-94); v0.2: resmî kabul 78/78 GEÇTİ (G-95); onaylandı, P6 kapandı (KK-62, G-97) |
 | FSR-TN-PLT-07 · Yardım sistemi: tasarım ve kabul ölçütleri | 0.2 | KK-63 yetkisiyle; Y-1…Y-12 donduruldu; kuru koşu 48/48 (G-98); resmî kabul 48/48 (G-99); v0.2: altı not (KK-64), kuru 51/51 (G-100), resmî 51/51 (G-102); onaylandı (KK-65, G-109); içerik incelemesi bekliyor |
 | FSR-TN-PLT-09 · Yardım içeriği kararları (KK-66): tasarım ve kabul ölçütleri | 0.2 | v0.1 onaylandı, G-1 … G-9 donduruldu (KK-67, G-115); v0.2: resmî kabul P6 80/80, EMA 44/44, yardım 51/51 (G-116); onaylandı (KK-68, G-117) |
+| FSR-TN-PLT-13 · Noce 2020 örneğinde referans ürün düzeltmesi | 0.1 | N-1 … N-6 koddan önce donduruldu (KK-79, G-141); kuru koşular P6 101/101, P7 87/87, P8 45/45; resmî kabul bekliyor |
 | FSR-TN-PLT-12 · Dissolüsyon verisi için geniş biçim: tasarım ve kabul ölçütleri | 0.1 | W-0 … W-12 koddan önce donduruldu (KK-78, G-139); uygulama ve kuru koşular P6 101/101, P7 87/87, P8 45/45; resmî kabul bekliyor |
 | FSR-TN-PLT-11 · Analiz raporlarında veri bölümü: tasarım ve kabul ölçütleri | 0.2 | v0.1: tasarım, D-1 … D-9 donduruldu (KK-75, G-134); v0.2: resmî kabul P6 91/91, P8 45/45 (G-136), onaylandı (KK-76, G-137) |
 | FSR-TN-PLT-10 · Meraklısı için basit anlatımlar: tasarım ve kabul ölçütleri | 0.2 | v0.1: tasarım, B-1 … B-7 donduruldu (KK-72, G-124); altı sayfa onaylandı; v0.2: resmî kabul 89/89 (G-132), onaylandı (KK-74, G-133) |
@@ -2581,3 +2618,4 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | KK-76 | FSR-TN-PLT-11 v0.2 ve FSR-VAL-PLT-1 1.7 onaylandı; analiz edilen veri işi kapandı | G-137 |
 | KK-77 | Türkçe Excel şablonları kaldırıldı; panelde tek “Şablon (CSV)”; Y-5 yalnız uluslararası şablon | G-138 |
 | KK-78 | Dissolüsyon verisi için geniş biçim (DDSolver düzeni): tek dosya, `<ürün>.<ünite>` sütunları; yalnız dissolüsyon, PBE değişmez; W-0 … W-12 donduruldu | G-139 |
+| KK-79 | Noce 2020 örneğinde referans Ürün 3 (yayın Bölüm 2.1); ekran varsayılanı, f2 notu, basit sayfa, testler; N-1 … N-6 donduruldu | G-141 |

@@ -29,12 +29,13 @@ Torbadan çekme rastgele olduğu için sonuç biraz oynar. Aynı **seed** (başl
 Tabletler az değişkense (değişkenlik katsayısı, CV, belirli eşiklerin altında) EMA tek f2 ile karar vermeye de izin verir; ekrandaki “CV kuralı” satırı bunu gösterir (EMA, Ek I; teknik not, Bölüm 4).
 
 ## Örnek: Noce ve ark. 2020
-Noce ve ark. (2020) yayınındaki iki ürünün verisi (her biri 12 tablet; Ürün 1 test, Ürün 2 referans), EMA ön ayarı ve B = 5000 ile ([teknik not](f2.html), Bölüm 6):
+Noce ve ark. (2020) yayınında üç ürün vardır (her biri 12 tablet): Ürün 1 ve Ürün 2 test, Ürün 3 referanstır (yayının Bölüm 2.1’i). Ürün 1 ile Ürün 3, EMA ön ayarı ve B = 5000 ile ([teknik not](f2.html), Bölüm 6):
 
 - %85 kuralından sonra [[f2_p|6]] zaman noktası kalır.
-- f2 = [[f2_f2|37,39]]: tek başına bile 50’nin altında.
-- Bootstrap %90 aralığı [[f2_alt|30,90]] – [[f2_ust|43,99]]; alt sınırın oynama payı (MCSE) yalnız [[f2_mcse|0,12]].
-- Alt sınır 50’nin çok altında: **benzer değil**. EMA’nın istediği tam sayı raporlamasıyla alt sınır [[f2_tamsayi|31]]’dir.
+- f2 = [[f2_f2|45,85]]: tek başına bile 50’nin altında. Yayının Tablo 3’ündeki değerle aynı.
+- Bootstrap %90 aralığı [[f2_alt|35,62]] – [[f2_ust|57,50]]; alt sınırın oynama payı (MCSE) yalnız [[f2_mcse|0,14]]. Yayındaki iki program aynı koşulda 35,54 ve 35,82 bulur; küçük fark torbadan çekmenin rastgeleliğinden gelir.
+- Alt sınır 50’nin çok altında: **benzer değil**. EMA’nın istediği tam sayı raporlamasıyla alt sınır [[f2_tamsayi|36]]’dır.
+- Aralığın bu kadar geniş olması, Ürün 1’in tabletlerinin birbirinden çok farklı çözünmesinden gelir (130. dakikada CV %51; yayının Tablo 1’i).
 
 ## Unutmayın
 - f2 eğrilerin şeklini karşılaştırır; tek bir zaman noktasında büyük bir fark, diğer noktalardaki benzerlikle örtülebilir.
@@ -75,12 +76,13 @@ Because drawing from the bag is random, the result moves a little. The same **se
 If the tablets vary little (coefficient of variation, CV, below set thresholds), the EMA also allows a decision with a single f2; the “CV rule” line on the screen shows this (EMA, Annex I; technical note, Section 4).
 
 ## Example: Noce et al. 2020
-The data of two products in Noce et al. (2020) (12 tablets each; Product 1 test, Product 2 reference), with the EMA preset and B = 5000 ([technical note](f2.html), Section 6):
+Noce et al. (2020) have three products (12 tablets each): products 1 and 2 are tests, product 3 is the reference (Section 2.1 of the paper). Product 1 against product 3, with the EMA preset and B = 5000 ([technical note](f2.html), Section 6):
 
 - After the 85% rule, [[f2_p|6]] time points remain.
-- f2 = [[f2_f2|37.39]]: below 50 even on its own.
-- Bootstrap 90% interval [[f2_alt|30.90]] – [[f2_ust|43.99]]; the movement of the lower limit (MCSE) is only [[f2_mcse|0.12]].
-- The lower limit is far below 50: **not similar**. With the whole-number reporting the EMA asks for, the lower limit is [[f2_tamsayi|31]].
+- f2 = [[f2_f2|45.85]]: below 50 even on its own. The same as in Table 3 of the paper.
+- Bootstrap 90% interval [[f2_alt|35.62]] – [[f2_ust|57.50]]; the movement of the lower limit (MCSE) is only [[f2_mcse|0.14]]. The two programs in the paper find 35.54 and 35.82 under the same conditions; the small difference comes from the randomness of drawing from the bag.
+- The lower limit is far below 50: **not similar**. With the whole-number reporting the EMA asks for, the lower limit is [[f2_tamsayi|36]].
+- The interval is this wide because the tablets of product 1 dissolve very differently from each other (CV 51% at minute 130; Table 1 of the paper).
 
 ## Remember
 - f2 compares the shapes of curves; a large difference at one time point can be hidden by similarity at the others.

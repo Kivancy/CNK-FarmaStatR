@@ -83,7 +83,7 @@ m1 <- pk$platform_dis(kp, ts, "TEST", "REF", c("STD1", "STD2"), yontem = "msd", 
 m2 <- pk$platform_dis(kp, ts, "TEST", "REF", c("STD1", "STD2"), yontem = "msd", ayar = list(sinir = "L2a"))$sonuc
 w2 <- pk$platform_dis(kp, ts, "TEST", "REF", c("STD1", "STD2"), yontem = "weibull", ayar = list(param = "lnA_lnB", bolge = "B-L2a"))$sonuc
 w3 <- pk$platform_dis(kp, ts, "TEST", "REF", character(0), yontem = "weibull")$sonuc
-f2 <- pk$platform_dis(kp, no, "Urun1", "Urun2", yontem = "f2")$sonuc
+f2 <- pk$platform_dis(kp, no, "Urun1", "Urun3", yontem = "f2")$sonuc   # product 3 = reference (KK-79, FSR-TN-PLT-13)
 th <- ((log(1.11))^2 + 0.01) / 0.1^2
 ref <- list(pbe_sigma_r = c(pbe$Sigma_R, 4), pbe_ed = c(pbe$E_D, 6), pbe_e1 = c(pbe$E1, 6), pbe_e3s = c(pbe$E3s, 6),
             pbe_eq = c(pbe$Eq_Ref, 6), pbe_uq = c(pbe$Uq_Ref, 6), pbe_heta = c(pbe$H_eta_Ref, 6), pbe_heta_c = c(pbe$H_eta_Const, 6),

@@ -289,7 +289,8 @@ async function loadDis() {
   // (case-insensitive), otherwise the first two products (by design)
   const ad = (re, yedek) => u.find((x) => re.test(x.trim())) || yedek;
   const dt = k === 'noce2020' ? 'Urun1' : ad(/^test$/i, u[0]);
-  const dr = k === 'noce2020' ? 'Urun2' : ad(/^(ref|reference|referans)$/i, u.find((x) => x !== dt) || u[0]);
+  // Noce 2020: products 1 and 2 are tests, product 3 the reference (Section 2.1; KK-79, FSR-TN-PLT-13)
+  const dr = k === 'noce2020' ? 'Urun3' :ad(/^(ref|reference|referans)$/i, u.find((x) => x !== dt) || u[0]);
   fillSelect('#dis_form [name=test]', u, dt);
   fillSelect('#dis_form [name=ref]', u, dr);
   disData.src = src; disData.kaynak = k; disData.urunler = u; disData.n = r.n;

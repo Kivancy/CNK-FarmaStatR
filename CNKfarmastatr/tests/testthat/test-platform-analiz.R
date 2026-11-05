@@ -99,16 +99,28 @@ test_that("A-7 f2: perspective presets of calc_f2_boot (EMA Q&A 3.11; FDA 1997);
   skip_if_not(have_kopru, "inst/kopru/dis_kopru.R not installed")
   skip_on_cran()
   no <- platform_dis_veri(ornek = "noce2020")
-  e <- platform_dis(kp, no, "Urun1", "Urun2", yontem = "f2")$sonuc
+  e <- platform_dis(kp, no, "Urun1", "Urun3", yontem = "f2")$sonuc   # product 3 = reference (Noce 2020, 2.1; KK-79)
   expect_identical(c(e$perspektif, e$tahminci, e$cvkural), c("EMA", "Ef2", "M9"))
   expect_identical(c(e$B, e$seed), c(5000, 20260927))
   expect_identical(e$karar, "BENZER DE\u011e\u0130L")
-  expect_identical(round(e$alt, 2), 30.90)                                    # FarmaStatR reference (P6)
-  f <- platform_dis(kp, no, "Urun1", "Urun2", yontem = "f2", ayar = list(perspektif = "FDA", B = 2000))$sonuc
+  expect_identical(round(e$alt, 2), 35.62)                                    # FarmaStatR reference; Noce Table 4: 35.54-35.82
+  f <- platform_dis(kp, no, "Urun1", "Urun3", yontem = "f2", ayar = list(perspektif = "FDA", B = 2000))$sonuc
   expect_identical(c(f$perspektif, f$tahminci, f$cvkural), c("FDA", "f2", "FDA97"))
   expect_equal(f$B, 2000)
-  kp$kp_hazirla(no$Product, no$Unit, no$Time, no$Diss, "Urun1", "Urun2", character(0), "dakika")
+  kp$kp_hazirla(no$Product, no$Unit, no$Time, no$Diss, "Urun1", "Urun3", character(0), "dakika")
   expect_identical(f, local({ s <- kp$kp_f2("FDA", "f2", "FDA", "replika", "FDA97", "persentil", 2000, 20260927, 7); s }))
+})
+
+test_that("N-2 Noce 2020 Table 3: f2 and E(f2), products 1-3 and 2-3, three truncation rules (FSR-TN-PLT-13, KK-79)", {
+  skip_if_not(have_kopru, "inst/kopru/dis_kopru.R not installed")
+  no <- platform_dis_veri(ornek = "noce2020")
+  # Noce et al. 2020, Table 3 (product 3 = reference, Section 2.1)
+  tab3 <- list(Urun1 = rbind(none = c(49.66, 48.35), EMA = c(45.85, 44.54), FDA = c(47.34, 46.02)),
+               Urun2 = rbind(none = c(54.87, 54.04), EMA = c(57.11, 55.70), FDA = c(56.47, 55.29)))
+  for (t in names(tab3)) for (k in rownames(tab3[[t]])) {
+    s <- platform_dis(kp, no, t, "Urun3", yontem = "f2", ayar = list(kesme = k, B = 200))$sonuc
+    expect_identical(round(c(s$f2, s$Ef2), 2), tab3[[t]][k, ])
+  }
 })
 
 test_that("A-8 dissolution input errors", {

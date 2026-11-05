@@ -44,12 +44,13 @@ $$ \hat Q_{0,05}\left(E(f_2)^*\right) \ge 50 \;\Rightarrow\; \text{benzer} $$ ::
 - Rastgele sayı üreteci (Mersenne-Twister, Inversion, Rejection), seed ve B raporlanır; seed varsayılanı 20260927.
 
 ## 6. Çalışılmış örnek
-Noce ve ark. (2020) veri seti (Urun1 test, Urun2 referans; 12 ünite), EMA ön ayarı, persentil aralık, B = 5000, seed 20260927:
+Noce ve ark. (2020) veri seti: Ürün 1 (30 mg) ve Ürün 2 (60 mg) test, Ürün 3 (30 mg) referans; her biri 12 ünite (Noce ve ark. 2020, Bölüm 2.1). Örnek Urun1 (test) ile Urun3’ü (referans) karşılaştırır; EMA ön ayarı, persentil aralık, B = 5000, seed 20260927:
 
 - %85 kesmesi sonrası P = [[f2_p|6]] zaman noktası (120–165 dk).
-- f2 = [[f2_f2|37,39]], E(f2) = [[f2_ef2|36,90]], bc-f2 = [[f2_bcf2|37,90]].
-- Bootstrap %90 GA: [[f2_alt|30,90]] – [[f2_ust|43,99]]; alt sınırın MCSE’si [[f2_mcse|0,12]].
-- Alt sınır < 49,5 → benzer değil. EMA raporlaması: [[f2_tamsayi|31]].
+- f2 = [[f2_f2|45,85]], E(f2) = [[f2_ef2|44,54]], bc-f2 = [[f2_bcf2|47,36]]: yayının Tablo 3’ündeki “1 profile exceeding 85%” satırıyla aynı.
+- Bootstrap %90 GA: [[f2_alt|35,62]] – [[f2_ust|57,50]]; alt sınırın MCSE’si [[f2_mcse|0,14]]. Yayının Tablo 4’ünde aynı koşulda alt sınır 35,54 (PhEq_bootstrap) ve 35,82’dir (Bootf2bca); fark seed’den gelir.
+- Alt sınır < 49,5 → benzer değil. EMA raporlaması: [[f2_tamsayi|36]].
+- Ürün 2–Ürün 3 karşılaştırması ekranda referans olarak Urun3, test olarak Urun2 seçilerek yapılır (yayının Tablo 3 ve 4’ünün ikinci bölümü).
 
 ## 7. Sınırlar
 - Bootstrap aralığı seed’e bağlıdır; aynı seed ve B ile aynı sonuç elde edilir. Seed’e duyarlı uyarısında B artırılmalıdır.
@@ -115,12 +116,13 @@ $$ \hat Q_{0.05}\left(E(f_2)^*\right) \ge 50 \;\Rightarrow\; \text{similar} $$ :
 - Random number generator (Mersenne-Twister, Inversion, Rejection), seed and B are reported; default seed 20260927.
 
 ## 6. Worked example
-Data set of Noce et al. (2020) (Urun1 test, Urun2 reference; 12 units), EMA preset, percentile interval, B = 5000, seed 20260927:
+Data set of Noce et al. (2020): product 1 (30 mg) and product 2 (60 mg) are tests, product 3 (30 mg) the reference; 12 units each (Noce et al. 2020, Section 2.1). The example compares Urun1 (test) with Urun3 (reference); EMA preset, percentile interval, B = 5000, seed 20260927:
 
 - After the 85% truncation P = [[f2_p|6]] time points (120–165 min).
-- f2 = [[f2_f2|37.39]], E(f2) = [[f2_ef2|36.90]], bc-f2 = [[f2_bcf2|37.90]].
-- Bootstrap 90% CI: [[f2_alt|30.90]] – [[f2_ust|43.99]]; MCSE of the lower bound [[f2_mcse|0.12]].
-- Lower bound < 49.5 → not similar. EMA reporting: [[f2_tamsayi|31]].
+- f2 = [[f2_f2|45.85]], E(f2) = [[f2_ef2|44.54]], bc-f2 = [[f2_bcf2|47.36]]: the same as the row “1 profile exceeding 85%” of Table 3 of the paper.
+- Bootstrap 90% CI: [[f2_alt|35.62]] – [[f2_ust|57.50]]; MCSE of the lower bound [[f2_mcse|0.14]]. Under the same conditions Table 4 of the paper gives lower bounds of 35.54 (PhEq_bootstrap) and 35.82 (Bootf2bca); the difference comes from the seed.
+- Lower bound < 49.5 → not similar. EMA reporting: [[f2_tamsayi|36]].
+- The product 2–product 3 comparison is made on the screen by choosing Urun2 as test and Urun3 as reference (second part of Tables 3 and 4 of the paper).
 
 ## 7. Limits
 - The bootstrap interval depends on the seed; the same seed and B give the same result. If the result is seed-sensitive, increase B.
