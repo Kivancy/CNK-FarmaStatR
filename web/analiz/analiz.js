@@ -285,8 +285,13 @@ async function loadDis() {
   const r = await callR('.an_dis_veri(metin, ornek)', { metin, ornek });
   if (!r.ok) { setStatus('dis', 'an_st_data_error', 'bad'); showErrors('dis', [t('an_data_error'), r.message]); $('#dis_run').disabled = true; return; }
   const u = arr(r.urunler);
-  fillSelect('#dis_form [name=test]', u, k === 'noce2020' ? 'Urun1' : 'TEST');
-  fillSelect('#dis_form [name=ref]', u, k === 'noce2020' ? 'Urun2' : 'REF');
+  // default test/reference (W-7, FSR-TN-PLT-12): a product named test / ref, reference, referans
+  // (case-insensitive), otherwise the first two products (by design)
+  const ad = (re, yedek) => u.find((x) => re.test(x.trim())) || yedek;
+  const dt = k === 'noce2020' ? 'Urun1' : ad(/^test$/i, u[0]);
+  const dr = k === 'noce2020' ? 'Urun2' : ad(/^(ref|reference|referans)$/i, u.find((x) => x !== dt) || u[0]);
+  fillSelect('#dis_form [name=test]', u, dt);
+  fillSelect('#dis_form [name=ref]', u, dr);
   disData.src = src; disData.kaynak = k; disData.urunler = u; disData.n = r.n;
   lotBoxes(k === 'tsong1996' ? ['STD1', 'STD2'] : []);
   $('#dis_data_info').textContent = `${src} · ${fmtInt(r.n)} ${t('an_rows')} · ${t('an_products')}: ${u.join(', ')}` + (disData.sha256 ? ` · SHA-256 ${disData.sha256}` : '');

@@ -18,7 +18,7 @@ Kaynak / source: FSR-TN-PLT-07 (KK-63).
    (`python3 araclar/yardim_derle.py`; gerekli: `pip install latex2mathml`). Üretilen HTML’i elle
    değiştirmeyin; kaynağı değiştirip yeniden derleyin.
 
-Örnek CSV dosyaları `sablon/` klasöründedir (Excel Türkçe: `;` ve ondalık virgül; uluslararası: `,`).
+Örnek CSV dosyaları `sablon/` klasöründedir (`,` ayraç, ondalık nokta). Türkçe Excel biçimli şablonlar kaldırıldı (KK-77); okuyucu `;` ayraçlı ve ondalık virgüllü dosyaları kabul etmeye devam eder.
 
 **Metin değiştirme kuralları:** TR ve EN aynı anahtarlarla güncellenir. Notlarda her denklem satırı
 `$$ … $$ :: kaynak` biçimindedir; kaynak etiketi zorunludur (kılavuz ya da makale + madde/denklem,

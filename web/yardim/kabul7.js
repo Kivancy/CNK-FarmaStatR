@@ -137,14 +137,14 @@ async function main() {
   };
   const run = async (sec) => { W().__p6.status[sec] = null; Dc().querySelector(`#${sec}_run`).click(); await waitFor(() => ['an_st_done', 'an_st_error'].includes(W().__p6.status[sec])); return W().__p6.status[sec]; };
   await tab('tab_pbe');
-  for (const f of ['pbe_sablon_tr.csv', 'pbe_sablon_en.csv']) {
+  for (const f of ['pbe_sablon_en.csv']) {   // Turkish template removed (KK-77, FSR-LOG-01 G-138)
     put('Y-5', f, 'pbe', 'veri', await upload('pbe', 'web/yardim/sablon/' + f));
     Dc().querySelector('#pbe_form [name=log_d]').checked = false; Dc().querySelector('#pbe_form [name=tek]').checked = false;
     put('Y-5', f, 'pbe', 'durum', await run('pbe'));
     put('Y-5', f, 'pbe', 'sonuc', JSON.stringify(W().__p6.pbe && W().__p6.pbe.sonuc));
   }
   await tab('tab_dis');
-  for (const f of ['dis_sablon_tr.csv', 'dis_sablon_en.csv']) {
+  for (const f of ['dis_sablon_en.csv']) {   // Turkish template removed (KK-77)
     put('Y-5', f, 'dis', 'veri', await upload('dis', 'web/yardim/sablon/' + f));
     for (const i of Dc().querySelectorAll('#dis_form input[name=lot]')) i.checked = ['STD1', 'STD2'].includes(i.value);
     const y = Dc().querySelector('#dis_form [name=yontem]'); y.value = 'msd'; y.dispatchEvent(new Event('change', { bubbles: true }));

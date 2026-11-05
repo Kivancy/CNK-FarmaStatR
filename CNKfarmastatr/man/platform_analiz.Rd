@@ -31,6 +31,12 @@ byte-order mark and empty rows; numbers may use a decimal comma. Column names ar
 matched without case and Turkish letters (PBE: parti/batch, kap/container,
 asama/stage, urun/product, olcum/score; dissolution: Product/urun, Unit/tablet,
 Time/zaman, Diss/cozunen).
+\code{platform_dis_veri} also reads the wide layout (FSR-TN-PLT-12; decision KK-78):
+first column Time, the other columns \code{<product>.<unit>} (split at the last dot,
+e.g. \code{Test.1}, \code{Ref.1}), one row per time point; a first data row without
+any number (DDSolver's second header row) is skipped; empty or non-numeric cells,
+duplicate columns and duplicate time points are errors. It is returned in the long
+layout, ordered product, time, unit; results equal those of the long layout.
 In \code{platform_dis} the f2 perspective presets are those of \code{calc_f2_boot}
 (EMA: Ef2, EMA truncation, rule M9, B = 5000; FDA: f2, FDA truncation, FDA97,
 B = 10000); explicit settings in \code{ayar} win.

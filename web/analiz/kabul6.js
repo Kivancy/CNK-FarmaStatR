@@ -7,6 +7,7 @@
 // record p6_tarayici.csv and the reports. The comparison with local R is done by
 // belgeler/teknik_notlar/FSR-TN-PLT-06_ek/p6_kabul.R. Turkish only (internal tool).
 // FSR-TN-PLT-11 v0.1 (KK-75): rows 'D', 'D-8' for Section 9 'Analysed data' of the analysis reports.
+// FSR-TN-PLT-12 (KK-78): rows 'W' for the wide layout of dissolution data (W-0 ... W-11).
 // Research and education only; not a system validated for GxP environments.
 
 import { zipStored } from '../app/rapor.js';
@@ -178,8 +179,45 @@ async function main() {
   put('D', 'dis', '', 'ekran', Dc().querySelector('#dis_data_info').textContent);
   put('D', 'dis', '', 'form', JSON.stringify(st().dis.form));
   await dRep('dis', 'dis', false); await dRep('dis', 'dis', true); await langSwitch(); await dRep('dis', 'dis', true); await langSwitch();
+
+  // ---- FSR-TN-PLT-12 (KK-78): wide layout of dissolution data; rows 'W' (no 'F' rows: F counts stay as frozen)
+  const WV = 'belgeler/teknik_notlar/FSR-TN-PLT-12_ek/veri/';
+  const wLoad = async (id, sec, f) => {
+    await upload(sec, f, await fetchBytes(WV + f));
+    put('W', id, sec, 'kaynak', WV + f); put('W', id, sec, 'veri_durum', st().status[sec]);
+    put('W', id, sec, 'ekran', Dc().querySelector(`#${sec}_data_info`).textContent);
+    put('W', id, sec, 'hata', Dc().querySelector(`#${sec}_errors`).textContent);
+    if (sec === 'dis') { put('W', id, sec, 'test_varsayilan', Dc().querySelector('#dis_form [name=test]').value);
+      put('W', id, sec, 'ref_varsayilan', Dc().querySelector('#dis_form [name=ref]').value); }
+  };
+  const wRun = async (id) => {
+    st().status.dis = null; Dc().querySelector('#dis_run').click(); await waitSt('dis', DONE); await sleep(100);
+    put('W', id, 'dis', 'durum', st().status.dis);
+    if (st().status.dis === 'an_st_done') { put('W', id, 'dis', 'form', JSON.stringify(st().dis.form));
+      put('W', id, 'dis', 'sonuc', JSON.stringify(st().dis.sonuc, (k, v) => (typeof v === 'number' && !Number.isFinite(v) ? String(v) : v))); }
+  };
+  // W-1, W-3, W-4, W-7, W-8, W-9: Tsong 1996 in the DDSolver layout (';', decimal comma, second header row)
+  await wLoad('tsong-genis', 'dis', 'tsong1996_genis_ddsolver.csv');
+  for (const i of Dc().querySelectorAll('#dis_form input[name=lot]')) i.checked = ['STD1', 'STD2'].includes(i.value);
+  await select('dis_form', 'yontem', 'msd'); await select('dis_form', 'sinir', 'L2a'); await select('dis_form', 'kesme', 'none');
+  await wRun('tsong-genis');
+  await withData('dis', true);
+  { const lang = Dc().documentElement.lang, r0 = reqs().length, r = st().makeReport('dis'), name = `raporlar/w12_tsong-genis_veri_${lang}.docx`;
+    files.push([name, r.bytes]); put('W', 'tsong-genis', lang, 'rapor', name); put('W', 'tsong-genis', lang, 'ag_istegi', reqs().length - r0); }
+  await withData('dis', false);
+  // W-7 fallback (first two products), W-8 f2 with the EMA preset: Noce 2020 in the wide layout
+  await wLoad('noce-genis', 'dis', 'noce2020_genis.csv');
+  await select('dis_form', 'yontem', 'f2');
+  await wRun('noce-genis');
+  // W-5 empty cell: data error on the screen
+  await wLoad('bos-hucre', 'dis', 'hata_bos_hucre.csv');
+  put('W', 'bos-hucre', 'dis', 'calistir_etkin', enabled('#dis_run'));
+  log('FSR-TN-PLT-12: geniş biçim (dissolüsyon)');
+  // W-0 the PBE panel does not read the wide layout (checked below with the PBE tab)
   // D-pbe: test data file P1 (PSG example as a file)
   Dc().querySelector('#tab_pbe').click(); await sleep(200);
+  await wLoad('pbe-genis', 'pbe', 'tsong1996_genis_ddsolver.csv');                  // W-0 (FSR-TN-PLT-12)
+  put('W', 'pbe-genis', 'pbe', 'calistir_etkin', enabled('#pbe_run'));
   await upload('pbe', 'P1_psg020929.csv', await fetchBytes('CNKfarmastatr/inst/validasyon/pbe/test_verisi/P1_psg020929.csv'));
   await check('pbe_form', 'log_d', false); await check('pbe_form', 'tek', false);
   await runD('pbe');

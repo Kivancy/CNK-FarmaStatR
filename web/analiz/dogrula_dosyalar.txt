@@ -42,6 +42,7 @@ CNKfarmastatr/tests/testthat/test-devralinan-validasyon.R
 CNKfarmastatr/tests/testthat/test-invitro-fast.R
 CNKfarmastatr/tests/testthat/test-platform-analiz.R
 CNKfarmastatr/tests/testthat/test-platform-bicim.R
+CNKfarmastatr/tests/testthat/test-platform-dis-genis.R
 CNKfarmastatr/tests/testthat/test-platform-export.R
 CNKfarmastatr/tests/testthat/test-platform-hipotez.R
 CNKfarmastatr/tests/testthat/test-platform-input.R

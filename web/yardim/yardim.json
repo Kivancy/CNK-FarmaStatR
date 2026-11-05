@@ -28,7 +28,7 @@
       "dis.Dg": "Zaman noktası başına izin verilen fark, yüzde puanı (EMA’da %10). L1 sınırı ve L3 kontrolü için.",
       "dis.birim": "Zaman sütununun birimi. f2’nin CV kuralı ve 15 dakika kontrolü dakika varsayar; “saat” seçilirse zamanlar f2 için dakikaya çevrilir.",
       "dis.bolge": "Benzerlik bölgesi: B-L3 yanıt uzayında ±D_g (referans lotu gerekmez); B-L2a Sathe kutusu (±k·SD).",
-      "dis.dosya": "CSV: Product, Unit, Time, Diss (ya da urun, tablet, zaman, cozunen). Her satır bir ünitenin bir zaman noktasındaki çözünme yüzdesi. Ayraç ; , ya da sekme.",
+      "dis.dosya": "CSV, geniş biçim: ilk sütun Time (zaman), diğer sütunlar <ürün>.<ünite> (Test.1, …, Ref.1, …); her satır bir zaman noktası. Uzun biçim (Product, Unit, Time, Diss) de kabul edilir. Ayraç ; , ya da sekme.",
       "dis.gatipi": "Bootstrap güven aralığı türü: persentil (varsayılan) ya da BCa (yanlılık ve çarpıklık düzeltmeli).",
       "dis.k": "B-L2a kutusunun genişliği: ±k × havuzlanmış SD (Sathe ve ark.: 1, 2 ya da 3).",
       "dis.kaynak": "Tsong ve ark. (1996) örneği (MSD ve Weibull için; STD1 ve STD2 referans lotlarıyla), Noce ve ark. (2020) örneği (f2 için) ya da kendi CSV dosyanız.",
@@ -138,7 +138,7 @@
         },
         {
           "id": "veri",
-          "html": "<ul><li>Uzun biçim CSV: her satır bir ölçüm. Sütunlar <code>parti, kap, asama, urun, olcum</code> (ya da <code>batch, container, stage, product, score</code>).</li><li>Kap, parti içinde tanımlanır (farklı partilerde aynı kap numarası olabilir); her kap her evrede tam bir kez ölçülmeli.</li><li>Test ve referansın evre kümeleri aynı olmalı.</li><li>Dengesiz ama eksiksiz tasarım kabul edilir (uyarı verilir).</li></ul><p class=\"yh-links\"><a href=\"../yardim/sablon/pbe_sablon_tr.csv\" target=\"_blank\" rel=\"noopener\">Şablon (Excel, Türkçe)</a> · <a href=\"../yardim/sablon/pbe_sablon_en.csv\" target=\"_blank\" rel=\"noopener\">Şablon (uluslararası)</a></p><ul><li>EMA: yalnız dengeli tasarım (her seride aynı kap sayısı); dengesiz dosyada hesap yapılmaz, FDA PBE seçilebilir.</li></ul>"
+          "html": "<ul><li>Uzun biçim CSV: her satır bir ölçüm. Sütunlar <code>parti, kap, asama, urun, olcum</code> (ya da <code>batch, container, stage, product, score</code>).</li><li>Kap, parti içinde tanımlanır (farklı partilerde aynı kap numarası olabilir); her kap her evrede tam bir kez ölçülmeli.</li><li>Test ve referansın evre kümeleri aynı olmalı.</li><li>Dengesiz ama eksiksiz tasarım kabul edilir (uyarı verilir).</li></ul><p class=\"yh-links\"><a href=\"../yardim/sablon/pbe_sablon_en.csv\" target=\"_blank\" rel=\"noopener\">Şablon (CSV)</a></p><ul><li>EMA: yalnız dengeli tasarım (her seride aynı kap sayısı); dengesiz dosyada hesap yapılmaz, FDA PBE seçilebilir.</li></ul>"
         },
         {
           "id": "ayar",
@@ -164,7 +164,7 @@
         },
         {
           "id": "veri",
-          "html": "<ul><li>Uzun biçim CSV: her satır bir ünitenin (tablet) bir zaman noktasındaki çözünme yüzdesi. Sütunlar <code>Product, Unit, Time, Diss</code> (ya da <code>urun, tablet, zaman, cozunen</code>).</li><li>Test ve referansın zaman noktaları aynı olmalı. EMA ürün başına 12 ünite ister.</li><li>Referans lotları (L2a, L2b, B-L2a için) ayrı ürün adlarıyla verilir.</li></ul><p class=\"yh-links\"><a href=\"../yardim/sablon/dis_sablon_tr.csv\" target=\"_blank\" rel=\"noopener\">Şablon (Excel, Türkçe)</a> · <a href=\"../yardim/sablon/dis_sablon_en.csv\" target=\"_blank\" rel=\"noopener\">Şablon (uluslararası)</a></p>"
+          "html": "<ul><li>Geniş biçim CSV (DDSolver düzeni): her satır bir zaman noktası; ilk sütun <code>Time</code>, diğer sütunlar <code>&lt;ürün&gt;.&lt;ünite&gt;</code>, ör. <code>Test.1 … Test.12, Ref.1 … Ref.12</code>. Hücreler çözünme yüzdesidir; boş hücre kabul edilmez. DDSolver’ın ikinci başlık satırı (<code>(min)</code>, <code>F(%)</code>) atlanır.</li><li>Uzun biçim de kabul edilir: her satır bir ünitenin bir zaman noktasındaki değeri; sütunlar <code>Product, Unit, Time, Diss</code> (ya da <code>urun, tablet, zaman, cozunen</code>).</li><li>Test ve referansın zaman noktaları aynı olmalı. EMA ürün başına 12 ünite ister.</li><li>Referans lotları (L2a, L2b, B-L2a için) ayrı ürün adlarıyla verilir (ör. <code>STD1.1 … STD1.6</code>).</li></ul><p class=\"yh-links\"><a href=\"../yardim/sablon/dis_sablon_en.csv\" target=\"_blank\" rel=\"noopener\">Şablon (CSV)</a></p>"
         },
         {
           "id": "ayar",
@@ -213,7 +213,7 @@
       "dis.Dg": "Allowed difference per time point, percentage points (10 in EMA). Used by L1 and the L3 check.",
       "dis.birim": "Unit of the time column. The CV rule and the 15-minute check of f2 assume minutes; with “hours” the times are converted to minutes for f2.",
       "dis.bolge": "Similarity region: B-L3 ±D_g in the response space (no reference lots needed); B-L2a Sathe box (±k·SD).",
-      "dis.dosya": "CSV: Product, Unit, Time, Diss (or urun, tablet, zaman, cozunen). One row per unit and time point (percent dissolved). Separator ; , or tab.",
+      "dis.dosya": "CSV, wide layout: first column Time, other columns <product>.<unit> (Test.1, …, Ref.1, …); one row per time point. The long layout (Product, Unit, Time, Diss) is also accepted. Separator ; , or tab.",
       "dis.gatipi": "Type of bootstrap confidence interval: percentile (default) or BCa (bias-corrected and accelerated).",
       "dis.k": "Width of the B-L2a box: ±k × pooled SD (Sathe et al.: 1, 2 or 3).",
       "dis.kaynak": "The example of Tsong et al. (1996) (for MSD and Weibull; with reference lots STD1 and STD2), the example of Noce et al. (2020) (for f2), or your own CSV file.",
@@ -323,7 +323,7 @@
         },
         {
           "id": "veri",
-          "html": "<ul><li>Long-format CSV: one row per measurement. Columns <code>batch, container, stage, product, score</code> (or <code>parti, kap, asama, urun, olcum</code>).</li><li>A container is identified within its batch (the same number may occur in different batches); each container is measured exactly once at each stage.</li><li>Test and reference must have the same set of stages.</li><li>An unbalanced but complete design is accepted (with a warning).</li></ul><p class=\"yh-links\"><a href=\"../yardim/sablon/pbe_sablon_tr.csv\" target=\"_blank\" rel=\"noopener\">Template (Excel, Turkish)</a> · <a href=\"../yardim/sablon/pbe_sablon_en.csv\" target=\"_blank\" rel=\"noopener\">Template (international)</a></p><ul><li>EMA: balanced designs only (same number of containers in every batch); an unbalanced file is not computed, FDA PBE can be chosen.</li></ul>"
+          "html": "<ul><li>Long-format CSV: one row per measurement. Columns <code>batch, container, stage, product, score</code> (or <code>parti, kap, asama, urun, olcum</code>).</li><li>A container is identified within its batch (the same number may occur in different batches); each container is measured exactly once at each stage.</li><li>Test and reference must have the same set of stages.</li><li>An unbalanced but complete design is accepted (with a warning).</li></ul><p class=\"yh-links\"><a href=\"../yardim/sablon/pbe_sablon_en.csv\" target=\"_blank\" rel=\"noopener\">Template (CSV)</a></p><ul><li>EMA: balanced designs only (same number of containers in every batch); an unbalanced file is not computed, FDA PBE can be chosen.</li></ul>"
         },
         {
           "id": "ayar",
@@ -349,7 +349,7 @@
         },
         {
           "id": "veri",
-          "html": "<ul><li>Long-format CSV: one row per unit (tablet) and time point, percent dissolved. Columns <code>Product, Unit, Time, Diss</code> (or <code>urun, tablet, zaman, cozunen</code>).</li><li>Test and reference must have the same time points. EMA asks for 12 units per product.</li><li>Reference lots (for L2a, L2b, B-L2a) are given as separate product names.</li></ul><p class=\"yh-links\"><a href=\"../yardim/sablon/dis_sablon_tr.csv\" target=\"_blank\" rel=\"noopener\">Template (Excel, Turkish)</a> · <a href=\"../yardim/sablon/dis_sablon_en.csv\" target=\"_blank\" rel=\"noopener\">Template (international)</a></p>"
+          "html": "<ul><li>Wide-layout CSV (DDSolver layout): one row per time point; first column <code>Time</code>, other columns <code>&lt;product&gt;.&lt;unit&gt;</code>, e.g. <code>Test.1 … Test.12, Ref.1 … Ref.12</code>. Cells are percent dissolved; empty cells are not accepted. DDSolver’s second header row (<code>(min)</code>, <code>F(%)</code>) is skipped.</li><li>The long layout is also accepted: one row per unit and time point; columns <code>Product, Unit, Time, Diss</code> (or <code>urun, tablet, zaman, cozunen</code>).</li><li>Test and reference must have the same time points. EMA asks for 12 units per product.</li><li>Reference lots (for L2a, L2b, B-L2a) are given as separate product names (e.g. <code>STD1.1 … STD1.6</code>).</li></ul><p class=\"yh-links\"><a href=\"../yardim/sablon/dis_sablon_en.csv\" target=\"_blank\" rel=\"noopener\">Template (CSV)</a></p>"
         },
         {
           "id": "ayar",

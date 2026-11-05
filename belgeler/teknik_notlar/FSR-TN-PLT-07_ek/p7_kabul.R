@@ -121,15 +121,15 @@ cmp_js <- function(js, loc) {
     if (is.numeric(vb)) { va <- num(va); return(length(va) == length(vb) && all(abs(va - vb) <= 1e-12 + 1e-12 * pmax(abs(va), abs(vb)))) }
     identical(as.character(va), as.character(vb)) || identical(as.logical(va), vb) }, NA))
 }
-for (f in c("pbe_sablon_tr.csv", "pbe_sablon_en.csv")) {
+for (f in c("pbe_sablon_en.csv")) {   # Turkish template removed (KK-77, FSR-LOG-01 G-138)
   loc <- pk$platform_pbe(pk$platform_pbe_veri(rd(f)))$sonuc
   js <- v1("Y-5", f, "pbe", "sonuc")
   put(paste("Y-5", f), identical(loc, pbe) && identical(v1("Y-5", f, "pbe", "durum"), "an_st_done") && !is.na(js) && cmp_js(js, pbe),
       "R: şablon = örnek; ekran = R")
 }
 m2s <- m2[names(m2) != "notlar"]
-for (f in c("dis_sablon_tr.csv", "dis_sablon_en.csv")) {
-  loc <- pk$platform_dis(kp, pk$platform_dis_veri(rd(f)), "TEST", "REF", c("STD1", "STD2"), yontem = "msd", ayar = list(sinir = "L2a"))$sonuc
+for (f in c("dis_sablon_en.csv")) {   # Turkish template removed (KK-77); wide layout, products Test/Ref (KK-78, G-139)
+  loc <- pk$platform_dis(kp, pk$platform_dis_veri(rd(f)), "Test", "Ref", c("STD1", "STD2"), yontem = "msd", ayar = list(sinir = "L2a"))$sonuc
   js <- v1("Y-5", f, "dis", "sonuc")
   put(paste("Y-5", f), identical(loc[names(loc) != "notlar"], m2s) && identical(v1("Y-5", f, "dis", "durum"), "an_st_done") && !is.na(js) && cmp_js(js, loc),
       "R: şablon = örnek (notlar hariç); ekran = R")

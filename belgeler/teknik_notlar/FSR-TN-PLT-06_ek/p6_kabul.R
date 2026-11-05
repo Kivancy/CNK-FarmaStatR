@@ -17,6 +17,8 @@
 #   F-9 validation in the browser: 516/516 and the package tests (0 failed, 0 errors)
 #   F-10 regression: pinned files, dis_kopru.R (G-01), P5 report unchanged
 #   F-11 TR/EN keys; narrow screen; F-12 documents present
+#   FSR-TN-PLT-11 (KK-75): D-1 ... D-8, Section 9 'Analysed data'
+#   FSR-TN-PLT-12 (KK-78): W-0 ... W-11, wide layout of dissolution data (rows 'W')
 # Numbers: K(1e-12, 1e-12) (absolute or relative difference); texts and decisions
 # exactly. Run from the repository root:
 #   source("belgeler/teknik_notlar/FSR-TN-PLT-06_ek/p6_kabul.R", encoding = "UTF-8")
@@ -308,6 +310,57 @@ if (!is.na(f1) && !is.na(f2)) {
 put("D-8 kutu varsayılanı", identical(v1("D-8", "kutu", "pbe", "varsayilan_isaretli"), "false") && identical(v1("D-8", "kutu", "dis", "varsayilan_isaretli"), "false"),
     "“Veriyi rapora ekle” iki sekmede de varsayılan olarak boş")
 put("D-8 çeviri", all(c("an_with_data", "rp_s_data", "rp_data_omitted") %in% names(TRJ$tr)) && identical(sort(names(TRJ$tr)), sort(names(TRJ$en))), "yeni anahtarlar TR ve EN")
+
+# ---------------------------------------------------------------- FSR-TN-PLT-12 (KK-78): wide layout, dissolution only
+wv <- function(id, a, sec = "dis") v1("W", id, sec, a)
+if (!nrow(g("W"))) put("W geniş biçim", NA, "W satırı yok") else {
+  rdw <- function(f) paste(readLines(f, encoding = "UTF-8", warn = FALSE), collapse = "\n")
+  fT <- wv("tsong-genis", "kaynak"); fN <- wv("noce-genis", "kaynak")
+  vT <- pk$platform_dis_veri(rdw(fT)); vN <- pk$platform_dis_veri(rdw(fN))
+  put("W-1/3/4 okuma (ekran)", identical(wv("tsong-genis", "veri_durum"), "an_st_data_ok") && identical(wv("noce-genis", "veri_durum"), "an_st_data_ok") &&
+        grepl(" 192 ", wv("tsong-genis", "ekran"), fixed = TRUE) && length(vT$Diss) == 192,
+      "DDSolver düzeni (';', ondalık virgül, ikinci başlık satırı) ve ',' dosyası okundu; Tsong 192 değer")
+  put("W-7 varsayılan seçim", identical(c(wv("tsong-genis", "test_varsayilan"), wv("tsong-genis", "ref_varsayilan")), c("Test", "Ref")) &&
+        identical(c(wv("noce-genis", "test_varsayilan"), wv("noce-genis", "ref_varsayilan")), c("Urun1", "Urun2")),
+      sprintf("Tsong: %s/%s (ad); Noce: %s/%s (ilk iki ürün)", wv("tsong-genis", "test_varsayilan"), wv("tsong-genis", "ref_varsayilan"),
+              wv("noce-genis", "test_varsayilan"), wv("noce-genis", "ref_varsayilan")))
+  for (id in c("tsong-genis", "noce-genis")) {
+    if (!identical(wv(id, "durum"), "an_st_done")) { put(paste("W-8", id), FALSE, paste("durum:", wv(id, "durum"))); next }
+    fm <- jsonlite::fromJSON(wv(id, "form"), simplifyVector = TRUE); ay <- fm$ayar[!vapply(fm$ayar, is.null, NA)]
+    vg <- if (id == "tsong-genis") vT else vN
+    vu <- pk$platform_dis_veri(ornek = if (id == "tsong-genis") "tsong1996" else "noce2020")
+    tr <- if (id == "tsong-genis") c(Test = "TEST", Ref = "REF") else c(Urun1 = "Urun1", Urun2 = "Urun2")
+    lg <- pk$platform_dis(kp, vg, fm$test, fm$ref, unlist(fm$lotlar), fm$birim, fm$yontem, ay)$sonuc
+    lu <- pk$platform_dis(kp, vu, tr[[fm$test]], tr[[fm$ref]], unlist(fm$lotlar), fm$birim, fm$yontem, ay)$sonuc
+    c1 <- cmp(wv(id, "sonuc"), lg)
+    put(paste("W-8", id), identical(lg, lu) && c1$ok,
+        sprintf("%s: R geniş = R uzun (identical); ekran = R, %d alan%s", fm$yontem, c1$n, if (length(c1$bad)) paste0("; farklı: ", paste(c1$bad, collapse = ", ")) else ""))
+  }
+  rf <- wv("tsong-genis", "rapor", "tr"); z <- if (is.na(rf)) NULL else sec9(rf); hs <- sha_f(fT)
+  okW9 <- !is.null(z) && length(z$tables) == 2 && {
+    sh <- Filter(function(r) identical(r[1], TRJ$tr$rp_data_sha), z$tables[[1]])
+    body <- do.call(rbind, z$tables[[2]][-1])
+    length(sh) == 1 && isTRUE(sh[[1]][2] == hs) && nrow(body) == 192 && identical(unname(body[, 1:2]), cbind(vT$Product, vT$Unit)) &&
+      identical(as.numeric(body[, 3]), vT$Time) && identical(as.numeric(body[, 4]), vT$Diss) }
+  put("W-9 rapor bölüm 9", isTRUE(okW9) && identical(wv("tsong-genis", "ag_istegi", "tr"), "0"),
+      sprintf("SHA-256 %s = yerel; tablo uzun biçimde 192 satır = yerel R", substr(hs, 1, 16)))
+  put("W-5 boş hücre (ekran)", identical(wv("bos-hucre", "veri_durum"), "an_st_data_error") && grepl("column Test.2, time 5", wv("bos-hucre", "hata"), fixed = TRUE) &&
+        identical(wv("bos-hucre", "calistir_etkin"), "false"), wv("bos-hucre", "hata"))
+  put("W-0 PBE paneli geniş biçimi okumaz", identical(wv("pbe-genis", "veri_durum", "pbe"), "an_st_data_error") &&
+        grepl("Missing column", wv("pbe-genis", "hata", "pbe"), fixed = TRUE) && identical(wv("pbe-genis", "calistir_etkin", "pbe"), "false"),
+      wv("pbe-genis", "hata", "pbe"))
+  sb <- pk$platform_dis_veri(rdw(file.path("web", "yardim", "sablon", "dis_sablon_en.csv")))
+  hd <- strsplit(readLines(file.path("web", "yardim", "sablon", "dis_sablon_en.csv"), n = 1, warn = FALSE), ",")[[1]]
+  put("W-10 şablon", identical(hd, c("Time", paste0(rep(c("Test", "Ref", "STD1", "STD2"), each = 6), ".", 1:6))) &&
+        identical(sb$Diss, pk$platform_dis_veri(ornek = "tsong1996")$Diss), "geniş biçim; değerler Tsong örneğiyle aynı")
+  yj <- jsonlite::fromJSON(file.path("web", "yardim", "yardim.json"), simplifyVector = FALSE)
+  ph <- function(l) paste(vapply(yj[[l]]$panel$dis, function(b) if (is.null(b$html)) "" else b$html, ""), collapse = " ")
+  put("W-11 yardım metni", all(vapply(c("tr", "en"), function(l) grepl("Test.1", ph(l), fixed = TRUE) && grepl("Product, Unit, Time, Diss", ph(l), fixed = TRUE), NA)),
+      "dissolüsyon paneli TR ve EN: geniş biçim ve uzun biçim")
+  t9 <- g("F-9", "test-platform-dis-genis.R", a = "nb_fail_err_skip")
+  put("W-2/5/6/8 paket testleri (webR)", nrow(t9) == 9 && all(vapply(strsplit(t9$deger, "/"), function(x) x[2] == "0" && x[3] == "false" && x[4] == "false", NA)),
+      sprintf("test-platform-dis-genis.R: %d blok", nrow(t9)))
+}
 
 utils::write.csv(res, file.path(E, "p6_kabul.csv"), row.names = FALSE, fileEncoding = "UTF-8")
 writeLines(utils::capture.output(utils::sessionInfo()), file.path(E, "p6_yerel_sessionInfo.txt"), useBytes = TRUE)

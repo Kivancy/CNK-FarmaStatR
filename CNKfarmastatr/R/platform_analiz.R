@@ -114,11 +114,54 @@ platform_ema <- function(veri, test = "TEST", ref = "REF", log_d = FALSE, level 
 .analiz_dis_adlar <- list(Product = c("product", "urun"), Unit = c("unit", "tablet", "unite", "birim", "kap"),
                           Time = c("time", "zaman", "dakika", "saat", "minute"),
                           Diss = c("diss", "cozunen", "dissolved", "yuzde", "percent"))
+# Wide layout (FSR-TN-PLT-12, KK-78): rows = time points, columns = units,
+#   header "Time, <product>.<unit>, ..." (DDSolver style). Returned in the long
+#   layout ordered product -> time -> unit (column order), as the examples are.
+.analiz_dis_genis_mi <- function(d) {
+  nm <- .analiz_sutun(names(d))
+  uzun <- all(vapply(.analiz_dis_adlar, function(a) any(.analiz_sutun(a) %in% nm), NA))
+  !uzun && ncol(d) >= 2 && nm[1] %in% .analiz_sutun(.analiz_dis_adlar$Time)
+}
+.analiz_dis_genis <- function(d) {
+  cn <- trimws(names(d))[-1]
+  if (anyDuplicated(cn)) stop(sprintf("Duplicate column name(s): %s.", paste(unique(cn[duplicated(cn)]), collapse = ", ")))
+  nokta <- regexpr("\\.[^.]*$", cn)
+  urun <- ifelse(nokta > 0, trimws(substr(cn, 1, nokta - 1)), "")
+  kap <- ifelse(nokta > 0, trimws(substr(cn, nokta + 1, nchar(cn))), "")
+  bad <- !nzchar(urun) | !nzchar(kap)
+  if (any(bad)) stop(sprintf("Column name(s) not of the form <product>.<unit> (e.g. Test.1, Ref.1): %s.",
+                             paste(sprintf("'%s'", cn[bad]), collapse = ", ")))
+  m <- as.matrix(d); m[is.na(m)] <- ""
+  # DDSolver second header row ("(min)", "F(%)"): the first row without any number is skipped (by design, W-4)
+  if (nrow(m) >= 1 && all(is.na(.analiz_sayi(m[1, ])))) m <- m[-1, , drop = FALSE]
+  if (!nrow(m)) stop("No data rows.")
+  zs <- trimws(m[, 1]); zaman <- .analiz_sayi(zs)
+  if (anyNA(zaman)) stop(sprintf("Time must be a number: '%s' (data row %d).", zs[which(is.na(zaman))[1]], which(is.na(zaman))[1]))
+  if (anyDuplicated(zaman)) stop(sprintf("Duplicate time point(s): %s.", paste(unique(zs[duplicated(zaman)]), collapse = ", ")))
+  x <- m[, -1, drop = FALSE]; v <- matrix(.analiz_sayi(x), nrow(x))
+  if (anyNA(v)) {
+    k <- which(is.na(v), arr.ind = TRUE)[1, ]
+    stop(sprintf("Empty or non-numeric cell: column %s, time %s ('%s'). Every unit needs a value at every time point.",
+                 cn[k[2]], zs[k[1]], trimws(x[k[1], k[2]])))
+  }
+  P <- character(0); U <- character(0); Tm <- numeric(0); D <- numeric(0)
+  for (p in unique(urun)) {
+    j <- which(urun == p)
+    for (i in seq_len(nrow(v))) {
+      P <- c(P, rep(p, length(j))); U <- c(U, kap[j]); Tm <- c(Tm, rep(zaman[i], length(j))); D <- c(D, v[i, j])
+    }
+  }
+  data.frame(Product = P, Unit = U, Time = Tm, Diss = D, stringsAsFactors = FALSE)
+}
 platform_dis_veri <- function(metin = NULL, ornek = NULL) {
   d <- if (identical(ornek, "tsong1996")) ornek_tsong() else if (identical(ornek, "noce2020")) ornek_noce() else {
-    e <- .analiz_esle(platform_csv(metin), .analiz_dis_adlar)
-    data.frame(Product = trimws(e$Product), Unit = trimws(e$Unit), Time = .analiz_sayi(e$Time),
-               Diss = .analiz_sayi(e$Diss), stringsAsFactors = FALSE)
+    cs <- platform_csv(metin)
+    if (.analiz_dis_genis_mi(cs)) .analiz_dis_genis(cs) else {
+      e <- tryCatch(.analiz_esle(cs, .analiz_dis_adlar), error = function(err)
+        stop(conditionMessage(err), " Accepted layouts: wide (Time, Test.1, Test.2, ..., Ref.1, ...) or long (Product, Unit, Time, Diss).", call. = FALSE))
+      data.frame(Product = trimws(e$Product), Unit = trimws(e$Unit), Time = .analiz_sayi(e$Time),
+                 Diss = .analiz_sayi(e$Diss), stringsAsFactors = FALSE)
+    }
   }
   if (anyNA(d$Time) || anyNA(d$Diss)) stop("Time and dissolved values must be numbers.")
   list(Product = as.character(d$Product), Unit = as.character(d$Unit), Time = as.numeric(d$Time),

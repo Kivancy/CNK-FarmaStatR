@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 2.34 · Son güncelleme: 04.11.2026"
+subtitle: "FSR-LOG-01 · Sürüm 2.36 · Son güncelleme: 04.11.2026"
 ---
 
 # Bu belge hakkında
@@ -2428,6 +2428,31 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Site (proje sahibi):** Actions > pages > Run workflow; yayımlanan analiz ekranında “Veriyi rapora ekle” kutusu görünüyor (“görünüyor”). Kayıt proje sahibinin bildirimine dayanır (Claude github.io'ya erişemez).
 - **Sıradaki iş (B aşaması):** ara sürüm etiketi (B1), BEBAC duyurusu (B2), A-9 dışa açılan fonksiyonlar (B4), JOSS makalesi (B6).
 
+## G-138 · Türkçe Excel şablonları kaldırıldı (KK-77); yardım kabulünde Y-5 yalnız uluslararası şablon — 04.11.2026
+
+- **Depo:** G-137 commit edildi; GitHub Actions başarılı (proje sahibi).
+- **Bildirim (proje sahibi, ekran görüntüsü):** PBE ve dissolüsyon “Veri ve girdiler” panelindeki “Şablon (Excel, Türkçe)” dosyası Excel'de doğru açılmıyor: `pbe_sablon_tr.csv` (`;` ayraç, ondalık virgül, UTF-8 BOM) tek sütuna yığılıyor ve sayılar virgülden bölünüyor (ör. `1;31;B;REF;5 | 957211`). Neden (Claude): proje sahibinin Excel'inde liste ayracı virgül; Türkçe şablon ise noktalı virgül varsayıyor.
+- **Karar (K, proje sahibi): KK-77.** “türkçe kısmının kaldırmanı istiyorum, formatı düzgün gelmiyor.”
+- **Uygulama (Claude):** `yardim.json` PBE ve dissolüsyon panellerinde (TR, EN) tek bağlantı: “Şablon (CSV)” / “Template (CSV)” → `*_sablon_en.csv`. `web/yardim/README.md` güncellendi. `pbe_sablon_tr.csv` ve `dis_sablon_tr.csv` siliniyor (Claude'un ortamında silindi; cihazda silme proje sahibinde). Okuyucu (`platform_csv`) `;` ayraçlı ve ondalık virgüllü dosyaları kabul etmeye devam eder (P6 F-6 Türkçe CSV kontrolleri değişmedi; o dosyalar `belgeler/teknik_notlar/FSR-TN-PLT-06_ek/veri/` altında).
+- **Kabul ölçütü revizyonu (proje sahibinin kararıyla):** FSR-TN-PLT-07 Y-5 (şablonlar) yalnız uluslararası şablonları sınar: `kabul7.js` ve `p7_kabul.R`'de Türkçe şablon satırları çıkarıldı (89 → 87 satır). FSR-VAL-PLT-1'in bir sonraki revizyonunda işlenecek.
+- **Kuru koşu (Claude):** P7 87/87 GEÇTİ (Y-5 iki şablon; Y-6 39 bağlantı).
+
+## G-139 · Dissolüsyon verisi için geniş biçim (FSR-TN-PLT-12, KK-78): ölçütler, uygulama, kuru koşular — 04.11.2026
+
+- **Depo:** G-138 henüz commit edilmedi; proje sahibinin isteğiyle G-138 ve G-139 tek commit'te gönderilecek (“birşey daha istesem sonra ikisini birlikte commit etsek olmaz mı?”). İki Türkçe şablonun cihazda silinmesi proje sahibinde.
+- **İstek (proje sahibi):** dissolüsyon profil benzerliğinde veri girişi “standart in vitro çalışmalarındaki yapıda” olsun; örnek ekran görüntüsü DDSolver düzeni: satırlar zaman (`Time (min)`), sütunlar kaplar (`Ref.1`, `Ref.2`, `Ref.3`; `F(%)`), “test ve referans için”.
+- **Seçenekler (Claude):** A) tek dosya, sütun adında ürün öneki (`Test.1 … Ref.1 …`, seriler `STD1.1 …`); B) ürün başına ayrı dosya. Not: Tsong 1996 Tablo 1'in yönü bu oturumda kaynaktan kontrol edilmedi.
+- **Karar (K, proje sahibi): KK-78.** “A yı tercih ediyorum.” Kapsam: “PBE de değişiklik istemiyorum. Bu wide yapı sadece disolüsyon benzerliğinde kullanılmalı.” (PBE'de Türkçe şablonun kaldırılması G-138'de kaldı.) Ölçütler W-0 … W-12 koddan önce donduruldu (“donduralım.”; KK-45); dosya `belgeler/teknik_notlar/FSR-TN-PLT-12_ek/olcutler.md`.
+- **Uygulama (Claude):**
+  - `platform_analiz.R`: `platform_dis_veri()` geniş biçimi tanır (ilk sütun zaman, diğerleri `<ürün>.<ünite>`, son noktadan bölünür) ve örneklerle aynı sırada uzun biçime çevirir; DDSolver ikinci başlık satırı atlanır (tasarım gereği); boş/sayı olmayan hücre, yinelenen sütun ve zaman hata. Uzun biçim aynen okunur. Hesap çekirdeği, sabitli dosyalar ve `dis_kopru.R` değişmedi. `man/platform_analiz.Rd` güncellendi.
+  - `analiz.js`: varsayılan test/referans (test; ref/reference/referans; yoksa ilk iki ürün; tasarım gereği). `ceviri.json` `an_dis_cols`, `yardim.json` (dosya ipucu ve panel, TR/EN), `web/analiz/README.md`.
+  - Şablon `dis_sablon_en.csv` geniş biçime çevrildi (Tsong verisi; Test, Ref, STD1, STD2).
+  - Testler: `test-platform-dis-genis.R` (9 blok); `dogrula_dosyalar.txt`'ye eklendi.
+  - Kabul araçları: P6'ya W satırları (`kabul6.js`, `p6_kabul.R`; veri `FSR-TN-PLT-12_ek/veri/`: DDSolver düzeninde Tsong, `,` ayraçlı Noce, boş hücreli dosya). P7 Y-5'te dissolüsyon şablonunun ürün adları Test/Ref (W-12 revizyonu). F satırları değişmedi.
+- **Kuru koşular (Claude, yalıtılmış kök):** testthat 2355 beklenti, 0 başarısız; P6 101/101 (önceki 91 + W 10; F-9 webR 70 blok, 2355 beklenti); P7 87/87; P8 45/45. Kanıt: `FSR-TN-PLT-12_ek/kuru/`. Araç düzeltmeleri: W-9'da SHA-256 karşılaştırması `==` ile (değer öznitelik taşıyordu); yerel test koşusunun bıraktığı `testthat-problems.rds` silindi (F-9 dosya listesi).
+- **Belge:** FSR-TN-PLT-12 v0.1 (tasarım, W-0 … W-12, uygulama, kuru koşular).
+- **Bekleyen (proje sahibi):** iki Türkçe şablonun silinmesi; G-138 + G-139 commit'i; resmî P6, P7, P8 kabul koşuları; ardından FSR-TN-PLT-12 v0.2, FSR-VAL-PLT-1 1.8 (KK-77 Y-5 ve KK-78) ve sitenin güncellenmesi.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -2455,7 +2480,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 2.34 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 2.36 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.1 | 1.0 onaylı; beş dosya sabitlendi (G-47). 1.1: TC-S11 (dışa aktarılan betik), onaylandı (KK-53, G-76) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.7 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68); v0.7: Tablo 8.1 ve 10.1 (KK-56, KK-57, KK-59; G-94), onay P6 kapanışında |
@@ -2466,6 +2491,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | FSR-TN-PLT-06 · P6 tasarımı, kabul ölçütleri ve sonuçları (devralınan modellerin arayüzü, platform validasyonu, yayın hazırlığı) | 0.2 | v0.1 yetki devriyle (KK-60), F-1…F-12 donduruldu (G-94); v0.2: resmî kabul 78/78 GEÇTİ (G-95); onaylandı, P6 kapandı (KK-62, G-97) |
 | FSR-TN-PLT-07 · Yardım sistemi: tasarım ve kabul ölçütleri | 0.2 | KK-63 yetkisiyle; Y-1…Y-12 donduruldu; kuru koşu 48/48 (G-98); resmî kabul 48/48 (G-99); v0.2: altı not (KK-64), kuru 51/51 (G-100), resmî 51/51 (G-102); onaylandı (KK-65, G-109); içerik incelemesi bekliyor |
 | FSR-TN-PLT-09 · Yardım içeriği kararları (KK-66): tasarım ve kabul ölçütleri | 0.2 | v0.1 onaylandı, G-1 … G-9 donduruldu (KK-67, G-115); v0.2: resmî kabul P6 80/80, EMA 44/44, yardım 51/51 (G-116); onaylandı (KK-68, G-117) |
+| FSR-TN-PLT-12 · Dissolüsyon verisi için geniş biçim: tasarım ve kabul ölçütleri | 0.1 | W-0 … W-12 koddan önce donduruldu (KK-78, G-139); uygulama ve kuru koşular P6 101/101, P7 87/87, P8 45/45; resmî kabul bekliyor |
 | FSR-TN-PLT-11 · Analiz raporlarında veri bölümü: tasarım ve kabul ölçütleri | 0.2 | v0.1: tasarım, D-1 … D-9 donduruldu (KK-75, G-134); v0.2: resmî kabul P6 91/91, P8 45/45 (G-136), onaylandı (KK-76, G-137) |
 | FSR-TN-PLT-10 · Meraklısı için basit anlatımlar: tasarım ve kabul ölçütleri | 0.2 | v0.1: tasarım, B-1 … B-7 donduruldu (KK-72, G-124); altı sayfa onaylandı; v0.2: resmî kabul 89/89 (G-132), onaylandı (KK-74, G-133) |
 | FSR-TN-PLT-08 · EMA %90 GA analizi: tasarım ve kabul ölçütleri | 0.4 | E-1…E-10 koddan önce donduruldu (KK-64, G-100); kuru koşu 44/44; v0.2: resmî kabul 44/44 (G-102); v0.3: kaynak eşlemesi ve SAS kontrolleri (G-106); v0.4: literatür eşlemesi (G-108); onaylandı (KK-65, G-109) |
@@ -2553,3 +2579,5 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | KK-74 | FSR-TN-PLT-10 v0.2 ve FSR-VAL-PLT-1 1.6 onaylandı; basit anlatımlar işi kapandı | G-133 |
 | KK-75 | Analiz raporlarına “9. Analiz edilen veri”: kaynak, SHA-256, yapı her zaman; veri tablosu “Veriyi rapora ekle” kutusuyla (varsayılan boş); FSR-TN-PLT-11 D-1 … D-9 donduruldu | G-134 |
 | KK-76 | FSR-TN-PLT-11 v0.2 ve FSR-VAL-PLT-1 1.7 onaylandı; analiz edilen veri işi kapandı | G-137 |
+| KK-77 | Türkçe Excel şablonları kaldırıldı; panelde tek “Şablon (CSV)”; Y-5 yalnız uluslararası şablon | G-138 |
+| KK-78 | Dissolüsyon verisi için geniş biçim (DDSolver düzeni): tek dosya, `<ürün>.<ünite>` sütunları; yalnız dissolüsyon, PBE değişmez; W-0 … W-12 donduruldu | G-139 |

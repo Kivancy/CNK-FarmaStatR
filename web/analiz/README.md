@@ -27,7 +27,7 @@ httpuv::runStaticServer(".", port = 8000)
 - **Veri:** örnek veri ya da CSV dosyası. Ayraç `;`, `,` ya da sekme; ondalık virgül olabilir.
   - PBE sütunları: `parti, kap, asama, urun, olcum` (ya da `batch, container, stage, product, score`).
     Aynı veriyle “Yöntem: EMA %90 GA” seçilebilir (yalnız dengeli tasarım; üç hesaplama yolu, karar (b) yolu).
-  - Dissolüsyon sütunları: `Product, Unit, Time, Diss` (ya da `urun, tablet, zaman, cozunen`).
+  - Dissolüsyon: geniş biçim (KK-78, FSR-TN-PLT-12): ilk sütun `Time`, diğer sütunlar `<ürün>.<ünite>` (`Test.1`, `Ref.1`, …), her satır bir zaman noktası; DDSolver'ın ikinci başlık satırı atlanır. Uzun biçim de okunur: `Product, Unit, Time, Diss` (ya da `urun, tablet, zaman, cozunen`).
     Referans lotları ayrı ürün adlarıyla verilir (L2a/L2b, B-L2a/B-L2b için).
 - **Gizlilik:** dosya tarayıcıda okunur; hiçbir yere gönderilmez.
 - **Çıktı:** Word raporu (.docx) ve koşu kaydı (JSON). Rapor ekrandakiyle aynı metinleri taşır.
