@@ -7,6 +7,9 @@
 \alias{platform_dis_veri}
 \alias{platform_dis_kopru}
 \alias{platform_dis}
+\alias{platform_dis_grafik}
+\alias{platform_dis_degiskenlik}
+\alias{platform_f2_disa}
 \title{Analysis of one's own data with the inherited validated models (analysis screen)}
 \description{
 Reader and caller behind the analysis screen \code{web/analiz/} (FSR-TN-PLT-06 v0.1;
@@ -53,6 +56,9 @@ platform_dis_kopru(path = system.file("kopru", "dis_kopru.R", package = "CNKfarm
                    parent = environment(calc_msd))
 platform_dis(kopru, veri, test, ref, lotlar = character(0), birim = "dakika",
              yontem = c("f2", "msd", "weibull"), ayar = list())
+platform_dis_grafik(kopru, r)
+platform_dis_degiskenlik(r)
+platform_f2_disa(kopru, indeks = FALSE, kunye = list())
 }
 \arguments{
   \item{metin}{CSV file content as one character string.}
@@ -72,6 +78,9 @@ platform_dis(kopru, veri, test, ref, lotlar = character(0), birim = "dakika",
   \item{ayar}{named list of settings: f2 \code{perspektif, tahminci, kesme, kmod,
     cvkural, gatipi, B, seed, qtip}; MSD \code{sinir, Dg, kesme}; Weibull
     \code{param, bolge, Dg, k, bolen}.}
+  \item{r}{result of \code{platform_dis}.}
+  \item{indeks}{logical; add the units drawn in every bootstrap replicate and a SAS program.}
+  \item{kunye}{named list of values written to the header of the CSV and the SAS program.}
 }
 \value{
 \code{platform_csv}: a data frame of character columns (attribute \code{ayrac}).
@@ -80,6 +89,13 @@ labels (\code{urunler}). \code{platform_pbe}, \code{platform_dis}: lists with th
 bridge's own results \code{hazir} (design, summaries, warnings) and \code{sonuc}.
 \code{platform_ema}: \code{hazir} and \code{sonuc} (per path: \code{yol, gmr, alt, ust,
 se, sd, gecti}; \code{karar} = path (b); \code{uyum}: the three paths agree).
+\code{platform_dis_grafik}: data of the charts (FSR-TN-PLT-14; decision KK-80): means, SDs and
+the time points used; for f2 the histogram of the bootstrap replicates (\code{pretty} breaks)
+with the interval; for Weibull the fitted curves. \code{platform_dis_degiskenlik}: CV of test
+and reference and their ratio at every time point (EMA 2010 Annex I; shown, not judged).
+\code{platform_f2_disa}: the replicates of the last f2 analysis as CSV text (\code{csv}), with
+\code{indeks = TRUE} also the drawn units and a SAS/IML program (\code{sas}) that recomputes
+every replicate and the percentile interval from them.
 }
 \seealso{\code{\link{kp_hazirla}}, \code{\link{calc_pbe}}, \code{\link{calc_f2_boot}},
   \code{\link{calc_msd}}, \code{\link{calc_msd_weibull}}}

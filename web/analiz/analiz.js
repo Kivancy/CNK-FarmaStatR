@@ -8,11 +8,15 @@
 // with the validated simulation engine (invitro_array, ema_ci_fast; FSR-VAL-SIM-1).
 // FSR-TN-PLT-11 v0.1 (KK-75): Section 9 'Analysed data' in the analysis reports: source, structure,
 // SHA-256 of the uploaded file and, if the user ticks it, the data table as used in the analysis.
+// FSR-TN-PLT-14 (KK-80; request 11052026-a): charts on the screen and in the report (grafik.js; data
+// from R), the variability table of test and reference, and the optional bootstrap replicate files
+// (CSV; with the drawn units also a SAS program).
 // Research and education only; not a system validated for GxP environments.
 
 import { WEBR_VERSION, TAMPER, verifyFiles, startWebR, fetchBytes, sha256 } from '../p1/motor.js';
 import { num, numExact } from '../app/bicim.js';
-import { buildReport, TABLE, H2, P, download, stamp } from '../app/rapor.js';
+import { buildReport, TABLE, H2, P, IMG, download, stamp } from '../app/rapor.js';
+import { drawProfile, drawHist, onScreen, pngBytes, LIGHT } from './grafik.js';
 
 const Q = new URLSearchParams(location.search);
 // inherited validated cores (pinned in CEKIRDEK_SHA256.txt) and the platform reader
@@ -52,7 +56,12 @@ const R_AN = `
   r <- platform_dis(.an$kp, .an$dis, test, ref, lotlar, birim, yontem, ayar)
   s <- r$sonuc; s$boot <- NULL; s$tt <- NULL; s$egR <- NULL; s$egT <- NULL
   h <- r$hazir; h$tekT <- NULL; h$tekR <- NULL
-  list(ok = TRUE, hazir = .an_null(h), sonuc = .an_null(s)) }, error = .an_hata)`;
+  list(ok = TRUE, hazir = .an_null(h), sonuc = .an_null(s), grafik = .an_null(platform_dis_grafik(.an$kp, r)),
+       degiskenlik = .an_null(platform_dis_degiskenlik(r))) }, error = .an_hata)
+.an_boot <- function(indeks, kunye_k, kunye_v) tryCatch({      # FSR-TN-PLT-14 (KK-80)
+  k <- strsplit(kunye_k, "\n", fixed = TRUE)[[1]]; v <- strsplit(kunye_v, "\n", fixed = TRUE)[[1]]
+  x <- platform_f2_disa(.an$kp, isTRUE(indeks), as.list(stats::setNames(v, k)))
+  list(ok = TRUE, csv = x$csv, sas = if (is.null(x$sas)) "" else x$sas) }, error = .an_hata)`;
 
 const $ = (s) => document.querySelector(s);
 // webR object -> plain JS (named lists -> objects, unnamed lists -> arrays, length-1 vectors -> scalars)
@@ -121,8 +130,8 @@ function warnList(sel, list) {
   const b = $(sel); b.innerHTML = '';
   for (const w of list) { const p = document.createElement('p'); p.className = 'warn'; p.textContent = w; b.append(p); }
 }
-function fillSelect(sel, items, want) {
-  const s = $(sel), keep = s.value; s.innerHTML = '';
+function fillSelect(sel, items, want, keepPrev = true) {
+  const s = $(sel), keep = keepPrev ? s.value : null; s.innerHTML = '';
   for (const u of items) { const o = document.createElement('option'); o.value = u; o.textContent = u; s.append(o); }
   s.value = items.includes(keep) ? keep : (items.includes(want) ? want : items[0] || '');
 }
@@ -291,8 +300,10 @@ async function loadDis() {
   const dt = k === 'noce2020' ? 'Urun1' : ad(/^test$/i, u[0]);
   // Noce 2020: products 1 and 2 are tests, product 3 the reference (Section 2.1; KK-79, FSR-TN-PLT-13)
   const dr = k === 'noce2020' ? 'Urun3' :ad(/^(ref|reference|referans)$/i, u.find((x) => x !== dt) || u[0]);
-  fillSelect('#dis_form [name=test]', u, dt);
-  fillSelect('#dis_form [name=ref]', u, dr);
+  // an example data set always opens with its own defaults (N-1: Noce reference Urun3), even if the
+  // previous file had products of the same names (found in the FSR-TN-PLT-14 dry run, G-142)
+  fillSelect('#dis_form [name=test]', u, dt, k === 'dosya');
+  fillSelect('#dis_form [name=ref]', u, dr, k === 'dosya');
   disData.src = src; disData.kaynak = k; disData.urunler = u; disData.n = r.n;
   lotBoxes(k === 'tsong1996' ? ['STD1', 'STD2'] : []);
   $('#dis_data_info').textContent = `${src} · ${fmtInt(r.n)} ${t('an_rows')} · ${t('an_products')}: ${u.join(', ')}` + (disData.sha256 ? ` · SHA-256 ${disData.sha256}` : '');
@@ -319,7 +330,7 @@ function disForm() {
   return { test: f.test.value, ref: f.ref.value, birim: f.birim.value, yontem: y,
            lotlar: [...f.querySelectorAll('input[name=lot]:checked')].map((i) => i.value), ayar };
 }
-function clearDis() { st.dis = null; $('#dis_result').hidden = true; reportState('dis'); }
+function clearDis() { st.dis = null; $('#dis_result').hidden = true; reportState('dis'); bootState(); }
 async function runDis(ev) {
   ev.preventDefault();
   const c = disForm(); showErrors('dis', null); $('#dis_run').disabled = true; setStatus('dis', 'st_running');
@@ -330,7 +341,7 @@ async function runDis(ev) {
   $('#dis_run').disabled = false;
   if (!r.ok) { setStatus('dis', 'an_st_error', 'bad'); showErrors('dis', [t('an_calc_error'), r.message]); clearDis(); return; }
   const tablo = await dataTable('dis', [c.test, c.ref, ...c.lotlar]);
-  st.dis = { form: c, key: JSON.stringify(c), data: { ...disData }, hazir: r.hazir, sonuc: r.sonuc, ms: performance.now() - t0,
+  st.dis = { form: c, key: JSON.stringify(c), data: { ...disData }, hazir: r.hazir, sonuc: r.sonuc, grafik: r.grafik, degiskenlik: r.degiskenlik, ms: performance.now() - t0,
              started: new Date().toISOString(), r_version: rInfo.r_version, files: fileRows(), tablo };
   renderDis(); setStatus('dis', 'an_st_done', 'ok');
 }
@@ -341,6 +352,9 @@ function dview(D) {
   const zt = arr(h.zaman);
   tables.push({ title: t('an_profiles'), head: [`${t('an_time')} (${u})`, `${t('an_mean')} T`, 'SD T', 'CV T (%)', `${t('an_mean')} R`, 'SD R', 'CV R (%)'],
     rows: zt.map((z, i) => [N(z, 0), N(arr(h.ortT)[i], 2), N(arr(h.sdT)[i], 2), N(arr(h.cvT)[i], 1), N(arr(h.ortR)[i], 2), N(arr(h.sdR)[i], 2), N(arr(h.cvR)[i], 1)]) });
+  const dv = D.degiskenlik;   // variability of test and reference (EMA 2010 Annex I; shown, not judged; FSR-TN-PLT-14 DV-1)
+  if (dv) tables.push({ title: t('an_var_table'), head: [`${t('an_time')} (${u})`, 'CV T (%)', 'CV R (%)', 'CV T / CV R'],
+    rows: arr(dv.zaman).map((z, i) => [N(z, 0), N(arr(dv.cvT)[i], 1), N(arr(dv.cvR)[i], 1), N(arr(dv.oran)[i], 2)]), note: t('an_var_note') });
   main.push([t('an_products_tr'), `${D.form.test} / ${D.form.ref} (n = ${h.nT} / ${h.nR})`]);
   if (arr(h.lotlar).length) main.push([t('an_lots'), arr(h.lotlar).join(', ')]);
   if (y === 'f2') {
@@ -375,37 +389,46 @@ function dview(D) {
   return { verdict, yes, main, tables, warnings: [...arr(s.notlar), ...arr(s.regulatif)],
            source: `${t('an_src_live')} · webR ${WEBR_VERSION} · ${D.r_version} · ${D.data.src}` };
 }
-function profileChart(host, h) {
-  host.innerHTML = '';
-  const z = arr(h.zaman), a = arr(h.ortT), b = arr(h.ortR); if (!z.length) return;
-  const NS = 'http://www.w3.org/2000/svg', W = 520, H = 220, L = 40, R = 12, Tp = 12, B = 30;
-  const xmax = Math.max(...z), x = (v) => L + (W - L - R) * v / xmax, y = (v) => Tp + (H - Tp - B) * (1 - v / 100);
-  const el = (n, at, tx) => { const e = document.createElementNS(NS, n); for (const [k, v] of Object.entries(at)) e.setAttribute(k, v); if (tx !== undefined) e.textContent = tx; return e; };
-  const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, class: 'chart', role: 'img', 'aria-label': t('an_chart') });
-  for (const g of [0, 25, 50, 75, 100]) { svg.append(el('line', { x1: L, x2: W - R, y1: y(g), y2: y(g), class: 'grid' })); svg.append(el('text', { x: L - 4, y: y(g) + 4, 'text-anchor': 'end', class: 'tick' }, String(g))); }
-  for (const v of z) svg.append(el('text', { x: x(v), y: H - B + 14, 'text-anchor': 'middle', class: 'tick' }, N(v, 0)));
-  for (const [s, c] of [[a, 's-t'], [b, 's-r']]) {
-    svg.append(el('polyline', { points: z.map((v, i) => `${x(v)},${y(s[i])}`).join(' '), fill: 'none', class: c, 'stroke-width': 2 }));
-    s.forEach((v, i) => svg.append(el('circle', { cx: x(z[i]), cy: y(v), r: 3, class: c, fill: 'none', 'stroke-width': 2, 'data-value': String(v) })));
+// charts (FSR-TN-PLT-14): the same drawing functions for the screen and the report (GR-5)
+function chartLabels() {
+  const u = st.dis && st.dis.form.birim === 'saat' ? t('an_hour_s') : t('an_min_s');
+  return { x: `${t('an_time')} (${u})`, y: t('an_ch_y'), unused: t('an_ch_unused'), bars: t('an_ch_bars'), ci: t('an_ch_ci'),
+           est: t('an_ch_est'), lo: t('an_ch_lo'), hi: t('an_ch_hi'), hx: t('an_ch_hx'), hy: t('an_ch_hy') };
+}
+function chartList(D) {
+  const g = D.grafik; if (!g) return [];
+  const L = chartLabels(), out = [];
+  const pg = { ...g, zaman: arr(g.zaman), ortT: arr(g.ortT), sdT: arr(g.sdT), ortR: arr(g.ortR), sdR: arr(g.sdR), kullanilan: arr(g.kullanilan),
+               egri: g.egri ? { tt: arr(g.egri.tt), egT: arr(g.egri.egT), egR: arr(g.egri.egR) } : null };
+  out.push({ title: t(g.egri ? 'an_ch_weibull' : 'an_ch_profile'), draw: (C) => (ctx, W, H) => drawProfile(ctx, W, H, pg, L, C) });
+  if (g.hist) {
+    const hh = { ...g.hist, kirilim: arr(g.hist.kirilim), sayi: arr(g.hist.sayi) };
+    out.push({ title: t('an_ch_hist').replace('{e}', hh.tahminci === 'Ef2' ? 'E(f2)' : hh.tahminci === 'bcf2' ? 'bc-f2' : 'f2'),
+               draw: (C) => (ctx, W, H) => drawHist(ctx, W, H, hh, { ...L, x: L.hx, y: L.hy }, C) });
   }
-  [['s-t', `T (${st.dis.form.test})`], ['s-r', `R (${st.dis.form.ref})`]].forEach(([c, lab], i) => {
-    const lx = L + 12 + i * 150, ly = H - B - 14;
-    svg.append(el('line', { x1: lx, x2: lx + 18, y1: ly, y2: ly, class: c, 'stroke-width': 2 }));
-    svg.append(el('text', { x: lx + 24, y: ly + 4, class: 'legend' }, lab));
-  });
-  svg.append(el('text', { x: 4, y: Tp + 4, class: 'tick' }, '%'));
-  host.append(svg);
+  return out;
+}
+function screenColours() {
+  const cs = getComputedStyle(document.documentElement), v = (n, d) => (cs.getPropertyValue(n) || '').trim() || d;
+  return { ...LIGHT, fg: v('--fg', LIGHT.fg), muted: v('--muted', LIGHT.muted), grid: v('--line', LIGHT.grid), bg: v('--card', LIGHT.bg), T: v('--c-fda', LIGHT.T), R: v('--c-a', LIGHT.R) };
+}
+function drawCharts(host, D) {
+  host.innerHTML = '';
+  const C = screenColours();
+  for (const c of chartList(D)) { const h = document.createElement('h3'); h.textContent = c.title; host.append(h); onScreen(host, c.draw(C)); }
 }
 function renderDis() {
   const D = st.dis, V = dview(D);
   $('#dis_verdict').textContent = V.verdict; $('#dis_verdict').className = 'verdict ' + (V.yes ? 'yes' : 'no');
-  fillTable('#dis_main', V.main); warnList('#dis_warn', V.warnings); profileChart($('#dis_chart'), D.hazir);
+  fillTable('#dis_main', V.main); warnList('#dis_warn', V.warnings); drawCharts($('#dis_chart'), D);
   const host = $('#dis_tables'); host.innerHTML = '';
   for (const tb of V.tables) {
     const h = document.createElement('h2'); h.textContent = tb.title; host.append(h);
     const w = document.createElement('div'); w.className = 'tablewrap'; const tab = document.createElement('table'); tab.innerHTML = '<thead></thead><tbody></tbody>';
     tab.id = 'dt_' + host.children.length; w.append(tab); host.append(w); fillTable('#' + tab.id, tb.rows, tb.head);
+    if (tb.note) { const p = document.createElement('p'); p.className = 'hint'; p.textContent = tb.note; host.append(p); }
   }
+  bootState();
   $('#dis_result').hidden = false; reportState('dis');
 }
 
@@ -446,7 +469,12 @@ function reportDis() {
     [t('an_method'), t('an_m_' + (f.yontem === 'weibull' ? 'wb' : f.yontem))], ...Object.entries(f.ayar).map(([k, v]) => [k, v === null ? '—' : decTxt(typeof v === 'number' ? numExact(v) : v)])];
   R.source = V.source;
   R.result = [P(V.verdict, { b: true }), TABLE([[t('rp_field'), t('rp_value')], ...V.main])];
-  for (const tb of V.tables) R.result.push(H2(tb.title), TABLE([tb.head, ...tb.rows], tb.head.map((_, i) => i).filter((i) => i > 0), true));
+  for (const tb of V.tables) { R.result.push(H2(tb.title), TABLE([tb.head, ...tb.rows], tb.head.map((_, i) => i).filter((i) => i > 0), true)); if (tb.note) R.result.push(P(tb.note, { sz: 17 })); }
+  // charts as PNG pictures, drawn with the screen's functions in light colours (GR-1 ... GR-6)
+  R.images = [];
+  const charts = chartList(D);
+  if (charts.length) R.result.push(H2(t('an_charts')));
+  for (const c of charts) { const im = pngBytes(c.draw(LIGHT)); R.images.push(im); R.result.push(P(c.title, { b: true, keep: true }), IMG(R.images.length, im.w, im.h, c.title)); }
   R.warnings = V.warnings;
   R.veri = dataSection('dis', D, withData('dis'));
   return R;
@@ -461,6 +489,34 @@ function makeReport(kind) {
 }
 st.makeReport = makeReport;
 st.view = (kind) => (kind === 'pbe' ? (isEma(st.pbe) ? eview(st.pbe) : pview(st.pbe)) : dview(st.dis));
+// optional bootstrap replicate files of an f2 analysis (FSR-TN-PLT-14 BS-1 ... BS-8): made in R from the
+// bridge's own copy of the result; the browser only saves the text (no request)
+function bootState() {
+  const f2 = !!st.dis && st.dis.form.yontem === 'f2', a = $('#dis_boot_csv'), b = $('#dis_boot_idx');
+  $('#dis_boot_wrap').hidden = !f2; b.disabled = !a.checked; if (!a.checked) b.checked = false;
+}
+async function makeBoot(indeks) {
+  const D = st.dis; if (!D || D.form.yontem !== 'f2') return null;
+  const base = `farmastatr_bootstrap_${stamp()}`;
+  const kunye = { platform: 'CNK-FarmaStatR', package: pkgVersion, webR: WEBR_VERSION, R: D.r_version, data: D.data.src,
+    data_sha256: D.data.sha256 || 'example data, no fingerprint', analysis_started: D.started, csv: base + '.csv' };
+  const r = await callR('.an_boot(indeks, kunye_k, kunye_v)', { indeks: !!indeks, kunye_k: Object.keys(kunye).join('\n'), kunye_v: Object.values(kunye).map(String).join('\n') });
+  if (!r.ok) { showErrors('dis', [t('an_calc_error'), r.message]); return null; }
+  return { csv: r.csv, sas: r.sas || null, csvName: base + '.csv', sasName: base + '.sas' };
+}
+st.makeBoot = makeBoot;
+function saveText(text, name, type) {
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type })); a.download = name; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+async function reportAndBoot() {
+  const r = makeReport('dis'); if (!r) return;
+  download(r.bytes, r.name);
+  if (st.dis.form.yontem === 'f2' && $('#dis_boot_csv').checked) {
+    const b = await makeBoot($('#dis_boot_idx').checked); if (!b) return;
+    saveText(b.csv, b.csvName, 'text/csv'); if (b.sas) saveText(b.sas, b.sasName, 'text/plain');
+  }
+}
 function formKey(kind) { return kind === 'pbe' ? JSON.stringify(pbeForm()) : JSON.stringify(disForm()); }
 function reportState(kind) {
   const ok = !!st[kind] && st[kind].key === formKey(kind) && !$(`#${kind}_run`).disabled;
@@ -531,7 +587,8 @@ $('#dis_form [name=yontem]').addEventListener('change', methodVis);
 $('#dis_form').addEventListener('submit', runDis);
 $('#dis_form').addEventListener('input', () => setTimeout(() => reportState('dis'), 0));
 $('#pbe_report').addEventListener('click', () => { const r = makeReport('pbe'); if (r) download(r.bytes, r.name); });
-$('#dis_report').addEventListener('click', () => { const r = makeReport('dis'); if (r) download(r.bytes, r.name); });
+$('#dis_report').addEventListener('click', () => { reportAndBoot(); });
+$('#dis_boot_csv').addEventListener('change', bootState);
 $('#pbe_json').addEventListener('click', () => downloadJson('pbe'));
 $('#dis_json').addEventListener('click', () => downloadJson('dis'));
 boot().catch((err) => { for (const s of ['pbe', 'dis']) { setStatus(s, 'st_error', 'bad'); showErrors(s, [String(err && err.message || err)]); } });

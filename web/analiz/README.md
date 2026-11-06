@@ -28,6 +28,7 @@ httpuv::runStaticServer(".", port = 8000)
   - PBE sütunları: `parti, kap, asama, urun, olcum` (ya da `batch, container, stage, product, score`).
     Aynı veriyle “Yöntem: EMA %90 GA” seçilebilir (yalnız dengeli tasarım; üç hesaplama yolu, karar (b) yolu).
   - Dissolüsyon: geniş biçim (KK-78, FSR-TN-PLT-12): ilk sütun `Time`, diğer sütunlar `<ürün>.<ünite>` (`Test.1`, `Ref.1`, …), her satır bir zaman noktası; DDSolver'ın ikinci başlık satırı atlanır. Uzun biçim de okunur: `Product, Unit, Time, Diss` (ya da `urun, tablet, zaman, cozunen`).
+  - Grafikler, değişkenlik tablosu ve bootstrap dosyaları (KK-80, FSR-TN-PLT-14): `grafik.js` ekran ve rapor için aynı çizim fonksiyonları (veri R'den: `platform_dis_grafik`); f2'de isteğe bağlı bootstrap CSV'si ve indeksli düzeyde SAS programı (`platform_f2_disa`).
     Referans lotları ayrı ürün adlarıyla verilir (L2a/L2b, B-L2a/B-L2b için).
 - **Gizlilik:** dosya tarayıcıda okunur; hiçbir yere gönderilmez.
 - **Çıktı:** Word raporu (.docx) ve koşu kaydı (JSON). Rapor ekrandakiyle aynı metinleri taşır.

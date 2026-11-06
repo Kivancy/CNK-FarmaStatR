@@ -191,3 +191,172 @@ platform_dis <- function(kopru, veri, test, ref, lotlar = character(0), birim = 
     weibull = kopru$kp_wb(g("param", "lnTd_lnB"), g("bolge", "B-L3"), g("Dg", 10), g("k", 3), g("bolen", "N")))
   list(hazir = hz, sonuc = r, yontem = yontem, test = test, ref = ref, lotlar = lotlar, birim = birim, ayar = ayar)
 }
+
+# -----------------------------------------------------------------------------
+# FSR-TN-PLT-14 (KK-80; request 11052026-a): data of the charts, the variability
+#   table and the bootstrap replicate files of the last dissolution analysis.
+#   Nothing new is estimated here: the values are taken from the bridge result
+#   (hazir, sonuc) and from the bridge's own copy of the f2 result (kopru$.kp$f2);
+#   the histogram counts and the CV ratio are the only arithmetic.
+# -----------------------------------------------------------------------------
+# r: result of platform_dis(); returns lists that the screen and the report draw
+platform_dis_grafik <- function(kopru, r) {
+  h <- r$hazir; s <- r$sonuc; d <- kopru$.kp$d
+  kul <- switch(r$yontem,
+    f2 = d$zaman_dk %in% as.numeric(s$zamanlar),
+    msd = d$zaman %in% as.numeric(s$zamanlar),
+    weibull = rep(TRUE, length(d$zaman)))
+  out <- list(yontem = r$yontem, zaman = h$zaman, ortT = h$ortT, sdT = h$sdT, ortR = h$ortR, sdR = h$sdR,
+              kullanilan = kul, test = r$test, ref = r$ref)
+  if (r$yontem == "f2") {
+    f <- kopru$.kp$f2
+    v <- f$replikalar[, f$tahminci]; v <- v[is.finite(v)]
+    br <- pretty(range(v), n = 30)
+    # counts as graphics::hist (right-closed, lowest included), with base R only
+    out$hist <- list(kirilim = br, sayi = tabulate(cut(v, br, include.lowest = TRUE, right = TRUE, labels = FALSE), nbins = length(br) - 1L),
+                     tahminci = f$tahminci, nokta = unname(f$nokta[f$tahminci]),
+                     alt = unname(f$karar_ga["alt"]), ust = unname(f$karar_ga["ust"]), B_gecerli = length(v))
+  }
+  if (r$yontem == "weibull") out$egri <- list(tt = s$tt, egT = s$egT, egR = s$egR)
+  out
+}
+# variability of test and reference at every time point (EMA 2010 Annex I; shown, not judged)
+platform_dis_degiskenlik <- function(r) {
+  h <- r$hazir
+  list(zaman = h$zaman, cvT = h$cvT, cvR = h$cvR, oran = h$cvT / h$cvR)
+}
+# bootstrap replicates of the last f2 analysis as CSV text; with indeks = TRUE also the
+# drawn units and a SAS program that recomputes every replicate from them.
+#   kunye: named character values added to the header (package version, data SHA-256, ...)
+platform_f2_disa <- function(kopru, indeks = FALSE, kunye = list()) {
+  f <- kopru$.kp$f2
+  if (is.null(f)) stop("No f2 analysis has been run.")
+  d <- kopru$.kp$d; k <- f$kontrol
+  XT <- if (f$kesme_modu == "replika") k$XT_tum else k$XT
+  XR <- if (f$kesme_modu == "replika") k$XR_tum else k$XR
+  zm <- if (f$kesme_modu == "replika") k$zaman_tum else k$zamanlar
+  g17 <- function(x) ifelse(is.na(x), "", sprintf("%.17g", x))
+  ga <- f$GA[f$tahminci, c("alt", "ust")]
+  bas <- c(
+    "# CNK-FarmaStatR - bootstrap f2 replicates (FSR-TN-PLT-14, KK-80)",
+    "# Research and education only; not a system validated for GxP environments.",
+    sprintf("# %s: %s", names(kunye), unlist(kunye)),
+    sprintf("# test: %s; reference: %s; n_T = %d; n_R = %d", d$test_ad, d$ref_ad, nrow(XT), nrow(XR)),
+    sprintf("# time points of the bootstrap (minutes): %s", paste(zm, collapse = " ")),
+    sprintf("# B = %d; seed = %s; RNG = %s", f$B, format(f$seed, scientific = FALSE), f$rng),
+    sprintf("# estimator = %s; truncation = %s; truncation mode = %s; interval = %s; quantile type = %d; level = %s",
+            f$tahminci, k$truncation, f$kesme_modu, f$ga_tipi, f$q_type, format(f$conf)),
+    sprintf("# point estimates: f2 = %s; Ef2 = %s; bcf2 = %s", g17(f$nokta["f2"]), g17(f$nokta["Ef2"]), g17(f$nokta["bcf2"])),
+    sprintf("# decision interval (%s): lower = %s; upper = %s", f$ga_tipi, g17(f$karar_ga["alt"]), g17(f$karar_ga["ust"])),
+    sprintf("# percentile interval of %s: lower = %s; upper = %s", f$tahminci, g17(ga["alt"]), g17(ga["ust"])),
+    "# columns: rep, f2, Ef2, bcf2 (empty: undefined), P (time points after truncation in the replicate)")
+  rp <- f$replikalar
+  cols <- c("rep", "f2", "Ef2", "bcf2", "P")
+  body <- cbind(seq_len(nrow(rp)), g17(rp[, "f2"]), g17(rp[, "Ef2"]), g17(rp[, "bcf2"]), as.integer(rp[, "P"]))
+  if (isTRUE(indeks)) {
+    bas <- c(bas,
+      "# T1 ... and R1 ...: row numbers of the units drawn in the replicate (1-based):",
+      sprintf("#   test units: %s", paste(sprintf("%d=%s", seq_len(nrow(XT)), rownames(XT)), collapse = "; ")),
+      sprintf("#   reference units: %s", paste(sprintf("%d=%s", seq_len(nrow(XR)), rownames(XR)), collapse = "; ")))
+    cols <- c(cols, paste0("T", seq_len(ncol(f$idx$T))), paste0("R", seq_len(ncol(f$idx$R))))
+    body <- cbind(body, f$idx$T, f$idx$R)
+  }
+  csv <- paste(c(bas, paste(cols, collapse = ","), apply(body, 1, paste, collapse = ",")), collapse = "\n")
+  list(csv = paste0(csv, "\n"), sas = if (isTRUE(indeks)) .f2_sas(f, XT, XR, zm, ga, kunye) else NULL)
+}
+.f2_sas <- function(f, XT, XR, zm, ga, kunye) {
+  g15 <- function(x) sprintf("%.15g", x)
+  g17 <- function(x) sprintf("%.17g", x)
+  satir <- function(M) apply(M, 1, function(r) paste(g15(r), collapse = " "))
+  qt <- f$q_type
+  ab <- switch(as.character(qt), "4" = c(0, 1), "5" = c(0.5, 0.5), "6" = c(0, 0), "7" = c(1, 1),
+               "8" = c(1/3, 1/3), "9" = c(3/8, 3/8), c(NA, NA))
+  paste0(paste(c(
+"/* ===========================================================================",
+"   CNK-FarmaStatR - bootstrap f2 cross-check in SAS (FSR-TN-PLT-14, KK-80)",
+"   Research and education only; not a system validated for GxP environments.",
+sprintf("   %s: %s", names(kunye), unlist(kunye)),
+"   Recomputes every bootstrap replicate from the units drawn by the platform",
+"   (the companion CSV with the T1... and R1... columns), using the analysis data",
+"   below, and compares f2, Ef2, bc-f2, P and the percentile interval with the",
+"   platform. R and SAS random number generators differ; with the drawn units",
+"   the agreement must be exact up to floating point (criterion BS-7).",
+"   Usage (e.g. SAS OnDemand): upload this program and the CSV to the same folder,",
+"   set CSV below to the full path of the CSV, run. Requires SAS/IML.",
+"   =========================================================================== */",
+sprintf("%%let csv = %s;   /* full path, e.g. /home/u12345/<file>.csv */", if (!is.null(kunye$csv)) kunye$csv else "boot.csv"),
+sprintf("%%let nT = %d; %%let nR = %d; %%let nP = %d; %%let B = %d;", nrow(XT), nrow(XR), ncol(XT), f$B),
+sprintf("%%let rule = %s;     /* EMA, FDA or none */", f$kontrol$truncation),
+sprintf("%%let mode = %s;     /* replika: truncation in every replicate; sabit: fixed time points */", f$kesme_modu),
+sprintf("%%let est = %s;      /* f2, Ef2 or bcf2 */", f$tahminci),
+sprintf("%%let qa = %s; %%let qb = %s;   /* Hyndman-Fan type %d (alpha, beta); . = type not reproduced here */", if (is.na(ab[1])) "." else g17(ab[1]), if (is.na(ab[2])) "." else g17(ab[2]), qt),
+sprintf("%%let conf = %s;", g17(f$conf)),
+sprintf("%%let p_lo = %s; %%let p_hi = %s;   /* platform percentile interval of the estimator */", g17(ga["alt"]), g17(ga["ust"])),
+"",
+sprintf("/* analysis data: rows = units, columns = time points (minutes): %s */", paste(zm, collapse = " ")),
+"data test_u; input x1-x&nP; datalines;", satir(XT), ";", "run;",
+"data ref_u; input x1-x&nP; datalines;", satir(XR), ";", "run;",
+"",
+"data boot;",
+"  infile \"&csv\" dsd truncover lrecl=1000000;",
+"  input @1 first $1. @;",
+"  if first in ('#', 'r', ' ') then delete;   /* header, column names, empty lines */",
+"  input @1 rep f2 Ef2 bcf2 P T1-T&nT R1-R&nR;",
+"  drop first;",
+"run;",
+"",
+"proc iml;",
+"  use test_u; read all var _num_ into XT; close test_u;",
+"  use ref_u;  read all var _num_ into XR; close ref_u;",
+"  vT = \"T1\":\"T&nT\"; vR = \"R1\":\"R&nR\";",
+"  use boot; read all var {f2 Ef2 bcf2 P} into V; read all var vT into IT; read all var vR into IR; close boot;",
+"  B = nrow(V); W = j(B, 4, .); cut = 85;",
+"  do b = 1 to B;",
+"    xt = XT[IT[b, ], ]; xr = XR[IR[b, ], ];",
+"    mT = round(xt[:, ], 1e-10); mR = round(xr[:, ], 1e-10);",
+"    np = ncol(XT);",
+"    if \"&mode\" = \"replika\" & \"&rule\" ^= \"none\" then do;",
+"      if \"&rule\" = \"EMA\" then a = loc(mT > cut | mR > cut); else a = loc(mT > cut & mR > cut);",
+"      if ncol(a) > 0 then np = a[1];",
+"    end;",
+"    W[b, 4] = np;",
+"    if np >= 3 then do;",
+"      t = xt[, 1:np]; r = xr[, 1:np];",
+"      D = ssq(t[:, ] - r[:, ]);",
+"      ct = t - repeat(t[:, ], nrow(t), 1); cr = r - repeat(r[:, ], nrow(r), 1);",
+"      Vr = sum(ct[##, ] / (nrow(t) - 1) / nrow(t)) + sum(cr[##, ] / (nrow(r) - 1) / nrow(r));",
+"      W[b, 1] = 100 - 25 * log10(1 + D / np);",
+"      W[b, 2] = 100 - 25 * log10(1 + (D + Vr) / np);",
+"      if D > Vr then W[b, 3] = 100 - 25 * log10(1 + (D - Vr) / np);",
+"    end;",
+"  end;",
+"  /* largest absolute differences SAS - platform, and differences in undefined values */",
+"  maxd = j(1, 4, 0); nmiss = j(1, 4, 0);",
+"  do k = 1 to 4;",
+"    nmiss[k] = sum((W[, k] = .) ^= (V[, k] = .));",
+"    ok = loc((W[, k] ^= .) & (V[, k] ^= .));",
+"    if ncol(ok) > 0 then maxd[k] = max(abs(W[ok, k] - V[ok, k]));",
+"  end;",
+"  print maxd[colname = {'f2' 'Ef2' 'bcf2' 'P'} label = 'Largest |SAS - platform| over the replicates'];",
+"  print nmiss[colname = {'f2' 'Ef2' 'bcf2' 'P'} label = 'Replicates where only one side is undefined'];",
+"  /* percentile interval of the estimator (Hyndman-Fan continuous types 4-9) */",
+"  col = (\"&est\" = \"f2\") * 1 + (\"&est\" = \"Ef2\") * 2 + (\"&est\" = \"bcf2\") * 3;",
+"  v = W[loc(W[, col] ^= .), col]; call sort(v, 1); n = nrow(v);",
+"  a2 = (1 - &conf) / 2; pr = a2 || (1 - a2); q = j(1, 2, .);",
+"  if &qa ^= . then do i = 1 to 2;",
+"    m = &qa + pr[i] * (1 - &qa - &qb); jj = floor(n * pr[i] + m + 4 * constant('maceps')); g = n * pr[i] + m - jj;",
+"    if abs(g) < 4 * constant('maceps') then g = 0;",
+"    lo = max(1, min(n, jj)); hi = max(1, min(n, jj + 1));",
+"    q[i] = (1 - g) * v[lo] + g * v[hi];",
+"  end;",
+"  plat = &p_lo || &p_hi; dq = abs(q - plat);",
+"  print q[colname = {'lower' 'upper'} label = 'SAS percentile interval'],",
+"        plat[colname = {'lower' 'upper'} label = 'Platform percentile interval'],",
+"        dq[colname = {'lower' 'upper'} label = '|difference|'];",
+"  ok_rep = (max(maxd[1:3]) <= 1e-10) & (maxd[4] = 0) & (sum(nmiss) = 0);",
+"  ok_ci = (max(dq) <= 1e-8);",
+"  result = ifc(ok_rep & ok_ci, 'AGREE: replicates and interval equal the platform (BS-7)',",
+"                               'DIFFERENT: see the tables above');",
+"  print result[label = 'Result'];",
+"quit;"), collapse = "\n"), "\n")
+}

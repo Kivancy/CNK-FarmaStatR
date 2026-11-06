@@ -44,6 +44,7 @@ CNKfarmastatr/tests/testthat/test-platform-analiz.R
 CNKfarmastatr/tests/testthat/test-platform-bicim.R
 CNKfarmastatr/tests/testthat/test-platform-dis-genis.R
 CNKfarmastatr/tests/testthat/test-platform-export.R
+CNKfarmastatr/tests/testthat/test-platform-grafik-boot.R
 CNKfarmastatr/tests/testthat/test-platform-hipotez.R
 CNKfarmastatr/tests/testthat/test-platform-input.R
 CNKfarmastatr/tests/testthat/test-platform-tasarim.R

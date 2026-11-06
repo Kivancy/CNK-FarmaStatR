@@ -8,6 +8,7 @@
 // belgeler/teknik_notlar/FSR-TN-PLT-06_ek/p6_kabul.R. Turkish only (internal tool).
 // FSR-TN-PLT-11 v0.1 (KK-75): rows 'D', 'D-8' for Section 9 'Analysed data' of the analysis reports.
 // FSR-TN-PLT-12 (KK-78): rows 'W' for the wide layout of dissolution data (W-0 ... W-11).
+// FSR-TN-PLT-14 (KK-80): rows 'G' for charts, variability table and bootstrap files (GR, DV, BS).
 // Research and education only; not a system validated for GxP environments.
 
 import { zipStored } from '../app/rapor.js';
@@ -213,6 +214,50 @@ async function main() {
   await wLoad('bos-hucre', 'dis', 'hata_bos_hucre.csv');
   put('W', 'bos-hucre', 'dis', 'calistir_etkin', enabled('#dis_run'));
   log('FSR-TN-PLT-12: geniş biçim (dissolüsyon)');
+
+  // ---- FSR-TN-PLT-14 (KK-80): charts, variability table, bootstrap files; rows 'G' (no 'F' rows)
+  const gEn = (sel) => !Dc().querySelector(sel).disabled;
+  const gCase = async (id, src, y, set, lots, tr) => {
+    st().status.dis = null; await select('dis_form', 'kaynak', src); await waitSt('dis', DATA);
+    put('G', id, 'secim', 'varsayilan', `${Dc().querySelector('#dis_form [name=test]').value}/${Dc().querySelector('#dis_form [name=ref]').value}`);
+    if (tr) { await select('dis_form', 'test', tr[0]); await select('dis_form', 'ref', tr[1]); }
+    put('G', id, 'bs', 'kutu_gorunur_once', !Dc().querySelector('#dis_boot_wrap').hidden);
+    await select('dis_form', 'yontem', y);
+    for (const [k, v] of Object.entries(set)) await select('dis_form', k, v);
+    for (const i of Dc().querySelectorAll('#dis_form input[name=lot]')) i.checked = lots.includes(i.value);
+    const r0 = reqs().length; st().status.dis = null; Dc().querySelector('#dis_run').click(); await waitSt('dis', DONE); await sleep(150);
+    put('G', id, '', 'durum', st().status.dis); put('G', id, '', 'form', JSON.stringify(st().dis.form));
+    put('G', id, '', 'grafik', JSON.stringify(st().dis.grafik)); put('G', id, '', 'degiskenlik', JSON.stringify(st().dis.degiskenlik));
+    put('G', id, '', 'sonuc', JSON.stringify(st().dis.sonuc, (k, v) => (typeof v === 'number' && !Number.isFinite(v) ? String(v) : v)));
+    put('G', id, 'ekran', 'canvas', Dc().querySelectorAll('#dis_chart canvas').length);
+    put('G', id, 'ekran', 'dv_tablo', [...Dc().querySelectorAll('#dis_tables h2')].some((h) => h.textContent === W().__p6.view('dis').tables.find((t) => t.note).title));
+    put('G', id, 'ekran', 'dv_not', Dc().querySelector('#dis_tables p.hint') ? Dc().querySelector('#dis_tables p.hint').textContent : '');
+    put('G', id, 'bs', 'kutu_gorunur', !Dc().querySelector('#dis_boot_wrap').hidden);
+    for (const lg of ['tr', 'en']) {
+      if (Dc().documentElement.lang !== lg) await langSwitch();
+      const q0 = reqs().length, r = st().makeReport('dis'), name = `raporlar/g14_${id}_${lg}.docx`;
+      files.push([name, r.bytes]); put('G', id, lg, 'rapor', name); put('G', id, lg, 'ag_istegi', reqs().length - q0);
+    }
+    if (Dc().documentElement.lang !== 'tr') await langSwitch();
+    put('G', id, '', 'ag_analiz', reqs().slice(r0).filter((u) => !u.startsWith(location.origin)).length);
+  };
+  await gCase('f2', 'noce2020', 'f2', { perspektif: 'EMA', gatipi: 'persentil' }, []);
+  { await sleep(1100); const r = st().makeReport('dis'); files.push(['raporlar/g14_f2_tr_tekrar.docx', r.bytes]); put('G', 'f2', 'tr', 'rapor_tekrar', 'raporlar/g14_f2_tr_tekrar.docx'); }
+  // BS-1 boxes; BS-2 ... BS-8 files
+  put('G', 'bs', '', 'csv_varsayilan', Dc().querySelector('#dis_boot_csv').checked);
+  put('G', 'bs', '', 'idx_etkin_once', gEn('#dis_boot_idx'));
+  { const a = Dc().querySelector('#dis_boot_csv'); a.checked = true; a.dispatchEvent(new Event('change', { bubbles: true })); await sleep(50);
+    put('G', 'bs', '', 'idx_etkin_sonra', gEn('#dis_boot_idx')); put('G', 'bs', '', 'idx_varsayilan', Dc().querySelector('#dis_boot_idx').checked);
+    a.checked = false; a.dispatchEvent(new Event('change', { bubbles: true })); await sleep(50); }
+  for (const [lev, ix] of [['a', false], ['b', true]]) {
+    const q0 = reqs().length, b = await st().makeBoot(ix);
+    files.push([`bootstrap/${lev}.csv`, enc.encode(b.csv)]); put('G', 'bs', lev, 'csv', `bootstrap/${lev}.csv`);
+    if (b.sas) { files.push([`bootstrap/${lev}.sas`, enc.encode(b.sas)]); put('G', 'bs', lev, 'sas', `bootstrap/${lev}.sas`); }
+    put('G', 'bs', lev, 'ag_istegi', reqs().length - q0);
+  }
+  await gCase('msd', 'tsong1996', 'msd', { sinir: 'L2a', kesme: 'none' }, ['STD1', 'STD2'], ['TEST', 'REF']);
+  await gCase('wb', 'tsong1996', 'weibull', { param: 'lnTd_lnB', bolge: 'B-L3' }, [], ['TEST', 'REF']);
+  log('FSR-TN-PLT-14: grafik, değişkenlik, bootstrap dosyaları');
   // W-0 the PBE panel does not read the wide layout (checked below with the PBE tab)
   // D-pbe: test data file P1 (PSG example as a file)
   Dc().querySelector('#tab_pbe').click(); await sleep(200);

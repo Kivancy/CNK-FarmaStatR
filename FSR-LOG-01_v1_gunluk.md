@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 2.38 · Son güncelleme: 05.11.2026"
+subtitle: "FSR-LOG-01 · Sürüm 2.39 · Son güncelleme: 05.11.2026"
 ---
 
 # Bu belge hakkında
@@ -2489,6 +2489,25 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Belge:** FSR-TN-PLT-13 v0.1 (bulgu, yayınla karşılaştırma Tablo 2.1–2.2, N-1 … N-6, uygulama, kuru koşular).
 - **Bekleyen (proje sahibi):** G-140 + G-141 commit'i; resmî P6, P7, P8 (G-138/G-139 için bekleyen koşular bunlarla birleştirilebilir: beklenen 101, 87, 45); ardından FSR-TN-PLT-12 v0.2, FSR-TN-PLT-13 v0.2, FSR-VAL-PLT-1 1.8 (KK-77, KK-78, KK-79) ve sitenin güncellenmesi. Sonra 11052026-a.
 
+## G-142 · İstek 11052026-a: raporlarda grafik, bootstrap dosyaları ve SAS programı, değişkenlik tablosu (FSR-TN-PLT-14, KK-80) — 05.11.2026
+
+- **Depo:** G-140 + G-141 commit edildi; GitHub Actions başarılı (proje sahibi). Resmî P6, P7, P8 koşuları henüz yapılmadı.
+- **Kararlar (proje sahibi; tartışma G-140'ta başladı):** bootstrap dosyası “csv olsun tabi ki ve istege bağlı olsun. SAS lı ve SAS sız da iseğe bapkı olsun.”; indeksli düzeyde hazır SAS programı: “üretilsin.”; değişkenlik benzerliği yalnız gösterilir, eşik yok: “i”.
+- **Karar (K, proje sahibi): KK-80.** Ölçütler GR-1 … GR-7, BS-1 … BS-8, DV-1, DV-2, RG-1 koddan önce donduruldu (“dondur bakalım.”; KK-45); dosya `belgeler/teknik_notlar/FSR-TN-PLT-14_ek/olcutler.md`. Kapsam dışı: sınır seçiminde “FDA 1997 yolu” notu; L2a seri sayısı simülasyonu.
+- **Uygulama (Claude):**
+  - `platform_analiz.R`: `platform_dis_grafik` (ortalamalar, SD, analize giren noktalar; f2 histogramı `pretty` kırılımlarıyla, yalnız temel R; Weibull eğrileri), `platform_dis_degiskenlik` (CV_T, CV_R, oran), `platform_f2_disa` (CSV; indeksli düzeyde SAS/IML programı); `man/platform_analiz.Rd`. Hesap çekirdeği, sabitli dosyalar ve `dis_kopru.R` değişmedi (değerler köprünün kendi sonucundan, `kopru$.kp`).
+  - `web/analiz/grafik.js` (yeni; ekran ve rapor için aynı çizim fonksiyonları, PNG); `web/app/rapor.js` resim desteği (yalnız resimli raporlarda; PBE, EMA, simülasyon raporları değişmez); `analiz.js` grafikler, değişkenlik tablosu ve EMA Ek I alıntısı, bootstrap kutuları (rapor düğmesiyle birlikte CSV ve SAS indirilir); `index.html`, `analiz.css`, `ceviri.json` (17 anahtar), `web/analiz/README.md`.
+  - Testler: `test-platform-grafik-boot.R` (4 blok; `dogrula_dosyalar.txt`). P6'ya G satırları (`kabul6.js`, `p6_kabul.R`).
+- **Kuru koşuda bulunanlar (Claude):**
+  - **N-1 açığı:** dosyadan sonra Noce örneği seçilince, önceki dosyada aynı adlı ürünler varsa ekran önceki seçimi koruyordu (ör. geniş biçim Noce dosyasından sonra Urun1/Urun2). Düzeltme: örnek veriler her zaman kendi varsayılanıyla açılır (`fillSelect(..., keepPrev)`); P6'ya sınayan satır eklendi (N-1 örnek varsayılanı).
+  - Persentil olasılığı: 0,05 sabiti çekirdeğin (1 − 0,90)/2 değerinden 1 ulp farklı; testler ve SAS programı çekirdeğin ifadesini kullanır.
+  - webR ile yerel R arasında replika değerleri son bitte farklı olabiliyor (en fazla 1,4·10⁻¹⁴). BS-3 P6'da yerel R ile K(10⁻¹², 10⁻¹²) ölçüsüyle karşılaştırılır; dosyanın tam duyarlığı paket testinde (`identical`) ve P6'da CSV'den hesaplanan aralığın ekranla birebir aynı olmasıyla (BS-5) gösterilir. Ölçüt değişikliği değil, değerlendirme yöntemi; FSR-TN-PLT-14 Bölüm 5'te yazılı.
+  - Araç hataları düzeltildi (Weibull resim sayısı 1, ilişki sayımı, SAS veri satırı sayısı, künye ayrıştırma). Histogram sayıları `graphics::hist` yerine temel R ile (`cut`, `tabulate`; sonuç aynı, testle doğrulandı).
+  - SAS algoritması Python ile aynalandı (`FSR-TN-PLT-14_ek/sas_algoritma_aynasi.py`): tarayıcıda üretilen dosyalarda replikalarda en büyük fark 6·10⁻¹³, persentil aralığı birebir. SAS sözdizimi SAS'ta denenmedi (BS-7).
+- **Kuru koşular (Claude, yalıtılmış kök):** testthat 2402 beklenti, 0 başarısız; P6 126/126 (101 + G 25; F-9 webR 75 blok, 2402 beklenti); P7 87/87; P8 45/45. Kanıt: `FSR-TN-PLT-14_ek/kuru/`. BS-7 için örnek dosyalar: `FSR-TN-PLT-14_ek/sas_ornek/` (Noce, Ürün 1–Ürün 3, EMA, B = 5000).
+- **Belge:** FSR-TN-PLT-14 v0.1.
+- **Bekleyen (proje sahibi):** commit; resmî P6 (beklenen 126), P7 (87), P8 (45); BS-7: SAS OnDemand'de örnek SAS programının çalıştırılması (sonuç satırı “AGREE”); ardından FSR-TN-PLT-12, 13, 14 v0.2 ve FSR-VAL-PLT-1 1.8 (KK-77 … KK-80), sitenin güncellenmesi.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -2516,7 +2535,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 2.38 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 2.39 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.1 | 1.0 onaylı; beş dosya sabitlendi (G-47). 1.1: TC-S11 (dışa aktarılan betik), onaylandı (KK-53, G-76) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.7 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68); v0.7: Tablo 8.1 ve 10.1 (KK-56, KK-57, KK-59; G-94), onay P6 kapanışında |
@@ -2527,6 +2546,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | FSR-TN-PLT-06 · P6 tasarımı, kabul ölçütleri ve sonuçları (devralınan modellerin arayüzü, platform validasyonu, yayın hazırlığı) | 0.2 | v0.1 yetki devriyle (KK-60), F-1…F-12 donduruldu (G-94); v0.2: resmî kabul 78/78 GEÇTİ (G-95); onaylandı, P6 kapandı (KK-62, G-97) |
 | FSR-TN-PLT-07 · Yardım sistemi: tasarım ve kabul ölçütleri | 0.2 | KK-63 yetkisiyle; Y-1…Y-12 donduruldu; kuru koşu 48/48 (G-98); resmî kabul 48/48 (G-99); v0.2: altı not (KK-64), kuru 51/51 (G-100), resmî 51/51 (G-102); onaylandı (KK-65, G-109); içerik incelemesi bekliyor |
 | FSR-TN-PLT-09 · Yardım içeriği kararları (KK-66): tasarım ve kabul ölçütleri | 0.2 | v0.1 onaylandı, G-1 … G-9 donduruldu (KK-67, G-115); v0.2: resmî kabul P6 80/80, EMA 44/44, yardım 51/51 (G-116); onaylandı (KK-68, G-117) |
+| FSR-TN-PLT-14 · Profil benzerliği raporlarında grafik, bootstrap dosyaları ve değişkenlik | 0.1 | GR, BS, DV ölçütleri koddan önce donduruldu (KK-80, G-142); kuru koşular P6 126/126, P7 87/87, P8 45/45; resmî kabul ve BS-7 (SAS) bekliyor |
 | FSR-TN-PLT-13 · Noce 2020 örneğinde referans ürün düzeltmesi | 0.1 | N-1 … N-6 koddan önce donduruldu (KK-79, G-141); kuru koşular P6 101/101, P7 87/87, P8 45/45; resmî kabul bekliyor |
 | FSR-TN-PLT-12 · Dissolüsyon verisi için geniş biçim: tasarım ve kabul ölçütleri | 0.1 | W-0 … W-12 koddan önce donduruldu (KK-78, G-139); uygulama ve kuru koşular P6 101/101, P7 87/87, P8 45/45; resmî kabul bekliyor |
 | FSR-TN-PLT-11 · Analiz raporlarında veri bölümü: tasarım ve kabul ölçütleri | 0.2 | v0.1: tasarım, D-1 … D-9 donduruldu (KK-75, G-134); v0.2: resmî kabul P6 91/91, P8 45/45 (G-136), onaylandı (KK-76, G-137) |
@@ -2619,3 +2639,4 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | KK-77 | Türkçe Excel şablonları kaldırıldı; panelde tek “Şablon (CSV)”; Y-5 yalnız uluslararası şablon | G-138 |
 | KK-78 | Dissolüsyon verisi için geniş biçim (DDSolver düzeni): tek dosya, `<ürün>.<ünite>` sütunları; yalnız dissolüsyon, PBE değişmez; W-0 … W-12 donduruldu | G-139 |
 | KK-79 | Noce 2020 örneğinde referans Ürün 3 (yayın Bölüm 2.1); ekran varsayılanı, f2 notu, basit sayfa, testler; N-1 … N-6 donduruldu | G-141 |
+| KK-80 | İstek 11052026-a: raporlarda grafik (f2, MSD, Weibull); isteğe bağlı bootstrap CSV (iki düzey) ve indeksli düzeyde SAS programı; değişkenlik yalnız gösterilir; ölçütler donduruldu | G-142 |

@@ -19,6 +19,7 @@
 #   F-11 TR/EN keys; narrow screen; F-12 documents present
 #   FSR-TN-PLT-11 (KK-75): D-1 ... D-8, Section 9 'Analysed data'
 #   FSR-TN-PLT-12 (KK-78): W-0 ... W-11, wide layout of dissolution data (rows 'W')
+#   FSR-TN-PLT-14 (KK-80): GR-1 ... GR-7, BS-1 ... BS-6, BS-8, DV-1, DV-2 (rows 'G'; BS-7 is the owner's SAS run)
 # Numbers: K(1e-12, 1e-12) (absolute or relative difference); texts and decisions
 # exactly. Run from the repository root:
 #   source("belgeler/teknik_notlar/FSR-TN-PLT-06_ek/p6_kabul.R", encoding = "UTF-8")
@@ -360,6 +361,90 @@ if (!nrow(g("W"))) put("W geniş biçim", NA, "W satırı yok") else {
   t9 <- g("F-9", "test-platform-dis-genis.R", a = "nb_fail_err_skip")
   put("W-2/5/6/8 paket testleri (webR)", nrow(t9) == 9 && all(vapply(strsplit(t9$deger, "/"), function(x) x[2] == "0" && x[3] == "false" && x[4] == "false", NA)),
       sprintf("test-platform-dis-genis.R: %d blok", nrow(t9)))
+}
+
+# ---------------------------------------------------------------- FSR-TN-PLT-14 (KK-80): charts, variability, bootstrap files
+gv <- function(id, a, y = "") v1("G", id, y, a)
+if (!nrow(g("G"))) put("G grafik/bootstrap", NA, "G satırı yok") else {
+  med <- function(f) { z <- utils::unzip(file.path(X, f), list = TRUE)$Name; sort(z[startsWith(z, "word/media/")]) }
+  rd_m <- function(f, m) { d <- file.path(tempdir(), "p6_med"); unlink(d, recursive = TRUE); dir.create(d); utils::unzip(file.path(X, f), files = m, exdir = d)
+    readBin(file.path(d, m), "raw", file.size(file.path(d, m))) }
+  png_sig <- as.raw(c(0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a))
+  nimg <- c(f2 = 2L, msd = 1L, wb = 1L)
+  loc_run <- function(id) { fm <- jsonlite::fromJSON(gv(id, "form"), simplifyVector = TRUE); ay <- fm$ayar[!vapply(fm$ayar, is.null, NA)]
+    v <- pk$platform_dis_veri(ornek = if (id == "f2") "noce2020" else "tsong1996")
+    pk$platform_dis(kp, v, fm$test, fm$ref, unlist(fm$lotlar), fm$birim, fm$yontem, ay) }
+  for (id in names(nimg)) {
+    if (!identical(gv(id, "durum"), "an_st_done")) { put(paste("GR-1", id), FALSE, paste("durum:", gv(id, "durum"))); next }
+    r <- loc_run(id)
+    gl <- pk$platform_dis_grafik(kp, r); dl <- pk$platform_dis_degiskenlik(r)
+    c1 <- cmp(gv(id, "grafik"), gl[setdiff(names(gl), c("hist", "egri"))])
+    c2 <- if (!is.null(gl$hist)) cmp(jsonlite::toJSON(jsonlite::fromJSON(gv(id, "grafik"), simplifyVector = FALSE)$hist, auto_unbox = TRUE, digits = NA), gl$hist) else list(ok = TRUE, n = 0, bad = character(0))
+    c3 <- if (!is.null(gl$egri)) cmp(jsonlite::toJSON(jsonlite::fromJSON(gv(id, "grafik"), simplifyVector = FALSE)$egri, auto_unbox = TRUE, digits = NA), gl$egri) else list(ok = TRUE, n = 0, bad = character(0))
+    put(paste("GR-4", id), c1$ok && c2$ok && c3$ok, sprintf("grafik verisi = yerel R (%d + %d + %d alan)%s", c1$n, c2$n, c3$n,
+        if (length(c(c1$bad, c2$bad, c3$bad))) paste0("; farklı: ", paste(c(c1$bad, c2$bad, c3$bad), collapse = ", ")) else ""))
+    c4 <- cmp(gv(id, "degiskenlik"), dl)
+    put(paste("DV-2", id), c4$ok, sprintf("CV_T, CV_R, oran = yerel R (%d alan)", c4$n))
+    okr <- vapply(c("tr", "en"), function(lg) { f <- gv(id, "rapor", lg); m <- med(f); x <- doc_xml(f)$xml; pp <- paras(x)
+      length(m) == nimg[[id]] && all(vapply(m, function(k) identical(rd_m(f, k)[1:8], png_sig), NA)) &&
+        TRJ[[lg]]$an_charts %in% pp && lengths(regmatches(x, gregexpr("r:embed=\"rIdImg", x, fixed = TRUE))) == nimg[[id]] &&
+        (id != "f2" || any(startsWith(pp, sub("\\{e\\}.*$", "", TRJ[[lg]]$an_ch_hist)))) &&
+        (id != "wb" || TRJ[[lg]]$an_ch_weibull %in% pp) && (id == "wb" || TRJ[[lg]]$an_ch_profile %in% pp) &&
+        TRJ[[lg]]$an_var_table %in% pp && TRJ[[lg]]$an_var_note %in% pp }, NA)
+    put(paste("GR-1/2/3, DV-1 rapor", id), all(okr) && identical(gv(id, "canvas", "ekran"), as.character(nimg[[id]])),
+        sprintf("TR %s, EN %s; %d PNG; ekranda %s grafik; değişkenlik tablosu ve EMA alıntısı", okr[1], okr[2], nimg[[id]], gv(id, "canvas", "ekran")))
+    put(paste("DV-1 ekran", id), identical(gv(id, "dv_tablo", "ekran"), "true") && identical(gv(id, "dv_not", "ekran"), TRJ$tr$an_var_note), "tablo ve alıntı ekranda")
+    put(paste("GR-6 dış istek", id), all(c(gv(id, "ag_istegi", "tr"), gv(id, "ag_istegi", "en"), gv(id, "ag_analiz")) == "0"), "analiz ve rapor")
+  }
+  put("N-1 örnek varsayılanı (G)", identical(gv("f2", "varsayilan", "secim"), "Urun1/Urun3"),
+      sprintf("dosyadan sonra Noce örneği: %s (beklenen Urun1/Urun3)", gv("f2", "varsayilan", "secim")))
+  f1 <- gv("f2", "rapor", "tr"); f2b <- gv("f2", "rapor_tekrar", "tr")
+  strip <- function(x) gsub("[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2} UTC", "<zaman>", x)
+  put("GR-6 belirlenimcilik", identical(strip(doc_xml(f1)$xml), strip(doc_xml(f2b)$xml)) &&
+        all(vapply(med(f1), function(k) identical(rd_m(f1, k), rd_m(f2b, k)), NA)), "aynı tarayıcıda iki rapor: metin ve PNG baytları aynı")
+  pr <- g("D", a = "dosya"); pr <- pr$deger[startsWith(pr$durum, "pbe")]
+  put("GR-7 PBE/EMA raporu", length(pr) > 0 && all(vapply(pr, function(f) !length(med(f)), NA)), sprintf("%d PBE raporunda resim yok", length(pr)))
+  # BS
+  put("BS-1 kutular", identical(gv("f2", "kutu_gorunur", "bs"), "true") && identical(gv("msd", "kutu_gorunur", "bs"), "false") &&
+        identical(gv("wb", "kutu_gorunur", "bs"), "false") && identical(v1("G", "bs", "", "csv_varsayilan"), "false") &&
+        identical(v1("G", "bs", "", "idx_etkin_once"), "false") && identical(v1("G", "bs", "", "idx_etkin_sonra"), "true") &&
+        identical(v1("G", "bs", "", "idx_varsayilan"), "false"), "yalnız f2'de görünür; ikisi de boş; ikincisi birincisiyle etkin")
+  rf <- loc_run("f2"); ff <- kp$.kp$f2
+  fm <- jsonlite::fromJSON(gv("f2", "form"), simplifyVector = TRUE)
+  rdx <- function(f) { x <- readLines(file.path(X, f), encoding = "UTF-8", warn = FALSE); list(bas = x[startsWith(x, "#")], d = utils::read.csv(file.path(X, f), comment.char = "#")) }
+  A <- rdx(v1("G", "bs", "a", "csv")); Bx <- rdx(v1("G", "bs", "b", "csv"))
+  sc <- jsonlite::fromJSON(gv("f2", "sonuc"), simplifyVector = TRUE)
+  keys <- c("package:", "data_sha256:", "seed = ", "RNG = ", "estimator = ", "truncation = ", "truncation mode = ", "interval = ",
+            "quantile type = ", "test: ", "time points", "point estimates", "decision interval", "percentile interval of")
+  put("BS-2 künye", all(vapply(keys, function(k) any(grepl(k, A$bas, fixed = TRUE)), NA)) &&
+        any(grepl(paste0("data_sha256: "), A$bas, fixed = TRUE)), sprintf("%d künye satırı", length(A$bas)))
+  # webR and the local R may differ in the last bit; full precision in the file is shown by BS-5 (exact) and
+  # by the package tests (identical); here the values are compared with the local R as the F rows: K()
+  kv <- function(a, b) identical(is.na(a), is.na(b)) && all(K(a[!is.na(a)], b[!is.na(b)]))
+  okv <- all(vapply(c("f2", "Ef2", "bcf2"), function(k) kv(A$d[[k]], unname(ff$replikalar[, k])) && identical(A$d[[k]], Bx$d[[k]]), NA)) &&
+    identical(as.numeric(A$d$P), unname(ff$replikalar[, "P"])) && nrow(A$d) == ff$B
+  hd <- function(k) { ln <- grep("point estimates", A$bas, value = TRUE); num(sub(paste0("^.*[:;] ", k, " = ([^;]+).*$"), "\\1", ln)) }
+  okh <- identical(hd("Ef2"), num(sc$Ef2)) && identical(hd("f2"), num(sc$f2))
+  put("BS-3 replika değerleri", okv && okh, sprintf("%d replika = yerel R, K(1e-12); iki düzey aynı; künyedeki nokta tahminleri = ekran", nrow(A$d)))
+  nT <- ncol(ff$idx$T); nR <- ncol(ff$idx$R)
+  oki <- identical(unname(as.matrix(Bx$d[, paste0("T", seq_len(ncol(ff$idx$T)))])), unname(ff$idx$T) + 0L) &&
+    identical(unname(as.matrix(Bx$d[, paste0("R", seq_len(ncol(ff$idx$R)))])), unname(ff$idx$R) + 0L) &&
+    any(grepl("test units: 1=", Bx$bas, fixed = TRUE)) && !any(grepl("^T1$", names(A$d)))
+  put("BS-4 tablet indeksleri", oki, "indeksli düzeyde T ve R sıra numaraları = yerel R; yalın düzeyde yok")
+  a2 <- (1 - ff$conf) / 2; v <- A$d[[ff$tahminci]]; v <- v[is.finite(v)]
+  q <- unname(stats::quantile(v, c(a2, 1 - a2), type = ff$q_type))
+  put("BS-5 persentil", identical(q, c(num(sc$alt), num(sc$ust))) || all(K(q, c(num(sc$alt), num(sc$ust)))),
+      sprintf("CSV'den %s – %s = ekran %s – %s", format(q[1], digits = 17), format(q[2], digits = 17), sc$alt, sc$ust))
+  ss <- v1("G", "bs", "b", "sas")
+  okS <- !is.na(ss) && is.na(v1("G", "bs", "a", "sas")) && {
+    L <- readLines(file.path(X, ss), encoding = "UTF-8", warn = FALSE)
+    i <- which(L == "data test_u; input x1-x&nP; datalines;"); j <- which(L == "data ref_u; input x1-x&nP; datalines;")
+    dt <- do.call(rbind, lapply(strsplit(L[(i + 1):(i + nT)], " "), as.numeric)); dr <- do.call(rbind, lapply(strsplit(L[(j + 1):(j + nR)], " "), as.numeric))
+    identical(unname(dt), unname(ff$kontrol$XT_tum)) && identical(unname(dr), unname(ff$kontrol$XR_tum)) &&
+      any(grepl(sprintf("%%let rule = %s;", ff$kontrol$truncation), L, fixed = TRUE)) && any(grepl(sprintf("%%let est = %s;", ff$tahminci), L, fixed = TRUE)) &&
+      any(grepl(sprintf("%%let B = %d;", ff$B), L, fixed = TRUE)) && any(grepl("proc iml;", L, fixed = TRUE)) }
+  put("BS-6 SAS programı", isTRUE(okS), "yalnız indeksli düzeyde; gömülü veri ve makro değerleri = yerel R")
+  put("BS-8 dış istek", identical(v1("G", "bs", "a", "ag_istegi"), "0") && identical(v1("G", "bs", "b", "ag_istegi"), "0"), "dosya üretiminde dış istek 0")
 }
 
 utils::write.csv(res, file.path(E, "p6_kabul.csv"), row.names = FALSE, fileEncoding = "UTF-8")

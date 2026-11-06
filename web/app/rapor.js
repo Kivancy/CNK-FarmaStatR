@@ -49,7 +49,7 @@ const run = (t, o = {}) => {
   const rp = (o.b ? '<w:b/>' : '') + (o.i ? '<w:i/>' : '') + (o.sz ? `<w:sz w:val="${o.sz}"/>` : '') + (o.color ? `<w:color w:val="${o.color}"/>` : '');
   return `<w:r>${rp ? '<w:rPr>' + rp + '</w:rPr>' : ''}<w:t xml:space="preserve">${x(t)}</w:t></w:r>`;
 };
-export const P = (t, o = {}) => `<w:p>${o.style ? `<w:pPr><w:pStyle w:val="${o.style}"/></w:pPr>` : ''}${Array.isArray(t) ? t.map((r) => run(r[0], r[1])).join('') : run(t, o)}</w:p>`;
+export const P = (t, o = {}) => `<w:p>${o.style ? `<w:pPr><w:pStyle w:val="${o.style}"/></w:pPr>` : o.keep ? '<w:pPr><w:keepNext/></w:pPr>' : ''}${Array.isArray(t) ? t.map((r) => run(r[0], r[1])).join('') : run(t, o)}</w:p>`;
 export const H1 = (t) => P(t, { style: 'Heading1' });
 export const H2 = (t) => P(t, { style: 'Heading2' });
 // rows: arrays of cell texts; first row is the header; num: indexes of right-aligned columns
@@ -62,14 +62,25 @@ export function TABLE(rows, num = [], small = false) {
     '</w:tbl>' + P('');
 }
 
-function docx(body, headerText, footerText) {
+// inline picture i (1-based) of R.images, width w and height h in pixels at 96 dpi scaled to the
+// text width (FSR-TN-PLT-14, KK-80). Only reports that carry images use it (GR-7).
+const IMG_NS = 'xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"';
+export function IMG(i, w, h, title) {
+  const cx = 6120000, cy = Math.round(cx * h / w);   // 17 cm wide
+  return `<w:p><w:r><w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0"><wp:extent cx="${cx}" cy="${cy}"/><wp:docPr id="${i}" name="${x(title)}"/>` +
+    '<wp:cNvGraphicFramePr><a:graphicFrameLocks noChangeAspect="1"/></wp:cNvGraphicFramePr><a:graphic><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture">' +
+    `<pic:pic><pic:nvPicPr><pic:cNvPr id="${i}" name="grafik${i}.png"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="rIdImg${i}"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill>` +
+    `<pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${cx}" cy="${cy}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r></w:p>`;
+}
+
+function docx(body, headerText, footerText, images = []) {
   const f = (s) => enc.encode('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' + s);
   const footer = `<w:ftr ${NS}><w:p><w:pPr><w:pStyle w:val="Footer"/></w:pPr>${run(footerText + ' · ')}` +
     '<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGE </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>1</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r></w:p></w:ftr>';
   return zipStored([
-    ['[Content_Types].xml', f('<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/><Override PartName="/word/settings.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.settings+xml"/><Override PartName="/word/header1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.header+xml"/><Override PartName="/word/footer1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml"/></Types>')],
+    ['[Content_Types].xml', f(`<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/>${images.length ? '<Default Extension="png" ContentType="image/png"/>' : ''}<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/><Override PartName="/word/settings.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.settings+xml"/><Override PartName="/word/header1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.header+xml"/><Override PartName="/word/footer1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml"/></Types>`)],
     ['_rels/.rels', f('<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>')],
-    ['word/_rels/document.xml.rels', f('<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/header" Target="header1.xml"/><Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer" Target="footer1.xml"/><Relationship Id="rId4" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/settings" Target="settings.xml"/></Relationships>')],
+    ['word/_rels/document.xml.rels', f(`<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/header" Target="header1.xml"/><Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer" Target="footer1.xml"/><Relationship Id="rId4" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/settings" Target="settings.xml"/>${images.map((_, k) => `<Relationship Id="rIdImg${k + 1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/grafik${k + 1}.png"/>`).join('')}</Relationships>`)],
     ['word/settings.xml', f(`<w:settings ${NS}><w:defaultTabStop w:val="709"/><w:compat><w:compatSetting w:name="compatibilityMode" w:uri="http://schemas.microsoft.com/office/word" w:val="15"/></w:compat></w:settings>`)],
     ['word/styles.xml', f(`<w:styles ${NS}><w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:eastAsia="Calibri" w:cs="Calibri"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:lang w:val="tr-TR" w:eastAsia="en-US" w:bidi="ar-SA"/></w:rPr></w:rPrDefault><w:pPrDefault><w:pPr><w:spacing w:after="80" w:line="259" w:lineRule="auto"/></w:pPr></w:pPrDefault></w:docDefaults>` +
       '<w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:qFormat/></w:style>' +
@@ -84,7 +95,8 @@ function docx(body, headerText, footerText) {
       '<w:style w:type="table" w:styleId="Tablo"><w:name w:val="Tablo"/><w:basedOn w:val="TableNormal"/><w:tblPr><w:tblBorders><w:top w:val="single" w:sz="4" w:space="0" w:color="999999"/><w:bottom w:val="single" w:sz="4" w:space="0" w:color="999999"/><w:insideH w:val="single" w:sz="4" w:space="0" w:color="D9D8D2"/></w:tblBorders><w:tblCellMar><w:top w:w="30" w:type="dxa"/><w:left w:w="70" w:type="dxa"/><w:bottom w:w="30" w:type="dxa"/><w:right w:w="70" w:type="dxa"/></w:tblCellMar></w:tblPr></w:style></w:styles>')],
     ['word/header1.xml', f(`<w:hdr ${NS}><w:p><w:pPr><w:pStyle w:val="Header"/></w:pPr>${run(headerText)}</w:p></w:hdr>`)],
     ['word/footer1.xml', f(footer)],
-    ['word/document.xml', f(`<w:document ${NS}><w:body>${body}<w:sectPr><w:headerReference w:type="default" r:id="rId2"/><w:footerReference w:type="default" r:id="rId3"/><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1134" w:right="1021" w:bottom="1134" w:left="1021" w:header="567" w:footer="567" w:gutter="0"/></w:sectPr></w:body></w:document>`)]
+    ...images.map((im, k) => [`word/media/grafik${k + 1}.png`, im.bytes]),
+    ['word/document.xml', f(`<w:document ${NS}${images.length ? ' ' + IMG_NS : ''}><w:body>${body}<w:sectPr><w:headerReference w:type="default" r:id="rId2"/><w:footerReference w:type="default" r:id="rId3"/><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1134" w:right="1021" w:bottom="1134" w:left="1021" w:header="567" w:footer="567" w:gutter="0"/></w:sectPr></w:body></w:document>`)]
   ]);
 }
 
@@ -92,7 +104,8 @@ function docx(body, headerText, footerText) {
 // R: { kind: 'tek' | 'tasarim', t, lang, created, header, disclaimer_tr, disclaimer_en,
 //      identity: [[label, value]], versions: [[label, value]], files: [[file, pinned, sha, status]] | null,
 //      params: [[label, value]], source, result: [xml ...], warnings: [text], link (null: no Section 9), sources?,
-//      veri? [xml ...]: Section 9 'Analysed data' of the analysis reports (FSR-TN-PLT-11, KK-75) }
+//      veri? [xml ...]: Section 9 'Analysed data' of the analysis reports (FSR-TN-PLT-11, KK-75),
+//      images? [{ bytes, w, h }]: PNG pictures referred to by IMG(i, ...) in result (FSR-TN-PLT-14, KK-80) }
 export function buildReport(R) {
   const t = R.t;
   const b = [];
@@ -113,7 +126,7 @@ export function buildReport(R) {
   // link, because the user's data never leave the browser (owner decision KK-71, FSR-LOG-01 G-122).
   if (R.link) b.push(H1('9. ' + t('rp_s_link')), P(t('rp_link_note')), P(R.link, { sz: 16 }));
   else if (R.veri) b.push(H1('9. ' + t('rp_s_data')), ...R.veri);   // FSR-TN-PLT-11 (KK-75)
-  return docx(b.join(''), R.header, R.disclaimer_tr + ' · ' + R.disclaimer_en);
+  return docx(b.join(''), R.header, R.disclaimer_tr + ' · ' + R.disclaimer_en, R.images || []);
 }
 
 // download helper (no network request: an object URL of the bytes made here)
