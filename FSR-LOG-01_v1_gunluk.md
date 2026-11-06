@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 2.42 · Son güncelleme: 06.11.2026"
+subtitle: "FSR-LOG-01 · Sürüm 2.43 · Son güncelleme: 06.11.2026"
 ---
 
 # Bu belge hakkında
@@ -2536,6 +2536,13 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
   - FSR-VAL-PLT-1 1.8 (`belgeler/validasyon/`): KK-77 … KK-80 revizyonu (Tablo 1.1 B-6, B-8, B-10; Tablo 2.1 İ-1/İ-5 kanıtı; Tablo 3.1 yeni satır; Bölüm 4: B-L2b KK-81, SAS çapraz kontrolü, son bit farkları, örnek veri varsayılanı). 1.7 onayı (KK-76) künyeye işlendi.
 - **Bekleyen (proje sahibi):** dört belgenin onayı; commit; sitenin güncellenmesi (Actions → pages → Run workflow).
 
+## G-146 · FSR-TN-PLT-12, 13, 14 v0.2 ve FSR-VAL-PLT-1 1.8 onaylandı (KK-82); bootstrap dosyası üzerine sorular — 06.11.2026
+
+- **Depo:** G-145 commit edildi; proje sahibi: “güzel. çalıştı.”
+- **Proje sahibinin soruları (bootstrap CSV'si, B = 10000 koşusu):** “her replikasyon test ve ref için 12 örnek neyi temsil ediyor”, “zaman nerede burada?” Claude'un yanıtı: her satır bir replika; T1 … T12 ve R1 … R12, 12 tabletten yerine koyarak çekilen tabletlerin sıra numaraları; bir numara tabletin bütün profilini (dokuz zaman noktası) temsil eder (Noce ve ark. 2020, s. 6: bireysel değerleri yeniden örneklemek anormal profiller üretebilir); zaman noktaları künyede, tablet değerleri asıl veride ve SAS programının `test_u`/`ref_u` bloklarında; P, kesmeden sonra kalan ilk P zaman noktası. Proje sahibi: “tamam şimdi anladım.”
+- **Bulgu (Claude):** Excel, BOM'suz UTF-8 CSV'nin künyesindeki Türkçe karakterleri ve “≥” işaretini bozuk gösteriyor (“Ã–rnek”, “â‰¥”); sayılar, R ve SAS etkilenmiyor. Düzeltme seçenekleri: künyeyi ASCII yazmak ya da BOM eklemek (SAS okuma satırı da değişir). Karar bekliyor.
+- **Karar (K, proje sahibi): KK-82.** “onaylıyorum.” FSR-TN-PLT-12 v0.1–0.2, FSR-TN-PLT-13 v0.1–0.2, FSR-TN-PLT-14 v0.1–0.2 ve FSR-VAL-PLT-1 1.8 onaylandı.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -2563,7 +2570,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 2.42 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 2.43 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.1 | 1.0 onaylı; beş dosya sabitlendi (G-47). 1.1: TC-S11 (dışa aktarılan betik), onaylandı (KK-53, G-76) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.7 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68); v0.7: Tablo 8.1 ve 10.1 (KK-56, KK-57, KK-59; G-94), onay P6 kapanışında |
@@ -2574,13 +2581,13 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | FSR-TN-PLT-06 · P6 tasarımı, kabul ölçütleri ve sonuçları (devralınan modellerin arayüzü, platform validasyonu, yayın hazırlığı) | 0.2 | v0.1 yetki devriyle (KK-60), F-1…F-12 donduruldu (G-94); v0.2: resmî kabul 78/78 GEÇTİ (G-95); onaylandı, P6 kapandı (KK-62, G-97) |
 | FSR-TN-PLT-07 · Yardım sistemi: tasarım ve kabul ölçütleri | 0.2 | KK-63 yetkisiyle; Y-1…Y-12 donduruldu; kuru koşu 48/48 (G-98); resmî kabul 48/48 (G-99); v0.2: altı not (KK-64), kuru 51/51 (G-100), resmî 51/51 (G-102); onaylandı (KK-65, G-109); içerik incelemesi bekliyor |
 | FSR-TN-PLT-09 · Yardım içeriği kararları (KK-66): tasarım ve kabul ölçütleri | 0.2 | v0.1 onaylandı, G-1 … G-9 donduruldu (KK-67, G-115); v0.2: resmî kabul P6 80/80, EMA 44/44, yardım 51/51 (G-116); onaylandı (KK-68, G-117) |
-| FSR-TN-PLT-14 · Profil benzerliği raporlarında grafik, bootstrap dosyaları ve değişkenlik | 0.1 | GR, BS, DV ölçütleri koddan önce donduruldu (KK-80, G-142); kuru koşular P6 126/126, P7 87/87, P8 45/45; resmî kabul ve BS-7 (SAS) bekliyor |
-| FSR-TN-PLT-13 · Noce 2020 örneğinde referans ürün düzeltmesi | 0.1 | N-1 … N-6 koddan önce donduruldu (KK-79, G-141); kuru koşular P6 101/101, P7 87/87, P8 45/45; resmî kabul bekliyor |
-| FSR-TN-PLT-12 · Dissolüsyon verisi için geniş biçim: tasarım ve kabul ölçütleri | 0.1 | W-0 … W-12 koddan önce donduruldu (KK-78, G-139); uygulama ve kuru koşular P6 101/101, P7 87/87, P8 45/45; resmî kabul bekliyor |
+| FSR-TN-PLT-14 · Profil benzerliği raporlarında grafik, bootstrap dosyaları ve değişkenlik | 0.2 | Onaylandı (KK-82, G-146); resmî kabul P6 126/126, P7 87/87, P8 45/45; BS-7 SAS AGREE |
+| FSR-TN-PLT-13 · Noce 2020 örneğinde referans ürün düzeltmesi | 0.2 | Onaylandı (KK-82, G-146); resmî kabul P6 126/126, P7 87/87, P8 45/45 |
+| FSR-TN-PLT-12 · Dissolüsyon verisi için geniş biçim: tasarım ve kabul ölçütleri | 0.2 | Onaylandı (KK-82, G-146); resmî kabul P6 126/126, P7 87/87, P8 45/45 |
 | FSR-TN-PLT-11 · Analiz raporlarında veri bölümü: tasarım ve kabul ölçütleri | 0.2 | v0.1: tasarım, D-1 … D-9 donduruldu (KK-75, G-134); v0.2: resmî kabul P6 91/91, P8 45/45 (G-136), onaylandı (KK-76, G-137) |
 | FSR-TN-PLT-10 · Meraklısı için basit anlatımlar: tasarım ve kabul ölçütleri | 0.2 | v0.1: tasarım, B-1 … B-7 donduruldu (KK-72, G-124); altı sayfa onaylandı; v0.2: resmî kabul 89/89 (G-132), onaylandı (KK-74, G-133) |
 | FSR-TN-PLT-08 · EMA %90 GA analizi: tasarım ve kabul ölçütleri | 0.4 | E-1…E-10 koddan önce donduruldu (KK-64, G-100); kuru koşu 44/44; v0.2: resmî kabul 44/44 (G-102); v0.3: kaynak eşlemesi ve SAS kontrolleri (G-106); v0.4: literatür eşlemesi (G-108); onaylandı (KK-65, G-109) |
-| FSR-VAL-PLT-1 · Platform katmanı validasyon belgesi | 1.7 | 1.0: P1–P6 kanıtları (G-94); 1.1: P6 resmî kabulü, onaylandı (KK-62, G-97); 1.2: yardım sistemi, PBE metin bulgusu, gerileme (G-98); 1.3: EMA %90 GA analizi (G-100); 1.4: EMA ve yardım resmî kabulleri (G-102); 1.2–1.4 onaylandı (KK-65, G-109); 1.5: FSR-TN-PLT-09 (G-116), onaylandı (KK-68, G-117); 1.6: GitHub Pages (B-12), Bölüm 9 (KK-71), basit anlatımlar (FSR-TN-PLT-10), KK-73 (G-132), onaylandı (KK-74, G-133); 1.7: analiz edilen veri (FSR-TN-PLT-11; G-136), onaylandı (KK-76, G-137) |
+| FSR-VAL-PLT-1 · Platform katmanı validasyon belgesi | 1.8 | 1.0: P1–P6 kanıtları (G-94); 1.1: P6 resmî kabulü, onaylandı (KK-62, G-97); 1.2: yardım sistemi, PBE metin bulgusu, gerileme (G-98); 1.3: EMA %90 GA analizi (G-100); 1.4: EMA ve yardım resmî kabulleri (G-102); 1.2–1.4 onaylandı (KK-65, G-109); 1.5: FSR-TN-PLT-09 (G-116), onaylandı (KK-68, G-117); 1.6: GitHub Pages (B-12), Bölüm 9 (KK-71), basit anlatımlar (FSR-TN-PLT-10), KK-73 (G-132), onaylandı (KK-74, G-133); 1.7: analiz edilen veri (FSR-TN-PLT-11; G-136), onaylandı (KK-76, G-137); 1.8: KK-77 … KK-80 (şablonlar, geniş biçim, Noce referansı, grafik ve bootstrap dosyaları; SAS AGREE), onaylandı (KK-82, G-146) |
 | CNK-FarmaStatR | 1.0.0.9000 | Geliştirme başladı (G-01) |
 | CNKfarmastatr (R paketi) | 1.0.0.9000 | 13 dosya SHA-256 ile sabit (8 devralınan çekirdek + simülasyon çatısı ve in vitro motoru; FSR-VAL-SIM-1 1.0, G-47); testler 26 blok, 968 beklenti GEÇTİ (G-46); G-94: 58 blok, 2.292 beklenti (yerel R ve webR); G-100: 61 blok, 2.328 beklenti (Windows CI 2.323, G-101) |
 
@@ -2669,3 +2676,4 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | KK-79 | Noce 2020 örneğinde referans Ürün 3 (yayın Bölüm 2.1); ekran varsayılanı, f2 notu, basit sayfa, testler; N-1 … N-6 donduruldu | G-141 |
 | KK-80 | İstek 11052026-a: raporlarda grafik (f2, MSD, Weibull); isteğe bağlı bootstrap CSV (iki düzey) ve indeksli düzeyde SAS programı; değişkenlik yalnız gösterilir; ölçütler donduruldu | G-142 |
 | KK-81 | K-8 yeniden değerlendirildi: B-L2b olduğu gibi kalır (ekranda yok, çekirdekte N/√N); düzeltilmiş biçim açılmadı | G-143 |
+| KK-82 | FSR-TN-PLT-12, 13, 14 v0.2 ve FSR-VAL-PLT-1 1.8 onaylandı | G-146 |
