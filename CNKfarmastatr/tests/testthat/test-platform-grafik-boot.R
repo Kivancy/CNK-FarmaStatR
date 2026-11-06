@@ -79,4 +79,13 @@ test_that("BS-6 SAS program: macro values and embedded data are the analysis'", 
   dat <- do.call(rbind, lapply(strsplit(L[(j + 1):(j + 12)], " "), as.numeric))
   expect_identical(unname(dat), unname(f$kontrol$XR_tum))
   expect_true(any(grepl("Research and education only", L, fixed = TRUE)))
+  # SAS names are not case sensitive: the names assigned in PROC IML must stay distinct ignoring case
+  # (G-144: XT/xt, XR/xr, B/b and V/v collided in the first version; found in the owner's SAS run)
+  iml <- L[which(L == "proc iml;"):which(L == "quit;")]
+  nm <- unique(unlist(regmatches(iml, gregexpr("\\b[A-Za-z_][A-Za-z0-9_]*(?=\\s*(\\[[^]]*\\])?\\s*=[^=])", iml, perl = TRUE))))
+  nm <- c(nm, unlist(regmatches(iml, gregexpr("(?<=into )[A-Za-z_][A-Za-z0-9_]*", iml, perl = TRUE))),
+          unlist(regmatches(iml, gregexpr("(?<=do )[A-Za-z_][A-Za-z0-9_]*", iml, perl = TRUE))))
+  nm <- unique(nm)
+  expect_identical(anyDuplicated(tolower(nm)), 0L)
+  expect_true(all(c("DATT", "PLAT_V", "smpT", "ib", "nrep") %in% nm))
 })

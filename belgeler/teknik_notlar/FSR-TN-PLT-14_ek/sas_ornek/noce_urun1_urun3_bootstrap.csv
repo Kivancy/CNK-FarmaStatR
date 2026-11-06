@@ -6,8 +6,8 @@
 # R: R version 4.5.1 (2025-06-13)
 # data: Örnek: Noce ve ark. 2020
 # data_sha256: example data, no fingerprint
-# analysis_started: 2026-11-05T19:30:08.536Z
-# csv: farmastatr_bootstrap_2026-11-05T19-30-10.csv
+# analysis_started: 2026-11-06T06:19:20.141Z
+# csv: farmastatr_bootstrap_2026-11-06T06-19-20.csv
 # test: Urun1; reference: Urun3; n_T = 12; n_R = 12
 # time points of the bootstrap (minutes): 120 130 135 140 150 165 180 210 240
 # B = 5000; seed = 20260927; RNG = Mersenne-Twister / Inversion / Rejection (R ≥ 3.6)

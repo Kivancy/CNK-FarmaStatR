@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 2.39 · Son güncelleme: 05.11.2026"
+subtitle: "FSR-LOG-01 · Sürüm 2.41 · Son güncelleme: 06.11.2026"
 ---
 
 # Bu belge hakkında
@@ -2508,6 +2508,24 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Belge:** FSR-TN-PLT-14 v0.1.
 - **Bekleyen (proje sahibi):** commit; resmî P6 (beklenen 126), P7 (87), P8 (45); BS-7: SAS OnDemand'de örnek SAS programının çalıştırılması (sonuç satırı “AGREE”); ardından FSR-TN-PLT-12, 13, 14 v0.2 ve FSR-VAL-PLT-1 1.8 (KK-77 … KK-80), sitenin güncellenmesi.
 
+## G-143 · K-8 yeniden soruldu: B-L2b iki bölenle hesaplandı; olduğu gibi kalır (KK-81) — 06.11.2026
+
+- **Depo:** G-142, Claude tarafından 06.11.2026'da cihaza yazıldı (25 dosya, bayt doğrulaması 25/25; bilgisayar 05.11 akşamı bağlı değildi) ve commit edildi; GitHub Actions başarılı (proje sahibi). Resmî P6 (126), P7 (87), P8 (45) ve BS-7 (SAS) proje sahibinde.
+- **Proje sahibinin sorusu:** “k-8 için her iki durum için de hesaplama yapabilir misin?” Claude bunu B-L2b'nin Σ₂ böleni (N, √N) olarak anladı ve Tsong 1996 verisiyle hesapladı (Weibull MSD; F(0,99; 2, 9) = 8,0215; oran = elips içindeki en büyük T² / F):
+  - (ln T_d, ln β), lotlar STD1 + STD2: N oran 17,08 (merkez 88,41); √N oran 7,45 (merkez 39,15).
+  - (ln α, ln β): N 81,73; √N 34,30. Lotlara REF eklenince (ln T_d, ln β): N 21,58; √N 9,56.
+  - Hepsinde benzer değil; B-L2a ve B-L3 de benzer değil. Bilgi amaçlı (çekirdekte yok, kaynakta yok): N·Σ₁ + Σ₂ ile oran 2,85.
+- **Proje sahibi:** “bu veri için değişmiyor. Başka veriler için değişmesi kuvvetle muhtemel. N mi, √N mi kararını vermedik sanırım henüz?” Claude: doğrudan N–√N seçimi yapılmadı; K-8 KK-66 (G-114) ile “B-L2b ekran seçeneklerinden çıkar, çekirdekte kalır” olarak kapatıldı, çünkü G-111/G-112'ye göre iki bölen de %99 kapsamaz (N %39–77, √N %42–88; kalibre biçim N·Σ₁ + Σ₂). Seçenekler: (a) olduğu gibi bırakmak; (b) düzeltilmiş B-L2b'yi ayrı iş olarak açmak (sabitli `msd_weibull.R` revizyonu, simülasyon, validasyon).
+- **Karar (K, proje sahibi): KK-81.** “olduğu gibi kalsın.” B-L2b ekranda yok, çekirdekte iki bölenle kalır; kod ve belge değişmez. Not (Claude): çekirdeğin ilk içerik revizyonunda `sr_bolen` yorumuna “iki bölen de %99 kapsamaz (G-111, G-112)” eklenmesi önerisi bekleyen notlara alındı.
+
+## G-144 · Resmî kabul P6 126/126, P7 87/87, P8 45/45; ilk SAS koşusu “DIFFERENT”: SAS adlarında büyük-küçük harf çakışması düzeltildi — 06.11.2026
+
+- **Resmî kabul (proje sahibi, 06.11.2026; KK-77 … KK-80 birlikte):** P6 “Toplam: 126 ölçüt satırı; GECTI 126, KALDI 0, EKSIK 0”; P7 “87 … GECTI 87”; P8 “45 … GECTI 45”. Koşular sırayla yapıldı (Claude'un önerisi: aynı anda sekmelerde koşmak F-7 süre ölçütünü ve arka plan zamanlayıcılarını etkileyebilir).
+- **BS-7, ilk SAS koşusu (proje sahibi, SAS OnDemand):** program hatasız çalıştı (sözdizimi geçerli) ama sonuç “DIFFERENT”: tek replika hesaplanmış (4999 replikada “yalnız bir tarafta tanımsız”), SAS aralığı 41,738482 – 41,738482; ilk replikada fark Ef2 7,1·10⁻¹⁵, bc-f2 1,4·10⁻¹⁴.
+- **Neden (Claude):** SAS/IML adları büyük-küçük harfe duyarsızdır. Programda `B` (replika sayısı) ile döngü değişkeni `b`, veri matrisi `XT` ile örneklem `xt`, `XR` ile `xr`, platform değerleri `V` ile tahminci vektörü `v` aynı değişkendi: döngü ilk adımda sınırını ve verisini ezdi. Python aynası harf duyarlı olduğu için bunu yakalayamadı (algoritma doğru, adlandırma hatalı).
+- **Düzeltme (Claude):** `.f2_sas` (platform_analiz.R) IML bölümü harf duyarsız benzersiz adlarla yeniden yazıldı (`DATT, DATR, IDXT, IDXR, PLAT_V, nrep, ib, smpT, smpR, uT, uR, dsum, vsum, est_v, n_undef …`); okunan replika sayısı yazdırılır ve AGREE koşuluna eklendi (`nrep = &B`); IML işlev adıyla aynı olan `nmiss` değişkeni `n_undef` oldu. Yeni test: IML'de atanan adlar harf duyarsız benzersiz (`test-platform-grafik-boot.R`, BS-6 bloğu). Örnek dosyalar tarayıcıda yeniden üretildi (`sas_ornek/`); Python aynası: replika farkı en fazla 6·10⁻¹³, aralık birebir. testthat 2404 beklenti, 0 başarısız; P6 kuru 126/126 (F-9 webR 75 blok, 2404 beklenti; kanıt `FSR-TN-PLT-14_ek/kuru/p6_kabul_kuru_p14b.*`).
+- **Bekleyen (proje sahibi):** commit; SAS'ta yeniden koşu (yeni `.sas` ve `.csv`); `platform_analiz.R` değiştiği için resmî P6'nın yeniden koşusu (beklenen 126/126).
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -2535,7 +2553,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 2.39 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 2.41 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.1 | 1.0 onaylı; beş dosya sabitlendi (G-47). 1.1: TC-S11 (dışa aktarılan betik), onaylandı (KK-53, G-76) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.7 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68); v0.7: Tablo 8.1 ve 10.1 (KK-56, KK-57, KK-59; G-94), onay P6 kapanışında |
@@ -2640,3 +2658,4 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | KK-78 | Dissolüsyon verisi için geniş biçim (DDSolver düzeni): tek dosya, `<ürün>.<ünite>` sütunları; yalnız dissolüsyon, PBE değişmez; W-0 … W-12 donduruldu | G-139 |
 | KK-79 | Noce 2020 örneğinde referans Ürün 3 (yayın Bölüm 2.1); ekran varsayılanı, f2 notu, basit sayfa, testler; N-1 … N-6 donduruldu | G-141 |
 | KK-80 | İstek 11052026-a: raporlarda grafik (f2, MSD, Weibull); isteğe bağlı bootstrap CSV (iki düzey) ve indeksli düzeyde SAS programı; değişkenlik yalnız gösterilir; ölçütler donduruldu | G-142 |
+| KK-81 | K-8 yeniden değerlendirildi: B-L2b olduğu gibi kalır (ekranda yok, çekirdekte N/√N); düzeltilmiş biçim açılmadı | G-143 |
