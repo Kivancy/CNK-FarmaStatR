@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 2.41 · Son güncelleme: 06.11.2026"
+subtitle: "FSR-LOG-01 · Sürüm 2.42 · Son güncelleme: 06.11.2026"
 ---
 
 # Bu belge hakkında
@@ -2526,6 +2526,16 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Düzeltme (Claude):** `.f2_sas` (platform_analiz.R) IML bölümü harf duyarsız benzersiz adlarla yeniden yazıldı (`DATT, DATR, IDXT, IDXR, PLAT_V, nrep, ib, smpT, smpR, uT, uR, dsum, vsum, est_v, n_undef …`); okunan replika sayısı yazdırılır ve AGREE koşuluna eklendi (`nrep = &B`); IML işlev adıyla aynı olan `nmiss` değişkeni `n_undef` oldu. Yeni test: IML'de atanan adlar harf duyarsız benzersiz (`test-platform-grafik-boot.R`, BS-6 bloğu). Örnek dosyalar tarayıcıda yeniden üretildi (`sas_ornek/`); Python aynası: replika farkı en fazla 6·10⁻¹³, aralık birebir. testthat 2404 beklenti, 0 başarısız; P6 kuru 126/126 (F-9 webR 75 blok, 2404 beklenti; kanıt `FSR-TN-PLT-14_ek/kuru/p6_kabul_kuru_p14b.*`).
 - **Bekleyen (proje sahibi):** commit; SAS'ta yeniden koşu (yeni `.sas` ve `.csv`); `platform_analiz.R` değiştiği için resmî P6'nın yeniden koşusu (beklenen 126/126).
 
+## G-145 · BS-7 SAS AGREE; resmî P6 yeniden 126/126; FSR-TN-PLT-12, 13, 14 v0.2 ve FSR-VAL-PLT-1 1.8 — 06.11.2026
+
+- **Depo:** G-143 + G-144 commit edildi; GitHub Actions başarılı (proje sahibi).
+- **BS-7 (proje sahibi, kendi SAS'ı):** düzeltilmiş programla “Result: AGREE: replicates and interval equal the platform (BS-7)”. Bootstrap f2, platformun çektiği tabletlerle SAS/IML'de birebir yeniden hesaplandı (5000 replika ve persentil aralığı). Projenin ilk SAS çapraz kontrolü.
+- **Resmî P6 yeniden (proje sahibi, `platform_analiz.R` değiştiği için):** sayfa içi paket testleri “75 blok, 2404 beklenti, 0 başarısız, 0 hata, 0 atlandı”; değerlendirme “Toplam: 126 ölçüt satırı; GECTI 126, KALDI 0, EKSIK 0”.
+- **Belgeler (Claude):**
+  - FSR-TN-PLT-12 v0.2, FSR-TN-PLT-13 v0.2, FSR-TN-PLT-14 v0.2 (`belgeler/teknik_notlar/`): sürüm geçmişi ve resmî kabul bölümü; TN-14'te SAS ilk koşusu (DIFFERENT), nedeni ve düzeltmesi, ardından AGREE. Ölçütler değişmedi.
+  - FSR-VAL-PLT-1 1.8 (`belgeler/validasyon/`): KK-77 … KK-80 revizyonu (Tablo 1.1 B-6, B-8, B-10; Tablo 2.1 İ-1/İ-5 kanıtı; Tablo 3.1 yeni satır; Bölüm 4: B-L2b KK-81, SAS çapraz kontrolü, son bit farkları, örnek veri varsayılanı). 1.7 onayı (KK-76) künyeye işlendi.
+- **Bekleyen (proje sahibi):** dört belgenin onayı; commit; sitenin güncellenmesi (Actions → pages → Run workflow).
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -2553,7 +2563,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 2.41 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 2.42 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.1 | 1.0 onaylı; beş dosya sabitlendi (G-47). 1.1: TC-S11 (dışa aktarılan betik), onaylandı (KK-53, G-76) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.7 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68); v0.7: Tablo 8.1 ve 10.1 (KK-56, KK-57, KK-59; G-94), onay P6 kapanışında |
