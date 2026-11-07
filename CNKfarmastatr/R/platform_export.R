@@ -174,6 +174,17 @@ platform_export_invitro <- function(params, sinir = NULL, dosyalar, cekirdek_sha
     paste0("#   ", .platform_esc_u(names(kaynak)), ": ", kv)
   pl <- vapply(names(p), function(k) sprintf("  %s = %s", k, .r_value(p[[k]])), "")
   pl[-length(pl)] <- paste0(pl[-length(pl)], ",")
+  # regulatory constants in a block of their own (FSR-TN-PLT-15, KK-83): the run record is unchanged
+  ia <- which(names(p) == "alpha")
+  pl <- c(pl[seq_len(ia - 1)],
+          "  # -- regulatory constants: values of the guidelines, not settings of the scenario --",
+          "  #    alpha    : one-sided level, FDA 95% upper confidence bound (PSG 020929 App. A, Step 4)",
+          "  #    sigma_T0 : FDA regulatory constant, the scaling threshold (PSG 020929 App. A, Steps 1",
+          "  #               and 3); NOT the SD of the test product (that is rho * sigma_R).",
+          "  #               theta_p = ((log(1.11))^2 + 0.01) / sigma_T0^2 = 2.0891 is computed from it",
+          "  #    ema_limits: EMA acceptance limits of the 90% CI of the GMR (CPMP/EWP/4151/00 Rev. 2, 5.1)",
+          "  #    Change them only to study the method: the result is then not the guideline's criterion.",
+          pl[ia:length(pl)])
   delim <- "---"
   has_end <- function(d) any(vapply(need, function(f)
     grepl(paste0(")", d, "\""), rawToChar(dosyalar[[f]]), fixed = TRUE, useBytes = TRUE), TRUE))

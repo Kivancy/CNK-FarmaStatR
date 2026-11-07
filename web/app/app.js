@@ -411,10 +411,17 @@ function paramRows(kp, extra = []) {
   if ('delta' in kp) rows.push([t('delta_choice'), /^[a-z]/.test(kp.delta) ? t('opt_' + kp.delta) : 'δ = ' + decTxt(kp.delta)]);
   return rows.concat(extra);
 }
+// regulatory constants of the engine, shown under the parameters of the simulation reports
+// (FSR-TN-PLT-15, KK-83): fixed values of the guidelines, not settings of the run; the engine's
+// defaults (invitro_scenario: alpha = 0.05, sigma_T0 = 0.1, ema_limits = c(0.85, 1.18))
+function constRows() {
+  return [[t('rp_c_alpha'), decTxt('0.05'), t('rp_c_alpha_src')], [t('rp_c_sigmaT0'), decTxt('0.1'), t('rp_c_sigmaT0_src')],
+          [t('rp_c_thetap'), decTxt('2.0891'), t('rp_c_thetap_src')], [t('rp_c_ema'), decTxt('0.85') + ' – ' + decTxt('1.18'), t('rp_c_ema_src')]];
+}
 export function reportCommon(kind) {
   return { kind, t, lang, created: new Date().toISOString().replace('T', ' ').slice(0, 19) + ' UTC',
            header: `CNK-FarmaStatR · ${t('rp_title_' + kind)} · CNKfarmastatr ${pkgVersion}`,
-           disclaimer_tr: T.tr.disclaimer, disclaimer_en: T.en.disclaimer };
+           disclaimer_tr: T.tr.disclaimer, disclaimer_en: T.en.disclaimer, constants: constRows() };
 }
 function fileRows(fs) { return fs.map((e) => [e.file, e.pinned ? t('rp_yes') : t('recorded'), e.sha256 || '', e.status === 'ok' ? '✓' : '✗ ' + t(e.status)]); }
 function reportTek(D) {

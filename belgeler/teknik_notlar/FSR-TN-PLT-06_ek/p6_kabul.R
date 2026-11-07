@@ -235,10 +235,20 @@ if (file.exists(p5z) && !is.na(fn)) {
   # FSR-TN-PLT-09 (KK-66, T-3): only the two source sentences rp_src_ema and rp_src_sim may change, to the new text
   tr <- jsonlite::fromJSON(file.path("web", "app", "ceviri.json"))$tr
   src <- "^(EMA, CPMP/EWP/4151/00 Rev\\. 2, Bölüm 5\\.1|Morris, White ve Crowther 2019)"
-  a2 <- drop(a); b2 <- drop(b); ia <- grepl(src, a2); ib <- grepl(src, b2)
+  a2 <- drop(a); b2 <- drop(b)
+  a2 <- a2[nzchar(trimws(a2))]; b2 <- b2[nzchar(trimws(b2))]   # empty spacing paragraphs (e.g. after a table) carry no text
+  # FSR-TN-PLT-15 (KK-83): the only addition is the block of regulatory constants under Section 3
+  cst <- c(tr$rp_s_const, tr$rp_const, tr$rp_value, tr$rp_source, tr$rp_c_alpha, "0,05", tr$rp_c_alpha_src,
+           tr$rp_c_sigmaT0, "0,1", tr$rp_c_sigmaT0_src, tr$rp_c_thetap, "2,0891", tr$rp_c_thetap_src,
+           tr$rp_c_ema, "0,85 \u2013 1,18", tr$rp_c_ema_src, tr$rp_const_note)
+  k <- match(tr$rp_s_const, b2)
+  ok_cst <- !is.na(k) && identical(trimws(b2[k:min(length(b2), k + length(cst) - 1)]), trimws(cst))
+  if (!is.na(k)) b2 <- b2[-(k:(k + length(cst) - 1))]
+  ia <- grepl(src, a2); ib <- grepl(src, b2)
   ok_src <- sum(ia) == 2 && sum(ib) == 2 && all(trimws(b2[ib]) %in% trimws(c(tr$rp_src_ema, tr$rp_src_sim)))
-  put("F-10 P5 raporu değişmedi", identical(a2[!ia], b2[!ib]) && ok_src,
-      sprintf("%d paragraf (oluşturma zamanı, bağlantı ve zaman satırları hariç); kaynak cümleleri yeni metinle: %s", length(a2), if (ok_src) "evet" else "HAYIR"))
+  put("F-10 P5 raporu değişmedi", identical(a2[!ia], b2[!ib]) && ok_src && ok_cst,
+      sprintf("%d paragraf (oluşturma zamanı, bağlantı ve zaman satırları hariç); kaynak cümleleri yeni metinle: %s; düzenleyici sabitler bloğu (FSR-TN-PLT-15): %s",
+              length(a2), if (ok_src) "evet" else "HAYIR", if (ok_cst) "eklendi, metni ceviri.json ile aynı" else "HAYIR"))
 } else put("F-10 P5 raporu değişmedi", NA, "p5_kabul.zip ya da yeni rapor yok")
 
 # ---------------------------------------------------------------- F-11, F-12

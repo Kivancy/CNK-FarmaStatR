@@ -168,3 +168,17 @@ test_that("E-9 the script text is deterministic apart from the export time", {
   expect_identical(length(a), length(b))
   expect_identical(grep("^\\.fsr_created <- ", a), which(a != b))
 })
+
+test_that("C-2 regulatory constants are marked in the script; the parameters are unchanged (FSR-TN-PLT-15)", {
+  skip_if_not(have_src, "R sources not found")
+  txt <- exp_script(list(sigma_R = 0.12, n_sim = 200), sinir = "fda_delta0")
+  L <- strsplit(txt, "\n")[[1]]
+  i <- grep("-- regulatory constants", L, fixed = TRUE); a <- grep("^  alpha = ", L)
+  expect_identical(length(i), 1L); expect_true(i < a)   # expect_length is not in the webR stand-in (testthat_kucuk.R)
+  expect_true(any(grepl("NOT the SD of the test product", L, fixed = TRUE)))
+  expect_true(any(grepl("theta_p = ((log(1.11))^2 + 0.01) / sigma_T0^2 = 2.0891", L, fixed = TRUE)))
+  e <- run_script(txt)
+  expect_null(e$.error)
+  expect_identical(e$params[c("alpha", "sigma_T0", "ema_limits")], list(alpha = 0.05, sigma_T0 = 0.1, ema_limits = c(0.85, 1.18)))
+  expect_equal(((log(1.11))^2 + 0.01) / 0.1^2, 2.0891, tolerance = 5e-5)
+})

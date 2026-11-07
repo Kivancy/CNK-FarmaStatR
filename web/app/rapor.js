@@ -116,6 +116,8 @@ export function buildReport(R) {
   b.push(H1('2. ' + t('rp_s_versions')), TABLE([[t('rp_field'), t('rp_value')], ...R.versions]));
   if (R.files) b.push(TABLE([[t('rp_file'), t('rp_pinned'), 'SHA-256', t('rp_status')], ...R.files], [], true));
   b.push(H1('3. ' + t('rp_s_params')), TABLE([[t('rp_param'), t('rp_value')], ...R.params]));
+  // regulatory constants (simulation reports; FSR-TN-PLT-15, KK-83)
+  if (R.constants) b.push(H2(t('rp_s_const')), TABLE([[t('rp_const'), t('rp_value'), t('rp_source')], ...R.constants]), P(t('rp_const_note'), { sz: 17 }));
   b.push(H1('4. ' + t('rp_s_source')), P(R.source));
   b.push(H1('5. ' + t('rp_s_result')), ...R.result);
   b.push(H1('6. ' + t('rp_s_warnings')), ...(R.warnings.length ? R.warnings.map((w) => P(w)) : [P(t('rp_none'))]));

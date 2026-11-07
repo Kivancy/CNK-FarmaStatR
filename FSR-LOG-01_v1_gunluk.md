@@ -1,6 +1,6 @@
 ---
 title: "CNK-FarmaStatR v1 · Proje Günlüğü"
-subtitle: "FSR-LOG-01 · Sürüm 2.43 · Son güncelleme: 06.11.2026"
+subtitle: "FSR-LOG-01 · Sürüm 2.44 · Son güncelleme: 06.11.2026"
 ---
 
 # Bu belge hakkında
@@ -2543,6 +2543,19 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 - **Bulgu (Claude):** Excel, BOM'suz UTF-8 CSV'nin künyesindeki Türkçe karakterleri ve “≥” işaretini bozuk gösteriyor (“Ã–rnek”, “â‰¥”); sayılar, R ve SAS etkilenmiyor. Düzeltme seçenekleri: künyeyi ASCII yazmak ya da BOM eklemek (SAS okuma satırı da değişir). Karar bekliyor.
 - **Karar (K, proje sahibi): KK-82.** “onaylıyorum.” FSR-TN-PLT-12 v0.1–0.2, FSR-TN-PLT-13 v0.1–0.2, FSR-TN-PLT-14 v0.1–0.2 ve FSR-VAL-PLT-1 1.8 onaylandı.
 
+## G-147 · Simülasyon raporlarında ve betiklerinde düzenleyici sabitler (σT0) (FSR-TN-PLT-15, KK-83) — 06.11.2026
+
+- **Depo:** G-146 commit edildi; GitHub Actions başarılı (proje sahibi).
+- **Proje sahibinin tespiti:** PBE simülasyon raporunda σR = 0,12 ve ρ = σT/σR = 1 yazarken dışa aktarılan R betiğinde `sigma_T0 = 0.1` görünüyor: “nasıl oluyor da sigma_T0 = 0.1 olabiliyor.”
+- **Yanıt (Claude):** σT0 test ürününün SD'si değildir; FDA'nın düzenleyici sabitidir (PSG 020929, Rev. Dec 2025, Ek A Adım 1 ve 3: “σT0: Regulatory constant (σT0 = 0.1)”): σR > σT0 ise referansa göre (η1), değilse σT0'a göre (η2) ölçekleme; θp = [(ln 1,11)² + 0,01]/σT0² = 2,0891. Asıl tutarsızlık: rapor sabitleri hiç göstermiyordu, betik ise onları “you may change these” altında veriyordu.
+- **Proje sahibinin sorusu:** “σT0 değil de σ0 mı desen acaba. guide da σ0 olsa gerek.” Kontrol (kaynaktan, proje dosyası): kılavuz σT0 yazar (bazı satırlarda “σTO”); Fluticasone PSG 020121 de aynı; Chow ve Liu (2008) PBE için σT0, IBE için σW0 (Denk. 11.8.1–11.8.3). Simge σT0 olarak kalır.
+- **Karar (K, proje sahibi): KK-83.** “Aç ve bitir.” Ölçütler C-1 … C-5 bu yetkiyle koddan önce donduruldu (KK-45); dosya `belgeler/teknik_notlar/FSR-TN-PLT-15_ek/olcutler.md`.
+- **Uygulama (Claude):** simülasyon (tek koşu, hazır ve canlı) ve tasarım raporlarında Bölüm 3'e “Düzenleyici sabitler” alt tablosu (α, σT0, θp, EMA sınırları; kaynaklarıyla) ve açıklama (`app.js` `constRows`, `rapor.js`, `ceviri.json` 12 anahtar). Senaryo betiğinde sabitler `params` içinde kalır, önlerine açıklayıcı yorum bloğu (`platform_export.R`); tasarım betiğinde bilgi yorumu (`platform_tasarim.R`). Hesap değişmedi. Yeni test C-2 (`test-platform-export.R`). P6 F-10 revize: P5 raporunda yalnız sabitler bloğu eklenmiş olmalı (boş aralık paragrafları karşılaştırmadan çıkarıldı).
+- **Kuru koşuda bulunanlar:** (i) ilk P6 kuru koşusu yerel sunucunun durması yüzünden yarıda kaldı (kapsayıcı yeniden başlamıştı); yeniden koşuldu. (ii) C-2 testi webR'de hata verdi: `expect_length`, tarayıcıdaki testthat yerine geçen kodda yok; `expect_identical(length(.), 1L)` ile değiştirildi. (iii) F-10 ilk değerlendirmede tablodan sonraki boş paragrafı sabitler bloğunun parçası sanıyordu; boş paragraflar karşılaştırmadan çıkarıldı.
+- **Kuru koşular (Claude):** testthat 2411 beklenti, 0 başarısız; P5 GECTI (R-1 64/64 rapor, R-2, R-10, R-11; KALDI 0); P6 126/126 (F-9 webR 76 blok, 2411 beklenti; F-10 sabitler bloğu eklendi, metni `ceviri.json` ile aynı). Kanıt: `FSR-TN-PLT-15_ek/kuru/`.
+- **Belge:** FSR-TN-PLT-15 v0.1.
+- **Bekleyen (proje sahibi):** commit; resmî P5 ve P6 koşuları; ardından FSR-TN-PLT-15 v0.2, FSR-VAL-PLT-1 1.9, site güncellemesi.
+
 # 3. Açık işler
 
 | No | İş | Durum |
@@ -2570,7 +2583,7 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 
 | Belge / yazılım | Sürüm | Durum |
 |---|---|---|
-| FSR-LOG-01 · Proje günlüğü | 2.43 | Bu belge |
+| FSR-LOG-01 · Proje günlüğü | 2.44 | Bu belge |
 | FSR-TN-PBE-01 · In vitro eşdeğerlik (FDA PBE, EMA OIP) simülasyon modeli ve tasarımı | 0.11 | Taslak; Bölüm 12.10 onaylandı, mekanizma "destekler" düzeyinde (G-48, KK-42) |
 | FSR-VAL-SIM-1 · Simülasyon çatısı ve in vitro simülasyon motoru validasyon belgesi | 1.1 | 1.0 onaylı; beş dosya sabitlendi (G-47). 1.1: TC-S11 (dışa aktarılan betik), onaylandı (KK-53, G-76) |
 | FSR-TN-PLT-01 · Platform tasarımı ve P0 spesifikasyonu | 0.7 | Onaylı (KK-48); P0 ve P1 kapandı; v0.6: künye ve Tablo 11.1 revizyonu (G-68); v0.7: Tablo 8.1 ve 10.1 (KK-56, KK-57, KK-59; G-94), onay P6 kapanışında |
@@ -2677,3 +2690,4 @@ Diğer makale malzemesi: DDSolver değerlendirmesi (benzerlik sınırının test
 | KK-80 | İstek 11052026-a: raporlarda grafik (f2, MSD, Weibull); isteğe bağlı bootstrap CSV (iki düzey) ve indeksli düzeyde SAS programı; değişkenlik yalnız gösterilir; ölçütler donduruldu | G-142 |
 | KK-81 | K-8 yeniden değerlendirildi: B-L2b olduğu gibi kalır (ekranda yok, çekirdekte N/√N); düzeltilmiş biçim açılmadı | G-143 |
 | KK-82 | FSR-TN-PLT-12, 13, 14 v0.2 ve FSR-VAL-PLT-1 1.8 onaylandı | G-146 |
+| KK-83 | Simülasyon raporlarında ve betiklerinde düzenleyici sabitler (α, σT0, θp, EMA sınırları); simge σT0 kalır (PSG 020929) | G-147 |
